@@ -1,0 +1,46 @@
+/* navigation bar */
+.topBar {
+  overflow: hidden; /* avoid having elements that go beyond the <div> */
+  background-color: rgba(50, 50, 50, 0.75); /* background navbar color */
+  position: fixed; /* set the navbar to fixed position */
+  top: 0; /* position the navbar at the top of the page */
+  width: 100%; /* full screen width */
+  cursor: default; /* avoid to see text cursor */
+}
+
+/* links inside the navbar */
+.topBar span {
+  float: left;
+  color: rgb(255, 255, 255);
+  padding: 3px 10px;
+}
+
+/* change background on mouse-over */
+.topBar span:hover {
+  background: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+}
+
+/* links inside the navbar */
+.topBar a {
+  float: left;
+  color: rgb(255, 255, 255);
+  padding: 3px 10px;
+  text-decoration: none;
+}
+
+/* change background on mouse-over */
+.topBar a:hover {
+  background: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+}
+
+/* fix the content to the right side of the navbar */
+.outright {
+  position: absolute;
+  right: 0px;
+}
+
+.contrasted {
+  background-color: rgb(125, 125, 125);
+}
