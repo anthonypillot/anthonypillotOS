@@ -3,11 +3,11 @@ import Image from "next/image";
 
 import LoadingBar from "../LoadingBar/LoadingBar";
 
-import styles from "./CenterBox.module.css";
+import styles from "./WelcomeBox.module.css";
 
 const logoSize: number = 300;
 
-const CenterBox: NextPage = () => {
+const WelcomeBox: NextPage = () => {
   return (
     <div className={styles.centerBox}>
       <Image
@@ -29,4 +29,4 @@ const CenterBox: NextPage = () => {
   );
 };
 
-export default CenterBox;
+export default WelcomeBox;

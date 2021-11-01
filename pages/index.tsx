@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 
 import TopBar from "./components/TopBar/TopBar";
-import CenterBox from "./components/CenterBox/CenterBox";
+import WelcomeBox from "./components/CenterBox/WelcomeBox";
 
 import styles from "../styles/Home.module.css";
 
@@ -11,12 +11,18 @@ const Home: NextPage = () => {
     <div>
       <Head>
         <title>anthonypillotOS</title>
-        <meta name="description" content="anthonypillotOS application" />
+        <meta
+          name="description"
+          content="Personal application intended to introduce myself, a blog, and what I'm doing in the IT world."
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <TopBar />
-      <CenterBox />
+
+      <div className={styles.centeredContent}>
+        <WelcomeBox />
+      </div>
 
       <div className={styles.background}></div>
       <div className={`${styles.background} ${styles.backgroundSecond}`}></div>
