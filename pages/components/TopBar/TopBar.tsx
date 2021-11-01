@@ -1,17 +1,14 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 
-import moment from "moment";
+import FormattedTime from "../FormattedTime/FormattedTime";
 
 import styles from "./TopBar.module.css";
-
-// format used by moment: "October 31, 2021 8:24:33 PM"
-const currentTime = `${moment().format("LL")} ${moment().format("LTS")}`;
 
 const TopBar: NextPage = () => {
   return (
     <div className={styles.topBar}>
-      <span className="contrasted">anthonypillotOS</span>
+      <span className={styles.contrasted}>anthonypillotOS</span>
 
       <Link href="/">Launch</Link>
       <Link href="/">Projects</Link>
@@ -24,7 +21,9 @@ const TopBar: NextPage = () => {
           GitHub
         </Link>
 
-        <span className={styles.contrasted}>{currentTime}</span>
+        <span className={styles.contrasted}>
+          <FormattedTime />
+        </span>
       </div>
     </div>
   );
