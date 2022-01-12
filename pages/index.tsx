@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>anthonypillotOS</title>
+        <title>anthonypillotOS - Personal application</title>
         <meta
           name="description"
           content="Personal application intended to introduce myself, a blog, and what I'm doing in the IT world."
