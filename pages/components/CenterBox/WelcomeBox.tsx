@@ -18,13 +18,18 @@ const WelcomeBox: NextPage = () => {
       ></Image>
 
       <h1>
-        Welcome to <br />
+        Welcome to :<br />
         <span className={styles.subtitleCenterBox}>
           &#123; this.application &#125;
         </span>
       </h1>
 
       <LoadingBar />
+
+      <div className={styles.bottomText}>
+        This project is under development. <br />
+        Stay tuned.
+      </div>
     </div>
   );
 };
