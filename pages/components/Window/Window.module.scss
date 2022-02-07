@@ -1,0 +1,137 @@
+$red: rgb(249, 96, 87);
+$yellow: rgb(248, 206, 82);
+$yellow-light: rgba(248, 206, 82, 0.5);
+$green: rgb(95, 207, 101);
+$grey-light: rgba(20, 20, 27, 0.3);
+$grey-dark: rgba(20, 20, 27, 0.9);
+$white: rgba(255, 255, 255, 0.7);
+
+.topOfWindow {
+  color: $grey-dark;
+}
+
+.title {
+  font-family: monospace;
+  font-size: 1.4em;
+}
+
+.window {
+  background-color: $grey-light;
+  max-width: 100vh;
+  max-height: 80vh;
+  width: 100vh;
+  height: 80vh;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 500;
+
+  border-radius: 14px;
+  backdrop-filter: blur(20px);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 58px;
+  width: 100%;
+  border-bottom: 1px solid $grey-light;
+  padding: 0 37px;
+  white-space: nowrap;
+}
+
+.circleMenu {
+  width: 15px;
+  height: 15px;
+  background-color: $red;
+  border-radius: 50%;
+  box-shadow: 24px 0 0 0 $yellow, 48px 0 0 0 $green;
+  margin-right: 195px;
+  flex-shrink: 0;
+}
+
+.headerMenu {
+  display: flex;
+  align-items: center;
+  cursor: default;
+}
+.headerMenu a {
+  padding: 20px 30px;
+  text-decoration: none;
+  color: $grey-dark;
+  border-bottom: 2px solid transparent;
+  transition: 0.3s;
+}
+.headerMenu a:hover {
+  color: $white;
+  border-bottom: 2px solid $white;
+}
+
+.wrapper {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.leftSide {
+  border-right: 1px solid $grey-light;
+  padding: 1vh;
+  overflow: auto;
+  flex-shrink: 0;
+  cursor: default;
+}
+
+.leftSideTitle {
+  font-size: 25px;
+  color: $grey-dark;
+  margin: 20px;
+  margin-bottom: 30px;
+}
+.leftSideTitle a {
+  transition: 0.3s;
+}
+.leftSideTitle a:hover {
+  color: $white;
+}
+
+.leftSideElement {
+  font-size: 15px;
+  color: $grey-dark;
+  margin: 20px;
+}
+.leftSideElement a {
+  transition: 0.3s;
+}
+.leftSideElement a:hover {
+  color: $white;
+}
+
+.bottomLeftSide {
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 15px;
+}
+
+.centerContentWrapper {
+  display: flex;
+  flex-direction: column;
+  color: $grey-dark;
+  padding: 20px 40px;
+  height: 100%;
+  overflow: auto;
+}
+
+.subtitle {
+  margin-bottom: 15px;
+}
+
+.warningText {
+  font-family: monospace;
+  margin-bottom: 20px;
+  background-color: $yellow-light;
+  border-radius: 10px;
+  padding: 10px;
+}
