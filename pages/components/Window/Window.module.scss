@@ -6,7 +6,12 @@ $grey-light: rgba(20, 20, 27, 0.3);
 $grey-dark: rgba(20, 20, 27, 0.9);
 $white: rgba(255, 255, 255, 0.7);
 
-.topOfWindow {
+.mainWrapper {
+  height: 60%;
+  width: 60%;
+}
+
+.top {
   color: $grey-dark;
 }
 
@@ -16,15 +21,11 @@ $white: rgba(255, 255, 255, 0.7);
 }
 
 .window {
-  background-color: $grey-light;
-  max-width: 100vh;
-  max-height: 80vh;
-  width: 100vh;
-  height: 80vh;
-
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+
+  background-color: $grey-light;
+
   font-size: 15px;
   font-weight: 500;
 
@@ -37,7 +38,6 @@ $white: rgba(255, 255, 255, 0.7);
   align-items: center;
   flex-shrink: 0;
   height: 58px;
-  width: 100%;
   border-bottom: 1px solid $grey-light;
   padding: 0 37px;
   white-space: nowrap;
@@ -55,7 +55,6 @@ $white: rgba(255, 255, 255, 0.7);
 
 .headerMenu {
   display: flex;
-  align-items: center;
   cursor: default;
 }
 .headerMenu a {
@@ -70,13 +69,16 @@ $white: rgba(255, 255, 255, 0.7);
   border-bottom: 2px solid $white;
 }
 
-.wrapper {
+.windowWrapper {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
 }
 
-.leftSide {
+.leftWrapper {
+  display: flex;
+  flex-direction: column;
+
   border-right: 1px solid $grey-light;
   padding: 1vh;
   overflow: auto;
@@ -84,11 +86,17 @@ $white: rgba(255, 255, 255, 0.7);
   cursor: default;
 }
 
+.leftContent {
+  display: flex;
+  flex-direction: column;
+}
+
 .leftSideTitle {
   font-size: 25px;
   color: $grey-dark;
-  margin: 20px;
-  margin-bottom: 30px;
+  margin-top: 15px;
+  margin-left: 15px;
+  margin-bottom: 10px;
 }
 .leftSideTitle a {
   transition: 0.3s;
@@ -100,7 +108,8 @@ $white: rgba(255, 255, 255, 0.7);
 .leftSideElement {
   font-size: 15px;
   color: $grey-dark;
-  margin: 20px;
+  margin-top: 15px;
+  margin-left: 15px;
 }
 .leftSideElement a {
   transition: 0.3s;
@@ -110,9 +119,9 @@ $white: rgba(255, 255, 255, 0.7);
 }
 
 .bottomLeftSide {
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 15px;
+  display: flex;
+  align-items: flex-end;
+  flex-grow: 1;
 }
 
 .centerContentWrapper {

@@ -7,8 +7,8 @@ import FormattedTime from "../FormattedTime/FormattedTime";
 
 const Window: NextPage = () => {
   return (
-    <div>
-      <div className={styles.topOfWindow}>
+    <div className={styles.mainWrapper}>
+      <div className={styles.top}>
         <h1>
           Welcome to
           <span className={styles.title}> &#123; this.application &#125;</span>
@@ -50,22 +50,25 @@ const Window: NextPage = () => {
           </div>
         </div>
 
-        <div className={styles.wrapper}>
-          <div className={styles.leftSide}>
-            <div className={styles.leftSideTitle}>
-              <a>All applications</a>
-            </div>
-            <div className={styles.leftSideElement}>
-              <a>First element incoming</a>
-            </div>
-            <div className={styles.leftSideElement}>
-              <a>Second element incoming</a>
-            </div>
-            <div className={styles.leftSideElement}>
-              <a>Third element incoming</a>
-            </div>
-            <div className={styles.leftSideElement}>
-              <a>Fourth element incoming</a>
+        {/* start content of the main window */}
+        <div className={styles.windowWrapper}>
+          <div className={styles.leftWrapper}>
+            <div className={styles.leftContent}>
+              <div className={styles.leftSideTitle}>
+                <a>All applications</a>
+              </div>
+              <div className={styles.leftSideElement}>
+                <a>First element incoming</a>
+              </div>
+              <div className={styles.leftSideElement}>
+                <a>Second element incoming</a>
+              </div>
+              <div className={styles.leftSideElement}>
+                <a>Third element incoming</a>
+              </div>
+              <div className={styles.leftSideElement}>
+                <a>Fourth element incoming</a>
+              </div>
             </div>
             <div className={styles.bottomLeftSide}>
               <FormattedTime />
@@ -119,9 +122,20 @@ const Window: NextPage = () => {
                 </li>
               </ul>
             </span>
+            <span>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum
+              rerum voluptatibus necessitatibus saepe ad voluptatum fuga hic
+              deserunt. Commodi autem dolorem fugit provident consequatur
+              tenetur ducimus soluta at veniam itaque! Lorem ipsum, dolor sit
+              amet consectetur adipisicing elit. Rerum sit, quisquam nihil alias
+              repudiandae esse. Amet veritatis labore autem numquam. Excepturi
+              blanditiis quam quasi? Aspernatur non natus quidem repellendus
+              quae!
+            </span>
           </div>
         </div>
       </div>
+      {/* end content of the main window */}
     </div>
   );
 };
