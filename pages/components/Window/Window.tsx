@@ -5,13 +5,33 @@ import styles from "./Window.module.scss";
 
 import FormattedTime from "../FormattedTime/FormattedTime";
 
+const logoSize: number = 200;
+
+const leftContentElements: Array<string> = [
+  "First element incoming",
+  "Second element incoming",
+  "Third element incoming",
+  "Fourth element incoming",
+];
+
+function getEachLeftContentElements() {
+  return leftContentElements.map((element, i) => (
+    <div className={styles.leftSideContent} key={i}>
+      <a>{element}</a>
+    </div>
+  ));
+}
+
 const Window: NextPage = () => {
   return (
     <div className={styles.mainWrapper}>
-      <div className={styles.top}>
+      <div className={styles.topWrapper}>
         <h1>
           Welcome to
-          <span className={styles.title}> &#123; this.application &#125;</span>
+          <span className={styles.topTitle}>
+            {" "}
+            &#123; this.application &#125;
+          </span>
         </h1>
       </div>
 
@@ -57,20 +77,9 @@ const Window: NextPage = () => {
               <div className={styles.leftSideTitle}>
                 <a>All applications</a>
               </div>
-              <div className={styles.leftSideElement}>
-                <a>First element incoming</a>
-              </div>
-              <div className={styles.leftSideElement}>
-                <a>Second element incoming</a>
-              </div>
-              <div className={styles.leftSideElement}>
-                <a>Third element incoming</a>
-              </div>
-              <div className={styles.leftSideElement}>
-                <a>Fourth element incoming</a>
-              </div>
+              {getEachLeftContentElements()}
             </div>
-            <div className={styles.bottomLeftSide}>
+            <div className={styles.bottomLeftSideContent}>
               <FormattedTime />
             </div>
           </div>
@@ -78,18 +87,18 @@ const Window: NextPage = () => {
             <Image
               src="/assets/logo_anthonypillotOS_black.svg"
               alt="logo_anthonypillotOS_black"
-              height={350}
-              width={350}
+              height={logoSize}
+              width={logoSize}
             ></Image>
             <h1>
-              Hi. I'm Anthony Pillot.
+              Hi. I&apos;m Anthony Pillot.
               <br />
               Full-Stack developer.
             </h1>
 
             <span className={styles.subtitle}>
-              Personal application intended to introduce myself and what I'm
-              doing in the IT world.
+              Personal application intended to introduce myself and what
+              I&apos;m doing in the IT world.
             </span>
 
             <span className={styles.warningText}>
@@ -98,7 +107,7 @@ const Window: NextPage = () => {
             </span>
 
             <span>
-              I've worked or I'm working on:
+              I&apos;ve worked or I&apos;m working on:
               <ul>
                 <li>Languages : JavaScript, Node.js, Java.</li>
                 <li>Back-end frameworks : Express, Spring.</li>
@@ -121,16 +130,6 @@ const Window: NextPage = () => {
                   Instance, Autonomous Database), Matomo (web analytics).
                 </li>
               </ul>
-            </span>
-            <span>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum
-              rerum voluptatibus necessitatibus saepe ad voluptatum fuga hic
-              deserunt. Commodi autem dolorem fugit provident consequatur
-              tenetur ducimus soluta at veniam itaque! Lorem ipsum, dolor sit
-              amet consectetur adipisicing elit. Rerum sit, quisquam nihil alias
-              repudiandae esse. Amet veritatis labore autem numquam. Excepturi
-              blanditiis quam quasi? Aspernatur non natus quidem repellendus
-              quae!
             </span>
           </div>
         </div>
