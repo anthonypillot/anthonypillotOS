@@ -1,6 +1,6 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "anthonypillotos",
+  "private": false,
   "type": "module",
   "scripts": {
     "build": "nuxt build",
@@ -12,6 +12,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "nuxt": "^3.8.1",
+    "sass": "^1.69.5",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   }
