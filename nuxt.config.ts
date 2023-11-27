@@ -14,10 +14,14 @@ export default defineNuxtConfig({
 
   css: ["@/assets/scss/main.scss"],
 
-  vite: {
-    build: {
-      cssCodeSplit: false,
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
     },
+  },
+
+  vite: {
     css: {
       preprocessorOptions: {
         scss: {

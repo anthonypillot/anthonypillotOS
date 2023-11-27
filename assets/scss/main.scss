@@ -1,20 +1,14 @@
 @import "./reset.css";
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url(https://fonts.googleapis.com/css?family=Poppins);
 
 html,
 body {
-  color: #ffff;
-
   font-family: "Poppins", serif;
 
-  background: linear-gradient(to bottom, $primary-color 50%, $secondary-color 100%);
-  background-color: $secondary-color;
-  background-repeat: no-repeat;
-}
-
-a {
-  color: #ffff;
-
-  text-decoration: none;
+  background-color: $primary-color;
 }
