@@ -41,7 +41,7 @@
             rel="noopener"
             target="_blank"
             class="text-sm font-semibold leading-6 text-white"
-            >GitHub <span aria-hidden="true">&rarr;</span></NuxtLink
+            >GitHub project <span aria-hidden="true">&rarr;</span></NuxtLink
           >
         </div>
       </nav>
@@ -83,7 +83,7 @@
                   rel="noopener"
                   target="_blank"
                   class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >GitHub &rarr;</a
+                  >GitHub project &rarr;</a
                 >
               </div>
             </div>
@@ -127,18 +127,22 @@
           />
         </div>
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
-          <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+          <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-32">
             <div class="hidden sm:mb-8 sm:flex sm:justify-center">
               <div class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
-                Discover our documentation website.
+                Discover our Size Up organization documentation website.
                 <NuxtLink href="https://docs.sizeup.cloud" rel="noopener" target="_blank" class="font-semibold text-white"
                   ><span class="absolute inset-0" aria-hidden="true" />Get me in <span aria-hidden="true">&rarr;</span></NuxtLink
                 >
               </div>
             </div>
-            <div class="text-center">
-              <img src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg" />
-              <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl" style="display: none">anthonypillotOS</h1>
+            <div class="flex flex-col text-center">
+              <img
+                class="h-80"
+                src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg"
+                alt="anthonypillotOS"
+              />
+              <h1 class="hidden text-4xl font-bold tracking-tight text-white sm:text-6xl">anthonypillotOS</h1>
               <p class="mt-6 text-lg leading-8 text-gray-300">
                 <span class="text-indigo-400">Freelance</span> Software Engineer, <span class="text-indigo-400">Real</span> Full Stack
                 Developer, and <span class="text-indigo-400">more</span>.
@@ -162,14 +166,6 @@
           <div
             class="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5"
           >
-            <img
-              class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-              src="https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg"
-              alt="JavaScript"
-              width="158"
-              height="48"
-              style="filter: hue-rotate(180deg)"
-            />
             <img
               class="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1"
               src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg"
@@ -195,9 +191,17 @@
               style="filter: hue-rotate(110deg)"
             />
             <img
+              class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
+              src="https://static-00.iconduck.com/assets.00/node-js-icon-454x512-nztofx17.png"
+              alt="Node.js"
+              width="158"
+              height="48"
+              style="filter: hue-rotate(145deg)"
+            />
+            <img
               class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1"
               src="https://www.vectorlogo.zone/logos/java/java-icon.svg"
-              alt="Statamic"
+              alt="Java"
               width="158"
               height="48"
               style="filter: hue-rotate(220deg)"
@@ -508,9 +512,9 @@ import {
 
 const navigation = [
   { name: "Home", href: "/", rel: "", target: "" },
-  { name: "LinkedIn", href: "https://www.linkedin.com/in/anthony-pillot", rel: "noopener", target: "_blank" },
-  { name: "GitHub", href: "https://github.com/anthonypillot", rel: "noopener", target: "_blank" },
-  { name: "Size Up", href: "https://github.com/size-up", rel: "noopener", target: "_blank" },
+  { name: "My LinkedIn", href: "https://www.linkedin.com/in/anthony-pillot", rel: "noopener", target: "_blank" },
+  { name: "My GitHub", href: "https://github.com/anthonypillot", rel: "noopener", target: "_blank" },
+  { name: "Size Up org.", href: "https://github.com/size-up", rel: "noopener", target: "_blank" },
   { name: "Documentation website", href: "https://docs.sizeup.cloud", rel: "noopener", target: "_blank" },
 ];
 
