@@ -36,12 +36,8 @@
           >
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-          <NuxtLink
-            href="https://github.com/anthonypillot/anthonypillotOS"
-            rel="noopener"
-            target="_blank"
-            class="text-sm font-semibold leading-6 text-white"
-            >GitHub project <span aria-hidden="true">&rarr;</span></NuxtLink
+          <NuxtLink :href="data.url.githubRepository" rel="noopener" target="_blank" class="text-sm font-semibold leading-6 text-white"
+            >GitHub repository <span aria-hidden="true">&rarr;</span></NuxtLink
           >
         </div>
       </nav>
@@ -79,11 +75,11 @@
               </div>
               <div class="py-6">
                 <a
-                  href="https://github.com/anthonypillot/anthonypillotOS"
+                  :href="data.url.githubRepository"
                   rel="noopener"
                   target="_blank"
                   class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >GitHub project &rarr;</a
+                  >GitHub repository &rarr;</a
                 >
               </div>
             </div>
@@ -131,7 +127,7 @@
             <div class="hidden sm:mb-8 sm:flex sm:justify-center">
               <div class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
                 Discover our Size Up organization documentation website.
-                <NuxtLink href="https://docs.sizeup.cloud" rel="noopener" target="_blank" class="font-semibold text-white"
+                <NuxtLink :href="data.url.sizeUpDocumentation" rel="noopener" target="_blank" class="font-semibold text-white"
                   ><span class="absolute inset-0" aria-hidden="true" />Get me in <span aria-hidden="true">&rarr;</span></NuxtLink
                 >
               </div>
@@ -447,52 +443,63 @@
     </main>
 
     <!-- Footer -->
-    <!-- <footer class="mt-32 bg-gray-900 sm:mt-56" aria-labelledby="footer-heading">
+    <footer class="bg-gray-900" aria-labelledby="footer-heading">
       <h2 id="footer-heading" class="sr-only">Footer</h2>
       <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-32">
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
-          <img class="h-7" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Company name" />
+          <img
+            class="h-7"
+            src="https://raw.githubusercontent.com/anthonypillot/assets/78c3327a009fa95b72dd06dac4bbc3e811f5a1c3/logo/svg/logo_anthonypillotOS_OS.svg"
+            alt="anthonypillotOS"
+            style="filter: invert(1)"
+          />
           <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div class="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 class="text-sm font-semibold leading-6 text-white">Solutions</h3>
+                <h3 class="text-sm font-semibold leading-6 text-white">GitHub</h3>
                 <ul role="list" class="mt-6 space-y-4">
-                  <li v-for="item in footerNavigation.solutions" :key="item.name">
-                    <a :href="item.href" class="text-sm leading-6 text-gray-300 hover:text-white">{{ item.name }}</a>
+                  <li v-for="item in footerNavigation.github" :key="item.name">
+                    <a :href="item.href" :rel="item.rel" :target="item.target" class="text-sm leading-6 text-gray-300 hover:text-white">{{
+                      item.name
+                    }}</a>
                   </li>
                 </ul>
               </div>
               <div class="mt-10 md:mt-0">
-                <h3 class="text-sm font-semibold leading-6 text-white">Support</h3>
+                <h3 class="text-sm font-semibold leading-6 text-white">Project</h3>
                 <ul role="list" class="mt-6 space-y-4">
-                  <li v-for="item in footerNavigation.support" :key="item.name">
-                    <a :href="item.href" class="text-sm leading-6 text-gray-300 hover:text-white">{{ item.name }}</a>
+                  <li v-for="item in footerNavigation.project" :key="item.name">
+                    <a :href="item.href" :rel="item.rel" :target="item.target" class="text-sm leading-6 text-gray-300 hover:text-white">{{
+                      item.name
+                    }}</a>
                   </li>
                 </ul>
               </div>
             </div>
             <div class="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 class="text-sm font-semibold leading-6 text-white">Company</h3>
+                <h3 class="text-sm font-semibold leading-6 text-white">Contact</h3>
                 <ul role="list" class="mt-6 space-y-4">
-                  <li v-for="item in footerNavigation.company" :key="item.name">
-                    <a :href="item.href" class="text-sm leading-6 text-gray-300 hover:text-white">{{ item.name }}</a>
+                  <li v-for="item in footerNavigation.contact" :key="item.name">
+                    <a :href="item.href" :rel="item.rel" :target="item.target" class="text-sm leading-6 text-gray-300 hover:text-white">{{
+                      item.name
+                    }}</a>
                   </li>
                 </ul>
               </div>
-              <div class="mt-10 md:mt-0">
+              <!-- <div class="mt-10 md:mt-0">
                 <h3 class="text-sm font-semibold leading-6 text-white">Legal</h3>
                 <ul role="list" class="mt-6 space-y-4">
                   <li v-for="item in footerNavigation.legal" :key="item.name">
                     <a :href="item.href" class="text-sm leading-6 text-gray-300 hover:text-white">{{ item.name }}</a>
                   </li>
                 </ul>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
       </div>
-    </footer> -->
+    </footer>
   </div>
 </template>
 
@@ -510,12 +517,26 @@ import {
   ServerIcon,
 } from "@heroicons/vue/20/solid";
 
+const data = {
+  email: {
+    owner: "pillot.anthony@gmail.com",
+  },
+  url: {
+    linkedIn: "https://www.linkedin.com/in/anthony-pillot",
+    githubAccount: "https://github.com/anthonypillot",
+    githubRepository: "https://github.com/anthonypillot/anthonypillotOS",
+    githubOrganization: "https://github.com/size-up",
+    githubFreeGamesCatcherCore: "https://github.com/size-up/freegamescatcher-core",
+    sizeUpDocumentation: "https://docs.sizeup.cloud",
+  },
+};
+
 const navigation = [
   { name: "Home", href: "/", rel: "", target: "" },
-  { name: "My LinkedIn", href: "https://www.linkedin.com/in/anthony-pillot", rel: "noopener", target: "_blank" },
-  { name: "My GitHub", href: "https://github.com/anthonypillot", rel: "noopener", target: "_blank" },
-  { name: "Size Up org.", href: "https://github.com/size-up", rel: "noopener", target: "_blank" },
-  { name: "Documentation website", href: "https://docs.sizeup.cloud", rel: "noopener", target: "_blank" },
+  { name: "My LinkedIn", href: data.url.linkedIn, rel: "noopener", target: "_blank" },
+  { name: "My GitHub", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
+  { name: "Size Up - Org.", href: data.url.githubOrganization, rel: "noopener", target: "_blank" },
+  { name: "Size Up - Documentation", href: data.url.sizeUpDocumentation, rel: "noopener", target: "_blank" },
 ];
 
 // const features = [
@@ -585,32 +606,28 @@ const navigation = [
 //   },
 //   // More questions...
 // ];
-// const footerNavigation = {
-//   solutions: [
-//     { name: "Marketing", href: "#" },
-//     { name: "Analytics", href: "#" },
-//     { name: "Commerce", href: "#" },
-//     { name: "Insights", href: "#" },
-//   ],
-//   support: [
-//     { name: "Pricing", href: "#" },
-//     { name: "Documentation", href: "#" },
-//     { name: "Guides", href: "#" },
-//     { name: "API Status", href: "#" },
-//   ],
-//   company: [
-//     { name: "About", href: "#" },
-//     { name: "Blog", href: "#" },
-//     { name: "Jobs", href: "#" },
-//     { name: "Press", href: "#" },
-//     { name: "Partners", href: "#" },
-//   ],
-//   legal: [
-//     { name: "Claim", href: "#" },
-//     { name: "Privacy", href: "#" },
-//     { name: "Terms", href: "#" },
-//   ],
-// };
+
+const footerNavigation = {
+  github: [
+    { name: "Account", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
+    { name: "Repository", href: data.url.githubRepository, rel: "noopener", target: "_blank" },
+    { name: "Organization", href: data.url.githubOrganization, rel: "noopener", target: "_blank" },
+  ],
+  project: [
+    { name: "Size Up - Documentation", href: data.url.sizeUpDocumentation, rel: "noopener", target: "_blank" },
+    { name: "Free Games Catcher", href: data.url.githubFreeGamesCatcherCore, rel: "noopener", target: "_blank" },
+  ],
+  contact: [
+    { name: "Email", href: "mailto:" + data.email.owner },
+    { name: "LinkedIn", href: data.url.linkedIn, rel: "noopener", target: "_blank" },
+    { name: "GitHub", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
+  ],
+  // legal: [
+  //   { name: "Claim", href: "#" },
+  //   { name: "Privacy", href: "#" },
+  //   { name: "Terms", href: "#" },
+  // ],
+};
 
 const mobileMenuOpen: Ref<boolean> = ref(false);
 </script>
