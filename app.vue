@@ -6,10 +6,12 @@
         <div class="flex lg:flex-1">
           <a href="#" class="-m-1.5 p-1.5">
             <span class="sr-only">anthonypillotOS</span>
-            <img
+            <NuxtImg
+              format="webp"
+              quality="80"
               class="h-12 w-auto"
               src="https://raw.githubusercontent.com/anthonypillot/assets/78c3327a009fa95b72dd06dac4bbc3e811f5a1c3/logo/svg/logo_anthonypillotOS_OS.svg"
-              alt=""
+              alt="anthonypillotOS"
               style="filter: invert(1)"
             />
           </a>
@@ -49,7 +51,9 @@
           <div class="flex items-center justify-between">
             <a href="#" class="-m-1.5 p-1.5">
               <span class="sr-only">anthonypillotOS</span>
-              <img
+              <NuxtImg
+                format="webp"
+                quality="80"
                 class="h-12 w-auto"
                 src="https://raw.githubusercontent.com/anthonypillot/assets/78c3327a009fa95b72dd06dac4bbc3e811f5a1c3/logo/svg/logo_anthonypillotOS_OS.svg"
                 alt=""
@@ -91,7 +95,9 @@
     <main>
       <!-- Hero section -->
       <div class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
-        <img
+        <NuxtImg
+          format="webp"
+          quality="80"
           src="https://focus.courrierinternational.com/2022/02/04/0/0/3882/2584/1280/0/60/0/89816dd_1644014034247-christopher-gower-m-hrflhgabo-unsplash.jpg"
           alt=""
           class="absolute inset-0 -z-10 h-full w-full object-cover"
@@ -133,7 +139,9 @@
               </div>
             </div>
             <div class="flex flex-col text-center">
-              <img
+              <NuxtImg
+                format="webp"
+                quality="80"
                 class="h-80"
                 src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg"
                 alt="anthonypillotOS"
@@ -162,7 +170,9 @@
           <div
             class="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5"
           >
-            <img
+            <NuxtImg
+              format="webp"
+              quality="80"
               class="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1"
               src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg"
               alt="TypeScript"
@@ -170,7 +180,9 @@
               height="48"
               style="filter: hue-rotate(30deg)"
             />
-            <img
+            <NuxtImg
+              format="webp"
+              quality="80"
               class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
               src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
               alt="Vue.js"
@@ -178,7 +190,9 @@
               height="48"
               style="filter: hue-rotate(110deg)"
             />
-            <img
+            <NuxtImg
+              format="webp"
+              quality="80"
               class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
               src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Nuxt_logo.svg"
               alt="Nuxt"
@@ -186,7 +200,9 @@
               height="48"
               style="filter: hue-rotate(110deg)"
             />
-            <img
+            <NuxtImg
+              format="webp"
+              quality="80"
               class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
               src="https://static-00.iconduck.com/assets.00/node-js-icon-454x512-nztofx17.png"
               alt="Node.js"
@@ -194,7 +210,9 @@
               height="48"
               style="filter: hue-rotate(145deg)"
             />
-            <img
+            <NuxtImg
+              format="webp"
+              quality="80"
               class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1"
               src="https://www.vectorlogo.zone/logos/java/java-icon.svg"
               alt="Java"
@@ -248,7 +266,8 @@
         </div>
         <div class="relative overflow-hidden pt-16">
           <div class="mx-auto max-w-7xl px-6 lg:px-8">
-            <img
+            <NuxtImg format="webp"
+quality="80"
               src="https://tailwindui.com/img/component-images/project-app-screenshot.png"
               alt="App screenshot"
               class="mb-[-12%] rounded-xl shadow-2xl ring-1 ring-gray-900/10"
@@ -308,7 +327,8 @@
         <div class="mx-auto flex max-w-7xl flex-col items-center gap-x-8 gap-y-10 px-6 sm:gap-y-8 lg:px-8 xl:flex-row xl:items-stretch">
           <div class="-mt-8 w-full max-w-2xl xl:-mb-8 xl:w-96 xl:flex-none">
             <div class="relative aspect-[2/1] h-full md:-mx-8 xl:mx-0 xl:aspect-auto">
-              <img
+              <NuxtImg format="webp"
+quality="80"
                 class="absolute inset-0 h-full w-full rounded-2xl bg-gray-800 object-cover shadow-2xl"
                 src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2102&q=80"
                 alt=""
@@ -447,7 +467,9 @@
       <h2 id="footer-heading" class="sr-only">Footer</h2>
       <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-32">
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
-          <img
+          <NuxtImg
+            format="webp"
+            quality="80"
             class="h-7"
             src="https://raw.githubusercontent.com/anthonypillot/assets/78c3327a009fa95b72dd06dac4bbc3e811f5a1c3/logo/svg/logo_anthonypillotOS_OS.svg"
             alt="anthonypillotOS"

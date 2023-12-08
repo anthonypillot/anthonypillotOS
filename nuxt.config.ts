@@ -31,5 +31,7 @@ export default defineNuxtConfig({
     },
   },
 
+  modules: ["@nuxt/image", "@nuxtjs/tailwindcss"],
+
   devtools: { enabled: true },
 });
