@@ -51,8 +51,8 @@
               format="webp"
               quality="80"
               class="h-12 w-auto"
-              src="https://raw.githubusercontent.com/anthonypillot/assets/78c3327a009fa95b72dd06dac4bbc3e811f5a1c3/logo/svg/logo_anthonypillotOS_OS.svg"
-              alt=""
+              src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg"
+              alt="anthonypillotOS"
             />
           </a>
           <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = false">

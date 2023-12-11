@@ -16,7 +16,7 @@ export default function getInformation(): {
       owner: "pillot.anthony@gmail.com",
     },
     url: {
-      linkedIn: "https://www.linkedin.com/in/anthony-pillot",
+      linkedIn: "https://linkedin.com/in/anthony-pillot",
       githubAccount: "https://github.com/anthonypillot",
       githubRepository: "https://github.com/anthonypillot/anthonypillotOS",
       githubOrganization: "https://github.com/size-up",
