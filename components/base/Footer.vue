@@ -16,7 +16,7 @@
             <div>
               <h3 class="text-sm font-semibold leading-6 text-white">GitHub</h3>
               <ul role="list" class="mt-6 space-y-4">
-                <li v-for="item in footerNavigation.github" :key="item.name">
+                <li v-for="item in navigation.github" :key="item.name">
                   <a :href="item.href" :rel="item.rel" :target="item.target" class="text-sm leading-6 text-gray-300 hover:text-white">{{
                     item.name
                   }}</a>
@@ -26,7 +26,7 @@
             <div class="mt-10 md:mt-0">
               <h3 class="text-sm font-semibold leading-6 text-white">Project</h3>
               <ul role="list" class="mt-6 space-y-4">
-                <li v-for="item in footerNavigation.project" :key="item.name">
+                <li v-for="item in navigation.project" :key="item.name">
                   <a :href="item.href" :rel="item.rel" :target="item.target" class="text-sm leading-6 text-gray-300 hover:text-white">{{
                     item.name
                   }}</a>
@@ -38,7 +38,7 @@
             <div>
               <h3 class="text-sm font-semibold leading-6 text-white">Contact</h3>
               <ul role="list" class="mt-6 space-y-4">
-                <li v-for="item in footerNavigation.contact" :key="item.name">
+                <li v-for="item in navigation.contact" :key="item.name">
                   <a :href="item.href" :rel="item.rel" :target="item.target" class="text-sm leading-6 text-gray-300 hover:text-white">{{
                     item.name
                   }}</a>
@@ -61,36 +61,22 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  data: {
-    email: {
-      owner: string;
-    };
-    url: {
-      linkedIn: string;
-      githubAccount: string;
-      githubRepository: string;
-      githubOrganization: string;
-      githubFreeGamesCatcherCore: string;
-      sizeUpDocumentation: string;
-    };
-  };
-}>();
+const data = getInformation();
 
-const footerNavigation = {
+const navigation = {
   github: [
-    { name: "Account", href: props.data.url.githubAccount, rel: "noopener", target: "_blank" },
-    { name: "Repository", href: props.data.url.githubRepository, rel: "noopener", target: "_blank" },
-    { name: "Organization", href: props.data.url.githubOrganization, rel: "noopener", target: "_blank" },
+    { name: "Account", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
+    { name: "Repository", href: data.url.githubRepository, rel: "noopener", target: "_blank" },
+    { name: "Organization", href: data.url.githubOrganization, rel: "noopener", target: "_blank" },
   ],
   project: [
-    { name: "Size Up - Documentation", href: props.data.url.sizeUpDocumentation, rel: "noopener", target: "_blank" },
-    { name: "Free Games Catcher", href: props.data.url.githubFreeGamesCatcherCore, rel: "noopener", target: "_blank" },
+    { name: "Size Up - Documentation", href: data.url.sizeUpDocumentation, rel: "noopener", target: "_blank" },
+    { name: "Free Games Catcher", href: data.url.githubFreeGamesCatcherCore, rel: "noopener", target: "_blank" },
   ],
   contact: [
-    { name: "Email", href: "mailto:" + props.data.email.owner },
-    { name: "LinkedIn", href: props.data.url.linkedIn, rel: "noopener", target: "_blank" },
-    { name: "GitHub", href: props.data.url.githubAccount, rel: "noopener", target: "_blank" },
+    { name: "Email", href: "mailto:" + data.email.owner },
+    { name: "LinkedIn", href: data.url.linkedIn, rel: "noopener", target: "_blank" },
+    { name: "GitHub", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
   ],
 };
 </script>

@@ -159,19 +159,5 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  data: {
-    email: {
-      owner: string;
-    };
-    url: {
-      linkedIn: string;
-      githubAccount: string;
-      githubRepository: string;
-      githubOrganization: string;
-      githubFreeGamesCatcherCore: string;
-      sizeUpDocumentation: string;
-    };
-  };
-}>();
+const data = getInformation();
 </script>

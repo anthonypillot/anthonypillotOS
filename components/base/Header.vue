@@ -93,28 +93,14 @@
 import { Dialog, DialogPanel } from "@headlessui/vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 
-const props = defineProps<{
-  data: {
-    email: {
-      owner: string;
-    };
-    url: {
-      linkedIn: string;
-      githubAccount: string;
-      githubRepository: string;
-      githubOrganization: string;
-      githubFreeGamesCatcherCore: string;
-      sizeUpDocumentation: string;
-    };
-  };
-}>();
+const data = getInformation();
 
 const navigation = [
   { name: "Home", href: "/", rel: "", target: "" },
-  { name: "My LinkedIn", href: props.data.url.linkedIn, rel: "noopener", target: "_blank" },
-  { name: "My GitHub", href: props.data.url.githubAccount, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Org.", href: props.data.url.githubOrganization, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Documentation", href: props.data.url.sizeUpDocumentation, rel: "noopener", target: "_blank" },
+  { name: "My LinkedIn", href: data.url.linkedIn, rel: "noopener", target: "_blank" },
+  { name: "My GitHub", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
+  { name: "Size Up - Org.", href: data.url.githubOrganization, rel: "noopener", target: "_blank" },
+  { name: "Size Up - Documentation", href: data.url.sizeUpDocumentation, rel: "noopener", target: "_blank" },
 ];
 
 const mobileMenuOpen: Ref<boolean> = ref(false);
