@@ -10,11 +10,15 @@
 
     <!-- Footer -->
     <BaseFooter />
+
+    <!-- Vercel SpeedInsights used for performance metrics ; see: https://vercel.com/docs/speed-insights -->
+    <SpeedInsights />
   </div>
 </template>
 
 <script setup lang="ts">
 import { author, description } from "@/package.json";
+import { SpeedInsights } from "@vercel/speed-insights/vue";
 
 const title = "anthonypillotOS";
 const img = "https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg";
