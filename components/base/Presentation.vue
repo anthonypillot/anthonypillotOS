@@ -3,13 +3,11 @@
     <div class="bg-gray-900 pb-20 sm:pb-24 xl:pb-0">
       <div class="mx-auto flex max-w-7xl flex-col items-center gap-x-8 gap-y-10 px-6 sm:gap-y-8 lg:px-8 xl:flex-row xl:items-stretch">
         <div class="mt-14 w-full max-w-2xl xl:-mb-8 xl:w-96 xl:flex-none">
-          <div class="relative aspect-[2/1] h-full md:-mx-8 xl:mx-0 xl:aspect-auto">
-            <img
-              class="rounded-xl lg:rounded-3xl"
-              src="https://avatars.githubusercontent.com/u/51130139"
-              :alt="config.app.website.author.name"
-            />
-          </div>
+          <img
+            class="rounded-xl lg:rounded-3xl"
+            src="https://avatars.githubusercontent.com/u/51130139"
+            :alt="config.app.website.author.name"
+          />
         </div>
         <div class="w-full max-w-2xl xl:max-w-none xl:flex-auto xl:px-16 xl:py-24">
           <figure class="relative isolate pt-6 sm:pt-12">
