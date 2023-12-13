@@ -2,16 +2,9 @@
   <header class="absolute inset-x-0 top-0 z-50">
     <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
       <div class="flex lg:flex-1">
-        <a href="#" class="-m-1.5 p-1.5">
-          <span class="sr-only">anthonypillotOS</span>
-          <NuxtImg
-            format="webp"
-            quality="80"
-            class="h-12 w-auto"
-            src="https://raw.githubusercontent.com/anthonypillot/assets/78c3327a009fa95b72dd06dac4bbc3e811f5a1c3/logo/svg/logo_anthonypillotOS_OS.svg"
-            alt="anthonypillotOS"
-            style="filter: invert(1)"
-          />
+        <a href="/" class="-m-1.5 p-1.5">
+          <span class="sr-only">{{ config.app.website.title }}</span>
+          <NuxtImg format="webp" quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" style="filter: invert(1)" />
         </a>
       </div>
       <div class="flex lg:hidden">
@@ -36,7 +29,11 @@
         >
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <NuxtLink :href="data.url.githubRepository" rel="noopener" target="_blank" class="text-sm font-semibold leading-6 text-white"
+        <NuxtLink
+          :href="config.app.website.link.githubRepository"
+          rel="noopener"
+          target="_blank"
+          class="text-sm font-semibold leading-6 text-white"
           >GitHub repository <span aria-hidden="true">&rarr;</span></NuxtLink
         >
       </div>
@@ -47,13 +44,7 @@
         <div class="flex items-center justify-between">
           <a href="#" class="-m-1.5 p-1.5">
             <span class="sr-only">anthonypillotOS</span>
-            <NuxtImg
-              format="webp"
-              quality="80"
-              class="h-12 w-auto"
-              src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg"
-              alt="anthonypillotOS"
-            />
+            <NuxtImg format="webp" quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" />
           </a>
           <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = false">
             <span class="sr-only">Close menu</span>
@@ -75,7 +66,7 @@
             </div>
             <div class="py-6">
               <a
-                :href="data.url.githubRepository"
+                :href="config.app.website.link.githubRepository"
                 rel="noopener"
                 target="_blank"
                 class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
@@ -93,14 +84,16 @@
 import { Dialog, DialogPanel } from "@headlessui/vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 
-const data = getInformation();
+const config = useRuntimeConfig();
+
+const logo = config.app.website.logo.os.raw;
 
 const navigation = [
   { name: "Home", href: "/", rel: "", target: "" },
-  { name: "My LinkedIn", href: data.url.linkedIn, rel: "noopener", target: "_blank" },
-  { name: "My GitHub", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Org.", href: data.url.githubOrganization, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Documentation", href: data.url.sizeUpDocumentation, rel: "noopener", target: "_blank" },
+  { name: "My LinkedIn", href: config.app.website.link.linkedIn, rel: "noopener", target: "_blank" },
+  { name: "My GitHub", href: config.app.website.link.githubAccount, rel: "noopener", target: "_blank" },
+  { name: "Size Up - Org.", href: config.app.website.link.githubOrganization, rel: "noopener", target: "_blank" },
+  { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "noopener", target: "_blank" },
 ];
 
 const mobileMenuOpen: Ref<boolean> = ref(false);

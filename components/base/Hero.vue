@@ -37,20 +37,15 @@
       <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-32">
         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
           <div class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
-            Discover our Size Up organization documentation website.
-            <NuxtLink :href="data.url.sizeUpDocumentation" rel="noopener" target="_blank" class="font-semibold text-white"
+            Discover our <span class="font-semibold text-white">Size Up</span> organization
+            <span class="font-semibold text-white">documentation</span> website.
+            <NuxtLink :href="config.app.website.link.sizeUpDocumentation" rel="noopener" target="_blank" class="font-semibold text-white"
               ><span class="absolute inset-0" aria-hidden="true" />Get me in <span aria-hidden="true">&rarr;</span></NuxtLink
             >
           </div>
         </div>
         <div class="flex flex-col text-center">
-          <NuxtImg
-            format="webp"
-            quality="80"
-            class="h-80"
-            src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg"
-            alt="anthonypillotOS"
-          />
+          <NuxtImg format="webp" quality="80" class="h-80" :src="logo" :alt="config.app.website.title" />
           <h1 class="hidden text-4xl font-bold tracking-tight text-white sm:text-6xl">anthonypillotOS</h1>
           <p class="mt-6 text-lg leading-8 text-gray-300">
             <span class="text-indigo-400">Freelance</span> Software Engineer, <span class="text-indigo-400">Real</span> Full Stack
@@ -159,5 +154,7 @@
 </template>
 
 <script setup lang="ts">
-const data = getInformation();
+const config = useRuntimeConfig();
+
+const logo = config.app.website.logo.white;
 </script>

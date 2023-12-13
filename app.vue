@@ -17,22 +17,20 @@
 </template>
 
 <script setup lang="ts">
-import { author, description } from "@/package.json";
 import { SpeedInsights } from "@vercel/speed-insights/vue";
 
-const title = "anthonypillotOS";
-const img = "https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg";
+const config = useRuntimeConfig();
 
 useSeoMeta({
-  title: title + " | Personal application by Anthony Pillot",
-  ogTitle: title,
-  description: description,
-  ogDescription: description,
-  ogImage: img,
-  ogUrl: author.url,
-  twitterTitle: title,
-  twitterDescription: description,
-  twitterImage: img,
+  title: config.app.website.title + ` | Personal application by ${config.app.website.author.name}`,
+  ogTitle: config.app.website.title,
+  description: config.app.website.description,
+  ogDescription: config.app.website.description,
+  ogImage: config.app.website.logo.os.raw,
+  ogUrl: config.app.website.url,
+  twitterTitle: config.app.website.title,
+  twitterDescription: config.app.website.description,
+  twitterImage: config.app.website.logo.os.raw,
   twitterCard: "summary",
 });
 

@@ -3,14 +3,7 @@
     <h2 id="footer-heading" class="sr-only">Footer</h2>
     <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-32">
       <div class="xl:grid xl:grid-cols-3 xl:gap-8">
-        <NuxtImg
-          format="webp"
-          quality="80"
-          class="h-7"
-          src="https://raw.githubusercontent.com/anthonypillot/assets/78c3327a009fa95b72dd06dac4bbc3e811f5a1c3/logo/svg/logo_anthonypillotOS_OS.svg"
-          alt="anthonypillotOS"
-          style="filter: invert(1)"
-        />
+        <NuxtImg format="webp" quality="80" class="h-7" :src="logo" :alt="config.app.website.title" style="filter: invert(1)" />
         <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
           <div class="md:grid md:grid-cols-2 md:gap-8">
             <div>
@@ -61,22 +54,23 @@
 </template>
 
 <script setup lang="ts">
-const data = getInformation();
+const config = useRuntimeConfig();
+
+const logo = config.app.website.logo.os.raw;
 
 const navigation = {
   github: [
-    { name: "Account", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
-    { name: "Repository", href: data.url.githubRepository, rel: "noopener", target: "_blank" },
-    { name: "Organization", href: data.url.githubOrganization, rel: "noopener", target: "_blank" },
+    { name: "Account", href: config.app.website.link.githubAccount, rel: "noopener", target: "_blank" },
+    { name: "Repository", href: config.app.website.link.githubRepository, rel: "noopener", target: "_blank" },
+    { name: "Organization", href: config.app.website.link.githubOrganization, rel: "noopener", target: "_blank" },
   ],
   project: [
-    { name: "Size Up - Documentation", href: data.url.sizeUpDocumentation, rel: "noopener", target: "_blank" },
-    { name: "Free Games Catcher", href: data.url.githubFreeGamesCatcherCore, rel: "noopener", target: "_blank" },
+    { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "noopener", target: "_blank" },
+    { name: "Free Games Catcher", href: config.app.website.link.githubFreeGamesCatcherCore, rel: "noopener", target: "_blank" },
   ],
   contact: [
-    { name: "Email", href: "mailto:" + data.email.owner },
-    { name: "LinkedIn", href: data.url.linkedIn, rel: "noopener", target: "_blank" },
-    { name: "GitHub", href: data.url.githubAccount, rel: "noopener", target: "_blank" },
+    { name: "Email", href: "mailto:" + config.app.website.author.email },
+    { name: "LinkedIn", href: config.app.website.link.linkedIn, rel: "noopener", target: "_blank" },
   ],
 };
 </script>
