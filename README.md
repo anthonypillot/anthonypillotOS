@@ -1,75 +1,76 @@
-# Nuxt 3 Minimal Starter
+<div align="center">
+<div style="background: #333333; padding: 1rem; margin: 1rem; border-radius: 1rem;">
+<img src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg" alt="logo_anthonypillotOS_black" width="200"/>
+</div>
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# [anthonypillotOS](https://anthonypillot.com) | Personal application
 
-## Setup
+</div>
+
+👨🏻‍💻 Designed to introduce himself and explain what he does in the IT world.
+
+Build with ❤️ and [Nuxt](https://nuxt.com).
+
+# Table of Contents
+
+- [anthonypillotOS | Personal application](#anthonypillotos--personal-application)
+- [Table of Contents](#table-of-contents)
+  - [⚙️ Setup](#️-setup)
+  - [🧪 Development](#-development)
+  - [🚀 Production](#-production)
+- [🚀 Deployment](#-deployment)
+- [📊 Analytics](#-analytics)
+- [🌳 Git conventions](#-git-conventions)
+- [📜 License](#-license)
+
+## ⚙️ Setup
 
 Make sure to install the dependencies:
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
 # yarn
 yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+## 🧪 Development
 
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
 # yarn
 yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## 🚀 Production
 
 Build the application for production:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
 # yarn
 yarn build
-
-# bun
-bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
 # yarn
 yarn preview
-
-# bun
-bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+# 🚀 Deployment
+
+This application is deployed on [Vercel](https://vercel.com).
+
+# 📊 Analytics
+
+This application uses [Vercel Analytics](https://vercel.com/docs/analytics) to collect anonymous usage analytics.
+
+# 🌳 Git conventions
+
+This project uses [Gitmoji](https://gitmoji.dev/) to make commits more readable and easier to understand.
+
+# 📜 License
+
+This project is licensed under the [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/).

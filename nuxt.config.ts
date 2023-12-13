@@ -1,14 +1,35 @@
+import { author, description } from "./package.json";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  app: {
-    head: {
-      title: "anthonypillotOS - Personal portfolio",
-      meta: [
-        {
-          name: "description",
-          content: "Personal portfolio of Anthony Pillot, Software Engineer",
+  runtimeConfig: {
+    app: {
+      website: {
+        title: "anthonypillotOS",
+        description: description,
+        url: author.url,
+        logo: {
+          white: "https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg",
+          black: "https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_black.svg",
+          os: {
+            raw: "https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_OS.svg",
+            cutted: "https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_OS_cutted.svg",
+          },
         },
-      ],
+        author: {
+          name: author.name,
+          url: author.url,
+          email: author.email,
+        },
+        link: {
+          linkedIn: "https://linkedin.com/in/anthony-pillot",
+          githubAccount: "https://github.com/anthonypillot",
+          githubRepository: "https://github.com/anthonypillot/anthonypillotOS",
+          githubOrganization: "https://github.com/size-up",
+          githubFreeGamesCatcherCore: "https://github.com/size-up/freegamescatcher-core",
+          sizeUpDocumentation: "https://docs.sizeup.cloud",
+        },
+      },
     },
   },
 
@@ -30,6 +51,8 @@ export default defineNuxtConfig({
       },
     },
   },
+
+  modules: ["@nuxt/image", "@nuxtjs/tailwindcss"],
 
   devtools: { enabled: true },
 });
