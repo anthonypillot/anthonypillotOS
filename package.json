@@ -23,14 +23,15 @@
     "@nuxt/image": "^1.1.0",
     "@vercel/analytics": "^1.1.1",
     "@vercel/speed-insights": "^1.0.2",
-    "vue-writer": "^1.2.0"
+    "vue-writer": "^1.2.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0.6",
-    "@nuxtjs/tailwindcss": "^6.10.1",
+    "@nuxtjs/tailwindcss": "^6.10.3",
+    "@tailwindcss/forms": "^0.5.7",
     "nuxt": "^3.8.1",
-    "sass": "^1.69.5",
-    "vue": "^3.3.13",
+    "sass": "^1.69.6",
+    "vue": "^3.4.3",
     "vue-router": "^4.2.5"
   }
 }
