@@ -65,7 +65,7 @@ const navigation = {
     { name: "Organization", href: config.app.website.link.githubOrganization, rel: "noopener", target: "_blank" },
   ],
   project: [
-    { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "noopener", target: "_blank" },
+    { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "", target: "_blank" },
     { name: "Free Games Catcher", href: config.app.website.link.githubFreeGamesCatcherCore, rel: "noopener", target: "_blank" },
   ],
   contact: [
