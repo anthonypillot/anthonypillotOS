@@ -27,6 +27,55 @@
           class="text-sm font-semibold leading-6 text-white"
           >{{ item.name }}</NuxtLink
         >
+        <Popover class="relative">
+          <PopoverButton class="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
+            <span>Tools</span>
+            <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
+          </PopoverButton>
+
+          <transition
+            enter-active-class="transition ease-out duration-200"
+            enter-from-class="opacity-0 translate-y-1"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition ease-in duration-150"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 translate-y-1"
+          >
+            <PopoverPanel v-slot="{ close }" class="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4">
+              <div
+                class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5"
+              >
+                <div class="p-4">
+                  <div v-for="item in popover.links" :key="item.name" class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
+                    <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                      <component :is="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <NuxtLink :to="item.to" class="font-semibold text-gray-900" @click="close()">
+                        {{ item.name }}
+                        <span class="absolute inset-0" />
+                      </NuxtLink>
+                      <p class="mt-1 text-gray-600">{{ item.description }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid divide-x divide-gray-900/5 bg-gray-50">
+                  <NuxtLink
+                    v-for="item in popover.callsToAction"
+                    :key="item.name"
+                    :href="item.href"
+                    :rel="item.rel"
+                    :target="item.target"
+                    class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                  >
+                    <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                    {{ item.name }}
+                  </NuxtLink>
+                </div>
+              </div>
+            </PopoverPanel>
+          </transition>
+        </Popover>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <NuxtLink
@@ -71,6 +120,70 @@
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >{{ item.name }}</NuxtLink
               >
+              <Popover class="relative">
+                <PopoverButton
+                  class="inline-flex items-center -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  <span class="text-black">Tools</span>
+                  <ChevronDownIcon class="h-5 w-5 text-black" aria-hidden="true" />
+                </PopoverButton>
+
+                <transition
+                  enter-active-class="transition ease-out duration-200"
+                  enter-from-class="opacity-0 translate-y-1"
+                  enter-to-class="opacity-100 translate-y-0"
+                  leave-active-class="transition ease-in duration-150"
+                  leave-from-class="opacity-100 translate-y-0"
+                  leave-to-class="opacity-0 translate-y-1"
+                >
+                  <PopoverPanel v-slot="{ close }" class="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4">
+                    <div
+                      class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5"
+                    >
+                      <div class="p-4">
+                        <div
+                          v-for="item in popover.links"
+                          :key="item.name"
+                          class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50"
+                        >
+                          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                            <component :is="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                          </div>
+                          <div>
+                            <NuxtLink
+                              :to="item.to"
+                              class="font-semibold text-gray-900"
+                              @click="
+                                {
+                                  close();
+                                  mobileMenuOpen = false;
+                                }
+                              "
+                            >
+                              {{ item.name }}
+                              <span class="absolute inset-0" />
+                            </NuxtLink>
+                            <p class="mt-1 text-gray-600">{{ item.description }}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="grid divide-x divide-gray-900/5 bg-gray-50">
+                        <NuxtLink
+                          v-for="item in popover.callsToAction"
+                          :key="item.name"
+                          :href="item.href"
+                          :rel="item.rel"
+                          :target="item.target"
+                          class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                        >
+                          <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                          {{ item.name }}
+                        </NuxtLink>
+                      </div>
+                    </div>
+                  </PopoverPanel>
+                </transition>
+              </Popover>
             </div>
             <div class="py-6">
               <NuxtLink
@@ -99,10 +212,33 @@ const config = useRuntimeConfig();
 const logo = config.app.website.logo.os.raw;
 
 const navigation = [
-  { name: "Home", href: "/", rel: "", target: "" },
   { name: "My LinkedIn", href: config.app.website.link.linkedIn, rel: "noopener", target: "_blank" },
   { name: "My GitHub", href: config.app.website.link.githubAccount, rel: "noopener", target: "_blank" },
   { name: "Size Up - Org.", href: config.app.website.link.githubOrganization, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "noopener", target: "_blank" },
+  // { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "", target: "_blank" },
 ];
+
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
+import { ChevronDownIcon, DocumentIcon } from "@heroicons/vue/20/solid";
+import { ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
+
+const popover = {
+  links: [
+    {
+      name: "GitHub History Cleaner",
+      description: "Delete all your GitHub project history",
+      to: "/tools/github/history-cleaner",
+      icon: ArrowPathRoundedSquareIcon,
+    },
+  ],
+  callsToAction: [
+    {
+      name: "Size Up docs. about GitHub actions",
+      href: config.app.website.link.sizeUpDocumentation + "/docs/category/actions",
+      rel: "",
+      target: "_blank",
+      icon: DocumentIcon,
+    },
+  ],
+};
 </script>
