@@ -54,7 +54,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/image", "@nuxtjs/tailwindcss"],
+  modules: ["@nuxt/image", "@nuxtjs/tailwindcss", "@nuxt/test-utils/module"],
 
   devtools: { enabled: true },
 });

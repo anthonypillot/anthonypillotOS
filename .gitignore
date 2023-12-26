@@ -25,3 +25,15 @@ logs
 
 # Visual Studio Code
 .vscode
+
+# Vitest coverage
+coverage
+
+# Playwright test results
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Playwright screenshots
+/tests/e2e/**/*.png
