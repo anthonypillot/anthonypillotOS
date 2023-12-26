@@ -2,6 +2,7 @@
   "name": "anthonypillotos",
   "description": "The Operating System by Anthony Pillot, Software Engineer, designed to introduce himself and explain what he does in the IT world. Provided with Open Source tools and documentation about the IT world.",
   "version": "1.0.0",
+  "type": "module",
   "author": {
     "name": "Anthony Pillot",
     "email": "pillot.anthony@gmail.com",
@@ -10,30 +11,46 @@
   "license": "GPL-3.0-or-later",
   "private": false,
   "scripts": {
+    "clear": "rm -rf .nuxt .output coverage playwright-report test-results",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "start": "nuxt build && nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test:unit": "vitest",
+    "test:unit:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:show-report": "playwright show-report",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots"
   },
   "dependencies": {
-    "@headlessui/vue": "^1.7.16",
+    "@headlessui/vue": "^1.7.17",
     "@heroicons/vue": "^2.1.1",
-    "@nuxt/image": "^1.1.0",
+    "@nuxt/image": "^1.2.0",
     "@vercel/analytics": "^1.1.1",
-    "@vercel/speed-insights": "^1.0.2",
-    "vue-writer": "^1.2.0"
+    "@vercel/speed-insights": "^1.0.3",
+    "vue-writer": "^1.2.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0.6",
-    "@nuxtjs/tailwindcss": "^6.10.1",
+    "@nuxt/test-utils": "^3.9.0",
+    "@nuxtjs/tailwindcss": "^6.10.4",
+    "@playwright/test": "^1.40.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "nuxt": "^3.8.1",
-    "sass": "^1.69.5",
+    "@tailwindcss/forms": "^0.5.7",
+    "@types/node": "^20.11.0",
+    "@vitest/coverage-v8": "^1.2.0",
+    "@vue/test-utils": "^2.4.3",
+    "happy-dom": "^12.10.3",
+    "msw": "^2.1.0",
+    "nuxt": "^3.9.1",
+    "sass": "^1.69.7",
     "semantic-release": "^23.0.0",
-    "vue": "^3.3.13",
+    "vitest": "^1.2.0",
+    "vue": "^3.4.11",
     "vue-router": "^4.2.5"
   }
 }
