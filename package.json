@@ -10,12 +10,12 @@
   "license": "GPL-3.0-or-later",
   "private": false,
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "start": "nuxt build && nuxt preview",
-    "postinstall": "nuxt prepare"
+    "build": "nuxi build",
+    "dev": "nuxi dev",
+    "generate": "nuxi generate",
+    "preview": "nuxi preview",
+    "start": "nuxi build && nuxi preview",
+    "postinstall": "nuxi prepare"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.16",
