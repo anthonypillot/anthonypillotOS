@@ -34,7 +34,7 @@
       />
     </div>
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-32">
+      <div class="mx-auto max-w-2xl py-24 sm:py-48 lg:py-20">
         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
           <div class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
             Discover our <span class="font-semibold text-white">Size Up</span> org.
@@ -46,14 +46,22 @@
         </div>
         <div class="flex flex-col text-center">
           <NuxtImg format="webp" quality="80" class="h-80" :src="logo" :alt="config.app.website.title" />
+          <div class="hidden sm:flex sm:flex-col items-center mt-8 mb-4">
+            <div>
+              <span class="text-white text-4xl mr-2">OS</span>
+              <span class="text-indigo-400 text-4xl mr-2">stands for</span>
+              <span class="text-white text-4xl mr-2">:</span>
+              <VueWriter class="text-white text-4xl" :array="writers" :typeSpeed="80" :eraseSpeed="40" :start="1000" />
+            </div>
+          </div>
           <h1 class="hidden text-4xl font-bold tracking-tight text-white sm:text-6xl">
             {{ config.app.website.title }} | {{ config.app.website.description }}
           </h1>
-          <p class="mt-6 text-lg leading-8 text-gray-300">
+          <p class="mt-2 text-lg leading-8 text-gray-300">
             <span class="text-indigo-400">Freelance</span> Software Engineer, <span class="text-indigo-400">Real</span> Full Stack
             Developer, and <span class="text-indigo-400">more</span>.
           </p>
-          <p class="mt-6 text-lg leading-8 text-gray-300">
+          <p class="mt-2 text-lg leading-8 text-gray-300">
             <span class="text-indigo-400">Lille</span>, France. <span class="text-indigo-400">Remote</span> and
             <span class="text-indigo-400">on-site</span> work.
           </p>
@@ -155,7 +163,11 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import VueWriter from "vue-writer";
+
+const writers = ["Operating System", "Open Source", "Object Storage", "Organic Search", "Omniscient System", "Oh my god, So good"];
+
 const config = useRuntimeConfig();
 
 const logo = config.app.website.logo.white;
