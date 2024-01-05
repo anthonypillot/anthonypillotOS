@@ -1,7 +1,7 @@
 <div align="center">
-<div style="background: #333333; padding: 1rem; margin: 1rem; border-radius: 1rem;">
+
+<img src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_black.svg" alt="logo_anthonypillotOS_black" width="200"/>
 <img src="https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg" alt="logo_anthonypillotOS_black" width="200"/>
-</div>
 
 # [anthonypillotOS](https://anthonypillot.com) | Personal application
 
