@@ -25,3 +25,9 @@ logs
 
 # Visual Studio Code
 .vscode
+
+# End-to-end test Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
