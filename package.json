@@ -26,11 +26,11 @@
     "vue-writer": "^1.2.0"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0.6",
+    "@nuxt/devtools": "^1.0.8",
     "@nuxtjs/tailwindcss": "^6.10.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "nuxt": "^3.8.1",
+    "nuxt": "^3.9.3",
     "sass": "^1.69.5",
     "semantic-release": "^23.0.0",
     "vue": "^3.3.13",
