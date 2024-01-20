@@ -3,7 +3,9 @@ import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 import * as dao from "@/server/dao/github.dao";
+
 import { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github";
+import { logger } from "@/utils/logger";
 
 import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
 
@@ -16,6 +18,8 @@ const information = {
 const server = setupServer();
 
 beforeAll(() => {
+  logger.level = -999; // is the silent level
+
   server.listen({
     // This tells MSW to throw an error whenever it
     // encounters a request that doesn't have a
@@ -91,17 +95,51 @@ describe("GitHub DAO", async () => {
       )
     );
 
-    const ids = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+    const runs: GitHubWorkflowRun[] = [
+      //@ts-ignore
+      {
+        id: 1,
+      },
+      //@ts-ignore
+      {
+        id: 2,
+      },
+      //@ts-ignore
+      {
+        id: 3,
+      },
+      //@ts-ignore
+      {
+        id: 4,
+      },
+    ];
 
     const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRuns");
 
-    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, ids);
+    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, runs);
 
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledOnce();
-    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, ids);
+    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, runs);
 
     expect(result).toStrictEqual({
-      success: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      success: [
+        //@ts-ignore
+        {
+          id: 1,
+        },
+        //@ts-ignore
+        {
+          id: 2,
+        },
+        //@ts-ignore
+        {
+          id: 3,
+        },
+        //@ts-ignore
+        {
+          id: 4,
+        },
+      ],
       notFound: [],
       unauthorized: [],
       unknown: [],
@@ -120,18 +158,52 @@ describe("GitHub DAO", async () => {
       )
     );
 
-    const ids = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+    const runs: GitHubWorkflowRun[] = [
+      //@ts-ignore
+      {
+        id: 1,
+      },
+      //@ts-ignore
+      {
+        id: 2,
+      },
+      //@ts-ignore
+      {
+        id: 3,
+      },
+      //@ts-ignore
+      {
+        id: 4,
+      },
+    ];
 
     const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRuns");
 
-    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, ids);
+    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, runs);
 
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledOnce();
-    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, ids);
+    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, runs);
 
     expect(result).toStrictEqual({
       success: [],
-      notFound: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      notFound: [
+        //@ts-ignore
+        {
+          id: 1,
+        },
+        //@ts-ignore
+        {
+          id: 2,
+        },
+        //@ts-ignore
+        {
+          id: 3,
+        },
+        //@ts-ignore
+        {
+          id: 4,
+        },
+      ],
       unauthorized: [],
       unknown: [],
     });
@@ -149,19 +221,53 @@ describe("GitHub DAO", async () => {
       )
     );
 
-    const ids = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+    const runs: GitHubWorkflowRun[] = [
+      //@ts-ignore
+      {
+        id: 1,
+      },
+      //@ts-ignore
+      {
+        id: 2,
+      },
+      //@ts-ignore
+      {
+        id: 3,
+      },
+      //@ts-ignore
+      {
+        id: 4,
+      },
+    ];
 
     const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRuns");
 
-    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, ids);
+    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, runs);
 
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledOnce();
-    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, ids);
+    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, runs);
 
     expect(result).toStrictEqual({
       success: [],
       notFound: [],
-      unauthorized: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      unauthorized: [
+        //@ts-ignore
+        {
+          id: 1,
+        },
+        //@ts-ignore
+        {
+          id: 2,
+        },
+        //@ts-ignore
+        {
+          id: 3,
+        },
+        //@ts-ignore
+        {
+          id: 4,
+        },
+      ],
       unknown: [],
     });
   });
@@ -178,20 +284,54 @@ describe("GitHub DAO", async () => {
       )
     );
 
-    const ids = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+    const runs: GitHubWorkflowRun[] = [
+      //@ts-ignore
+      {
+        id: 1,
+      },
+      //@ts-ignore
+      {
+        id: 2,
+      },
+      //@ts-ignore
+      {
+        id: 3,
+      },
+      //@ts-ignore
+      {
+        id: 4,
+      },
+    ];
 
     const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRuns");
 
-    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, ids);
+    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, runs);
 
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledOnce();
-    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, ids);
+    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, runs);
 
     expect(result).toStrictEqual({
       success: [],
       notFound: [],
       unauthorized: [],
-      unknown: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      unknown: [
+        //@ts-ignore
+        {
+          id: 1,
+        },
+        //@ts-ignore
+        {
+          id: 2,
+        },
+        //@ts-ignore
+        {
+          id: 3,
+        },
+        //@ts-ignore
+        {
+          id: 4,
+        },
+      ],
     });
   });
 });

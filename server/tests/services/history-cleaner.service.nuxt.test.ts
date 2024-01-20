@@ -5,9 +5,9 @@ import { GitHubWorkflowRun } from "@/server/types/github";
 import { HistoryCleanerOptions } from "@/server/types/historyCleaner.d";
 import { logger } from "@/utils/logger";
 
-import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
-
 import * as dao from "@/server/dao/github.dao";
+
+import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
 
 beforeAll(() => {
   logger.level = -999; // is the silent level
@@ -20,10 +20,78 @@ describe("HistoryCleaner service", async () => {
       .mockResolvedValue(workflowRunsApiResponse.workflow_runs as unknown as GitHubWorkflowRun[]);
 
     const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRuns").mockResolvedValue({
-      success: ["1", "2", "3", "4"],
-      notFound: ["1", "2", "3"],
-      unauthorized: ["1", "2"],
-      unknown: ["1"],
+      success: [
+        //@ts-ignore
+        {
+          id: 1,
+        },
+        //@ts-ignore
+        {
+          id: 2,
+        },
+        //@ts-ignore
+        {
+          id: 3,
+        },
+        //@ts-ignore
+        {
+          id: 4,
+        },
+      ],
+      notFound: [
+        //@ts-ignore
+        {
+          id: 1,
+        },
+        //@ts-ignore
+        {
+          id: 2,
+        },
+        //@ts-ignore
+        {
+          id: 3,
+        },
+        //@ts-ignore
+        {
+          id: 4,
+        },
+      ],
+      unauthorized: [
+        //@ts-ignore
+        {
+          id: 1,
+        },
+        //@ts-ignore
+        {
+          id: 2,
+        },
+        //@ts-ignore
+        {
+          id: 3,
+        },
+        //@ts-ignore
+        {
+          id: 4,
+        },
+      ],
+      unknown: [
+        //@ts-ignore
+        {
+          id: 1,
+        },
+        //@ts-ignore
+        {
+          id: 2,
+        },
+        //@ts-ignore
+        {
+          id: 3,
+        },
+        //@ts-ignore
+        {
+          id: 4,
+        },
+      ],
     });
 
     const result: HistoryCleanerResult = await clean("my-account", "my-repository", "ghp_abcd1234", [
@@ -35,10 +103,78 @@ describe("HistoryCleaner service", async () => {
 
     expect(result).toEqual({
       workflow: {
-        success: ["1", "2", "3", "4"],
-        notFound: ["1", "2", "3"],
-        unauthorized: ["1", "2"],
-        unknown: ["1"],
+        success: [
+          //@ts-ignore
+          {
+            id: 1,
+          },
+          //@ts-ignore
+          {
+            id: 2,
+          },
+          //@ts-ignore
+          {
+            id: 3,
+          },
+          //@ts-ignore
+          {
+            id: 4,
+          },
+        ],
+        notFound: [
+          //@ts-ignore
+          {
+            id: 1,
+          },
+          //@ts-ignore
+          {
+            id: 2,
+          },
+          //@ts-ignore
+          {
+            id: 3,
+          },
+          //@ts-ignore
+          {
+            id: 4,
+          },
+        ],
+        unauthorized: [
+          //@ts-ignore
+          {
+            id: 1,
+          },
+          //@ts-ignore
+          {
+            id: 2,
+          },
+          //@ts-ignore
+          {
+            id: 3,
+          },
+          //@ts-ignore
+          {
+            id: 4,
+          },
+        ],
+        unknown: [
+          //@ts-ignore
+          {
+            id: 1,
+          },
+          //@ts-ignore
+          {
+            id: 2,
+          },
+          //@ts-ignore
+          {
+            id: 3,
+          },
+          //@ts-ignore
+          {
+            id: 4,
+          },
+        ],
       },
       deployment: null,
     });

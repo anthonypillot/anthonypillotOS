@@ -2,11 +2,11 @@
  * GitHub personal interface
  */
 
-export interface GitHubDeletionStatus {
-  success: string[];
-  notFound: string[];
-  unauthorized: string[];
-  unknown: string[];
+export interface GitHubWorkflowRunDeletionResult {
+  success: GitHubWorkflowRun[];
+  notFound: GitHubWorkflowRun[];
+  unauthorized: GitHubWorkflowRun[];
+  unknown: GitHubWorkflowRun[];
 }
 
 export enum GitHubDeletionStatusType {

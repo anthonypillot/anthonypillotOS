@@ -1,5 +1,10 @@
 import { getApiConfiguration } from "@/server/config/api/github.config";
-import { GitHubDeletionStatus, GitHubDeletionStatusType, GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.d";
+import {
+  GitHubDeletionStatusType,
+  GitHubWorkflowRun,
+  GitHubWorkflowRunApiResponse,
+  GitHubWorkflowRunDeletionResult,
+} from "@/server/types/github.d";
 
 import { logger } from "@/utils/logger";
 
@@ -83,36 +88,41 @@ export async function getWorkflowRuns(
  *
  * @see https://docs.github.com/rest/actions/workflow-runs#delete-a-workflow-run
  */
-export async function deleteWorkflowRuns(account: string, repository: string, token: string, ids: string[]): Promise<GitHubDeletionStatus> {
-  const status: GitHubDeletionStatus = {
+export async function deleteWorkflowRuns(
+  account: string,
+  repository: string,
+  token: string,
+  runs: GitHubWorkflowRun[]
+): Promise<GitHubWorkflowRunDeletionResult> {
+  const status: GitHubWorkflowRunDeletionResult = {
     success: [],
     notFound: [],
     unauthorized: [],
     unknown: [],
   };
 
-  const deletionPromises = ids.map(async (id) => {
-    const result = await deleteWorkflowRun(account, repository, token, id);
+  const deletions = runs.map(async (run) => {
+    const result = await deleteWorkflowRun(account, repository, token, run.id);
 
     switch (result) {
       case GitHubDeletionStatusType.SUCCESS:
-        status.success.push(id);
+        status.success.push(run);
         break;
       case GitHubDeletionStatusType.NOT_FOUND:
-        status.notFound.push(id);
+        status.notFound.push(run);
         break;
       case GitHubDeletionStatusType.UNAUTHORIZED:
-        status.unauthorized.push(id);
+        status.unauthorized.push(run);
         break;
       case GitHubDeletionStatusType.UNKNOWN:
-        status.unknown.push(id);
+        status.unknown.push(run);
         break;
       default:
         logger.error(`Unknown deletion status: ${result}`);
     }
   });
 
-  await Promise.all(deletionPromises);
+  await Promise.all(deletions);
 
   return status;
 }
@@ -127,7 +137,7 @@ export async function deleteWorkflowRuns(account: string, repository: string, to
  *
  * @see https://docs.github.com/rest/actions/workflow-runs#delete-a-workflow-run
  */
-async function deleteWorkflowRun(account: string, repository: string, token: string, id: string): Promise<string> {
+async function deleteWorkflowRun(account: string, repository: string, token: string, id: number): Promise<string> {
   let status: string = GitHubDeletionStatusType.UNKNOWN;
 
   try {

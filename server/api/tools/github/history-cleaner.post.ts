@@ -50,7 +50,7 @@ export default defineEventHandler(async (event): Promise<HistoryCleanerResult> =
   try {
     return await clean(body.account, body.repository, body.token, body.options);
   } catch (error: any) {
-    logger.error(`History cleaner request failed, error: ${JSON.stringify(error.statusMessage)}`);
+    logger.error(`History cleaner request failed, error: ${JSON.stringify(error.message)}`);
     throw createError({
       statusCode: error.statusCode || 500,
       statusMessage: error.statusMessage || "Internal Server Error",

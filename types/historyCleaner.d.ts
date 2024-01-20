@@ -1,4 +1,4 @@
-import { GitHubDeletionStatus } from "@/server/types/github";
+import { GitHubWorkflowRunDeletionResult } from "@/server/types/github";
 
 declare global {
   interface HistoryCleanerForm {
@@ -9,8 +9,8 @@ declare global {
   }
 
   interface HistoryCleanerResult {
-    workflow: GitHubDeletionStatus | null;
-    deployment: GitHubDeletionStatus | null;
+    workflow: GitHubWorkflowRunDeletionResult | null;
+    deployment: GitHubWorkflowRunDeletionResult | null;
   }
 }
 
