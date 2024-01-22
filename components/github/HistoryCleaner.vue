@@ -135,21 +135,21 @@
                 </div>
                 <div v-if="result.workflow">
                   <p class="pt-1 text-gray-900 font-semibold leading-7">Workflow deletion</p>
-                  <p v-if="result.workflow.success.length > 0" class="text-sm leading-6 text-gray-600">
-                    Number of workflow runs deleted with success: <span class="font-semibold">{{ result.workflow.success.length }}</span
+                  <p v-if="result.workflow.success > 0" class="text-sm leading-6 text-gray-600">
+                    Number of workflow runs deleted with success: <span class="font-semibold">{{ result.workflow.success }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.notFound.length > 0" class="text-sm leading-6 text-gray-600">
-                    Number workflow runs not found: <span class="font-semibold">{{ result.workflow.notFound.length }}</span
+                  <p v-if="result.workflow.notFound > 0" class="text-sm leading-6 text-gray-600">
+                    Number workflow runs not found: <span class="font-semibold">{{ result.workflow.notFound }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.unauthorized.length > 0" class="text-sm leading-6 text-gray-600">
-                    Number of workflow unauthorized to delete: <span class="font-semibold">{{ result.workflow.unauthorized.length }}</span
+                  <p v-if="result.workflow.unauthorized > 0" class="text-sm leading-6 text-gray-600">
+                    Number of workflow unauthorized to delete: <span class="font-semibold">{{ result.workflow.unauthorized }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.unknown.length > 0" class="text-sm leading-6 text-gray-600">
+                  <p v-if="result.workflow.unknown > 0" class="text-sm leading-6 text-gray-600">
                     Number of workflow runs not deleted for unknown reason:
-                    <span class="font-semibold">{{ result.workflow.unknown.length }}</span
+                    <span class="font-semibold">{{ result.workflow.unknown }}</span
                     >.
                   </p>
                 </div>
@@ -298,7 +298,14 @@ const validation = ref({
 });
 const confirmationModal = ref(false);
 const loading = ref<boolean>(false);
-const result = ref<HistoryCleanerResult | null>(null);
+const result = ref<{
+  workflow: {
+    success: number;
+    notFound: number;
+    unauthorized: number;
+    unknown: number;
+  };
+} | null>(null);
 const resultHtml = ref<HTMLDivElement | null>(null);
 
 /**

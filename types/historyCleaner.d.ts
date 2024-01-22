@@ -7,11 +7,6 @@ declare global {
     token: string;
     options: string[];
   }
-
-  interface HistoryCleanerResult {
-    workflow: GitHubWorkflowRunDeletionResult | null;
-    deployment: GitHubWorkflowRunDeletionResult | null;
-  }
 }
 
 export {};

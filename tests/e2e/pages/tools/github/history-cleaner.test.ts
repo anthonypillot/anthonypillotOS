@@ -87,16 +87,16 @@ test("should have a result after confirmation", async ({ page }) => {
   await page.route(`/api${path}`, async (route) => {
     const json = {
       workflow: {
-        success: ["1", "2", "3", "4"],
-        notFound: ["1", "2", "3"],
-        unauthorized: ["1", "2"],
-        unknown: ["1"],
+        success: 4,
+        notFound: 3,
+        unauthorized: 2,
+        unknown: 1,
       },
       deployment: {
-        success: ["1", "2", "3", "4"],
-        notFound: ["1", "2", "3"],
-        unauthorized: ["1", "2"],
-        unknown: ["1"],
+        success: 4,
+        notFound: 3,
+        unauthorized: 2,
+        unknown: 1,
       },
     };
     await route.fulfill({ status: 200, json });

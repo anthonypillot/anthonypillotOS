@@ -1,7 +1,7 @@
 import { deleteWorkflowRuns, getAllWorkflowRuns } from "@/server/dao/github.dao";
 import { create as createHistoryCleanerRequest, update as updateHistoryCleanerRequest } from "@/server/dao/history-cleaner.dao";
 import { GitHubWorkflowRunDeletionResult } from "@/server/types/github.d";
-import { HistoryCleanerOptions } from "@/server/types/historyCleaner.d";
+import { HistoryCleanerOptions, HistoryCleanerResult } from "@/server/types/historyCleaner.d";
 
 import { logger } from "@/utils/logger";
 
