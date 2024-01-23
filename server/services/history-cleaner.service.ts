@@ -3,8 +3,6 @@ import { create as createHistoryCleanerRequest, update as updateHistoryCleanerRe
 import { GitHubWorkflowRunDeletionResult } from "@/server/types/github.d";
 import { HistoryCleanerOptions, HistoryCleanerResult } from "@/server/types/historyCleaner.d";
 
-import { logger } from "@/utils/logger";
-
 export async function clean(account: string, repository: string, token: string, options: string[]): Promise<HistoryCleanerResult> {
   logger.start(`Starting history cleaner for [${account}/${repository}] repository`);
 

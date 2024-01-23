@@ -1,5 +1,5 @@
-import { useLogger } from "@nuxt/kit";
 import type { ConsolaInstance } from "consola";
+import { createConsola } from "consola";
 
 import { version } from "@/package.json";
 
@@ -19,7 +19,7 @@ import { version } from "@/package.json";
  * +999: Verbose logs
  */
 function getLogger(): ConsolaInstance {
-  const logger = useLogger(useRuntimeConfig().app.website.title);
+  const logger = createConsola(useRuntimeConfig().app.website.title);
 
   if (process.env.NODE_ENV === "production") {
     logger.setReporters([

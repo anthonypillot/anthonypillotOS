@@ -5,7 +5,6 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vite
 import * as dao from "@/server/dao/github.dao";
 
 import { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github";
-import { logger } from "@/utils/logger";
 
 import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
 

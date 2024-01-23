@@ -3,7 +3,6 @@ import { beforeAll, describe, expect, test, vi } from "vitest";
 import { clean } from "@/server/services/history-cleaner.service";
 import { GitHubWorkflowRun } from "@/server/types/github";
 import { HistoryCleanerOptions } from "@/server/types/historyCleaner.d";
-import { logger } from "@/utils/logger";
 
 import * as dao from "@/server/dao/github.dao";
 

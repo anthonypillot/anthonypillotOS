@@ -3,8 +3,6 @@ import { z } from "zod";
 import { clean } from "@/server/services/history-cleaner.service";
 import { HistoryCleanerResult } from "@/server/types/historyCleaner";
 
-import { logger } from "@/utils/logger";
-
 export default defineEventHandler(
   async (
     event
