@@ -12,7 +12,7 @@
   "private": false,
   "scripts": {
     "clear": "rm -rf .nuxt .output coverage playwright-report test-results",
-    "build": "nuxt build",
+    "build": "nuxt build && prisma generate",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
