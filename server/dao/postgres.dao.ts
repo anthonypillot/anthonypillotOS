@@ -1,5 +1,7 @@
 import { HistoryCleanerRequest, PrismaClient } from "@prisma/client";
 
+import { logger } from "@/server/utils/logger";
+
 const prisma = new PrismaClient();
 
 /**

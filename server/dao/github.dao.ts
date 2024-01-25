@@ -6,6 +6,8 @@ import {
   GitHubWorkflowRunDeletionResult,
 } from "@/server/types/github.d";
 
+import { logger } from "@/server/utils/logger";
+
 const api = getApiConfiguration();
 
 const maximumPerPage = 100;
