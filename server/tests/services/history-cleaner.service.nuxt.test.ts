@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, test, vi } from "vitest";
 
 import { clean } from "@/server/services/history-cleaner.service";
-import { GitHubWorkflowRun } from "@/server/types/github";
+import { GitHubDeletionStatusType, GitHubWorkflowRun } from "@/server/types/github.d";
 import { HistoryCleanerOptions, HistoryCleanerResult } from "@/server/types/historyCleaner.d";
 
 import { logger } from "@/server/utils/logger";
@@ -52,16 +52,7 @@ describe("HistoryCleaner service", async () => {
       updatedAt: new Date(),
     });
 
-    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRuns").mockResolvedValue({
-      //@ts-ignore
-      success: expectedResultArray,
-      //@ts-ignore
-      notFound: expectedResultArray,
-      //@ts-ignore
-      unauthorized: expectedResultArray,
-      //@ts-ignore
-      unknown: expectedResultArray,
-    });
+    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRun").mockResolvedValue(GitHubDeletionStatusType.SUCCESS);
 
     const result: HistoryCleanerResult = await clean("my-account", "my-repository", "ghp_abcd1234", [
       HistoryCleanerOptions.ALL_WORKFLOW_RUNS,
@@ -71,17 +62,12 @@ describe("HistoryCleaner service", async () => {
     expect(spyPostgresUpdate).toBeCalledTimes(1);
 
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
-    expect(spyDeleteWorkflowRuns).toBeCalledTimes(1);
+    expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
 
-    expect(result).toEqual({
-      workflow: {
-        success: expectedResultArray,
-        notFound: expectedResultArray,
-        unauthorized: expectedResultArray,
-        unknown: expectedResultArray,
-      },
-      deployment: null,
-    });
+    expect(result.workflow?.success.length).toEqual(100);
+    expect(result.workflow?.notFound.length).toEqual(0);
+    expect(result.workflow?.unauthorized.length).toEqual(0);
+    expect(result.workflow?.unknown.length).toEqual(0);
 
     expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
     expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
@@ -116,12 +102,7 @@ describe("HistoryCleaner service", async () => {
       updatedAt: new Date(),
     });
 
-    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRuns").mockResolvedValue({
-      success: [],
-      notFound: [],
-      unauthorized: [],
-      unknown: [],
-    });
+    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRun").mockResolvedValue(GitHubDeletionStatusType.SUCCESS);
 
     const result: HistoryCleanerResult = await clean("my-account", "my-repository", "ghp_abcd1234", [
       HistoryCleanerOptions.ALL_WORKFLOW_RUNS,
@@ -131,17 +112,12 @@ describe("HistoryCleaner service", async () => {
     expect(spyPostgresUpdate).toBeCalledTimes(1);
 
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
-    expect(spyDeleteWorkflowRuns).toBeCalledTimes(1);
+    expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
 
-    expect(result).toEqual({
-      workflow: {
-        success: [],
-        notFound: [],
-        unauthorized: [],
-        unknown: [],
-      },
-      deployment: null,
-    });
+    expect(result.workflow?.success.length).toEqual(100);
+    expect(result.workflow?.notFound.length).toEqual(0);
+    expect(result.workflow?.unauthorized.length).toEqual(0);
+    expect(result.workflow?.unknown.length).toEqual(0);
 
     expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
     expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");

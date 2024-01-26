@@ -16,21 +16,6 @@ const information = {
   token: "ghp_abcd1234",
 };
 
-const expectedResultArray = [
-  {
-    id: 1,
-  },
-  {
-    id: 2,
-  },
-  {
-    id: 3,
-  },
-  {
-    id: 4,
-  },
-];
-
 const server = setupServer();
 
 beforeAll(() => {
@@ -129,39 +114,14 @@ describe("GitHub DAO", async () => {
       )
     );
 
-    //@ts-ignore
-    const runs: GitHubWorkflowRun[] = expectedResultArray;
+    const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRun");
 
-    const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRuns");
-
-    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, runs);
+    const result = await dao.deleteWorkflowRun(information.account, information.repository, information.token, 1);
 
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledOnce();
-    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, runs);
+    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, 1);
 
-    expect(result).toStrictEqual({
-      success: [
-        //@ts-ignore
-        {
-          id: 1,
-        },
-        //@ts-ignore
-        {
-          id: 2,
-        },
-        //@ts-ignore
-        {
-          id: 3,
-        },
-        //@ts-ignore
-        {
-          id: 4,
-        },
-      ],
-      notFound: [],
-      unauthorized: [],
-      unknown: [],
-    });
+    expect(result).toStrictEqual("success");
   });
 
   test("should not delete an array of not found workflow runs", async () => {
@@ -176,17 +136,9 @@ describe("GitHub DAO", async () => {
       )
     );
 
-    //@ts-ignore
-    const runs: GitHubWorkflowRun[] = expectedResultArray;
+    const result = await dao.deleteWorkflowRun(information.account, information.repository, information.token, 1);
 
-    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, runs);
-
-    expect(result).toStrictEqual({
-      success: [],
-      notFound: expectedResultArray,
-      unauthorized: [],
-      unknown: [],
-    });
+    expect(result).toStrictEqual("notFound");
   });
 
   test("should not delete an array of unauthorized workflow runs", async () => {
@@ -201,17 +153,9 @@ describe("GitHub DAO", async () => {
       )
     );
 
-    //@ts-ignore
-    const runs: GitHubWorkflowRun[] = expectedResultArray;
+    const result = await dao.deleteWorkflowRun(information.account, information.repository, information.token, 1);
 
-    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, runs);
-
-    expect(result).toStrictEqual({
-      success: [],
-      notFound: [],
-      unauthorized: expectedResultArray,
-      unknown: [],
-    });
+    expect(result).toStrictEqual("unauthorized");
   });
 
   test("should not delete an array of unknown workflow runs", async () => {
@@ -226,21 +170,13 @@ describe("GitHub DAO", async () => {
       )
     );
 
-    //@ts-ignore
-    const runs: GitHubWorkflowRun[] = expectedResultArray;
+    const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRun");
 
-    const spyDeleteWorkflowRuns = vi.spyOn(dao, "deleteWorkflowRuns");
-
-    const result = await dao.deleteWorkflowRuns(information.account, information.repository, information.token, runs);
+    const result = await dao.deleteWorkflowRun(information.account, information.repository, information.token, 1);
 
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledOnce();
-    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, runs);
+    expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, 1);
 
-    expect(result).toStrictEqual({
-      success: [],
-      notFound: [],
-      unauthorized: [],
-      unknown: expectedResultArray,
-    });
+    expect(result).toStrictEqual("unknown");
   });
 });

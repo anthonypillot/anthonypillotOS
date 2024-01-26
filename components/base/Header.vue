@@ -126,7 +126,7 @@
                 <Popover class="relative">
                   <PopoverButton
                     id="popover-button-tools-mobile"
-                    class="inline-flex items-center -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    class="inline-flex items-center -mx-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     <span class="text-black">Tools</span>
                     <ChevronDownIcon class="h-5 w-5 text-black" aria-hidden="true" />

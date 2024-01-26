@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@nuxt/test-utils": "^3.9.0",
-    "@nuxtjs/tailwindcss": "^6.10.4",
+    "@nuxtjs/tailwindcss": "^6.11.1",
     "@playwright/test": "^1.40.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",

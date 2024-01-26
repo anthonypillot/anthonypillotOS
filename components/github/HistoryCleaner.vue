@@ -2,7 +2,7 @@
   <div id="github-history-cleaner" class="flex justify-center space-y-10 divide-y divide-gray-900/10 md:px-8">
     <div class="lg:grid lg:grid-cols-3 lg:gap-x-4 max-w-screen-xl">
       <div class="pb-4 px-4 sm:px-0 lg:pb-0">
-        <h2 class="text-white font-semibold leading-7 text-gray-900">GitHub History Cleaner</h2>
+        <h2 class="text-white font-semibold leading-7">GitHub History Cleaner</h2>
         <p class="text-sm leading-6 text-gray-400">
           This tool will help you clean up your GitHub history by deleting all workflow runs, deployments, releases, packages, and other.<br />
           The application needs a GitHub Personal Access Token (PAT) to be able to delete your history. However,
@@ -87,29 +87,27 @@
               </div>
               <div class="sm:col-span-6">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Deleting options</label>
-                <div class="divide-y divide-gray-200">
-                  <div v-for="option in options" class="relative flex items-start pt-2">
-                    <div class="flex h-6 items-center">
-                      <input
-                        type="checkbox"
-                        :id="option.name"
-                        :name="option.name"
-                        :aria-describedby="option.description"
-                        :checked="option.checked"
-                        :disabled="option.disabled"
-                        class="h-4 w-4 rounded focus:ring-indigo-600 text-indigo-600 cursor-pointer disabled:cursor-not-allowed border-gray-400 disabled:border-gray-300"
-                        @click="
-                          option.checked = !option.checked;
-                          option.checked ? form.options.push(option.name) : form.options.splice(form.options.indexOf(option.name), 1);
-                        "
-                      />
-                    </div>
-                    <div class="ml-3 text-sm leading-6">
-                      <label :for="option.name" class="font-medium text-gray-900">
-                        <span v-html="option.label" :class="option.disabled ? 'cursor-not-allowed' : 'cursor-pointer'" />
-                      </label>
-                      <p class="text-gray-500">{{ option.description }}</p>
-                    </div>
+                <div v-for="option in options" class="relative flex items-start pt-1.5">
+                  <div class="flex h-6 items-center">
+                    <input
+                      type="checkbox"
+                      :id="option.name"
+                      :name="option.name"
+                      :aria-describedby="option.description"
+                      :checked="option.checked"
+                      :disabled="option.disabled"
+                      class="h-4 w-4 rounded focus:ring-indigo-600 text-indigo-600 cursor-pointer disabled:cursor-not-allowed border-gray-400 disabled:border-gray-300"
+                      @click="
+                        option.checked = !option.checked;
+                        option.checked ? form.options.push(option.name) : form.options.splice(form.options.indexOf(option.name), 1);
+                      "
+                    />
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <label :for="option.name" class="font-medium text-gray-900">
+                      <span v-html="option.label" :class="option.disabled ? 'cursor-not-allowed' : 'cursor-pointer'" />
+                    </label>
+                    <p class="text-gray-400">{{ option.description }}</p>
                   </div>
                 </div>
               </div>
