@@ -1,10 +1,5 @@
 import { getApiConfiguration } from "@/server/config/api/github.config";
-import {
-  GitHubDeletionStatusType,
-  GitHubWorkflowRun,
-  GitHubWorkflowRunApiResponse,
-  GitHubWorkflowRunDeletionResult,
-} from "@/server/types/github.d";
+import { GitHubDeletionStatusType, GitHubDeployments, GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.d";
 
 import { logger } from "@/server/utils/logger";
 
@@ -61,7 +56,7 @@ export async function getWorkflowRuns(
   page: number = 1
 ): Promise<GitHubWorkflowRunApiResponse> {
   try {
-    return await api(`/repos/${account}/${repository}/actions/runs`, {
+    return (await api(`/repos/${account}/${repository}/actions/runs`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -70,9 +65,36 @@ export async function getWorkflowRuns(
         per_page: maximumPerPage, // max allowed by GitHub API
         page: page,
       },
-    });
+    })) as GitHubWorkflowRunApiResponse;
   } catch (error: any) {
     const message = `Error while retrieving workflow runs for [${account}/${repository}] repository. Error: [${error.message}] from GitHub API`;
+    logger.error(message);
+    throw new Error(message);
+  }
+}
+
+/**
+ * Retrieves deployments for a specific GitHub repository.
+ * @param account - The GitHub account name.
+ * @param repository - The GitHub repository name.
+ * @param token - The GitHub API token.
+ * @param page - The page number of the deployments (default: 1).
+ * @returns A promise that resolves to an array of GitHubDeployments.
+ * @throws An error if there is an issue retrieving the deployments.
+ */
+export async function getDeployments(account: string, repository: string, token: string, page: number = 1): Promise<GitHubDeployments[]> {
+  try {
+    return await api(`/repos/${account}/${repository}/deployments`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        per_page: maximumPerPage, // max allowed by GitHub API
+      },
+    });
+  } catch (error: any) {
+    const message = `Error while retrieving deployments for [${account}/${repository}] repository. Error: [${error.message}] from GitHub API`;
     logger.error(message);
     throw new Error(message);
   }

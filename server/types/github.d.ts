@@ -180,3 +180,45 @@ interface GitHubReferencedWorkflow {
 }
 
 type GitHubStatus = "completed" | unknown;
+
+export type GitHubDeployments = {
+  url: string;
+  id: number;
+  node_id: string;
+  task: string;
+  original_environment: string;
+  environment: string;
+  description: null;
+  created_at: Date;
+  updated_at: Date;
+  statuses_url: string;
+  repository_url: string;
+  creator: GitHubCreator;
+  sha: string;
+  ref: string;
+  payload: object;
+  transient_environment: boolean;
+  production_environment: boolean;
+  performed_via_github_app: null;
+};
+
+type GitHubCreator = {
+  login: string;
+  id: number;
+  node_id: string;
+  avatar_url: string;
+  gravatar_id: string;
+  url: string;
+  html_url: string;
+  followers_url: string;
+  following_url: string;
+  gists_url: string;
+  starred_url: string;
+  subscriptions_url: string;
+  organizations_url: string;
+  repos_url: string;
+  events_url: string;
+  received_events_url: string;
+  type: string;
+  site_admin: boolean;
+};
