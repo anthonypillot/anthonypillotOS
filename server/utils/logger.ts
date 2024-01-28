@@ -1,45 +1,62 @@
-import type { ConsolaInstance } from "consola";
-import { createConsola } from "consola";
+import chalk from "chalk";
 
-import { version } from "@/package.json";
+class Logger {
+  level: string;
 
-/**
- * Returns a logger instance.
- * @returns {ConsolaInstance} The logger instance.
- *
- * Log levels:
- *
- * 0: Fatal and Error
- * 1: Warnings
- * 2: Normal logs
- * 3: Informational logs, success, fail, ready, start, ...
- * 4: Debug logs
- * 5: Trace logs
- * -999: Silent
- * +999: Verbose logs
- */
-function getLogger(): ConsolaInstance {
-  const logger = createConsola(useRuntimeConfig().app.website.title);
-
-  if (process.env.NODE_ENV === "production") {
-    logger.setReporters([
-      {
-        log: (logObj) => {
-          logObj.version = version;
-          logObj.message = logObj.args[0];
-
-          //@ts-ignore
-          delete logObj.args;
-          console.log(JSON.stringify(logObj));
-        },
-      },
-    ]);
-    logger.level = 5; // is the debug level
-  } else {
-    logger.level = 5; // is the debug level
+  constructor(level?: string) {
+    this.level = process.env.LOG_LEVEL || "info";
   }
 
-  return logger;
+  log(message: string, args?: any): void {
+    if (this.level !== "silent") {
+      const log = `[${new Date().toISOString()}] ${message}${args ? ` ${args}` : ""}`;
+      console.log(log);
+    }
+  }
+
+  info(message: string, args?: any): void {
+    if (this.level !== "silent") {
+      const log = `[${new Date().toISOString()}] ${`ℹ ${message}`}${args ? ` ${args}` : ""}`;
+      console.log(log);
+    }
+  }
+
+  success(message: string, args?: any): void {
+    if (this.level !== "silent") {
+      const log = `[${new Date().toISOString()}] ${chalk.green(`✔ ${message}`)}${args ? ` ${args}` : ""}`;
+      console.log(log);
+    }
+  }
+
+  start(message: string, args?: any): void {
+    if (this.level !== "silent") {
+      const log = `[${new Date().toISOString()}] ${chalk.blue(`▸ ${message}`)}${args ? ` ${args}` : ""}`;
+      console.log(log);
+    }
+  }
+
+  error(message: string, args?: any): void {
+    if (this.level !== "silent") {
+      const log = `[${new Date().toISOString()}] ${chalk.red(`✖ ${message}`)}${args ? ` ${args}` : ""}`;
+      console.log(log);
+    }
+  }
+
+  warn(message: string, args?: any): void {
+    if (this.level !== "silent") {
+      const log = `[${new Date().toISOString()}] ${chalk.yellow(`⚠ ${message}`)}${args ? ` ${args}` : ""}`;
+      console.log(log);
+    }
+  }
+
+  debug(message: string, args?: any): void {
+    if (this.level !== "silent") {
+      if (this.level === "debug") {
+        const log = `[${new Date().toISOString()}] ${chalk.gray(`✏ ${message}`)}${args ? ` ${args}` : ""}`;
+        console.log(log);
+      }
+    }
+  }
 }
 
-export const logger: ConsolaInstance = getLogger();
+export const logger = new Logger("debug");

@@ -19,7 +19,7 @@ const information = {
 const server = setupServer();
 
 beforeAll(() => {
-  logger.level = -999; // is the silent level
+  logger.level = "silent";
 
   server.listen({
     // This tells MSW to throw an error whenever it

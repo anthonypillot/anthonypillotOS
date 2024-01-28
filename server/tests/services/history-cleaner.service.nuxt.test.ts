@@ -27,7 +27,7 @@ const expectedResultArray = [
 ];
 
 beforeAll(() => {
-  logger.level = -999; // is the silent level
+  logger.level = "silent";
 });
 
 describe("HistoryCleaner service", async () => {
