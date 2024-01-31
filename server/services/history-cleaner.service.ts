@@ -40,7 +40,7 @@ export async function clean(account: string, repository: string, token: string, 
       status = "Completed";
     }
 
-    updateHistoryCleanerRequest(requestId, {
+    await updateHistoryCleanerRequest(requestId, {
       account: account,
       repository: repository,
       status: status,
