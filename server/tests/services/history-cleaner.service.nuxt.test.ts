@@ -26,6 +26,8 @@ const expectedResultArray = [
   },
 ];
 
+const now = new Date();
+
 beforeAll(() => {
   logger.level = "silent";
 });
@@ -48,8 +50,8 @@ describe("HistoryCleaner service", async () => {
         unknown: expectedResultArray,
       }),
       error: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
     });
 
     const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRun").mockResolvedValue(GitHubDeletionStatusType.SUCCESS);
@@ -73,18 +75,174 @@ describe("HistoryCleaner service", async () => {
     expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
     expect(spyPostgresUpdate.mock.results[0].value.workflowRunDeletionResult).toEqual(
       JSON.stringify({
-        success: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
-        notFound: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
-        unauthorized: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
-        unknown: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+        success: expectedResultArray,
+        notFound: expectedResultArray,
+        unauthorized: expectedResultArray,
+        unknown: expectedResultArray,
       })
     );
+    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
+    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
   });
 
-  test("should not clean all workflow runs if no workflow runs are found", async () => {
+  test("should not clean all workflow runs if workflows are not found", async () => {
     const spyGetAllWorkflowRuns = vi
       .spyOn(githubDao, "getAllWorkflowRuns")
       .mockResolvedValue(workflowRunsApiResponse.workflow_runs as unknown as GitHubWorkflowRun[]);
+
+    const spyPostgresCreate = vi.spyOn(postgresDao, "create").mockResolvedValue(1);
+    const spyPostgresUpdate = vi.spyOn(postgresDao, "update").mockResolvedValue({
+      id: 1,
+      account: "my-account",
+      repository: "my-repository",
+      workflowRunDeletionResult: JSON.stringify({
+        success: expectedResultArray,
+        notFound: expectedResultArray,
+        unauthorized: expectedResultArray,
+        unknown: expectedResultArray,
+      }),
+      error: null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRun").mockResolvedValue(GitHubDeletionStatusType.NOT_FOUND);
+
+    const result: HistoryCleanerResult = await clean("my-account", "my-repository", "ghp_abcd1234", [
+      HistoryCleanerOptions.ALL_WORKFLOW_RUNS,
+    ]);
+
+    expect(spyPostgresCreate).toBeCalledTimes(1);
+    expect(spyPostgresUpdate).toBeCalledTimes(1);
+
+    expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
+    expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
+
+    expect(result.workflow?.success.length).toEqual(0);
+    expect(result.workflow?.notFound.length).toEqual(100);
+    expect(result.workflow?.unauthorized.length).toEqual(0);
+    expect(result.workflow?.unknown.length).toEqual(0);
+
+    expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
+    expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
+    expect(spyPostgresUpdate.mock.results[0].value.workflowRunDeletionResult).toEqual(
+      JSON.stringify({
+        success: expectedResultArray,
+        notFound: expectedResultArray,
+        unauthorized: expectedResultArray,
+        unknown: expectedResultArray,
+      })
+    );
+    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
+    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
+  });
+
+  test("should not clean all workflow runs if workflows are unauthorized", async () => {
+    const spyGetAllWorkflowRuns = vi
+      .spyOn(githubDao, "getAllWorkflowRuns")
+      .mockResolvedValue(workflowRunsApiResponse.workflow_runs as unknown as GitHubWorkflowRun[]);
+
+    const spyPostgresCreate = vi.spyOn(postgresDao, "create").mockResolvedValue(1);
+    const spyPostgresUpdate = vi.spyOn(postgresDao, "update").mockResolvedValue({
+      id: 1,
+      account: "my-account",
+      repository: "my-repository",
+      workflowRunDeletionResult: JSON.stringify({
+        success: expectedResultArray,
+        notFound: expectedResultArray,
+        unauthorized: expectedResultArray,
+        unknown: expectedResultArray,
+      }),
+      error: null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRun").mockResolvedValue(GitHubDeletionStatusType.UNAUTHORIZED);
+
+    const result: HistoryCleanerResult = await clean("my-account", "my-repository", "ghp_abcd1234", [
+      HistoryCleanerOptions.ALL_WORKFLOW_RUNS,
+    ]);
+
+    expect(spyPostgresCreate).toBeCalledTimes(1);
+    expect(spyPostgresUpdate).toBeCalledTimes(1);
+
+    expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
+    expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
+
+    expect(result.workflow?.success.length).toEqual(0);
+    expect(result.workflow?.notFound.length).toEqual(0);
+    expect(result.workflow?.unauthorized.length).toEqual(100);
+    expect(result.workflow?.unknown.length).toEqual(0);
+
+    expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
+    expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
+    expect(spyPostgresUpdate.mock.results[0].value.workflowRunDeletionResult).toEqual(
+      JSON.stringify({
+        success: expectedResultArray,
+        notFound: expectedResultArray,
+        unauthorized: expectedResultArray,
+        unknown: expectedResultArray,
+      })
+    );
+    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
+    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
+  });
+
+  test("should not clean all workflow runs if workflows are unknown", async () => {
+    const spyGetAllWorkflowRuns = vi
+      .spyOn(githubDao, "getAllWorkflowRuns")
+      .mockResolvedValue(workflowRunsApiResponse.workflow_runs as unknown as GitHubWorkflowRun[]);
+
+    const spyPostgresCreate = vi.spyOn(postgresDao, "create").mockResolvedValue(1);
+    const spyPostgresUpdate = vi.spyOn(postgresDao, "update").mockResolvedValue({
+      id: 1,
+      account: "my-account",
+      repository: "my-repository",
+      workflowRunDeletionResult: JSON.stringify({
+        success: expectedResultArray,
+        notFound: expectedResultArray,
+        unauthorized: expectedResultArray,
+        unknown: expectedResultArray,
+      }),
+      error: null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRun").mockResolvedValue(GitHubDeletionStatusType.UNKNOWN);
+
+    const result: HistoryCleanerResult = await clean("my-account", "my-repository", "ghp_abcd1234", [
+      HistoryCleanerOptions.ALL_WORKFLOW_RUNS,
+    ]);
+
+    expect(spyPostgresCreate).toBeCalledTimes(1);
+    expect(spyPostgresUpdate).toBeCalledTimes(1);
+
+    expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
+    expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
+
+    expect(result.workflow?.success.length).toEqual(0);
+    expect(result.workflow?.notFound.length).toEqual(0);
+    expect(result.workflow?.unauthorized.length).toEqual(0);
+    expect(result.workflow?.unknown.length).toEqual(100);
+
+    expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
+    expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
+    expect(spyPostgresUpdate.mock.results[0].value.workflowRunDeletionResult).toEqual(
+      JSON.stringify({
+        success: expectedResultArray,
+        notFound: expectedResultArray,
+        unauthorized: expectedResultArray,
+        unknown: expectedResultArray,
+      })
+    );
+    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
+    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
+  });
+
+  test("should not clean all workflow runs if no workflow runs are found", async () => {
+    const spyGetAllWorkflowRuns = vi.spyOn(githubDao, "getAllWorkflowRuns").mockResolvedValue([]);
 
     const spyPostgresCreate = vi.spyOn(postgresDao, "create").mockResolvedValue(1);
     const spyPostgresUpdate = vi.spyOn(postgresDao, "update").mockResolvedValue({
@@ -98,11 +256,11 @@ describe("HistoryCleaner service", async () => {
         unknown: [],
       }),
       error: "No workflow runs deleted",
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
     });
 
-    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRun").mockResolvedValue(GitHubDeletionStatusType.SUCCESS);
+    const spyDeleteWorkflowRuns = vi.spyOn(githubDao, "deleteWorkflowRun");
 
     const result: HistoryCleanerResult = await clean("my-account", "my-repository", "ghp_abcd1234", [
       HistoryCleanerOptions.ALL_WORKFLOW_RUNS,
@@ -112,9 +270,9 @@ describe("HistoryCleaner service", async () => {
     expect(spyPostgresUpdate).toBeCalledTimes(1);
 
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
-    expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
+    expect(spyDeleteWorkflowRuns).not.toBeCalled();
 
-    expect(result.workflow?.success.length).toEqual(100);
+    expect(result.workflow?.success.length).toEqual(0);
     expect(result.workflow?.notFound.length).toEqual(0);
     expect(result.workflow?.unauthorized.length).toEqual(0);
     expect(result.workflow?.unknown.length).toEqual(0);
@@ -129,5 +287,7 @@ describe("HistoryCleaner service", async () => {
         unknown: [],
       })
     );
+    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
+    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
   });
 });
