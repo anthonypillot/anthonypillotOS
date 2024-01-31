@@ -95,10 +95,16 @@ async function deleteWorkflowRuns(
 }
 
 function formatGitHubWorkflowRunDeletionResult(result: GitHubWorkflowRunDeletionResult): string {
-  const success = result.success.map((run) => ({ id: run.id, display_title: run.display_title }));
-  const notFound = result.notFound.map((run) => ({ id: run.id, display_title: run.display_title }));
-  const unauthorized = result.unauthorized.map((run) => ({ id: run.id, display_title: run.display_title }));
-  const unknown = result.unknown.map((run) => ({ id: run.id, display_title: run.display_title }));
+  const { success, notFound, unauthorized, unknown } = result;
 
-  return JSON.stringify({ success, notFound, unauthorized, unknown });
+  const formatRun = (run: GitHubWorkflowRun) => ({ id: run.id, display_title: run.display_title });
+
+  const formattedResult = {
+    success: success.map(formatRun),
+    notFound: notFound.map(formatRun),
+    unauthorized: unauthorized.map(formatRun),
+    unknown: unknown.map(formatRun),
+  };
+
+  return JSON.stringify(formattedResult);
 }
