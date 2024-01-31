@@ -21,25 +21,31 @@ export async function clean(account: string, repository: string, token: string, 
   if (options.includes(HistoryCleanerOptions.ALL_WORKFLOW_RUNS)) {
     logger.info(`Option [${HistoryCleanerOptions.ALL_WORKFLOW_RUNS}] is enabled, retrieving all workflow runs`);
 
-    logger.info(`Deleting [${runs.length}] workflow runs`);
+    logger.info(`Deleting [${runs.length}] workflow runs for [${account}/${repository}] repository ...`);
     const deletionResult: GitHubWorkflowRunDeletionResult = await deleteWorkflowRuns(account, repository, token, runs);
 
     logger.success(
-      `Deletion report for [${account}/${repository}] repository: [success: ${deletionResult.success}, not found: ${deletionResult.notFound}, unauthorized: ${deletionResult.unauthorized}, unknown: ${deletionResult.unknown}]`
+      `Deletion report for [${account}/${repository}] repository: [success: ${deletionResult.success.length}, not found: ${deletionResult.notFound.length}, unauthorized: ${deletionResult.unauthorized.length}, unknown: ${deletionResult.unknown.length}]`
     );
 
     result.workflow = deletionResult;
 
+    let status = "Aborted, no workflow runs found";
     if (
       deletionResult.success.length > 0 ||
       deletionResult.notFound.length > 0 ||
       deletionResult.unauthorized.length > 0 ||
       deletionResult.unknown.length > 0
     ) {
-      await updateHistoryCleanerRequest(requestId, formatGitHubWorkflowRunDeletionResult(deletionResult));
-    } else {
-      await updateHistoryCleanerRequest(requestId, null, "No workflow runs deleted");
+      status = "Completed";
     }
+
+    updateHistoryCleanerRequest(requestId, {
+      account: account,
+      repository: repository,
+      status: status,
+      workflowRunDeletionResult: status === "Completed" ? formatGitHubWorkflowRunDeletionResult(deletionResult) : undefined,
+    });
   }
 
   return result;
@@ -97,7 +103,16 @@ async function deleteWorkflowRuns(
 function formatGitHubWorkflowRunDeletionResult(result: GitHubWorkflowRunDeletionResult): string {
   const { success, notFound, unauthorized, unknown } = result;
 
-  const formatRun = (run: GitHubWorkflowRun) => ({ id: run.id, display_title: run.display_title });
+  const formatRun = (run: GitHubWorkflowRun) => ({
+    id: run.id,
+    display_title: run.display_title,
+    head_branch: run.head_branch,
+    event: run.event,
+    created_at: run.created_at,
+    updated_at: run.updated_at,
+    actor: run.actor.login,
+    triggering_actor: run.triggering_actor.login,
+  });
 
   const formattedResult = {
     success: success.map(formatRun),

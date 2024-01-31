@@ -40,6 +40,7 @@ export async function create(account: string, repository: string): Promise<numbe
       data: {
         account: account,
         repository: repository,
+        status: "Pending",
       },
     })
   ).id;
@@ -48,18 +49,15 @@ export async function create(account: string, repository: string): Promise<numbe
 /**
  * Updates a history cleaner request with the specified ID.
  * @param id - The ID of the history cleaner request to update.
- * @param result - The workflow run deletion result to set.
- * @returns A Promise that resolves to the updated HistoryCleanerRequest object.
+ * @param request - The updated history cleaner request data.
+ * @returns A Promise that resolves to the updated history cleaner request.
  */
-export async function update(id: number, workflowRunDeletionResult: string | null, error?: string): Promise<HistoryCleanerRequest> {
+export async function update(id: number, request: HistoryCleanerRequest): Promise<HistoryCleanerRequest> {
   logger.info(`Update history cleaner request with ID [${id}]`);
   return await prisma.historyCleanerRequest.update({
     where: {
       id: id,
     },
-    data: {
-      workflowRunDeletionResult: workflowRunDeletionResult ? workflowRunDeletionResult : null,
-      error: error ? error : null,
-    },
+    data: request,
   });
 }
