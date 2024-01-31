@@ -7,7 +7,7 @@ import { HistoryCleanerOptions, HistoryCleanerResult } from "@/server/types/hist
 import { logger } from "@/server/utils/logger";
 
 import * as githubDao from "@/server/dao/github.dao";
-import * as postgresDao from "~/server/dao/postgres.dao";
+import * as postgresDao from "~/server/dao/repository.dao";
 
 import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
 
