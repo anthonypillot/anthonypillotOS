@@ -197,14 +197,14 @@
                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                   <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">Confirm deletion</DialogTitle>
                   <div class="">
-                    <p class="text-sm text-gray-600">
+                    <p class="text-sm text-gray-600 pt-2">
                       Are you sure you want to delete the history of your GitHub account
                       <span class="font-semibold">{{ form.account }}</span>
                       and repository
                       <span class="font-semibold">{{ form.repository }}</span> ?
                     </p>
                   </div>
-                  <div v-for="formOption in form.options">
+                  <div v-for="formOption in form.options" class="pt-2">
                     <div class="flex">
                       <ArrowRightCircleIcon class="h-5 w-5 mr-1" aria-hidden="true" />
                       <p
@@ -213,7 +213,7 @@
                       ></p>
                     </div>
                   </div>
-                  <div class="">
+                  <div class="pt-2">
                     <p class="text-sm text-gray-600">This action <span class="font-semibold">cannot be undone</span>.</p>
                   </div>
                 </div>
