@@ -142,9 +142,7 @@ export async function deleteWorkflowRun(account: string, repository: string, tok
         }
       },
     });
-  } catch (error: any) {
-    logger.error(`Error while deleting workflow run [${id}] from [${account}/${repository}] repository: ${error.message} from GitHub API`);
-  }
+  } catch (error: any) {}
 
   return status;
 }
