@@ -151,6 +151,9 @@
                     >.
                   </p>
                 </div>
+                <div v-else>
+                  <p class="pt-1 text-gray-900 leading-7">Everything went as expected, but nothing was found to delete.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -265,15 +268,15 @@ const disabled = ref({
 const options = ref([
   {
     name: "all-workflow-runs",
-    label: "All workflow history runs",
-    description: "Delete all workflow history runs.",
+    label: "All workflow runs history",
+    description: "Delete all workflow runs history.",
     disabled: false,
     checked: true,
   },
   {
     name: "only-workflow-runs-in-error",
-    label: "Only workflow history runs in error <span class='font-bold'>(available soon)</span>",
-    description: "Delete all workflow history runs in error.",
+    label: "Only workflow runs history in error <span class='font-bold'>(available soon)</span>",
+    description: "Delete all workflow runs history in error.",
     disabled: true,
     checked: false,
   },
@@ -296,14 +299,7 @@ const validation = ref({
 });
 const confirmationModal = ref(false);
 const loading = ref<boolean>(false);
-const result = ref<{
-  workflow: {
-    success: number;
-    notFound: number;
-    unauthorized: number;
-    unknown: number;
-  };
-} | null>(null);
+const result = ref<HistoryCleanerResultFiltered | null>(null);
 const resultHtml = ref<HTMLDivElement | null>(null);
 
 /**

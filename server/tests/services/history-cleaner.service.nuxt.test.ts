@@ -272,10 +272,10 @@ describe("HistoryCleaner service", async () => {
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
     expect(spyDeleteWorkflowRuns).not.toBeCalled();
 
-    expect(result.workflow?.success.length).toEqual(0);
-    expect(result.workflow?.notFound.length).toEqual(0);
-    expect(result.workflow?.unauthorized.length).toEqual(0);
-    expect(result.workflow?.unknown.length).toEqual(0);
+    expect(result.workflow?.success.length).not.toBeTruthy();
+    expect(result.workflow?.notFound.length).not.toBeTruthy();
+    expect(result.workflow?.unauthorized.length).not.toBeTruthy();
+    expect(result.workflow?.unknown.length).not.toBeTruthy();
 
     expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
     expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");

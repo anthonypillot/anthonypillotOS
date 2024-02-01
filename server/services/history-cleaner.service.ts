@@ -19,32 +19,33 @@ export async function clean(account: string, repository: string, token: string, 
   };
 
   if (options.includes(HistoryCleanerOptions.ALL_WORKFLOW_RUNS)) {
-    logger.info(`Option [${HistoryCleanerOptions.ALL_WORKFLOW_RUNS}] is enabled, retrieving all workflow runs`);
-
+    logger.debug(`Option [${HistoryCleanerOptions.ALL_WORKFLOW_RUNS}] is enabled, retrieving all workflow runs`);
     logger.info(`Deleting [${runs.length}] workflow runs for [${account}/${repository}] repository ...`);
-    const deletionResult: GitHubWorkflowRunDeletionResult = await deleteWorkflowRuns(account, repository, token, runs);
 
-    logger.success(
-      `Deletion report for [${account}/${repository}] repository: [success: ${deletionResult.success.length}, not found: ${deletionResult.notFound.length}, unauthorized: ${deletionResult.unauthorized.length}, unknown: ${deletionResult.unknown.length}]`
-    );
+    const deletionResult: GitHubWorkflowRunDeletionResult | null = await deleteWorkflowRuns(account, repository, token, runs);
 
-    result.workflow = deletionResult;
+    let status = "Aborted";
 
-    let status = "Aborted, no workflow runs found";
-    if (
-      deletionResult.success.length > 0 ||
-      deletionResult.notFound.length > 0 ||
-      deletionResult.unauthorized.length > 0 ||
-      deletionResult.unknown.length > 0
-    ) {
+    if (deletionResult) {
+      result.workflow = {
+        success: deletionResult.success,
+        notFound: deletionResult.notFound,
+        unauthorized: deletionResult.unauthorized,
+        unknown: deletionResult.unknown,
+      };
+
       status = "Completed";
+
+      logger.success(
+        `Deletion report for [${account}/${repository}] repository: [success: ${deletionResult.success.length}, not found: ${deletionResult.notFound.length}, unauthorized: ${deletionResult.unauthorized.length}, unknown: ${deletionResult.unknown.length}]`
+      );
     }
 
     await updateHistoryCleanerRequest(requestId, {
       account: account,
       repository: repository,
       status: status,
-      workflowRunDeletionResult: status === "Completed" ? formatGitHubWorkflowRunDeletionResult(deletionResult) : undefined,
+      workflowRunDeletionResult: deletionResult ? formatGitHubWorkflowRunDeletionResult(deletionResult) : null,
     });
   }
 
@@ -66,7 +67,7 @@ async function deleteWorkflowRuns(
   repository: string,
   token: string,
   runs: GitHubWorkflowRun[]
-): Promise<GitHubWorkflowRunDeletionResult> {
+): Promise<GitHubWorkflowRunDeletionResult | null> {
   const status: GitHubWorkflowRunDeletionResult = {
     success: [],
     notFound: [],
@@ -97,7 +98,11 @@ async function deleteWorkflowRuns(
 
   await Promise.all(deletions);
 
-  return status;
+  if (status.success.length === 0 && status.notFound.length === 0 && status.unauthorized.length === 0 && status.unknown.length === 0) {
+    return null;
+  } else {
+    return status;
+  }
 }
 
 function formatGitHubWorkflowRunDeletionResult(result: GitHubWorkflowRunDeletionResult): string {

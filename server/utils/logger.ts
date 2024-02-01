@@ -3,7 +3,7 @@ import chalk from "chalk";
 class Logger {
   level: string;
 
-  constructor(level?: string) {
+  constructor() {
     this.level = process.env.LOG_LEVEL || "info";
   }
 
@@ -45,7 +45,7 @@ class Logger {
 
   debug(message: string, args?: any): void {
     if (this.shouldPrintLog() && this.level === "debug") {
-      console.log(this.formatLog(`${chalk.gray("✏")}${message}`, args));
+      console.log(this.formatLog(`${chalk.gray(`✏ ${message}`)}`, args));
     }
   }
 

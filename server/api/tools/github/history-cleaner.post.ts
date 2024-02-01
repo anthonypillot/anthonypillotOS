@@ -3,23 +3,13 @@ import { z } from "zod";
 import { clean } from "@/server/services/history-cleaner.service";
 import { HistoryCleanerResult } from "@/server/types/historyCleaner";
 
-export default defineEventHandler(
-  async (
-    event
-  ): Promise<{
-    workflow: {
-      success: number;
-      notFound: number;
-      unauthorized: number;
-      unknown: number;
-    };
-  }> => {
+export default defineEventHandler(async (event): Promise<HistoryCleanerResultFiltered> => {
     const body: Readonly<HistoryCleanerForm> = await Object.freeze(readBody(event));
 
     const validOptions = [
       "all-workflow-runs",
       // "only-workflow-runs-in-error",
-      // "all-deployments"
+    // "all-deployments",
     ];
 
     const schema = z.object({
@@ -52,15 +42,8 @@ export default defineEventHandler(
     logger.info(`Received history cleaner request for [${body.account}/${body.repository}]`);
 
     try {
-      const result: HistoryCleanerResult = await clean(body.account, body.repository, body.token, body.options);
-      return {
-        workflow: {
-          success: result.workflow?.success.length || 0,
-          notFound: result.workflow?.notFound.length || 0,
-          unauthorized: result.workflow?.unauthorized.length || 0,
-          unknown: result.workflow?.unknown.length || 0,
-        },
-      };
+    const data: HistoryCleanerResult = await clean(body.account, body.repository, body.token, body.options);
+    return extract(data);
     } catch (error: any) {
       logger.error(`History cleaner request failed, error: ${JSON.stringify(error.message)}`);
       throw createError({
@@ -69,5 +52,22 @@ export default defineEventHandler(
         message: error.message || "An error occurred while processing the request",
       });
     }
+});
+
+function extract(data: HistoryCleanerResult): HistoryCleanerResultFiltered {
+  const result: HistoryCleanerResultFiltered = {
+    workflow: null,
+    deployment: null,
+  };
+
+  if (data.workflow) {
+    result.workflow = {
+      success: data.workflow.success.length,
+      notFound: data.workflow.notFound.length,
+      unauthorized: data.workflow.unauthorized.length,
+      unknown: data.workflow.unknown.length,
+    };
   }
-);
+
+  return result;
+}
