@@ -131,7 +131,8 @@ export async function deleteWorkflowRun(account: string, repository: string, tok
             logger.debug(`Workflow run [${id}] from [${account}/${repository}] repository not found`);
             status = GitHubDeletionStatusType.NOT_FOUND;
             break;
-          case 401 || 403:
+          case 401:
+          case 403:
             logger.debug(`Unauthorized to delete workflow run [${id}] from [${account}/${repository}] repository`);
             status = GitHubDeletionStatusType.UNAUTHORIZED;
             break;
