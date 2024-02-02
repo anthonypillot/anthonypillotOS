@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
  * @returns A promise that resolves to an array of HistoryCleanerRequest objects.
  */
 export async function findAll(): Promise<HistoryCleanerRequest[]> {
-  logger.info("Find all history cleaner requests");
+  logger.debug("Find all history cleaner requests in database");
   return await prisma.historyCleanerRequest.findMany();
 }
 
@@ -19,10 +19,10 @@ export async function findAll(): Promise<HistoryCleanerRequest[]> {
  * @returns A Promise that resolves to the found history cleaner request, or null if not found.
  */
 export async function find(id: number): Promise<HistoryCleanerRequest | null> {
-  logger.info("Find all history cleaner requests");
+  logger.debug("Find all history cleaner requests by ID in database");
   return await prisma.historyCleanerRequest.findUnique({
     where: {
-      id: id,
+      id,
     },
   });
 }
@@ -34,12 +34,12 @@ export async function find(id: number): Promise<HistoryCleanerRequest | null> {
  * @returns A Promise that resolves to the ID of the created history cleaner request.
  */
 export async function create(account: string, repository: string): Promise<number> {
-  logger.info(`Create history cleaner request for [${account}/${repository}] repository`);
+  logger.debug(`Create history cleaner request for [${account}/${repository}] repository in database`);
   return (
     await prisma.historyCleanerRequest.create({
       data: {
-        account: account,
-        repository: repository,
+        account,
+        repository,
         status: "Pending",
       },
     })
@@ -52,12 +52,15 @@ export async function create(account: string, repository: string): Promise<numbe
  * @param request - The updated history cleaner request data.
  * @returns A Promise that resolves to the updated history cleaner request.
  */
-export async function update(id: number, request: HistoryCleanerRequest): Promise<HistoryCleanerRequest> {
-  logger.info(`Update history cleaner request with ID [${id}]`);
+export async function update(id: number, status: string, workflowRunDeletionResult: string | null): Promise<HistoryCleanerRequest> {
+  logger.debug(`Update history cleaner request with ID [${id}] in database`);
   return await prisma.historyCleanerRequest.update({
     where: {
-      id: id,
+      id,
     },
-    data: request,
+    data: {
+      status,
+      workflowRunDeletionResult,
+    },
   });
 }

@@ -24,7 +24,7 @@ export async function clean(account: string, repository: string, token: string, 
 
     const deletionResult: GitHubWorkflowRunDeletionResult | null = await deleteWorkflowRuns(account, repository, token, runs);
 
-    let status = "No runs to delete";
+    let status = "No workflow runs to delete";
 
     if (deletionResult) {
       result.workflow = {
@@ -41,12 +41,7 @@ export async function clean(account: string, repository: string, token: string, 
       );
     }
 
-    await updateHistoryCleanerRequest(requestId, {
-      account: account,
-      repository: repository,
-      status: status,
-      workflowRunDeletionResult: deletionResult ? formatGitHubWorkflowRunDeletionResult(deletionResult) : null,
-    });
+    await updateHistoryCleanerRequest(requestId, status, deletionResult ? formatGitHubWorkflowRunDeletionResult(deletionResult) : null);
   }
 
   return result;
