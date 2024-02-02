@@ -24,7 +24,7 @@ export async function clean(account: string, repository: string, token: string, 
 
     const deletionResult: GitHubWorkflowRunDeletionResult | null = await deleteWorkflowRuns(account, repository, token, runs);
 
-    let status = "Aborted";
+    let status = "No runs to delete";
 
     if (deletionResult) {
       result.workflow = {

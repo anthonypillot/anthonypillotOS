@@ -55,22 +55,32 @@ export async function getWorkflowRuns(
   token: string,
   page: number = 1
 ): Promise<GitHubWorkflowRunApiResponse> {
-  try {
-    return (await api(`/repos/${account}/${repository}/actions/runs`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        per_page: maximumPerPage, // max allowed by GitHub API
-        page: page,
-      },
-    })) as GitHubWorkflowRunApiResponse;
-  } catch (error: any) {
-    const message = `Error while retrieving workflow runs for [${account}/${repository}] repository. Error: [${error.message}] from GitHub API`;
-    logger.error(message);
-    throw new Error(message);
-  }
+  return await api(`/repos/${account}/${repository}/actions/runs`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      per_page: maximumPerPage, // max allowed by GitHub API
+      page: page,
+    },
+
+    async onResponseError({ request, response, options }) {
+      if (response.status === 404) {
+        throw createError({
+          statusCode: response.status,
+          statusMessage: response.statusText,
+          message: `Repository [${account}/${repository}] not found`,
+        });
+      } else if (response.status === 401 || response.status === 403) {
+        throw createError({
+          statusCode: response.status,
+          statusMessage: response.statusText,
+          message: `Unauthorized to retrieve workflow runs for [${account}/${repository}] repository`,
+        });
+      }
+    },
+  });
 }
 
 /**

@@ -49,7 +49,7 @@ export default defineEventHandler(async (event): Promise<HistoryCleanerResultFil
     throw createError({
       statusCode: error.statusCode || 500,
       statusMessage: error.statusMessage || "Internal Server Error",
-      message: error.message || "An error occurred while processing the request",
+      message: error.message || "An unknown error occurred while processing the request",
     });
   }
 });
