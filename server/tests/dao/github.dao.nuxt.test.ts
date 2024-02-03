@@ -85,7 +85,6 @@ describe("GitHub DAO", async () => {
       http.get(
         `https://api.github.com/repos/${information.account}/${information.repository}/actions/runs`,
         ({ request, params, cookies }) => {
-          // return HttpResponse.error();
           return HttpResponse.text(null, {
             status: 500,
           });

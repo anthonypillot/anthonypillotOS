@@ -43,13 +43,14 @@ describe("HistoryCleaner service", async () => {
       id: 1,
       account: "my-account",
       repository: "my-repository",
+      status: "Pending",
       workflowRunDeletionResult: JSON.stringify({
         success: expectedResultArray,
         notFound: expectedResultArray,
         unauthorized: expectedResultArray,
         unknown: expectedResultArray,
       }),
-      error: null,
+      deploymentDeletionResult: null,
       createdAt: now,
       updatedAt: now,
     });
@@ -62,6 +63,7 @@ describe("HistoryCleaner service", async () => {
 
     expect(spyPostgresCreate).toBeCalledTimes(1);
     expect(spyPostgresUpdate).toBeCalledTimes(1);
+    expect(spyPostgresUpdate.mock.calls[0][1]).toEqual("Completed");
 
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
     expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
@@ -95,13 +97,14 @@ describe("HistoryCleaner service", async () => {
       id: 1,
       account: "my-account",
       repository: "my-repository",
+      status: "Pending",
       workflowRunDeletionResult: JSON.stringify({
         success: expectedResultArray,
         notFound: expectedResultArray,
         unauthorized: expectedResultArray,
         unknown: expectedResultArray,
       }),
-      error: null,
+      deploymentDeletionResult: null,
       createdAt: now,
       updatedAt: now,
     });
@@ -114,6 +117,7 @@ describe("HistoryCleaner service", async () => {
 
     expect(spyPostgresCreate).toBeCalledTimes(1);
     expect(spyPostgresUpdate).toBeCalledTimes(1);
+    expect(spyPostgresUpdate.mock.calls[0][1]).toEqual("Completed");
 
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
     expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
@@ -147,13 +151,14 @@ describe("HistoryCleaner service", async () => {
       id: 1,
       account: "my-account",
       repository: "my-repository",
+      status: "Pending",
       workflowRunDeletionResult: JSON.stringify({
         success: expectedResultArray,
         notFound: expectedResultArray,
         unauthorized: expectedResultArray,
         unknown: expectedResultArray,
       }),
-      error: null,
+      deploymentDeletionResult: null,
       createdAt: now,
       updatedAt: now,
     });
@@ -166,6 +171,7 @@ describe("HistoryCleaner service", async () => {
 
     expect(spyPostgresCreate).toBeCalledTimes(1);
     expect(spyPostgresUpdate).toBeCalledTimes(1);
+    expect(spyPostgresUpdate.mock.calls[0][1]).toEqual("Completed");
 
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
     expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
@@ -199,13 +205,14 @@ describe("HistoryCleaner service", async () => {
       id: 1,
       account: "my-account",
       repository: "my-repository",
+      status: "Completed",
       workflowRunDeletionResult: JSON.stringify({
         success: expectedResultArray,
         notFound: expectedResultArray,
         unauthorized: expectedResultArray,
         unknown: expectedResultArray,
       }),
-      error: null,
+      deploymentDeletionResult: null,
       createdAt: now,
       updatedAt: now,
     });
@@ -218,6 +225,7 @@ describe("HistoryCleaner service", async () => {
 
     expect(spyPostgresCreate).toBeCalledTimes(1);
     expect(spyPostgresUpdate).toBeCalledTimes(1);
+    expect(spyPostgresUpdate.mock.calls[0][1]).toEqual("Completed");
 
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
     expect(spyDeleteWorkflowRuns).toBeCalledTimes(100);
@@ -249,13 +257,14 @@ describe("HistoryCleaner service", async () => {
       id: 1,
       account: "my-account",
       repository: "my-repository",
+      status: "No workflow runs to delete",
       workflowRunDeletionResult: JSON.stringify({
         success: [],
         notFound: [],
         unauthorized: [],
         unknown: [],
       }),
-      error: "No workflow runs deleted",
+      deploymentDeletionResult: null,
       createdAt: now,
       updatedAt: now,
     });
@@ -268,6 +277,7 @@ describe("HistoryCleaner service", async () => {
 
     expect(spyPostgresCreate).toBeCalledTimes(1);
     expect(spyPostgresUpdate).toBeCalledTimes(1);
+    expect(spyPostgresUpdate.mock.calls[0][1]).toEqual("No workflow runs to delete");
 
     expect(spyGetAllWorkflowRuns).toBeCalledTimes(1);
     expect(spyDeleteWorkflowRuns).not.toBeCalled();
