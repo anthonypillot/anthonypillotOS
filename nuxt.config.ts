@@ -37,13 +37,6 @@ export default defineNuxtConfig({
 
   css: ["@/assets/scss/main.scss"],
 
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
-  },
-
   vite: {
     css: {
       preprocessorOptions: {
@@ -54,7 +47,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/image", "@nuxtjs/tailwindcss"],
+  modules: ["@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/tailwindcss"],
 
   devtools: { enabled: true },
 });
