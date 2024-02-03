@@ -137,8 +137,6 @@ test("should have a result after confirmation", async ({ page }) => {
   expect(await confirmButton.isDisabled()).toBe(false);
   await confirmButton.click();
 
-  await page.waitForTimeout(500);
-
   expect(await page.getByText("Cleaner history result").isVisible()).toBe(true);
   expect(await page.getByText("Workflow deletion").isVisible()).toBe(true);
 
