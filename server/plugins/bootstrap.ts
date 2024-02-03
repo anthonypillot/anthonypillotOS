@@ -13,9 +13,11 @@ export default defineNitroPlugin(async (nitro) => {
   if (process.env.LOG_LEVEL === "debug") logger.debug("Debug mode is enabled");
 
   try {
-    await prisma.$connect();
-    logger.success(`Connected to the database: [${process.env.POSTGRES_DATABASE}]`);
-    await prisma.$disconnect();
+    if (!process.env.CI) {
+      await prisma.$connect();
+      logger.success(`Connected to the database: [${process.env.POSTGRES_DATABASE}]`);
+      await prisma.$disconnect();
+    }
   } catch (error: any) {
     logger.error(`Failed to connect to the database: [${error.message}]`);
     exit(1);
