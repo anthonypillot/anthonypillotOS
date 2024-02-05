@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.0...v1.1.1) (2024-02-05)
+
+
+### Bug Fixes
+
+* remove exit(1) statement in bootstrap.ts ([abe1780](https://github.com/anthonypillot/anthonypillotOS/commit/abe17809ff1f8a77e7bc509f06b85013464ce5b9))
+
 # [1.1.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.0.0...v1.1.0) (2024-02-04)
 
 
