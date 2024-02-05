@@ -1,7 +1,6 @@
 import { version } from "@/package.json";
 import { logger } from "@/server/utils/logger";
 import { PrismaClient } from "@prisma/client";
-import { exit } from "process";
 
 const prisma = new PrismaClient();
 
@@ -20,6 +19,5 @@ export default defineNitroPlugin(async (nitro) => {
     }
   } catch (error: any) {
     logger.error(`Failed to connect to the database: [${error.message}]`);
-    exit(1);
   }
 });
