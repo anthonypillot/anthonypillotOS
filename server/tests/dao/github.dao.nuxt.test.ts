@@ -76,8 +76,8 @@ describe("GitHub DAO", async () => {
       ...workflowRunsApiResponse.workflow_runs,
     ];
 
-    expect(result).toEqual(expected);
-    expect(result.length).toEqual(300);
+    expect(result).toEqual(expected.slice(0, 200));
+    expect(result.length).toEqual(200);
   });
 
   test("should throw an error when cannot retrieve workflow runs", async () => {

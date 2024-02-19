@@ -8,6 +8,12 @@ const api = getApiConfiguration();
 const maximumPerPage = 100;
 
 /**
+ * Limit to 200 elements to avoid FUNCTION_INVOCATION_TIMEOUT error from Vercel.
+ * @see https://vercel.com/docs/errors/FUNCTION_INVOCATION_TIMEOUT
+ */
+export const limitNumberElements = 200;
+
+/**
  * Retrieves all workflow runs for a given account and repository.
  *
  * @param account - The account name.
@@ -21,7 +27,9 @@ export async function getAllWorkflowRuns(account: string, repository: string, to
   let total = response.total_count - response.workflow_runs.length;
   let page = 2;
 
-  while (total > 0) {
+  let continueExecution = true;
+
+  while (total > 0 && continueExecution) {
     logger.debug(`Retrieving page [${page}] of workflow runs for [${account}/${repository}] repository`);
 
     const newResponse: GitHubWorkflowRunApiResponse = await getWorkflowRuns(account, repository, token, page);
@@ -30,6 +38,11 @@ export async function getAllWorkflowRuns(account: string, repository: string, to
     response.workflow_runs.push(...newResponse.workflow_runs);
 
     logger.debug(`Added [${newResponse.workflow_runs.length}] workflow runs to the workflow runs array`);
+
+    if (response.workflow_runs.length >= limitNumberElements) {
+      logger.debug(`Stopping execution. Maximum workflow runs reached: [${response.workflow_runs.length}]`);
+      continueExecution = false;
+    }
 
     page++;
   }
