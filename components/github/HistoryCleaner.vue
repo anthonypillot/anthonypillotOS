@@ -14,6 +14,22 @@
             >GitHub repository</NuxtLink
           >.
         </p>
+        <div class="mt-4 rounded-md bg-yellow-50 p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <ExclamationTriangleIcon class="h-5 w-5 text-yellow-400" aria-hidden="true" />
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-yellow-800">Limited to {{ limitNumberElements }} elements</h3>
+              <div class="mt-2 text-sm text-yellow-700">
+                <p>
+                  Currently, the tool is limited to {{ limitNumberElements }} elements. If you have more than
+                  {{ limitNumberElements }} elements to delete, just run the tool again.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="lg:col-start-2 lg:col-end-4">
@@ -259,8 +275,11 @@ import {
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/vue/24/outline";
+import { limitNumberElements as limit } from "@/server/dao/github.dao";
 
 const config = useRuntimeConfig();
+
+const limitNumberElements = limit;
 
 const disabled = ref({
   submit: true,
@@ -385,8 +404,8 @@ async function confirm(): Promise<void> {
 
         default:
           alert(`An error occurred, please try again later.
-          Error status: [${error.response.status}].
-          Error message: [${error.response._data.message}].`);
+          ${error.response.status ? `Error status: [${error.response.status}].` : ""}
+          ${error.response._data.message ? `Error message: [${error.response._data.message}].` : ""}`);
           break;
       }
     },
