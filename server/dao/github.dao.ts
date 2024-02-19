@@ -55,7 +55,7 @@ export async function getWorkflowRuns(
   token: string,
   page: number = 1
 ): Promise<GitHubWorkflowRunApiResponse> {
-  return await api(`/repos/${account}/${repository}/actions/runs`, {
+  return (await api(`/repos/${account}/${repository}/actions/runs`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -80,7 +80,7 @@ export async function getWorkflowRuns(
         });
       }
     },
-  });
+  })) as GitHubWorkflowRunApiResponse;
 }
 
 /**
