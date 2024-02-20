@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.1...v1.1.2) (2024-02-20)
+
+
+### Bug Fixes
+
+* add limit to 200 GitHub elements ([12c33cb](https://github.com/anthonypillot/anthonypillotOS/commit/12c33cb983a5779376395bff82dbbd8468e46908))
+
 ## [1.1.1](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.0...v1.1.1) (2024-02-05)
 
 
