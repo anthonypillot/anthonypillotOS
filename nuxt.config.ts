@@ -30,6 +30,7 @@ export default defineNuxtConfig({
           githubOrganization: "https://github.com/size-up",
           githubFreeGamesCatcherCore: "https://github.com/size-up/freegamescatcher-core",
           sizeUpDocumentation: "https://docs.sizeup.cloud",
+          monitoring: "https://monitoring.anthonypillot.com",
         },
       },
     },
