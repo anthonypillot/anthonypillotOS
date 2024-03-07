@@ -5,9 +5,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default defineNitroPlugin(async (nitro) => {
-  logger.start(
-    `Starting [${useRuntimeConfig().app.website.title}] with version [${version}] and env. [${process.env.VERCEL_ENV || "local"}]`
-  );
+  logger.start(`Starting [${useRuntimeConfig().app.website.title}] with version [${version}] and env. [${process.env.ENV || "local"}]`);
 
   if (process.env.LOG_LEVEL === "debug") logger.debug("Debug mode is enabled");
 

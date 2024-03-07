@@ -1,0 +1,84 @@
+name: 🏗️ Build, push and deploy
+
+permissions:
+  contents: read
+  packages: write
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  extract-branch-name:
+    name: 🌳 Extract
+    uses: anthonypillot/actions/.github/workflows/extract-branch-name.yaml@v1
+
+  build:
+    name: 🏗️ Build
+    uses: anthonypillot/actions/.github/workflows/node-build-and-test.yaml@v1
+
+  push:
+    name: 🐳 Push
+    needs: [extract-branch-name, build]
+    uses: anthonypillot/actions/.github/workflows/node-build-image-and-push.yaml@v1
+    with:
+      registry_url: ghcr.io
+      registry_username: ${{ github.repository_owner }}
+      image_owner: ${{ github.repository_owner }}
+      image_name: os
+      image_tag: ${{ needs.extract-branch-name.outputs.result }}
+    secrets:
+      registry_password: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: 🚀 Deploy
+    needs: [extract-branch-name, push]
+    uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
+    with:
+      registry_url: ghcr.io
+      registry_username: ${{ github.repository_owner }}
+      environment: pre-production
+      namespace_name: os
+      deployment_name: os-prep
+      image_name: os
+      image_tag: ${{ needs.extract-branch-name.outputs.result }}
+    secrets:
+      kubeconfig: ${{ secrets.KUBECONFIG }}
+
+  test-e2e:
+    name: 🎭 End-to-end tests
+    runs-on: ubuntu-latest
+    needs: [build]
+    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        node-version: [20.x, current]
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🌐 Setup Node.js [${{ matrix.node-version }}]
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📦 Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: 🎭 Run Playwright tests
+        run: npx playwright test
+
+      - name: 📤 Upload report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.node-version }}
+          path: playwright-report/
+          retention-days: 7
