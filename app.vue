@@ -10,15 +10,10 @@
 
     <!-- Footer -->
     <BaseFooter />
-
-    <!-- Vercel SpeedInsights used for performance metrics ; see: https://vercel.com/docs/speed-insights -->
-    <SpeedInsights />
   </div>
 </template>
 
 <script setup lang="ts">
-import { SpeedInsights } from "@vercel/speed-insights/vue";
-
 const config = useRuntimeConfig();
 
 const title = `The Operating System by ${config.app.website.author.name} | ${config.app.website.title}`;
