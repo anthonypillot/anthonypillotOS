@@ -1,3 +1,11 @@
+## [1.1.3](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.2...v1.1.3) (2024-03-07)
+
+
+### Performance Improvements
+
+* **deps:** upgrade dependencies ([b1b59f3](https://github.com/anthonypillot/anthonypillotOS/commit/b1b59f3266b329055b0b72bcdb01905682054aa8))
+* status monitoring website in footer links ([b834417](https://github.com/anthonypillot/anthonypillotOS/commit/b834417021c7b459ee76c987155cbdb630a140d3))
+
 ## [1.1.2](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.1...v1.1.2) (2024-02-20)
 
 
