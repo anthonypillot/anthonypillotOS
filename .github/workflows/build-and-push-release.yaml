@@ -1,0 +1,37 @@
+name: 🔖 Build, push and deploy release
+
+permissions:
+  contents: read
+  packages: write
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  push:
+    name: 🐳 Push
+    uses: anthonypillot/actions/.github/workflows/node-build-image-and-push.yaml@v1
+    with:
+      registry_url: ghcr.io
+      registry_username: ${{ github.repository_owner }}
+      image_owner: ${{ github.repository_owner }}
+      image_name: os
+      image_tag: ${{ github.ref_name }}
+    secrets:
+      registry_password: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: 🚀 Deploy
+    needs: [push]
+    uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
+    with:
+      registry_url: ghcr.io
+      registry_username: ${{ github.repository_owner }}
+      environment: production
+      namespace_name: os
+      deployment_name: os-prod
+      image_name: os
+      image_tag: ${{ github.ref_name }}
+    secrets:
+      kubeconfig: ${{ secrets.KUBECONFIG }}

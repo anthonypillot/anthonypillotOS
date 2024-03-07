@@ -16,10 +16,12 @@ Build with ❤️ and [Nuxt](https://nuxt.com).
 - [anthonypillotOS | Personal application](#anthonypillotos--personal-application)
 - [Table of Contents](#table-of-contents)
   - [⚙️ Setup](#️-setup)
-  - [🧪 Development](#-development)
+  - [🚧 Development](#-development)
+  - [🧪 Unit tests](#-unit-tests)
   - [🚀 Production](#-production)
+    - [Local preview](#local-preview)
+    - [Docker image](#docker-image)
 - [🚀 Deployment](#-deployment)
-- [📊 Analytics](#-analytics)
 - [📈 Performance](#-performance)
 - [🌳 Git conventions](#-git-conventions)
 - [📜 License](#-license)
@@ -32,7 +34,7 @@ Make sure to install the dependencies:
 npm install
 ```
 
-## 🧪 Development
+## 🚧 Development
 
 Start the development server on `http://localhost:3000`:
 
@@ -40,7 +42,19 @@ Start the development server on `http://localhost:3000`:
 npm run dev
 ```
 
+## 🧪 Unit tests
+
+The project uses [Vitest](https://vitest.dev/) for unit tests.
+
+Run the unit tests:
+
+```bash
+npm run test:unit
+```
+
 ## 🚀 Production
+
+### Local preview
 
 Build the application for production:
 
@@ -60,17 +74,22 @@ Shortcut to build and preview production build:
 npm run start
 ```
 
+### Docker image
+
+Local Docker image build and run:
+
+```bash
+docker build --no-cache -t os:latest . \
+&& docker run --rm --name=os -p 3000:3000 os:latest
+```
+
 # 🚀 Deployment
 
-This application is deployed on [Vercel](https://vercel.com).
-
-# 📊 Analytics
-
-This application uses [Vercel Analytics](https://vercel.com/docs/analytics) to collect anonymous usage analytics.
+This application is deployed on [anthonypillot.com](https://anthonypillot.com) Kubernetes cluster.
 
 # 📈 Performance
 
-This application uses [Vercel Speed Insights](https://vercel.com/docs/speed-insights) to collect performance metrics.
+This application uses **Elastic APM** to collect performance metrics.
 
 # 🌳 Git conventions
 
