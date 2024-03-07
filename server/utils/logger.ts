@@ -1,61 +1,50 @@
-import chalk from "chalk";
+import type { ConsolaInstance } from "consola";
+import { createConsola } from "consola";
 
-class Logger {
-  level: string;
+import { version } from "@/package.json";
 
-  constructor() {
-    this.level = process.env.LOG_LEVEL || "info";
+/**
+ * Returns a logger instance.
+ *
+ * Log level:
+ *
+ * 0: Fatal and Error
+ * 1: Warnings
+ * 2: Normal logs
+ * 3: Informational logs, success, fail, ready, start, ...
+ * 4: Debug logs
+ * 5: Trace logs
+ * -999: Silent
+ * +999: Verbose logs
+ *
+ * @returns {ConsolaInstance} The logger instance.
+ */
+function getLogger(): ConsolaInstance {
+  const logger = createConsola();
+
+  if (process.env.NODE_ENV === "production") {
+    logger.setReporters([
+      {
+        log: (logObj) => {
+          logObj.message = logObj.args[0];
+
+          logObj.version = version;
+          logObj.env = process.env.ENV || "local";
+
+          console.log(JSON.stringify(logObj));
+        },
+      },
+    ]);
+
+    /**
+     * Set log level to debug if the environment variable LOG_LEVEL is set to debug.
+     */
+    logger.level = process.env.LOG_LEVEL === "debug" ? 5 : 3;
+  } else {
+    logger.level = 5;
   }
 
-  log(message: string, args?: any): void {
-    if (this.shouldPrintLog()) {
-      console.log(this.formatLog(message, args));
-    }
-  }
-
-  info(message: string, args?: any): void {
-    if (this.shouldPrintLog()) {
-      console.log(this.formatLog(`${chalk.blue("ℹ")} ${message}`, args));
-    }
-  }
-
-  success(message: string, args?: any): void {
-    if (this.shouldPrintLog()) {
-      console.log(this.formatLog(`${chalk.green("✔")} ${message}`, args));
-    }
-  }
-
-  start(message: string, args?: any): void {
-    if (this.shouldPrintLog()) {
-      console.log(this.formatLog(`${chalk.blue("▸")} ${message}`, args));
-    }
-  }
-
-  error(message: string, args?: any): void {
-    if (this.shouldPrintLog()) {
-      console.log(this.formatLog(`${chalk.red(`✖ ${message}`)}`, args));
-    }
-  }
-
-  warn(message: string, args?: any): void {
-    if (this.shouldPrintLog()) {
-      console.log(this.formatLog(`${chalk.yellow(`⚠ ${message}`)}`, args));
-    }
-  }
-
-  debug(message: string, args?: any): void {
-    if (this.shouldPrintLog() && this.level === "debug") {
-      console.log(this.formatLog(`${chalk.gray(`✏ ${message}`)}`, args));
-    }
-  }
-
-  private shouldPrintLog(): boolean {
-    return this.level !== "silent";
-  }
-
-  private formatLog(message: string, args?: any): string {
-    return args ? `${message}. Details: ${args}` : message;
-  }
+  return logger;
 }
 
-export const logger = new Logger();
+export const logger: ConsolaInstance = getLogger();
