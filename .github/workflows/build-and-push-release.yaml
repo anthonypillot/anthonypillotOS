@@ -11,13 +11,12 @@ on:
 jobs:
   push:
     name: 🐳 Push
-    uses: anthonypillot/actions/.github/workflows/node-build-image-and-push.yaml@v1
+    uses: anthonypillot/actions/.github/workflows/node-build-image-and-push.yaml@main
     with:
       registry_url: ghcr.io
       registry_username: ${{ github.repository_owner }}
       image_owner: ${{ github.repository_owner }}
       image_name: os
-      image_tag: ${{ github.ref_name }}
     secrets:
       registry_password: ${{ secrets.GITHUB_TOKEN }}
 

@@ -10,30 +10,25 @@ on:
       - main
 
 jobs:
-  extract-branch-name:
-    name: 🌳 Extract
-    uses: anthonypillot/actions/.github/workflows/extract-branch-name.yaml@v1
-
   build:
     name: 🏗️ Build
     uses: anthonypillot/actions/.github/workflows/node-build-and-test.yaml@v1
 
   push:
     name: 🐳 Push
-    needs: [extract-branch-name, build]
-    uses: anthonypillot/actions/.github/workflows/node-build-image-and-push.yaml@v1
+    needs: [build]
+    uses: anthonypillot/actions/.github/workflows/node-build-image-and-push.yaml@main
     with:
       registry_url: ghcr.io
       registry_username: ${{ github.repository_owner }}
       image_owner: ${{ github.repository_owner }}
       image_name: os
-      image_tag: ${{ needs.extract-branch-name.outputs.result }}
     secrets:
       registry_password: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     name: 🚀 Deploy
-    needs: [extract-branch-name, push]
+    needs: [push]
     uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
     with:
       registry_url: ghcr.io
