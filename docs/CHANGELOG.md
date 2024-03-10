@@ -1,3 +1,11 @@
+## [1.1.4](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.3...v1.1.4) (2024-03-10)
+
+
+### Performance Improvements
+
+* switch from Vercel to Docker image ([d97fd12](https://github.com/anthonypillot/anthonypillotOS/commit/d97fd1255da772f645d42fdb38d32d773d329958))
+* update dependencies and refactor logger ([e933bc9](https://github.com/anthonypillot/anthonypillotOS/commit/e933bc99cd855735d31fc11dbe1a9a775080acdc))
+
 ## [1.1.3](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.2...v1.1.3) (2024-03-07)
 
 
