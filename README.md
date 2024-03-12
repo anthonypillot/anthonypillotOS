@@ -22,7 +22,6 @@ Build with ❤️ and [Nuxt](https://nuxt.com).
     - [Local preview](#local-preview)
     - [Docker image](#docker-image)
 - [🚀 Deployment](#-deployment)
-- [📈 Performance](#-performance)
 - [🌳 Git conventions](#-git-conventions)
 - [📜 License](#-license)
 
@@ -86,10 +85,6 @@ docker build --no-cache -t os:latest . \
 # 🚀 Deployment
 
 This application is deployed on [anthonypillot.com](https://anthonypillot.com) Kubernetes cluster.
-
-# 📈 Performance
-
-This application uses **Elastic APM** to collect performance metrics.
 
 # 🌳 Git conventions
 
