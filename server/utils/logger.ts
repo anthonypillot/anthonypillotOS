@@ -1,4 +1,4 @@
-import type { ConsolaInstance } from "consola";
+import type { ConsolaInstance, LogLevel } from "consola";
 import { createConsola } from "consola";
 
 import { version } from "@/package.json";
@@ -27,6 +27,7 @@ function getLogger(): ConsolaInstance {
       {
         log: (logObj) => {
           logObj.message = logObj.args[0];
+          logObj.level = mapLevel(logObj.level) as unknown as LogLevel;
 
           logObj.version = version;
           logObj.env = process.env.ENV || "local";
@@ -45,6 +46,25 @@ function getLogger(): ConsolaInstance {
   }
 
   return logger;
+}
+
+function mapLevel(level: number): string {
+  switch (level) {
+    case 0:
+      return "error";
+    case 1:
+      return "warn";
+    case 2:
+      return "info";
+    case 3:
+      return "info";
+    case 4:
+      return "debug";
+    case 5:
+      return "trace";
+    default:
+      return "info";
+  }
 }
 
 export const logger: ConsolaInstance = getLogger();
