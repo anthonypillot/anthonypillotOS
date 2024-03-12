@@ -1,3 +1,12 @@
+## [1.1.5](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.4...v1.1.5) (2024-03-12)
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([402789d](https://github.com/anthonypillot/anthonypillotOS/commit/402789d736396786ee2ef2be694b43e3af9d1996))
+* map log level ([2e35f58](https://github.com/anthonypillot/anthonypillotOS/commit/2e35f5874920f3572c75bf4c136ca40b747864f4))
+* update bootstrap ([cf9be21](https://github.com/anthonypillot/anthonypillotOS/commit/cf9be217b2d1b27475592a3f34061f7710a03550))
+
 ## [1.1.4](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.3...v1.1.4) (2024-03-10)
 
 
