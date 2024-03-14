@@ -67,4 +67,18 @@ function mapLevel(level: number): string {
   }
 }
 
+/**
+ * Converts console log methods to custom logger methods.
+ */
+export function convertConsoleLogToCustomLogger() {
+  const consoleMethods = ["error", "warn", "info", "debug", "trace"];
+  consoleMethods.forEach((method) => {
+    // @ts-ignore
+    console[method] = function () {
+      // @ts-ignore
+      if (arguments[0]) logger[method](arguments[0]);
+    };
+  });
+}
+
 export const logger: ConsolaInstance = getLogger();
