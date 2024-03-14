@@ -1,12 +1,17 @@
 import { version } from "@/package.json";
-import { logger } from "@/server/utils/logger";
+import { convertConsoleLogToCustomLogger, logger } from "@/server/utils/logger";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/**
+ * Initializes all the necessary configurations and checks before starting the server.
+ * @param nitro - The Nitro instance.
+ */
 export default defineNitroPlugin(async (nitro) => {
+  convertConsoleLogToCustomLogger();
   logger.start(`Starting [${useRuntimeConfig().app.website.title}] with version [${version}] and env. [${process.env.ENV || "local"}]`);
-  if (process.env.LOG_LEVEL === "debug") logger.debug("Debug mode is enabled");
+  if (process.env.LOG_LEVEL === "debug") logger.debug("Debug logging is enabled");
   await checkDatabaseConnection();
 });
 
