@@ -1,4 +1,4 @@
-name: 🔖 Build, push and deploy release
+name: 📦 Build, push and deploy release
 
 permissions:
   contents: read
