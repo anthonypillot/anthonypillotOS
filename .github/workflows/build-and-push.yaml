@@ -31,39 +31,19 @@ jobs:
     secrets:
       registry_password: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy:
-    name: 🚀 Deploy
-    needs: [extract, push]
-    uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
-    with:
-      registry_url: ghcr.io
-      registry_username: ${{ github.repository_owner }}
-      environment: pre-production
-      namespace_name: os
-      deployment_name: os-prep
-      image_name: os
-      image_tag: ${{ needs.extract.outputs.result }}
-    secrets:
-      kubeconfig: ${{ secrets.KUBECONFIG }}
-
-  test-e2e:
+  e2e:
     name: 🎭 End-to-end tests
     runs-on: ubuntu-latest
     needs: [build]
     timeout-minutes: 10
-
-    strategy:
-      matrix:
-        node-version: [20.x, current]
-
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🌐 Setup Node.js [${{ matrix.node-version }}]
+      - name: 🌐 Setup Node.js [20.x]
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
           cache: npm
 
       - name: 📦 Install dependencies
@@ -79,6 +59,21 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report-${{ matrix.node-version }}
+          name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  deploy:
+    name: 🚀 Deploy
+    needs: [extract, push]
+    uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
+    with:
+      registry_url: ghcr.io
+      registry_username: ${{ github.repository_owner }}
+      environment: pre-production
+      namespace_name: os
+      deployment_name: os-prep
+      image_name: os
+      image_tag: ${{ needs.extract.outputs.result }}
+    secrets:
+      kubeconfig: ${{ secrets.KUBECONFIG }}

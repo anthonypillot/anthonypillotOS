@@ -33,13 +33,22 @@ jobs:
   deploy:
     name: 🚀 Deploy
     needs: [extract, push]
+    strategy:
+      matrix:
+        environment: [production, pre-production]
+        shortcut: [prod, prep]
+        include:
+          - environment: production
+            shortcut: prod
+          - environment: pre-production
+            shortcut: prep
     uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
     with:
       registry_url: ghcr.io
       registry_username: ${{ github.repository_owner }}
-      environment: production
+      environment: ${{ matrix.environment }}
       namespace_name: os
-      deployment_name: os-prod
+      deployment_name: os-${{ matrix.shortcut }}
       image_name: os
       image_tag: ${{ needs.extract.outputs.result }}
     secrets:
