@@ -1,3 +1,10 @@
+## [1.1.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.7...v1.1.8) (2024-03-15)
+
+
+### Performance Improvements
+
+* add ready endpoint ([a749550](https://github.com/anthonypillot/anthonypillotOS/commit/a7495501eca463e428191ea052da9e416babe6cf))
+
 ## [1.1.7](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.6...v1.1.7) (2024-03-15)
 
 
