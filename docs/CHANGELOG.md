@@ -1,3 +1,13 @@
+## [1.1.6](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.5...v1.1.6) (2024-03-15)
+
+
+### Performance Improvements
+
+* add error page and test ([f5fe239](https://github.com/anthonypillot/anthonypillotOS/commit/f5fe239635fc526baac724798526cf57991f183e))
+* convert console logging to custom logger ([3472013](https://github.com/anthonypillot/anthonypillotOS/commit/3472013bf2bf05e72fff789704519ecff06393fd))
+* **style:** replace Java logo to Kubernetes ([edac04b](https://github.com/anthonypillot/anthonypillotOS/commit/edac04b5b1748adbfda7916ca432e145fcc5d7a1))
+* use alpine image ([764bf9b](https://github.com/anthonypillot/anthonypillotOS/commit/764bf9bbc03e0d88c44265b177113fec2f926e42))
+
 ## [1.1.5](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.4...v1.1.5) (2024-03-12)
 
 
