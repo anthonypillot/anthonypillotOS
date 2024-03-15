@@ -124,11 +124,11 @@
           format="webp"
           quality="80"
           class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1"
-          src="https://www.vectorlogo.zone/logos/java/java-icon.svg"
-          alt="Java"
+          src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg"
+          alt="Kubernetes"
           width="158"
           height="48"
-          style="filter: hue-rotate(220deg)"
+          style="filter: hue-rotate(20deg)"
         />
       </div>
     </div>
