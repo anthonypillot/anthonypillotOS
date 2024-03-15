@@ -37,11 +37,11 @@ jobs:
       matrix:
         environment: [production, pre-production]
         shortcut: [prod, prep]
-        include:
+        exclude:
           - environment: production
-            shortcut: prod
-          - environment: pre-production
             shortcut: prep
+          - environment: pre-production
+            shortcut: prod
     uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
     with:
       registry_url: ghcr.io
