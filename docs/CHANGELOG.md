@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.6...v1.1.7) (2024-03-15)
+
+
+### Bug Fixes
+
+* environment exlusion in deploy workflow ([e7140d6](https://github.com/anthonypillot/anthonypillotOS/commit/e7140d654712746b179cc8131c40f9e109fa7f57))
+
 ## [1.1.6](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.5...v1.1.6) (2024-03-15)
 
 
