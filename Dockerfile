@@ -14,7 +14,7 @@ RUN npm ci
 RUN npm run build
 
 # Second stage is to run the application
-FROM node:20-alpine AS application
+FROM gcr.io/distroless/nodejs20-debian12 AS application
 
 WORKDIR /app
 
