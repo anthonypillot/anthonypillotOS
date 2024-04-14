@@ -1,3 +1,16 @@
+## [1.1.9](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.8...v1.1.9) (2024-04-14)
+
+
+### Bug Fixes
+
+* vue-writer on client side only to avoid memory issue ([2233a35](https://github.com/anthonypillot/anthonypillotOS/commit/2233a35477c8734b67f12dacffde8eb8e11874dd))
+
+
+### Performance Improvements
+
+* add live endpoint and remove ready endpoint ([ebee566](https://github.com/anthonypillot/anthonypillotOS/commit/ebee566210f9b451d73dcf97b0919f0de21119c3))
+* **deps:** update dependencies ([8bddcae](https://github.com/anthonypillot/anthonypillotOS/commit/8bddcaee14940b07c2ef0f9280e4c1f73013e8cb))
+
 ## [1.1.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.7...v1.1.8) (2024-03-15)
 
 
