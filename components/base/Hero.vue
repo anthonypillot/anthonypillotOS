@@ -51,7 +51,11 @@
               <span class="text-white text-4xl mr-2">OS</span>
               <span class="text-indigo-400 text-4xl mr-2">stands for</span>
               <span class="text-white text-4xl mr-2">:</span>
-              <VueWriter class="text-white text-4xl" :array="writers" :typeSpeed="80" :eraseSpeed="40" :start="1000" />
+              <div class="h-8">
+                <ClientOnly>
+                  <VueWriter class="text-white text-4xl" :array="writers" :typeSpeed="80" :eraseSpeed="40" :start="1000" />
+                </ClientOnly>
+              </div>
             </div>
           </div>
           <h1 class="hidden text-4xl font-bold tracking-tight text-white sm:text-6xl">
