@@ -4,4 +4,7 @@
 
   <!-- Presentation section -->
   <BasePresentation />
+
+  <!-- Professional experience section -->
+  <BaseProfessionalExperience />
 </template>
