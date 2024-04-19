@@ -36,10 +36,10 @@
       <div class="mx-auto max-w-2xl py-24 sm:py-48 lg:py-20">
         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
           <div class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
-            Discover our <span class="font-semibold text-white">Size Up</span> org.
-            <span class="font-semibold text-white">documentation</span> website.
-            <NuxtLink :href="config.app.website.link.sizeUpDocumentation" target="_blank" class="font-semibold text-white"
-              ><span class="absolute inset-0" aria-hidden="true" />Get me in <span aria-hidden="true">&rarr;</span></NuxtLink
+            Discover our <span class="font-semibold text-white">new tool</span>: the
+            <span class="font-semibold text-white">GitHub History Cleaner</span> !
+            <NuxtLink to="/tools/github/history-cleaner" class="font-semibold text-white"
+              ><span class="absolute inset-0" aria-hidden="true" />This is here <span aria-hidden="true">&rarr;</span></NuxtLink
             >
           </div>
         </div>
