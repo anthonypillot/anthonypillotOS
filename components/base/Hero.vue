@@ -1,5 +1,5 @@
 <template>
-  <div class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
+  <section class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
     <NuxtImg
       quality="80"
       :src="getHeroImageUrlOfTheDay()"
@@ -158,7 +158,7 @@
         "
       />
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
