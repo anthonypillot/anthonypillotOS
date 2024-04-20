@@ -10,10 +10,10 @@ export interface GitHubWorkflowRunDeletionResult {
 }
 
 export enum GitHubDeletionStatusType {
-  SUCCESS = "success",
-  NOT_FOUND = "notFound",
-  UNAUTHORIZED = "unauthorized",
-  UNKNOWN = "unknown",
+  SUCCESS = "SUCCESS",
+  NOT_FOUND = "NOT_FOUND",
+  UNAUTHORIZED = "UNAUTHORIZED",
+  UNKNOWN = "UNKNOWN",
 }
 
 /*

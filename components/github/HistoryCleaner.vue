@@ -260,6 +260,8 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/vue/24/outline";
 
+import { HistoryCleanerOptions } from "@/server/types/historyCleaner.type";
+
 const config = useRuntimeConfig();
 
 const disabled = ref({
@@ -267,21 +269,14 @@ const disabled = ref({
 });
 const options = ref([
   {
-    name: "all-workflow-runs",
+    name: HistoryCleanerOptions.WORKFLOW_RUNS,
     label: "All workflow runs history",
     description: "Delete all workflow runs history.",
     disabled: false,
     checked: true,
   },
   {
-    name: "only-workflow-runs-in-error",
-    label: "Only workflow runs history in error <span class='font-bold'>(available soon)</span>",
-    description: "Delete all workflow runs history in error.",
-    disabled: true,
-    checked: false,
-  },
-  {
-    name: "all-deployments",
+    name: HistoryCleanerOptions.DEPLOYMENTS,
     label: "All deployment history <span class='font-bold'>(available soon)</span>",
     description: "Delete all deployment history.",
     disabled: true,

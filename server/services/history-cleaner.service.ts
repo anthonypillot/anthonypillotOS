@@ -1,90 +1,120 @@
-import { getAllWorkflowRuns, deleteWorkflowRun } from "@/server/dao/github.dao";
-import { GitHubDeletionStatusType, GitHubWorkflowRun, GitHubWorkflowRunDeletionResult } from "@/server/types/github.d";
-import { HistoryCleanerOptions, HistoryCleanerResult } from "@/server/types/historyCleaner.d";
-import { create as createHistoryCleanerRequest, update as updateHistoryCleanerRequest } from "~/server/dao/repository.dao";
+import { deleteWorkflowRun, getAllWorkflowRuns } from "@/server/dao/github.dao";
+import { create as createHistoryCleanerJob, update as updateHistoryCleanerJob } from "@/server/dao/history-cleaner.dao";
+import { GitHubDeletionStatusType, GitHubWorkflowRun, GitHubWorkflowRunDeletionResult } from "@/server/types/github.type";
+import { HistoryCleanerJob, HistoryCleanerJobStatus, HistoryCleanerOptions } from "@/server/types/historyCleaner.type";
 
 import { logger } from "@/server/utils/logger";
 
-export async function clean(account: string, repository: string, token: string, options: string[]): Promise<HistoryCleanerResult> {
+/**
+ * Starts the history cleaner for the specified repository.
+ * @param account - The account name.
+ * @param repository - The repository name.
+ * @param token - The authentication token.
+ * @param options - The array of options for the history cleaner.
+ * @returns A Promise that resolves to a HistoryCleanerJob object.
+ */
+export async function proceed(account: string, repository: string, token: string, options: string[]): Promise<HistoryCleanerJob> {
   logger.start(`Starting history cleaner for [${account}/${repository}] repository`);
 
-  const requestId = await createHistoryCleanerRequest(account, repository);
+  let status = HistoryCleanerJobStatus.PENDING;
 
-  const runs = await getAllWorkflowRuns(account, repository, token);
-  logger.info(`Retrieved [${runs.length}] workflow runs`);
-
-  const result: HistoryCleanerResult = {
+  const jobId = await createHistoryCleanerJob(account, repository, status);
+  const job: HistoryCleanerJob = {
     workflow: null,
     deployment: null,
   };
 
-  if (options.includes(HistoryCleanerOptions.ALL_WORKFLOW_RUNS)) {
-    logger.debug(`Option [${HistoryCleanerOptions.ALL_WORKFLOW_RUNS}] is enabled, retrieving all workflow runs`);
-    logger.info(`Deleting [${runs.length}] workflow runs for [${account}/${repository}] repository ...`);
-
-    const deletionResult: GitHubWorkflowRunDeletionResult | null = await deleteWorkflowRuns(account, repository, token, runs);
-
-    let status = "No workflow runs to delete";
-
-    if (deletionResult) {
-      result.workflow = {
-        success: deletionResult.success,
-        notFound: deletionResult.notFound,
-        unauthorized: deletionResult.unauthorized,
-        unknown: deletionResult.unknown,
-      };
-
-      status = "Completed";
-
-      logger.success(
-        `Deletion report for [${account}/${repository}] repository: [success: ${deletionResult.success.length}, not found: ${deletionResult.notFound.length}, unauthorized: ${deletionResult.unauthorized.length}, unknown: ${deletionResult.unknown.length}]`
-      );
-    }
-
-    await updateHistoryCleanerRequest(requestId, status, deletionResult ? formatGitHubWorkflowRunDeletionResult(deletionResult) : null);
+  if (options.includes(HistoryCleanerOptions.WORKFLOW_RUNS)) {
+    status = await findAndDeleteWorkflowRuns(account, repository, token, status, job);
   }
 
-  return result;
+  updateHistoryCleanerJob(jobId, status, job);
+
+  return job;
 }
 
 /**
- * Deletes multiple workflow runs for a given account and repository.
+ * Finds and deletes workflow runs for a given account and repository.
+ *
  * @param account - The account name.
  * @param repository - The repository name.
  * @param token - The authentication token.
- * @param ids - An array of workflow run IDs to delete.
- * @returns A promise that resolves to a DeletionStatus object containing the status of the deletions.
+ * @param status - The current status of the history cleaner job.
+ * @param job - The history cleaner job object.
+ * @returns The updated status of the history cleaner job.
+ */
+async function findAndDeleteWorkflowRuns(
+  account: string,
+  repository: string,
+  token: string,
+  status: HistoryCleanerJobStatus,
+  job: HistoryCleanerJob
+): Promise<HistoryCleanerJobStatus> {
+  try {
+    const workflowRuns = await getAllWorkflowRuns(account, repository, token);
+    logger.info(`Retrieved [${workflowRuns.length}] workflow runs`);
+
+    const workflowRunDeletionResult: GitHubWorkflowRunDeletionResult = await deleteWorkflowRuns(account, repository, token, workflowRuns);
+
+    job.workflow = {
+      success: workflowRunDeletionResult.success,
+      notFound: workflowRunDeletionResult.notFound,
+      unauthorized: workflowRunDeletionResult.unauthorized,
+      unknown: workflowRunDeletionResult.unknown,
+    };
+
+    logger.success(
+      `Deletion report for [${account}/${repository}] repository: [success: ${workflowRunDeletionResult.success.length}, not found: ${workflowRunDeletionResult.notFound.length}, unauthorized: ${workflowRunDeletionResult.unauthorized.length}, unknown: ${workflowRunDeletionResult.unknown.length}]`
+    );
+    status = HistoryCleanerJobStatus.COMPLETED;
+  } catch (error: any) {
+    logger.error(`Failed to delete workflow runs for [${account}/${repository}] repository: ${error.message}`);
+    status = HistoryCleanerJobStatus.FAILED;
+    throw error;
+  }
+
+  return status;
+}
+
+/**
+ * Deletes workflow runs for a specific repository.
  *
- * @see https://docs.github.com/rest/actions/workflow-runs#delete-a-workflow-run
+ * @param account - The GitHub account name.
+ * @param repository - The GitHub repository name.
+ * @param token - The GitHub personal access token.
+ * @param workflowRuns - An array of GitHubWorkflowRun objects representing the workflow runs to be deleted.
+ * @returns A Promise that resolves to a GitHubWorkflowRunDeletionResult object or null.
  */
 async function deleteWorkflowRuns(
   account: string,
   repository: string,
   token: string,
-  runs: GitHubWorkflowRun[]
-): Promise<GitHubWorkflowRunDeletionResult | null> {
-  const status: GitHubWorkflowRunDeletionResult = {
+  workflowRuns: GitHubWorkflowRun[]
+): Promise<GitHubWorkflowRunDeletionResult> {
+  logger.info(`Proceeding to delete workflow runs for [${account}/${repository}] repository`);
+
+  const deletionStatus: GitHubWorkflowRunDeletionResult = {
     success: [],
     notFound: [],
     unauthorized: [],
     unknown: [],
   };
 
-  const deletions = runs.map(async (run) => {
-    const result = await deleteWorkflowRun(account, repository, token, run.id);
+  const deletions = workflowRuns.map(async (run) => {
+    const result: GitHubDeletionStatusType = await deleteWorkflowRun(account, repository, token, run.id);
 
     switch (result) {
       case GitHubDeletionStatusType.SUCCESS:
-        status.success.push(run);
+        deletionStatus.success.push(run);
         break;
       case GitHubDeletionStatusType.NOT_FOUND:
-        status.notFound.push(run);
+        deletionStatus.notFound.push(run);
         break;
       case GitHubDeletionStatusType.UNAUTHORIZED:
-        status.unauthorized.push(run);
+        deletionStatus.unauthorized.push(run);
         break;
       case GitHubDeletionStatusType.UNKNOWN:
-        status.unknown.push(run);
+        deletionStatus.unknown.push(run);
         break;
       default:
         logger.error(`Unknown deletion status: ${result}`);
@@ -93,33 +123,5 @@ async function deleteWorkflowRuns(
 
   await Promise.all(deletions);
 
-  if (status.success.length === 0 && status.notFound.length === 0 && status.unauthorized.length === 0 && status.unknown.length === 0) {
-    return null;
-  } else {
-    return status;
-  }
-}
-
-function formatGitHubWorkflowRunDeletionResult(result: GitHubWorkflowRunDeletionResult): string {
-  const { success, notFound, unauthorized, unknown } = result;
-
-  const formatRun = (run: GitHubWorkflowRun) => ({
-    id: run.id,
-    display_title: run.display_title,
-    head_branch: run.head_branch,
-    event: run.event,
-    created_at: run.created_at,
-    updated_at: run.updated_at,
-    actor: run.actor.login,
-    triggering_actor: run.triggering_actor.login,
-  });
-
-  const formattedResult = {
-    success: success.map(formatRun),
-    notFound: notFound.map(formatRun),
-    unauthorized: unauthorized.map(formatRun),
-    unknown: unknown.map(formatRun),
-  };
-
-  return JSON.stringify(formattedResult);
+  return deletionStatus;
 }

@@ -10,13 +10,48 @@ datasource db {
   url      = env("POSTGRES_PRISMA_URL")
 }
 
-model HistoryCleanerRequest {
-  id                        Int      @id @default(autoincrement())
-  account                   String
-  repository                String
-  status                    String
-  workflowRunDeletionResult String?
-  deploymentDeletionResult  String?
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @default(now()) @updatedAt
+model HistoryCleanerJobResult {
+  id String @id @default(uuid())
+
+  account    String
+  repository String
+  status     String
+
+  workflowRunDeletionResult WorkflowRunDeletionResult?
+  deploymentDeletionResult  DeploymentDeletionResult?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("history_cleaner_job_result")
+}
+
+model WorkflowRunDeletionResult {
+  id String @id @default(uuid())
+
+  historyCleanerJobResultId String                  @unique @map("history_cleaner_job_result_id")
+  historyCleanerJobResult   HistoryCleanerJobResult @relation(fields: [historyCleanerJobResultId], references: [id], onDelete: Cascade)
+
+  countTotal        Int? @map("count_total")
+  countSuccess      Int? @map("count_success")
+  countNotFound     Int? @map("count_not_found")
+  countUnauthorized Int? @map("count_unauthorized")
+  countUnknown      Int? @map("count_unknown")
+
+  @@map("workflow_run_deletion_result")
+}
+
+model DeploymentDeletionResult {
+  id String @id @default(uuid())
+
+  historyCleanerJobResultId String                  @unique @map("history_cleaner_job_result_id")
+  historyCleanerJobResult   HistoryCleanerJobResult @relation(fields: [historyCleanerJobResultId], references: [id], onDelete: Cascade)
+
+  countTotal        Int? @map("count_total")
+  countSuccess      Int? @map("count_success")
+  countNotFound     Int? @map("count_not_found")
+  countUnauthorized Int? @map("count_unauthorized")
+  countUnknown      Int? @map("count_unknown")
+
+  @@map("deployment_deletion_result")
 }

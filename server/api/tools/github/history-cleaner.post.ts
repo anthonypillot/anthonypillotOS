@@ -1,16 +1,12 @@
 import { z } from "zod";
 
-import { clean } from "@/server/services/history-cleaner.service";
-import { HistoryCleanerResult } from "@/server/types/historyCleaner";
+import { proceed } from "@/server/services/history-cleaner.service";
+import { HistoryCleanerJob, HistoryCleanerOptions } from "~/server/types/historyCleaner.type";
 
 export default defineEventHandler(async (event): Promise<HistoryCleanerResultFiltered> => {
   const body: Readonly<HistoryCleanerForm> = await Object.freeze(readBody(event));
 
-  const validOptions = [
-    "all-workflow-runs",
-    // "only-workflow-runs-in-error",
-    // "all-deployments",
-  ];
+  const validOptions: string[] = [HistoryCleanerOptions.WORKFLOW_RUNS, HistoryCleanerOptions.DEPLOYMENTS];
 
   const schema = z.object({
     account: z.string().min(1),
@@ -42,8 +38,8 @@ export default defineEventHandler(async (event): Promise<HistoryCleanerResultFil
   logger.info(`Received history cleaner request for [${body.account}/${body.repository}]`);
 
   try {
-    const data: HistoryCleanerResult = await clean(body.account, body.repository, body.token, body.options);
-    return extract(data);
+    const job: HistoryCleanerJob = await proceed(body.account, body.repository, body.token, body.options);
+    return extractAndFilterHistoryCleanerJob(job);
   } catch (error: any) {
     logger.error(`History cleaner request failed, error: ${JSON.stringify(error.message)}`);
     throw createError({
@@ -54,7 +50,7 @@ export default defineEventHandler(async (event): Promise<HistoryCleanerResultFil
   }
 });
 
-function extract(data: HistoryCleanerResult): HistoryCleanerResultFiltered {
+function extractAndFilterHistoryCleanerJob(data: HistoryCleanerJob): HistoryCleanerResultFiltered {
   const result: HistoryCleanerResultFiltered = {
     workflow: null,
     deployment: null,

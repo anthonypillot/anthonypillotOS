@@ -1,5 +1,5 @@
 import { getApiConfiguration } from "@/server/config/api/github.config";
-import { GitHubDeletionStatusType, GitHubDeployments, GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.d";
+import { GitHubDeletionStatusType, GitHubDeployments, GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
 
 import { logger } from "@/server/utils/logger";
 
@@ -21,9 +21,7 @@ export async function getAllWorkflowRuns(account: string, repository: string, to
   let total = response.total_count - response.workflow_runs.length;
   let page = 2;
 
-  let continueExecution = true;
-
-  while (total > 0 && continueExecution) {
+  while (total > 0) {
     logger.debug(`Retrieving page [${page}] of workflow runs for [${account}/${repository}] repository`);
 
     const newResponse: GitHubWorkflowRunApiResponse = await getWorkflowRuns(account, repository, token, page);
@@ -57,7 +55,8 @@ export async function getWorkflowRuns(
   token: string,
   page: number = 1
 ): Promise<GitHubWorkflowRunApiResponse> {
-  return (await api(`/repos/${account}/${repository}/actions/runs`, {
+  // @ts-ignore
+  return await api(`/repos/${account}/${repository}/actions/runs`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -67,7 +66,7 @@ export async function getWorkflowRuns(
       page: page,
     },
 
-    async onResponseError({ request, response, options }) {
+    async onResponseError({ response }) {
       if (response.status === 404) {
         throw createError({
           statusCode: response.status,
@@ -82,7 +81,7 @@ export async function getWorkflowRuns(
         });
       }
     },
-  })) as GitHubWorkflowRunApiResponse;
+  });
 }
 
 /**
@@ -122,8 +121,8 @@ export async function getDeployments(account: string, repository: string, token:
  *
  * @see https://docs.github.com/rest/actions/workflow-runs#delete-a-workflow-run
  */
-export async function deleteWorkflowRun(account: string, repository: string, token: string, id: number): Promise<string> {
-  let status: string = GitHubDeletionStatusType.UNKNOWN;
+export async function deleteWorkflowRun(account: string, repository: string, token: string, id: number): Promise<GitHubDeletionStatusType> {
+  let deletionStatus: GitHubDeletionStatusType = GitHubDeletionStatusType.UNKNOWN;
 
   try {
     await api(`/repos/${account}/${repository}/actions/runs/${id}`, {
@@ -134,27 +133,27 @@ export async function deleteWorkflowRun(account: string, repository: string, tok
       async onResponse({ request, response, options }) {
         if (response.status === 204) {
           logger.debug(`Workflow run [${id}] from [${account}/${repository}] repository deleted successfully`);
-          status = GitHubDeletionStatusType.SUCCESS;
+          deletionStatus = GitHubDeletionStatusType.SUCCESS;
         }
       },
       async onResponseError({ request, response, options }) {
         switch (response.status) {
           case 404:
             logger.debug(`Workflow run [${id}] from [${account}/${repository}] repository not found`);
-            status = GitHubDeletionStatusType.NOT_FOUND;
+            deletionStatus = GitHubDeletionStatusType.NOT_FOUND;
             break;
           case 401:
           case 403:
             logger.debug(`Unauthorized to delete workflow run [${id}] from [${account}/${repository}] repository`);
-            status = GitHubDeletionStatusType.UNAUTHORIZED;
+            deletionStatus = GitHubDeletionStatusType.UNAUTHORIZED;
             break;
           default:
             logger.debug(`Unknown error while deleting workflow run [${id}] from [${account}/${repository}] repository`);
-            status = GitHubDeletionStatusType.UNKNOWN;
+            deletionStatus = GitHubDeletionStatusType.UNKNOWN;
         }
       },
     });
   } catch (error: any) {}
 
-  return status;
+  return deletionStatus;
 }

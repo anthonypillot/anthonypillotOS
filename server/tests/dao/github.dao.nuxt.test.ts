@@ -6,7 +6,7 @@ import { logger } from "@/server/utils/logger";
 
 import * as dao from "@/server/dao/github.dao";
 
-import { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github";
+import { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
 
 import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
 
@@ -120,7 +120,7 @@ describe("GitHub DAO", async () => {
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledOnce();
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, 1);
 
-    expect(result).toStrictEqual("success");
+    expect(result).toStrictEqual("SUCCESS");
   });
 
   test("should not delete an array of not found workflow runs", async () => {
@@ -137,7 +137,7 @@ describe("GitHub DAO", async () => {
 
     const result = await dao.deleteWorkflowRun(information.account, information.repository, information.token, 1);
 
-    expect(result).toStrictEqual("notFound");
+    expect(result).toStrictEqual("NOT_FOUND");
   });
 
   test("should not delete an array of unauthorized workflow runs", async () => {
@@ -154,7 +154,7 @@ describe("GitHub DAO", async () => {
 
     const result = await dao.deleteWorkflowRun(information.account, information.repository, information.token, 1);
 
-    expect(result).toStrictEqual("unauthorized");
+    expect(result).toStrictEqual("UNAUTHORIZED");
   });
 
   test("should not delete an array of unknown workflow runs", async () => {
@@ -176,6 +176,6 @@ describe("GitHub DAO", async () => {
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledOnce();
     expect(spyDeleteWorkflowRuns).toHaveBeenCalledWith(information.account, information.repository, information.token, 1);
 
-    expect(result).toStrictEqual("unknown");
+    expect(result).toStrictEqual("UNKNOWN");
   });
 });
