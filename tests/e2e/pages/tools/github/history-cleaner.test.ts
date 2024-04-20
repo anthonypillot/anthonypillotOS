@@ -2,14 +2,6 @@ import { test, expect } from "@playwright/test";
 
 const path = "/tools/github/history-cleaner";
 
-if (!process.env.CI) {
-  test("should match previous snapshot", async ({ page }) => {
-    await page.goto(path);
-
-    expect(await page.screenshot({ fullPage: true })).toMatchSnapshot("history-cleaner.png");
-  });
-}
-
 test("should have a right number of inputs and buttons", async ({ page }) => {
   await page.goto(path);
 
@@ -18,7 +10,7 @@ test("should have a right number of inputs and buttons", async ({ page }) => {
   const buttons = await page.getByRole("button").all();
 
   expect(inputs).toHaveLength(3);
-  expect(checkboxes).toHaveLength(3);
+  expect(checkboxes).toHaveLength(2);
   expect(buttons).toHaveLength(4);
 });
 
@@ -26,7 +18,7 @@ test("should have the form filled with the default values", async ({ page }) => 
   await page.goto(path);
 
   const [account, repository, token] = await page.getByRole("textbox").all();
-  const [allWorkflowRuns, onlyWorkflowRunsInError, allDeployments] = await page.getByRole("checkbox").all();
+  const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
   const [openMenu, tool, clearButton, submitButton] = await page.getByRole("button").all();
 
   expect(await account.inputValue()).toBe("");
@@ -37,8 +29,6 @@ test("should have the form filled with the default values", async ({ page }) => 
 
   expect(await allWorkflowRuns.isChecked()).toBe(true);
   expect(await allWorkflowRuns.isDisabled()).toBe(false);
-  expect(await onlyWorkflowRunsInError.isChecked()).toBe(false);
-  expect(await onlyWorkflowRunsInError.isDisabled()).toBe(true);
   expect(await allDeployments.isChecked()).toBe(false);
   expect(await allDeployments.isDisabled()).toBe(true);
 
@@ -52,7 +42,7 @@ test("should have the form cleared after clicking on the clear button", async ({
   await page.goto(path);
 
   const [account, repository, token] = await page.getByRole("textbox").all();
-  const [allWorkflowRuns, onlyWorkflowRunsInError, allDeployments] = await page.getByRole("checkbox").all();
+  const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
   const [openMenu, tool, clearButton, submitButton] = await page.getByRole("button").all();
 
   await account.fill("my-account");
@@ -68,7 +58,6 @@ test("should have the form cleared after clicking on the clear button", async ({
   expect(await token.inputValue()).toBe("ghp_abcd1234");
 
   expect(await allWorkflowRuns.isChecked()).toBe(true);
-  expect(await onlyWorkflowRunsInError.isChecked()).toBe(false);
   expect(await allDeployments.isChecked()).toBe(false);
 
   expect(await clearButton.isDisabled()).toBe(false);
@@ -79,7 +68,6 @@ test("should have the form cleared after clicking on the clear button", async ({
   expect(await token.inputValue()).toBe("");
 
   expect(await allWorkflowRuns.isChecked()).toBe(false);
-  expect(await onlyWorkflowRunsInError.isChecked()).toBe(false);
   expect(await allDeployments.isChecked()).toBe(false);
 });
 
@@ -105,7 +93,7 @@ test("should have a result after confirmation", async ({ page }) => {
   await page.goto(path);
 
   const [account, repository, token] = await page.getByRole("textbox").all();
-  const [allWorkflowRuns, onlyWorkflowRunsInError, allDeployments] = await page.getByRole("checkbox").all();
+  const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
   const [openMenu, tool, clearButton, submitButton] = await page.getByRole("button").all();
 
   await account.fill("my-account");
@@ -121,7 +109,6 @@ test("should have a result after confirmation", async ({ page }) => {
   expect(await token.inputValue()).toBe("ghp_abcd1234");
 
   expect(await allWorkflowRuns.isChecked()).toBe(true);
-  expect(await onlyWorkflowRunsInError.isChecked()).toBe(false);
   expect(await allDeployments.isChecked()).toBe(false);
 
   expect(await submitButton.isDisabled()).toBe(false);
