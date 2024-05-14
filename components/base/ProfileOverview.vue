@@ -2,14 +2,14 @@
   <section class="bg-slate-800 pb-24 pt-24 sm:pb-24 sm:pt-32 xl:pb-32">
     <div class="bg-gray-900 pb-20 sm:pb-24 xl:pb-0">
       <div class="mx-auto flex max-w-7xl flex-col items-center gap-x-8 gap-y-10 px-6 sm:gap-y-8 lg:px-8 xl:flex-row xl:items-stretch">
-        <div class="mt-14 w-full max-w-2xl xl:-mb-8 xl:w-96 xl:flex-none">
+        <aside class="mt-14 w-full max-w-2xl xl:-mb-8 xl:w-96 xl:flex-none">
           <img
             class="rounded-xl lg:rounded-3xl"
             src="https://avatars.githubusercontent.com/u/51130139"
             :alt="config.app.website.author.name"
           />
-        </div>
-        <div class="w-full max-w-2xl xl:max-w-none xl:flex-auto xl:px-16 xl:py-24">
+        </aside>
+        <article class="w-full max-w-2xl xl:max-w-none xl:flex-auto xl:px-16 xl:py-24">
           <figure class="relative isolate pt-6 sm:pt-12">
             <svg viewBox="0 0 162 128" fill="none" aria-hidden="true" class="absolute left-0 top-0 -z-10 h-32 stroke-white/20">
               <path
@@ -31,7 +31,7 @@
               <div class="mt-1 text-gray-400">Software Engineer</div>
             </figcaption>
           </figure>
-        </div>
+        </article>
       </div>
     </div>
   </section>

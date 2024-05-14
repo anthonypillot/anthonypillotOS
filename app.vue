@@ -1,16 +1,14 @@
 <template>
-  <div>
-    <!-- Header -->
-    <BaseHeader />
+  <!-- Header -->
+  <BaseHeader />
 
-    <!-- Main content -->
-    <main>
-      <NuxtPage />
-    </main>
+  <!-- Main content -->
+  <main class="flex flex-col gap-y-16">
+    <NuxtPage />
+  </main>
 
-    <!-- Footer -->
-    <BaseFooter />
-  </div>
+  <!-- Footer -->
+  <BaseFooter />
 </template>
 
 <script setup lang="ts">

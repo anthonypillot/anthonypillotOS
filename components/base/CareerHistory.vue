@@ -1,6 +1,6 @@
 <template>
   <section class="mx-auto max-w-7xl px-6 lg:px-8 lg:max-w-4xl xl:max-w-7xl">
-    <h2 class="text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">Professional experience</h2>
+    <h2 class="text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">Career history</h2>
     <p class="mt-2 text-lg leading-8 text-gray-400">In the field of the IT world.</p>
     <div class="mt-8 flex flex-col gap-8">
       <article v-for="xp in experiences" :key="xp.title" class="flex flex-col gap-8 md:flex-row">
