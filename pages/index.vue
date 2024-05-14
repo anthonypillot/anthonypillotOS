@@ -2,9 +2,12 @@
   <!-- Hero section -->
   <BaseHero />
 
-  <!-- Presentation section -->
-  <BasePresentation />
+  <!-- Technology showcase section -->
+  <BaseTechnologyShowcase />
 
-  <!-- Professional experience section -->
-  <BaseProfessionalExperience />
+  <!-- Profile overview section -->
+  <BaseProfileOverview />
+
+  <!-- Career history section -->
+  <BaseCareerHistory />
 </template>
