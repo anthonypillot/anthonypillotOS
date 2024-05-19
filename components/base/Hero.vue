@@ -1,7 +1,6 @@
 <template>
   <div class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
     <NuxtImg
-      format="webp"
       quality="80"
       :src="getHeroImageUrlOfTheDay()"
       alt=""
@@ -45,7 +44,7 @@
           </div>
         </div>
         <div class="flex flex-col text-center">
-          <NuxtImg format="webp" quality="80" class="h-80" :src="logo" :alt="config.app.website.title" />
+          <NuxtImg quality="80" class="h-80" :src="logo" :alt="config.app.website.title" />
           <div class="hidden sm:flex sm:flex-col items-center my-8">
             <div>
               <span class="text-white text-4xl mr-2">OS</span>
@@ -85,7 +84,6 @@
         class="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5"
       >
         <NuxtImg
-          format="webp"
           quality="80"
           class="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1"
           src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg"
@@ -95,7 +93,6 @@
           style="filter: hue-rotate(30deg)"
         />
         <NuxtImg
-          format="webp"
           quality="80"
           class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
           src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
@@ -105,7 +102,6 @@
           style="filter: hue-rotate(110deg)"
         />
         <NuxtImg
-          format="webp"
           quality="80"
           class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
           src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Nuxt_logo.svg"
@@ -115,7 +111,6 @@
           style="filter: hue-rotate(110deg)"
         />
         <NuxtImg
-          format="webp"
           quality="80"
           class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
           src="https://static-00.iconduck.com/assets.00/node-js-icon-454x512-nztofx17.png"
@@ -125,7 +120,6 @@
           style="filter: hue-rotate(145deg)"
         />
         <NuxtImg
-          format="webp"
           quality="80"
           class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1"
           src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg"

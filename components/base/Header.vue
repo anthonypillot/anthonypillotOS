@@ -4,7 +4,7 @@
       <div class="flex lg:flex-1">
         <NuxtLink to="/" class="-m-1.5 p-1.5">
           <span class="sr-only">{{ config.app.website.title }}</span>
-          <NuxtImg format="webp" quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" style="filter: invert(1)" />
+          <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" style="filter: invert(1)" />
         </NuxtLink>
       </div>
       <div class="flex lg:hidden">
@@ -104,7 +104,7 @@
               "
             >
               <span class="sr-only">anthonypillotOS</span>
-              <NuxtImg format="webp" quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" />
+              <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" />
             </NuxtLink>
             <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = false">
               <span class="sr-only">Close menu</span>

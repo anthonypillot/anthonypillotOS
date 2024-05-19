@@ -3,7 +3,7 @@
     <h2 id="footer-heading" class="sr-only">Footer</h2>
     <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8 lg:py-32">
       <div class="xl:grid xl:grid-cols-3 xl:gap-8">
-        <NuxtImg format="webp" quality="80" class="h-7" :src="logo" :alt="config.app.website.title" style="filter: invert(1)" />
+        <NuxtImg quality="80" class="h-7" :src="logo" :alt="config.app.website.title" style="filter: invert(1)" />
         <div class="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
           <div class="md:grid md:grid-cols-2 md:gap-8">
             <div>
