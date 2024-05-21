@@ -84,7 +84,7 @@ const navigation = {
   ],
   application: [
     { name: "GitHub History Cleaner", href: "/tools/github/history-cleaner", rel: "", target: "", internal: true },
-    { name: "Status", href: config.app.website.link.monitoring, rel: "", target: "_blank" },
+    { name: "Status", href: config.app.website.link.status, rel: "", target: "_blank" },
   ],
 };
 </script>
