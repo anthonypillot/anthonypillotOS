@@ -1,3 +1,12 @@
+## [1.1.10](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.9...v1.1.10) (2024-05-21)
+
+
+### Performance Improvements
+
+* remove webp image format on <NuxtImg/> ([e56a3d6](https://github.com/anthonypillot/anthonypillotOS/commit/e56a3d647d9eb193b529f86d202a3e5b8056bc49))
+* update footer link to use new status page URL ([b6753c7](https://github.com/anthonypillot/anthonypillotOS/commit/b6753c741eae4eba5a0753ba73d33ea31c267b4d))
+* update hero to promote GitHub History Cleaner tool ([c4fcb3a](https://github.com/anthonypillot/anthonypillotOS/commit/c4fcb3ae41fed55191bef32021b3ecf8824b15c2))
+
 ## [1.1.9](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.8...v1.1.9) (2024-04-14)
 
 
