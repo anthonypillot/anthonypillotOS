@@ -1,5 +1,5 @@
 # First stage is to build the application
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 
 # Define working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN npm ci
 RUN npm run build
 
 # Second stage is to run the application
-FROM node:20-alpine AS application
+FROM node:22-alpine AS application
 
 WORKDIR /app
 
