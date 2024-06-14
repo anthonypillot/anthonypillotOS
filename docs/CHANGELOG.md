@@ -1,3 +1,19 @@
+# [1.2.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.10...v1.2.0) (2024-06-14)
+
+
+### Features
+
+* add professional experience ([e28cb3d](https://github.com/anthonypillot/anthonypillotOS/commit/e28cb3db7276301aaabfc05da679e4f980cecb62))
+* logos of the various technologies used, with Matter.js ([201bf8d](https://github.com/anthonypillot/anthonypillotOS/commit/201bf8d6ee42302d2dfbc5f111916bcc56bd2cd4))
+
+
+### Performance Improvements
+
+* add route rule for homepage with prerender and swr ([4f32328](https://github.com/anthonypillot/anthonypillotOS/commit/4f32328ae94d526b04c867e54bf79e0787eff735))
+* **asset:** update Nuxt logo in Hero component ([21e580f](https://github.com/anthonypillot/anthonypillotOS/commit/21e580f8dce2b1a6c93efc289fcbc75d08aeba0a))
+* **deps:** update dependencies ([88a8e48](https://github.com/anthonypillot/anthonypillotOS/commit/88a8e481934b4cb766a8cc6cb132a43f53b7183e))
+* update to Node 22 ([2b21719](https://github.com/anthonypillot/anthonypillotOS/commit/2b2171990eff2470be41b025f92839f29945e994))
+
 ## [1.1.10](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.9...v1.1.10) (2024-05-21)
 
 
