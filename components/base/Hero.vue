@@ -103,8 +103,8 @@
         />
         <NuxtImg
           quality="80"
-          class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-          src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Nuxt_logo.svg"
+          class="col-span-2 max-h-20 w-full object-contain lg:col-span-1"
+          src="svg/nuxt.svg"
           alt="Nuxt"
           width="158"
           height="48"
