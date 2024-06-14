@@ -48,6 +48,10 @@ export default defineNuxtConfig({
     },
   },
 
+  routeRules: {
+    "/": { prerender: true, swr: true },
+  },
+
   modules: ["@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/tailwindcss"],
 
   devtools: { enabled: true },
