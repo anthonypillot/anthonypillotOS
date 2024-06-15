@@ -411,7 +411,7 @@ watch(resultHtml, (updated) => {
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 * {
   font-family: sans-serif;
 }
