@@ -1,3 +1,11 @@
+## [1.2.1](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.0...v1.2.1) (2024-06-15)
+
+
+### Performance Improvements
+
+* **refactor:** how to record history cleaner job ([d3f6856](https://github.com/anthonypillot/anthonypillotOS/commit/d3f6856c3f0e21ee615762dac437a5da4c7a002d))
+* remove no longer used SASS ([4d86b11](https://github.com/anthonypillot/anthonypillotOS/commit/4d86b1170b477284d1d0af6028d3816a08bbe805))
+
 # [1.2.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.1.10...v1.2.0) (2024-06-14)
 
 
