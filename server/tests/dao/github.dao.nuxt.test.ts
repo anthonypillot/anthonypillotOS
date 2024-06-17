@@ -1,14 +1,10 @@
+import * as dao from "@/server/dao/github.dao";
+import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
+import { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
+import { logger } from "@/server/utils/logger";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
-
-import { logger } from "@/server/utils/logger";
-
-import * as dao from "@/server/dao/github.dao";
-
-import { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
-
-import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const information = {
   account: "my-account",
@@ -27,6 +23,19 @@ beforeAll(() => {
     // matching request handler.
     onUnhandledRequest: "error",
   });
+});
+
+beforeEach(() => {
+  server.use(
+    http.options("https://api.github.com/repos/*", ({ request, params, cookies }) => {
+      return new HttpResponse(null, {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
+    })
+  );
 });
 
 afterEach(() => server.resetHandlers());
