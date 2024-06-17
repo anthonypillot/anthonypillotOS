@@ -18,14 +18,14 @@
         </button>
       </div>
       <div class="hidden lg:flex lg:gap-x-12">
-        <NuxtLink
+        <a
           v-for="item in navigation"
           :key="item.name"
           :href="item.href"
           :rel="item.rel"
           :target="item.target"
           class="text-sm font-semibold leading-6 text-white"
-          >{{ item.name }}</NuxtLink
+          >{{ item.name }}</a
         >
         <Popover class="relative">
           <PopoverButton id="popover-button-tools" class="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
@@ -60,17 +60,16 @@
                   </div>
                 </div>
                 <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                  <NuxtLink
+                  <a
                     v-for="item in popover.callsToAction"
                     :key="item.name"
                     :href="item.href"
-                    :rel="item.rel"
                     :target="item.target"
                     class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
                   >
                     <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
                     {{ item.name }}
-                  </NuxtLink>
+                  </a>
                 </div>
               </div>
             </PopoverPanel>
@@ -78,12 +77,12 @@
         </Popover>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <NuxtLink
+        <a
           :href="config.app.website.link.githubRepository"
           rel="noopener"
           target="_blank"
           class="text-sm font-semibold leading-6 text-white"
-          >GitHub repository <span aria-hidden="true">&rarr;</span></NuxtLink
+          >GitHub repository <span aria-hidden="true">&rarr;</span></a
         >
       </div>
     </nav>
@@ -114,14 +113,14 @@
           <div class="mt-6 flow-root">
             <div class="-my-6 divide-y divide-gray-500/10">
               <div class="space-y-2 py-6">
-                <NuxtLink
+                <a
                   v-for="item in navigation"
                   :key="item.name"
                   :href="item.href"
                   :rel="item.rel"
                   :target="item.target"
                   class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >{{ item.name }}</NuxtLink
+                  >{{ item.name }}</a
                 >
                 <Popover class="relative">
                   <PopoverButton
@@ -174,17 +173,16 @@
                           </div>
                         </div>
                         <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                          <NuxtLink
+                          <a
                             v-for="item in popover.callsToAction"
                             :key="item.name"
                             :href="item.href"
-                            :rel="item.rel"
                             :target="item.target"
                             class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
                           >
                             <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
                             {{ item.name }}
-                          </NuxtLink>
+                          </a>
                         </div>
                       </div>
                     </PopoverPanel>
@@ -192,12 +190,12 @@
                 </Popover>
               </div>
               <div class="py-6">
-                <NuxtLink
+                <a
                   :href="config.app.website.link.githubRepository"
                   rel="noopener"
                   target="_blank"
                   class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >GitHub repository &rarr;</NuxtLink
+                  >GitHub repository &rarr;</a
                 >
               </div>
             </div>
@@ -242,7 +240,6 @@ const popover = {
     {
       name: "Size Up docs. about GitHub actions",
       href: config.app.website.link.sizeUpDocumentation + "/docs/category/actions",
-      rel: "",
       target: "_blank",
       icon: DocumentIcon,
     },
