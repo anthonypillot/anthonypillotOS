@@ -85,17 +85,8 @@
       >
         <NuxtImg
           quality="80"
-          class="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1"
-          src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg"
-          alt="TypeScript"
-          width="158"
-          height="48"
-          style="filter: hue-rotate(30deg)"
-        />
-        <NuxtImg
-          quality="80"
-          class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-          src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
+          class="col-span-2 max-h-16 w-full object-contain sm:col-start-2 lg:col-span-1"
+          src="svg/vue.svg"
           alt="Vue.js"
           width="158"
           height="48"
@@ -112,8 +103,17 @@
         />
         <NuxtImg
           quality="80"
-          class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-          src="https://static-00.iconduck.com/assets.00/node-js-icon-454x512-nztofx17.png"
+          class="col-span-2 max-h-14 w-full object-contain lg:col-span-1"
+          src="svg/typescript.svg"
+          alt="TypeScript"
+          width="158"
+          height="48"
+          style="filter: hue-rotate(30deg)"
+        />
+        <NuxtImg
+          quality="80"
+          class="col-span-2 max-h-14 w-full object-contain lg:col-span-1"
+          src="svg/node.svg"
           alt="Node.js"
           width="158"
           height="48"
@@ -121,7 +121,7 @@
         />
         <NuxtImg
           quality="80"
-          class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1"
+          class="col-span-2 col-start-2 max-h-14 w-full object-contain sm:col-start-auto lg:col-span-1"
           src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg"
           alt="Kubernetes"
           width="158"
