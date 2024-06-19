@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, test, vi } from "vitest";
 
 import { proceed } from "@/server/services/history-cleaner.service";
 import { GitHubDeletionStatusType, GitHubWorkflowRun } from "@/server/types/github.type";
-import { HistoryCleanerOptions, HistoryCleanerJob, HistoryCleanerJobStatus } from "~/server/types/historyCleaner.type";
+import { HistoryCleanerOptions, HistoryCleanerJob, HistoryCleanerJobStatus } from "@/server/types/history-cleaner.type";
 
 import { logger } from "@/server/utils/logger";
 
