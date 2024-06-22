@@ -2,7 +2,7 @@
   <section class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
     <NuxtImg
       quality="80"
-      :src="getHeroImageUrlOfTheDay()"
+      src="https://images.unsplash.com/photo-1518050947974-4be8c7469f0c?q=80&w=1600&h=1000"
       alt=""
       class="absolute inset-0 -z-10 h-full w-full object-cover"
       style="filter: blur(4px) hue-rotate(60deg) brightness(25%)"
@@ -85,17 +85,8 @@
       >
         <NuxtImg
           quality="80"
-          class="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1"
-          src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg"
-          alt="TypeScript"
-          width="158"
-          height="48"
-          style="filter: hue-rotate(30deg)"
-        />
-        <NuxtImg
-          quality="80"
-          class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-          src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg"
+          class="col-span-2 max-h-16 w-full object-contain sm:col-start-2 lg:col-span-1"
+          src="svg/vue.svg"
           alt="Vue.js"
           width="158"
           height="48"
@@ -112,8 +103,17 @@
         />
         <NuxtImg
           quality="80"
-          class="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-          src="https://static-00.iconduck.com/assets.00/node-js-icon-454x512-nztofx17.png"
+          class="col-span-2 max-h-14 w-full object-contain lg:col-span-1"
+          src="svg/typescript.svg"
+          alt="TypeScript"
+          width="158"
+          height="48"
+          style="filter: hue-rotate(30deg)"
+        />
+        <NuxtImg
+          quality="80"
+          class="col-span-2 max-h-14 w-full object-contain lg:col-span-1"
+          src="svg/node.svg"
           alt="Node.js"
           width="158"
           height="48"
@@ -121,7 +121,7 @@
         />
         <NuxtImg
           quality="80"
-          class="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1"
+          class="col-span-2 col-start-2 max-h-14 w-full object-contain sm:col-start-auto lg:col-span-1"
           src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg"
           alt="Kubernetes"
           width="158"
@@ -170,22 +170,4 @@ const writers = ["Operating System", "Open Source", "Object Storage", "Organic S
 const config = useRuntimeConfig();
 
 const logo = config.app.website.logo.hero.white;
-
-/**
- * Retrieves the URL of the hero image of the day.
- *
- * @returns {string} The URL of the hero image.
- */
-function getHeroImageUrlOfTheDay(): string {
-  const heroImageUrls = [
-    "https://images.unsplash.com/photo-1606908486836-c15087e04817?q=80&w=1600",
-    "https://images.unsplash.com/photo-1518050947974-4be8c7469f0c?q=80&w=1600",
-    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=1600",
-    "https://images.unsplash.com/photo-1505238680356-667803448bb6?q=80&w=1600",
-    "https://focus.courrierinternational.com/2022/02/04/0/0/3882/2584/1280/0/60/0/89816dd_1644014034247-christopher-gower-m-hrflhgabo-unsplash.jpg",
-  ];
-
-  const now = new Date();
-  return heroImageUrls[now.getDay() % heroImageUrls.length];
-}
 </script>

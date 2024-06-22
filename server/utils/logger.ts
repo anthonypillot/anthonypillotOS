@@ -75,8 +75,16 @@ export function convertConsoleLogToCustomLogger() {
   consoleMethods.forEach((method) => {
     // @ts-ignore
     console[method] = function () {
-      // @ts-ignore
-      if (arguments[0]) logger[method](arguments[0]);
+      if (arguments[0]) {
+        const vueRouterWarn = "[Vue Router warn]: ";
+        if (arguments[0].startsWith(vueRouterWarn)) {
+          const argument: string = arguments[0].replace(vueRouterWarn, "");
+          logger.warn(argument);
+        } else {
+          // @ts-ignore
+          logger[method](arguments[0]);
+        }
+      }
     };
   });
 }

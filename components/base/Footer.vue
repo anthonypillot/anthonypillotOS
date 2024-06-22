@@ -69,22 +69,22 @@ const config = useRuntimeConfig();
 const logo = config.app.website.logo.os.raw;
 
 const navigation = {
-  github: [
-    { name: "Account", href: config.app.website.link.githubAccount, rel: "noopener", target: "_blank" },
-    { name: "Repository", href: config.app.website.link.githubRepository, rel: "noopener", target: "_blank" },
-    { name: "Organization", href: config.app.website.link.githubOrganization, rel: "noopener", target: "_blank" },
+  application: [
+    { name: "GitHub History Cleaner", href: "/tools/github/history-cleaner", rel: "", target: "", internal: true },
+    { name: "Status", href: config.app.website.link.status, rel: "", target: "_blank" },
   ],
   project: [
     { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "", target: "_blank" },
     { name: "Free Games Catcher", href: config.app.website.link.githubFreeGamesCatcherCore, rel: "noopener", target: "_blank" },
   ],
+  github: [
+    { name: "Account", href: config.app.website.link.githubAccount, rel: "noopener", target: "_blank" },
+    { name: "Repository", href: config.app.website.link.githubRepository, rel: "noopener", target: "_blank" },
+    { name: "Organization", href: config.app.website.link.githubOrganization, rel: "noopener", target: "_blank" },
+  ],
   contact: [
     { name: "Email", href: "mailto:" + config.app.website.author.email },
     { name: "LinkedIn", href: config.app.website.link.linkedIn, rel: "noopener", target: "_blank" },
-  ],
-  application: [
-    { name: "GitHub History Cleaner", href: "/tools/github/history-cleaner", rel: "", target: "", internal: true },
-    { name: "Status", href: config.app.website.link.status, rel: "", target: "_blank" },
   ],
 };
 </script>
