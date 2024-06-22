@@ -3,7 +3,8 @@
   <BaseHeader />
 
   <!-- Main content -->
-  <main class="flex flex-col gap-y-16" style="min-height: 100dvh">
+  <main class="flex flex-col gap-y-16" style="min-height: 75dvh">
+    <AppLoader v-if="loading" />
     <NuxtPage />
   </main>
 
@@ -12,33 +13,19 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
+const loading = ref<boolean>(true);
 
-const title = `The Operating System by ${config.app.website.author.name} | ${config.app.website.title}`;
-
-useSeoMeta({
-  title: title,
-  ogTitle: title,
-  description: config.app.website.description,
-  ogDescription: config.app.website.description,
-  ogImage: config.app.website.logo.os.raw,
-  ogUrl: config.app.website.url,
-  twitterTitle: config.app.website.title,
-  twitterDescription: config.app.website.description,
-  twitterImage: config.app.website.logo.os.raw,
-  twitterCard: "summary",
+/**
+ * Used to show/hide the loading indicator,
+ * by listening to the Nuxt app events.
+ */
+const nuxtApp = useNuxtApp();
+nuxtApp.hook("page:start", () => {
+  loading.value = true;
+});
+nuxtApp.hook("page:finish", () => {
+  loading.value = false;
 });
 
-useHead({
-  htmlAttrs: {
-    lang: "en",
-  },
-  link: [
-    {
-      rel: "icon",
-      type: "image/x-icon",
-      href: "/favicon.ico",
-    },
-  ],
-});
+useSeo();
 </script>

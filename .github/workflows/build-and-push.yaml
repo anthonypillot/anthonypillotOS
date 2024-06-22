@@ -11,7 +11,7 @@ on:
 
 jobs:
   extract:
-    name: 📄 Extract
+    name: 📄 Extract version
     uses: anthonypillot/actions/.github/workflows/extract-version.yaml@v1
 
   build:
