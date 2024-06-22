@@ -90,7 +90,7 @@
       <Dialog as="div" class="lg:hidden" @close="mobileMenuOpen = false" :open="mobileMenuOpen">
         <div class="fixed inset-0 z-50" />
         <DialogPanel
-          class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+          class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-lg sm:ring-1 sm:ring-gray-900/10"
         >
           <div class="flex items-center justify-between">
             <NuxtLink
@@ -102,7 +102,7 @@
                 }
               "
             >
-              <span class="sr-only">anthonypillotOS</span>
+              <span class="sr-only">{{ config.app.website.title }}</span>
               <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" />
             </NuxtLink>
             <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = false">
