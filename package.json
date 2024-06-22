@@ -12,7 +12,7 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "postinstall": "prisma generate && nuxt prepare",
+    "postinstall": "npm run clean && prisma generate && nuxt prepare",
     "clean": "rm -rf .nuxt .output coverage playwright-report test-results",
     "build": "npm run clean && nuxt build",
     "dev": "nuxt dev",
@@ -31,7 +31,11 @@
     "@heroicons/vue": "^2.1.4",
     "@nuxt/image": "^1.7.0",
     "@prisma/client": "^5.15.1",
+    "@socket.io/postgres-adapter": "^0.3.1",
     "matter-js": "^0.19.0",
+    "pg": "^8.12.0",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "vue-writer": "^1.2.0",
     "zod": "^3.23.8"
   },
@@ -43,6 +47,7 @@
     "@semantic-release/git": "^10.0.1",
     "@tailwindcss/forms": "^0.5.7",
     "@types/node": "^20.14.8",
+    "@types/pg": "^8.11.6",
     "@vitest/coverage-v8": "^1.6.0",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^14.12.3",

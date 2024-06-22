@@ -208,7 +208,7 @@
 
 <script setup lang="ts">
 import { Dialog, DialogPanel } from "@headlessui/vue";
-import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { Bars3Icon, XMarkIcon, SquaresPlusIcon } from "@heroicons/vue/24/outline";
 
 const mobileMenuOpen: Ref<boolean> = ref(false);
 
@@ -229,6 +229,12 @@ import { ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
 
 const popover = {
   links: [
+    {
+      name: "TaskHold’em",
+      description: "Poker planning tool for agile teams",
+      to: "/tools/task-holdem",
+      icon: SquaresPlusIcon,
+    },
     {
       name: "GitHub History Cleaner",
       description: "Delete all your GitHub project history",

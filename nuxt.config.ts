@@ -48,8 +48,14 @@ export default defineNuxtConfig({
     },
   },
 
+  nitro: {
+    experimental: {
+      websocket: true,
+    },
+  },
+
   routeRules: {
-    "/": { prerender: true }, // pre-render the home page at build time
+    "/": { swr: 21600 }, // pre-render the home page at build time
   },
 
   modules: ["@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/tailwindcss"],
