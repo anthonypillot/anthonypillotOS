@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.1...v1.2.2) (2024-06-22)
+
+
+### Bug Fixes
+
+* `Vue Router warning` and multiple fix with deps upgrade ([#39](https://github.com/anthonypillot/anthonypillotOS/issues/39)) ([c7514bf](https://github.com/anthonypillot/anthonypillotOS/commit/c7514bf317269b9da4a3dedadbd13b48fb2de007))
+
 ## [1.2.1](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.0...v1.2.1) (2024-06-15)
 
 
