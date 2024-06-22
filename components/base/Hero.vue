@@ -2,7 +2,7 @@
   <section class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
     <NuxtImg
       quality="80"
-      :src="getHeroImageUrlOfTheDay()"
+      src="https://images.unsplash.com/photo-1518050947974-4be8c7469f0c?q=80&w=1600&h=1000"
       alt=""
       class="absolute inset-0 -z-10 h-full w-full object-cover"
       style="filter: blur(4px) hue-rotate(60deg) brightness(25%)"
@@ -170,22 +170,4 @@ const writers = ["Operating System", "Open Source", "Object Storage", "Organic S
 const config = useRuntimeConfig();
 
 const logo = config.app.website.logo.hero.white;
-
-/**
- * Retrieves the URL of the hero image of the day.
- *
- * @returns {string} The URL of the hero image.
- */
-function getHeroImageUrlOfTheDay(): string {
-  const heroImageUrls = [
-    "https://images.unsplash.com/photo-1606908486836-c15087e04817?q=80&w=1600",
-    "https://images.unsplash.com/photo-1518050947974-4be8c7469f0c?q=80&w=1600",
-    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=1600",
-    "https://images.unsplash.com/photo-1505238680356-667803448bb6?q=80&w=1600",
-    "https://focus.courrierinternational.com/2022/02/04/0/0/3882/2584/1280/0/60/0/89816dd_1644014034247-christopher-gower-m-hrflhgabo-unsplash.jpg",
-  ];
-
-  const now = new Date();
-  return heroImageUrls[now.getDay() % heroImageUrls.length];
-}
 </script>

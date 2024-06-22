@@ -49,7 +49,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    "/": { prerender: true, swr: true },
+    "/": { prerender: true }, // pre-render the home page at build time
   },
 
   modules: ["@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/tailwindcss"],
