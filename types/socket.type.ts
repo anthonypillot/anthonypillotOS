@@ -1,18 +1,4 @@
-export type Data = {
-  socketNumber: number | null;
-};
-
-export type User = {
-  isSet: boolean;
-  id: string | null;
-  name: string | null;
-};
-
-export type Message = {
-  id: string;
-  user: User;
-  content: string;
-};
+import type { Data, Message } from "@/types/task-holdem.type";
 
 export interface ServerToClientEvents {
   data: (data: Data) => void;

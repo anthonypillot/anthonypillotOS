@@ -1,4 +1,4 @@
-import { ClientToServerEvents, ServerToClientEvents } from "@/types/websocket.type";
+import { ClientToServerEvents, ServerToClientEvents } from "@/types/socket.type";
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
@@ -27,6 +27,7 @@ export default defineNitroPlugin((nitro: NitroApp) => {
 
   io.on("connection", async (socket) => {
     logger.debug(`Socket - User connected: [${socket.id}]`);
+
     io.emit("data", {
       socketNumber: (await io.fetchSockets()).length,
     });

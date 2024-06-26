@@ -1,5 +1,8 @@
 <template>
-  <TaskHoldem />
+  <section class="mt-32 flex flex-col gap-y-12 mx-auto w-10/12">
+    <TaskHoldemChat />
+    <SocketTechnicalData />
+  </section>
 </template>
 
 <script setup lang="ts">
