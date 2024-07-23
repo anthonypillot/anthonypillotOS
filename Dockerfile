@@ -21,6 +21,9 @@ WORKDIR /app
 # Copy the build files from the first stage
 COPY --from=build /app/.output ./
 
+ARG GIT_SHA=not_set
+ENV GIT_SHA=${GIT_SHA}
+
 EXPOSE 3000
 
 CMD [ "./server/index.mjs" ]
