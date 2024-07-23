@@ -60,6 +60,19 @@
         </div>
       </div>
     </div>
+    <div class="bg-gray-800 px-6 py-2 flex flex-col items-center">
+      <p v-if="data" class="text-xs text-gray-400">
+        Version: {{ data.version }} (<a
+          v-if="data.git_sha !== 'local'"
+          class="underline text-indigo-400 hover:text-indigo-300"
+          :href="config.app.website.link.githubRepository + '/commit/' + data.git_sha"
+        >
+          {{ data.git_sha.substring(0, 7) }}</a
+        >
+        <span v-else>{{ data.git_sha }}</span
+        >).<span v-if="data.environment !== 'production'"> Environment: {{ data.environment }}.</span>
+      </p>
+    </div>
   </footer>
 </template>
 
@@ -87,4 +100,6 @@ const navigation = {
     { name: "LinkedIn", href: config.app.website.link.linkedIn, rel: "noopener", target: "_blank" },
   ],
 };
+
+const { data } = await useFetch("/api");
 </script>

@@ -10,7 +10,11 @@ const prisma = new PrismaClient();
  */
 export default defineNitroPlugin(async (nitro) => {
   convertConsoleLogToCustomLogger();
-  logger.start(`Starting [${useRuntimeConfig().app.website.title}] with version [${version}] and env. [${process.env.ENV || "local"}]`);
+  logger.start(
+    `Starting [${useRuntimeConfig().app.website.title}] with version [${version}] (${process.env.GIT_SHA || "local"}) and env. [${
+      process.env.ENV || "local"
+    }]`
+  );
   if (process.env.LOG_LEVEL === "debug") logger.debug("Debug logging is enabled");
   await checkDatabaseConnection();
 });
