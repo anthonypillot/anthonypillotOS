@@ -8,6 +8,14 @@
     "email": "pillot.anthony@gmail.com",
     "url": "https://anthonypillot.com"
   },
+  "homepage": "https://github.com/anthonypillot/anthonypillotOS#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anthonypillot/anthonypillotOS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/anthonypillot/anthonypillotOS/issues"
+  },
   "license": "GPL-3.0-or-later",
   "private": false,
   "type": "module",
