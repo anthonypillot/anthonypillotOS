@@ -1,3 +1,16 @@
+## [1.2.3](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.2...v1.2.3) (2024-07-25)
+
+
+### Bug Fixes
+
+* prefer use fixed Node.js image ([6f0839a](https://github.com/anthonypillot/anthonypillotOS/commit/6f0839a1fa5deeeeae7e6ac09f2d7477b464d7d2))
+
+
+### Performance Improvements
+
+* application information endpoint and add version with env. in footer ([67278e4](https://github.com/anthonypillot/anthonypillotOS/commit/67278e43a7cc9b37536ab1294e5a7ad00e62c323))
+* **deps:** update dependencies ([255951a](https://github.com/anthonypillot/anthonypillotOS/commit/255951a6a20a99c77932cb4b2ad58ad7c4b5ec37))
+
 ## [1.2.2](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.1...v1.2.2) (2024-06-22)
 
 
