@@ -60,8 +60,8 @@
         </div>
       </div>
     </div>
-    <div class="bg-gray-800 px-6 py-2 flex flex-col items-center">
-      <p v-if="data" class="text-xs text-gray-400">
+    <div v-if="data" class="bg-gray-800 px-6 py-2 flex flex-col items-center">
+      <p class="text-xs text-gray-400">
         Version: {{ data.version }} (<a
           v-if="data.git_sha !== 'local'"
           class="underline text-indigo-400 hover:text-indigo-300"
