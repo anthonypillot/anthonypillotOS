@@ -3,7 +3,7 @@
   <BaseHeader />
 
   <!-- Main content -->
-  <main class="flex flex-col gap-y-16">
+  <main class="flex flex-col gap-y-16" style="min-height: 100dvh">
     <NuxtPage />
   </main>
 
