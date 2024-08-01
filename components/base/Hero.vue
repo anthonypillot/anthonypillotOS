@@ -86,7 +86,7 @@
         <NuxtImg
           quality="80"
           class="col-span-2 max-h-16 w-full object-contain sm:col-start-2 lg:col-span-1"
-          src="svg/vue.svg"
+          src="svg/icons/vue.svg"
           alt="Vue.js"
           width="158"
           height="48"
@@ -95,7 +95,7 @@
         <NuxtImg
           quality="80"
           class="col-span-2 max-h-20 w-full object-contain lg:col-span-1"
-          src="svg/nuxt.svg"
+          src="svg/icons/nuxt.svg"
           alt="Nuxt"
           width="158"
           height="48"
@@ -104,7 +104,7 @@
         <NuxtImg
           quality="80"
           class="col-span-2 max-h-14 w-full object-contain lg:col-span-1"
-          src="svg/typescript.svg"
+          src="svg/icons/typescript.svg"
           alt="TypeScript"
           width="158"
           height="48"
@@ -113,7 +113,7 @@
         <NuxtImg
           quality="80"
           class="col-span-2 max-h-14 w-full object-contain lg:col-span-1"
-          src="svg/node.svg"
+          src="svg/icons/node.svg"
           alt="Node.js"
           width="158"
           height="48"
