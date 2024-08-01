@@ -1,6 +1,6 @@
 import * as dao from "@/server/dao/github.dao";
 import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse.github.json";
-import { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
+import type { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
 import { logger } from "@/server/utils/logger";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";

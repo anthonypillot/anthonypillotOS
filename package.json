@@ -22,6 +22,7 @@
   "scripts": {
     "postinstall": "prisma generate && nuxt prepare",
     "clean": "rm -rf .nuxt .output coverage playwright-report test-results",
+    "lint": "nuxt typecheck",
     "build": "npm run clean && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -58,8 +59,10 @@
     "nuxt": "^3.12.4",
     "prisma": "^5.17.0",
     "semantic-release": "^24.0.0",
+    "typescript": "^5.5.4",
     "vitest": "^1.2.0",
     "vue": "^3.4.11",
-    "vue-router": "^4.4.0"
+    "vue-router": "^4.4.0",
+    "vue-tsc": "^2.0.29"
   }
 }

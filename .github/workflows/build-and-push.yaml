@@ -17,6 +17,9 @@ jobs:
   build:
     name: 🏗️ Build
     uses: anthonypillot/actions/.github/workflows/node-build-and-test.yaml@v1
+    with:
+      run_test: true
+      run_lint: true
 
   push:
     name: 🐳 Push

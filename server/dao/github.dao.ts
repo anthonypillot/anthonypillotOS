@@ -1,5 +1,5 @@
 import { getApiConfiguration } from "@/server/config/api/github.config";
-import { GitHubDeletionStatusType, GitHubDeployments, GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
+import { GitHubDeletionStatusType, type GitHubDeployments,  type GitHubWorkflowRun, type GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
 
 import { logger } from "@/server/utils/logger";
 

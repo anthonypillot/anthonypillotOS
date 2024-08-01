@@ -1,5 +1,5 @@
-import { HistoryCleanerJobResult, PrismaClient } from "@prisma/client";
-import { HistoryCleanerJob, HistoryCleanerJobStatus } from "@/server/types/history-cleaner.type";
+import { type HistoryCleanerJobResult, PrismaClient } from "@prisma/client";
+import { type HistoryCleanerJob, HistoryCleanerJobStatus } from "@/server/types/history-cleaner.type";
 
 import { logger } from "@/server/utils/logger";
 
