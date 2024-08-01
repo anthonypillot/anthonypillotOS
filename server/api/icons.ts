@@ -6,13 +6,13 @@ import fs from "fs";
  * @returns An array of objects containing the name and path of each SVG icon.
  */
 export default defineEventHandler((): { name: string; path: string }[] => {
-  return fs.readdirSync("public/svg").map((path) => {
+  return fs.readdirSync("public/svg/icons").map((path) => {
     return {
       name: path
         .replace(/-/g, " ")
         .replace(/\.svg$/, "")
         .replace(/\b\w/g, (c) => c.toUpperCase()),
-      path: `./svg/${path}`,
+      path: `./svg/icons/${path}`,
     };
   });
 });
