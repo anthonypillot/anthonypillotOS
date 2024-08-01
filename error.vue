@@ -39,9 +39,9 @@
 <script setup lang="ts">
 import type { NuxtError } from "#app";
 
-const props = defineProps({
-  error: Object as () => NuxtError,
-});
+const props = defineProps<{
+  error: NuxtError;
+}>();
 
 const config = useRuntimeConfig();
 const title = `${props.error?.statusCode ? "Error " + props.error?.statusCode : "Error"} | ${config.app.website.title}`;
