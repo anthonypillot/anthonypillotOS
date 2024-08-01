@@ -1,3 +1,11 @@
+## [1.2.4](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.3...v1.2.4) (2024-08-01)
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([6be207e](https://github.com/anthonypillot/anthonypillotOS/commit/6be207efc794779465ce300778c73678df173088))
+* **style:** update main content min-height ([9d83ec1](https://github.com/anthonypillot/anthonypillotOS/commit/9d83ec16563d4d0370820c42fb27aa3f5ead6022))
+
 ## [1.2.3](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.2...v1.2.3) (2024-07-25)
 
 
