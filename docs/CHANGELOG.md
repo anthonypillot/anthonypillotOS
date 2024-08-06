@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.4...v1.2.5) (2024-08-06)
+
+
+### Bug Fixes
+
+* add `target="_blank"` to git commit link ([14b4c28](https://github.com/anthonypillot/anthonypillotOS/commit/14b4c287507a84bf6c9b0f7dbbe19ea552de1fac))
+
 ## [1.2.4](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.3...v1.2.4) (2024-08-01)
 
 
