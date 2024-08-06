@@ -66,6 +66,7 @@
           v-if="data.git_sha !== 'local'"
           class="underline text-indigo-400 hover:text-indigo-300"
           :href="config.app.website.link.githubRepository + '/commit/' + data.git_sha"
+          target="_blank"
         >
           {{ data.git_sha.substring(0, 7) }}</a
         >
