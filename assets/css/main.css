@@ -5,4 +5,5 @@ html,
 body {
   font-family: "Poppins", sans-serif;
   background-color: var(--primary-color);
+  scrollbar-color: var(--secondary-color) var(--primary-color);
 }
