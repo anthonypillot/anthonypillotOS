@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.5...v1.2.6) (2024-08-09)
+
+
+### Performance Improvements
+
+* **analytics:** add Matomo plugin ([76f8bdf](https://github.com/anthonypillot/anthonypillotOS/commit/76f8bdf346e2cbd7dc603135e34454985c0eb6e8))
+
 ## [1.2.5](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.4...v1.2.5) (2024-08-06)
 
 
