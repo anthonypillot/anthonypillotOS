@@ -4,7 +4,7 @@ interface LiveResponse {
   message: string;
 }
 
-export default defineEventHandler(async (event): Promise<LiveResponse> => {
+export default defineEventHandler((): LiveResponse => {
   return {
     statusCode: 200,
     statusMessage: "OK",
