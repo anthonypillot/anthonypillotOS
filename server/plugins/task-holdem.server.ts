@@ -1,6 +1,5 @@
-import type { User } from "@/components/task-holdem/CreateUser.vue";
 import * as dao from "@/server/dao/task-holdem.dao";
-import type { ClientToServerEvents, ServerToClientEvents } from "@/types/task-holdem.type";
+import type { ClientToServerEvents, Room, ServerToClientEvents } from "@/types/task-holdem.type";
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
@@ -28,36 +27,51 @@ export default defineNitroPlugin((nitro: NitroApp) => {
       socketNumber: (await io.fetchSockets()).length,
     });
 
-    const roomId = socket.handshake.query.roomId as string;
+    const roomId = socket.handshake.query.id as string;
+
     if (roomId) {
       socket.join(roomId);
 
-      const users: User[] = await getUsers(roomId);
-      io.to(roomId).emit("users-update", users);
+      const room: Room = await dao.createOrUpdateRoom(roomId);
+      io.to(roomId).emit("room", room);
 
       socket.on("message", (message) => {
         io.to(roomId).emit("message", message);
       });
 
-      socket.on("users-update", async (users) => {
-        const usersUpdated = await dao.updateUsers(roomId, users);
-        io.to(roomId).emit("users-update", usersUpdated);
+      socket.on("room", async (room) => {
+        const updatedRoom: Room = await dao.updateRoom(roomId, room);
+        io.to(roomId).emit("room", updatedRoom);
       });
 
-      socket.on("user-create", async (user) => {
-        const users: User[] = await getUsers(roomId);
-        if (!users.find((u) => u.id === user.id)) {
-          users.push(user);
+      socket.on("user-create", async (userToCreate) => {
+        const room: Room = await dao.createOrUpdateRoom(roomId);
+        if (!room.users.find((user) => user.id === userToCreate.id)) {
+          logger.debug(`Socket - User create: ${userToCreate.name}`);
+          room.users.push(userToCreate);
         }
-        const usersUpdated = await dao.updateUsers(roomId, users);
-        io.to(roomId).emit("users-update", usersUpdated);
+        const updatedRoom = await dao.updateRoom(roomId, room);
+        io.to(roomId).emit("room", updatedRoom);
       });
 
-      socket.on("user-remove", async (user) => {
-        const users: User[] = await getUsers(roomId);
-        const usersWithoutDeletedUser = users.filter((u) => u.id !== user.id);
-        const usersUpdated = await dao.updateUsers(roomId, usersWithoutDeletedUser);
-        io.to(roomId).emit("users-update", usersUpdated);
+      socket.on("user-remove", async (userToRemove) => {
+        logger.debug(`Socket - User remove: ${userToRemove.name}`);
+
+        const room: Room = await dao.createOrUpdateRoom(roomId);
+        room.users = room.users.filter((user) => user.id !== userToRemove.id);
+
+        const updatedRoom = await dao.updateRoom(roomId, room);
+        io.to(roomId).emit("room", updatedRoom);
+      });
+
+      socket.on("room-restart", async (room: Room) => {
+        room.game.isRevealed = false;
+        room.users.forEach((user) => {
+          user.selectedCard = null;
+        });
+
+        const updatedRoom = await dao.updateRoom(roomId, room);
+        io.to(roomId).emit("room-restart", updatedRoom);
       });
     }
 
@@ -97,13 +111,3 @@ export default defineNitroPlugin((nitro: NitroApp) => {
     })
   );
 });
-
-async function getUsers(roomId: string): Promise<User[]> {
-  const users = await dao.getUsers(roomId);
-
-  if (users) {
-    return users;
-  } else {
-    return await dao.createRoom(roomId);
-  }
-}

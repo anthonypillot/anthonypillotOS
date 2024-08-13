@@ -6,18 +6,17 @@
     "
     @click="select()"
   >
-    <component v-if="props.component" :is="props.component" class="text-white w-10" />
+    <component v-if="props.type === 'icon'" :is="valueToComponent[props.value]" class="text-white" />
     <span v-else class="text-white text-xl">{{ props.value }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Component } from "vue";
+import { valueToComponent } from "@/types/task-holdem.type";
 
 export type Card = {
   type: "number" | "icon";
-  value: number | string;
-  component?: Component;
+  value: number | "skip" | "break";
   isSelected: boolean;
 };
 

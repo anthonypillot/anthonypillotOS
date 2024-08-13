@@ -1,6 +1,6 @@
 <template>
   <section class="mt-28 mx-auto flex flex-col gap-y-8 w-10/12">
-    <div class="flex items-start max-w-2xl flex-col bg-white/5 px-6 py-6 ring-1 ring-white/10 sm:rounded-3xl">
+    <div class="flex items-start flex-col bg-white/5 px-6 py-6 ring-1 ring-white/10 sm:rounded-3xl">
       <NuxtImg class="h-16" src="svg/task-holdem/poker-hand.svg" :alt="application.name" />
       <h1 class="text-4xl text-white">{{ application.name }}</h1>
       <span
@@ -13,8 +13,7 @@
 
     <section v-if="user" class="flex flex-col gap-y-8">
       <TaskHoldemUser :user @remove="removeUser" />
-      <TaskHoldemChat :user v-model:messages="messages" v-model:message="message" @submit="sendMessage(user, message)" />
-      <TaskHoldemPokerTable :users />
+      <TaskHoldemPokerTable :users="room.users" :game="room.game" @reveal="reveal" @restart="restart" />
       <section class="flex flex-col gap-2">
         <p class="text-white">Select a card:</p>
         <div class="flex flex-wrap gap-x-2 gap-y-4">
@@ -23,13 +22,13 @@
             :key="card.value"
             :type="card.type"
             :value="card.value"
-            :component="card.component"
             :isSelected="card.isSelected"
             @select="selectedCard"
           />
         </div>
       </section>
       <TaskHoldemInvitation />
+      <TaskHoldemChat :user="user" v-model:messages="messages" v-model:message="message" @submit="sendMessage(user, message)" />
     </section>
 
     <DevOnly>
@@ -42,8 +41,8 @@
 import type { Card } from "@/components/task-holdem/Card.vue";
 import type { Message } from "@/components/task-holdem/Chat.vue";
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import { application, type ClientToServerEvents, type Data, type ServerToClientEvents } from "@/types/task-holdem.type";
-import { BellSnoozeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
+import type { ClientToServerEvents, Data, Room, ServerToClientEvents } from "@/types/task-holdem.type";
+import { application } from "@/types/task-holdem.type";
 import { io, type Socket } from "socket.io-client";
 
 //#region SEO
@@ -64,29 +63,54 @@ useSeo({
 
 //#endregion
 
-//#region Socket configuration
+const roomId = generateRoomId();
 
-const roomId = getRoomId();
-
-function getRoomId(): string {
+function generateRoomId(): string {
   const route = useRoute();
-  const roomId = route.query.roomId as string;
+  const id = route.query.id as string;
 
-  if (roomId) {
-    return roomId;
+  if (id) {
+    return id;
   } else {
-    const roomId = crypto.randomUUID();
+    const id = crypto.randomUUID();
     const router = useRouter();
-    router.push({ query: { roomId } });
-    return roomId;
+    router.push({ query: { id } });
+    return id;
   }
 }
+
+function getUserFromLocalStorage(): User | null {
+  const userFromLocalStorage = localStorage.getItem("user");
+  if (userFromLocalStorage) {
+    const user: User = JSON.parse(userFromLocalStorage);
+
+    // Temporary solution to wait the socket connection before sending the user
+    setTimeout(() => {
+      socket.emit("user-create", user);
+    }, 1000);
+
+    return user;
+  } else {
+    return null;
+  }
+}
+
+const user = ref<User | null>(getUserFromLocalStorage());
+
+const room = ref<Room>({
+  users: [],
+  game: {
+    isRevealed: false,
+  },
+});
+
+//#region Socket
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
   path: "/api/websocket/task-holdem",
   transports: ["websocket"],
   query: {
-    roomId,
+    id: roomId,
   },
 });
 
@@ -97,12 +121,12 @@ if (socket.connected) {
   onConnect();
 }
 
-function onConnect() {
+function onConnect(): void {
   isConnected.value = true;
   transport.value = socket.io.engine.transport.name;
 }
 
-function onDisconnect() {
+function onDisconnect(): void {
   isConnected.value = false;
   transport.value = "N/A";
 }
@@ -133,45 +157,14 @@ socket.on("data", (socketData: Data) => {
 
 //#endregion
 
-function sendMessage(user: User, message: string | null) {
-  if (message) {
-    socket.emit("message", {
-      id: crypto.randomUUID(),
-      user: user,
-      content: message,
-    });
-  } else {
-    console.debug("Message is empty");
-  }
-}
-
-function getUserFromLocalStorage(): User | null {
-  const userFromLocalStorage = localStorage.getItem("user");
-  if (userFromLocalStorage) {
-    const user: User = JSON.parse(userFromLocalStorage);
-
-    // Temporary to wait the socket connection before sending the user
-    setTimeout(() => {
-      socket.emit("user-create", user);
-    }, 1000);
-
-    return user;
-  } else {
-    return null;
-  }
-}
-
-const user = ref<User | null>(getUserFromLocalStorage());
-const users = ref<User[]>([]);
-
-socket.on("users-update", (usersFromServer: User[]) => {
-  users.value = usersFromServer;
+socket.on("room", (roomFromServer: Room) => {
+  room.value = roomFromServer;
 });
 
-function createUser(userCreated: User | null) {
-  if (userCreated) {
-    user.value = userCreated;
-    localStorage.setItem("user", JSON.stringify(userCreated));
+function createUser(userToCreate: User | null) {
+  if (userToCreate) {
+    user.value = userToCreate;
+    localStorage.setItem("user", JSON.stringify(userToCreate));
     socket.emit("user-create", user.value);
   }
 }
@@ -183,13 +176,6 @@ function removeUser(userToRemove: User) {
     socket.emit("user-remove", userToRemove);
   }
 }
-
-const messages = ref<Message[]>([]);
-const message = ref<string>("");
-
-socket.on("message", (message: Message) => {
-  messages.value.push(message);
-});
 
 const cards = ref<Card[]>([
   {
@@ -244,33 +230,71 @@ const cards = ref<Card[]>([
   },
   {
     type: "icon",
-    value: "Snooze",
-    component: BellSnoozeIcon,
+    value: "skip",
     isSelected: false,
   },
   {
     type: "icon",
-    value: "Question",
-    component: QuestionMarkCircleIcon,
+    value: "break",
     isSelected: false,
   },
 ]);
 
 function selectedCard(selectedCard: Card): void {
-  const userInArray = users.value.find((u) => u.id === user.value?.id);
-  if (userInArray) {
+  const currentUserInRoom = room.value.users.find((userRoom) => userRoom.id === user.value?.id);
+
+  if (currentUserInRoom) {
     cards.value.forEach((card) => {
       card.value === selectedCard.value ? (card.isSelected = !card.isSelected) : (card.isSelected = false);
     });
 
-    users.value.forEach((u) => {
-      if (u.id === userInArray.id) {
-        u.selectedCard = selectedCard;
+    room.value.users.forEach((user) => {
+      if (user.id === currentUserInRoom.id) {
+        user.selectedCard = selectedCard;
       }
     });
 
-    console.debug(`User [${userInArray.name}] selected card value [${selectedCard.value}]`);
-    socket.emit("users-update", users.value);
+    socket.emit("room", room.value);
   }
 }
+
+function reveal(): void {
+  room.value.game.isRevealed = true;
+  socket.emit("room", room.value);
+}
+
+function restart(): void {
+  socket.emit("room-restart", room.value);
+}
+
+socket.on("room-restart", (roomFromServer: Room) => {
+  cards.value.forEach((card) => {
+    card.isSelected = false;
+  });
+
+  room.value = roomFromServer;
+});
+
+//#region Chat
+
+const messages = ref<Message[]>([]);
+const message = ref<string>("");
+
+function sendMessage(user: User, message: string | null) {
+  if (message) {
+    socket.emit("message", {
+      id: crypto.randomUUID(),
+      user: user,
+      content: message,
+    });
+  } else {
+    console.debug("Message is empty");
+  }
+}
+
+socket.on("message", (message: Message) => {
+  messages.value.push(message);
+});
+
+//#endregion
 </script>
