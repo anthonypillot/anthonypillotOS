@@ -1,11 +1,24 @@
 import type { Message } from "@/components/task-holdem/Chat.vue";
 import type { User } from "@/components/task-holdem/CreateUser.vue";
+import { BellSnoozeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 
 export const application = {
   id: "task-holdem",
   name: "TaskHold’em",
   description:
     "TaskHold’em is a collaborative poker planning tool designed for agile teams following the Scrum framework. It provides a simple and enjoyable way to conduct sprint planning sessions, allowing team members to estimate and prioritize tasks effectively.",
+};
+
+export type Room = {
+  users: User[];
+  game: {
+    isRevealed: boolean;
+  };
+};
+
+export const valueToComponent: Record<string, Component> = {
+  skip: BellSnoozeIcon,
+  break: QuestionMarkCircleIcon,
 };
 
 export type Data = {
@@ -15,7 +28,8 @@ export type Data = {
 export interface ServerToClientEvents {
   data: (data: Data) => void;
   message: (message: Message) => void;
-  "users-update": (users: User[]) => void;
+  room: (room: Room) => void;
+  "room-restart": (room: Room) => void;
   "user-create": (user: User) => void;
   "user-remove": (user: User) => void;
 }
@@ -23,7 +37,8 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   data: (data: Data) => void;
   message: (message: Message) => void;
-  "users-update": (users: User[]) => void;
+  room: (room: Room) => void;
+  "room-restart": (room: Room) => void;
   "user-create": (user: User) => void;
   "user-remove": (user: User) => void;
 }

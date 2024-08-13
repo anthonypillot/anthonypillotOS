@@ -1,58 +1,78 @@
 import { PrismaClient } from "@prisma/client";
-import type { User } from "@/components/task-holdem/CreateUser.vue";
+import type { Room } from "@/types/task-holdem.type";
 
 const prisma = new PrismaClient();
 
-export async function createRoom(roomId: string): Promise<User[]> {
+export async function getRoom(id: string): Promise<Room | null> {
   try {
-    const room = await prisma.taskHoldemRoom.create({
-      data: {
-        id: roomId,
-        data: [],
+    const room = await prisma.taskHoldemRoom.findUnique({
+      where: {
+        id,
       },
     });
 
-    return room.data as User[];
+    if (room && room.data) {
+      return room.data as Room;
+    } else {
+      return null;
+    }
+  } catch (error: any) {
+    logger.error(`Error while getting room: ${error}`);
+    throw new Error(error);
+  }
+}
+
+function createEmptyRoom(): Room {
+  return {
+    users: [],
+    game: {
+      isRevealed: false,
+    },
+  };
+}
+
+export async function createRoom(id: string): Promise<Room> {
+  try {
+    const room = await prisma.taskHoldemRoom.create({
+      data: {
+        id,
+        // @ts-ignore
+        data: createEmptyRoom(),
+      },
+    });
+
+    return room.data as Room;
   } catch (error: any) {
     logger.error(`Error while creating room: ${error}`);
     throw new Error(error);
   }
 }
 
-export async function getUsers(roomId: string): Promise<User[] | null> {
-  try {
-    const room = await prisma.taskHoldemRoom.findUnique({
-      where: {
-        id: roomId,
-      },
-    });
+export async function createOrUpdateRoom(id: string): Promise<Room> {
+  const room = await getRoom(id);
 
-    if (room && room.data) {
-      return room.data as User[];
-    } else {
-      return null;
-    }
-  } catch (error: any) {
-    logger.error(`Error while getting users: ${error}`);
-    throw new Error(error);
+  if (room) {
+    return room;
+  } else {
+    return await createRoom(id);
   }
 }
 
-export async function updateUsers(roomId: string, users: User[]): Promise<User[]> {
+export async function updateRoom(id: string, updatedRoom: Room): Promise<Room> {
   try {
     const room = await prisma.taskHoldemRoom.update({
       where: {
-        id: roomId,
+        id,
       },
       data: {
         // @ts-ignore
-        data: users,
+        data: updatedRoom,
       },
     });
 
-    return room.data as User[];
+    return room.data as Room;
   } catch (error: any) {
-    logger.error(`Error while updating users: ${error}`);
+    logger.error(`Error while updating room: ${error}`);
     throw new Error(error);
   }
 }

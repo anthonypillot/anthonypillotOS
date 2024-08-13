@@ -1,17 +1,20 @@
 <template>
-  <div class="flex flex-col items-center">
-    <NuxtImg class="max-h-12 lg:max-h-16 z-10" :src="useAvatar(user.avatar)" alt="poker player" />
-    <div class="absolute bg-indigo-200 h-12 w-12 blur-lg"></div>
+  <div class="flex flex-col items-center p-4 border border-gray-400 rounded bg-gray-600 bg-opacity-50">
+    <NuxtImg class="max-h-12 lg:max-h-16 z-10" :src="useAvatar(user.avatar)" :alt="'poker player ' + user.avatar" />
+    <div class="absolute bg-indigo-400 h-10 w-10 blur-md"></div>
     <p class="text-xs text-white text-ellipsis overflow-hidden text-center max-w-16">{{ user.name }}</p>
-    <div class="flex justify-center mt-1">
+    <div class="flex justify-center mt-2">
       <div
-        :class="`poker-card ${
-          isRevealed ? '' : 'poker-card-back'
-        } flex items-center justify-center text-center h-10 w-8 lg:h-14 lg:w-10 border-2 border-indigo-100 rounded shadow-md shadow-indigo-200 `"
+        :class="`flex items-center justify-center text-center h-10 w-8 lg:h-14 lg:w-10 border-2 border-indigo-100 rounded  ${
+          isRevealed ? 'bg-gray-800' : 'poker-card-back'
+        }`"
       >
-        <span :class="`text-xl ${isRevealed ? 'text-white' : ''}`">{{
-          isRevealed ? user.selectedCard?.value || "?" : getRandomEmoji()
+        <span v-if="!isRevealed" class="text-white">{{ getRandomEmoji() }}</span>
+        <span v-else-if="isRevealed && typeof getSelectedCardValue() === 'number'" class="text-white text-xl">{{
+          getSelectedCardValue()
         }}</span>
+        <component v-else-if="isRevealed && getSelectedCardValue()" :is="getSelectedCardValue()" class="text-white w-8" />
+        <component v-else :is="QuestionMarkCircleIcon" class="text-white w-8" />
       </div>
     </div>
   </div>
@@ -19,8 +22,10 @@
 
 <script setup lang="ts">
 import type { User } from "@/components/task-holdem/CreateUser.vue";
+import { valueToComponent } from "@/types/task-holdem.type";
+import { QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 
-defineProps<{
+const props = defineProps<{
   user: User;
   isRevealed: boolean;
 }>();
@@ -28,6 +33,20 @@ defineProps<{
 function getRandomEmoji(): string {
   const emojis = ["♠️", "♣️", "♥️", "♦️"];
   return emojis[Math.floor(Math.random() * emojis.length)];
+}
+
+function getSelectedCardValue(): number | Component | null {
+  if (props.user.selectedCard) {
+    if (props.user.selectedCard.type === "icon") {
+      return valueToComponent[props.user.selectedCard.value];
+    } else if (props.user.selectedCard.type === "number" && typeof props.user.selectedCard.value === "number") {
+      return props.user.selectedCard.value;
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
 }
 </script>
 
