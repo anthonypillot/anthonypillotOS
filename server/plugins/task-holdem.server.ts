@@ -65,7 +65,7 @@ export default defineNitroPlugin((nitro: NitroApp) => {
       });
 
       socket.on("room-restart", async (room: Room) => {
-        room.game.isRevealed = false;
+        room.game.status = "playing";
         room.users.forEach((user) => {
           user.selectedCard = null;
         });

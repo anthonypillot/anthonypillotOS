@@ -13,7 +13,7 @@
 
     <section v-if="user" class="flex flex-col gap-y-8">
       <TaskHoldemUser :user @remove="removeUser" />
-      <TaskHoldemPokerTable :users="room.users" :game="room.game" @reveal="reveal" @restart="restart" />
+      <TaskHoldemPokerTable :users="room.users" :game="room.game" @revealing="revealing" @revealed="revealed" @restart="restart" />
       <section class="flex flex-col gap-2">
         <p class="text-white">Select a card:</p>
         <div class="flex flex-wrap gap-x-2 gap-y-4">
@@ -100,7 +100,7 @@ const user = ref<User | null>(getUserFromLocalStorage());
 const room = ref<Room>({
   users: [],
   game: {
-    isRevealed: false,
+    status: "playing",
   },
 });
 
@@ -258,12 +258,18 @@ function selectedCard(selectedCard: Card): void {
   }
 }
 
-function reveal(): void {
-  room.value.game.isRevealed = true;
+function revealing(): void {
+  room.value.game.status = "revealing";
+  socket.emit("room", room.value);
+}
+
+function revealed(): void {
+  room.value.game.status = "revealed";
   socket.emit("room", room.value);
 }
 
 function restart(): void {
+  room.value.game.status = "playing";
   socket.emit("room-restart", room.value);
 }
 
