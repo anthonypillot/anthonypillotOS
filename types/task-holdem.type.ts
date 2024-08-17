@@ -9,10 +9,12 @@ export const application = {
     "TaskHold’em is a collaborative poker planning tool designed for agile teams following the Scrum framework. It provides a simple and enjoyable way to conduct sprint planning sessions, allowing team members to estimate and prioritize tasks effectively.",
 };
 
+export type GameStatus = "playing" | "revealing" | "revealed";
+
 export type Room = {
   users: User[];
   game: {
-    isRevealed: boolean;
+    status: GameStatus;
   };
 };
 

@@ -26,7 +26,7 @@ function createEmptyRoom(): Room {
   return {
     users: [],
     game: {
-      isRevealed: false,
+      status: "playing",
     },
   };
 }
