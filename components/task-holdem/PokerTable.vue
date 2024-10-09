@@ -5,7 +5,7 @@
         <TaskHoldemPokerPlayer :user :status="props.game.status" />
       </div>
     </div>
-    <div class="flex flex-col gap-y-2 justify-center items-center h-56 w-full p-4 bg-indigo-950 sm:rounded-3xl border border-indigo-400">
+    <div class="flex flex-col gap-y-2 justify-center items-center h-56 w-full p-4 bg-indigo-950 sm:rounded-2xl border border-indigo-400">
       <div v-if="props.game.status === 'playing' || props.game.status === 'revealing'">
         <button
           :class="`text-white bg-indigo-900 border border-white rounded-md px-4 py-2 min-w-40 ${
@@ -41,6 +41,8 @@
 </template>
 
 <script setup lang="ts">
+// @ts-ignore
+import confetti from "canvas-confetti";
 import type { Room } from "@/types/task-holdem.type";
 
 const props = defineProps<Room>();
@@ -62,6 +64,13 @@ function reveal(): void {
   emit("revealing");
 }
 
+const scalar = 2;
+const clubCard = confetti.shapeFromText({ text: "♣️", scalar });
+const spadeCard = confetti.shapeFromText({ text: "♠️", scalar });
+const diamondCard = confetti.shapeFromText({ text: "♦️", scalar });
+const heartCard = confetti.shapeFromText({ text: "♥️", scalar });
+const whiteHeartCard = confetti.shapeFromText({ text: "🤍", scalar });
+
 watch(
   () => props.game.status,
   (status) => {
@@ -71,7 +80,15 @@ watch(
         if (countdown.value === 0) {
           clearInterval(interval);
           countdown.value = countdownDuration;
+
           emit("revealed");
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            shapes: [clubCard, spadeCard, diamondCard, heartCard, whiteHeartCard],
+            scalar,
+          });
         }
       }, 1000);
     }
