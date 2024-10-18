@@ -1,5 +1,5 @@
 # First stage is to build the application
-FROM node:22.4-alpine AS build
+FROM node:22 AS build
 
 # Define working directory
 WORKDIR /app
