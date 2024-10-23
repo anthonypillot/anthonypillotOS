@@ -51,12 +51,19 @@ export default defineNuxtConfig({
     },
   },
 
-  routeRules: {
-    "/": { swr: 21600 }, // Homepage generated on demand, revalidates in background, cached for 6 hours (21600 seconds)
-    "/tools/github/history-cleaner": { swr: 21600 }, // Page generated on demand, revalidates in background, cached for 6 hours (21600 seconds),
+  nitro: {
+    experimental: {
+      websocket: true,
+    },
   },
 
-  modules: ["@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/tailwindcss"],
+  routeRules: {
+    "/": { swr: 21600 }, // Homepage generated on demand, revalidates in background, cached for 6 hours (21600 seconds)
+    "/tools/github/history-cleaner": { swr: 21600 }, // Landing page generated on demand, revalidates in background, cached for 6 hours (21600 seconds),
+    "/tools/task-holdem": { swr: 21600 }, // Landing page generated on demand, revalidates in background, cached for 6 hours (21600 seconds),
+  },
+
+  modules: ["@nuxt/image", "@nuxtjs/tailwindcss", "@nuxt/test-utils/module"],
 
   devtools: { enabled: true },
 });
