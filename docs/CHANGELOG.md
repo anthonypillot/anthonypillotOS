@@ -1,3 +1,18 @@
+## [1.2.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.7...v1.2.8) (2024-10-23)
+
+
+### Bug Fixes
+
+* Prisma generator configuration ([e306098](https://github.com/anthonypillot/anthonypillotOS/commit/e3060980ad3f4d239e6426f164ec9224a4ef05ad))
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([e9c39f0](https://github.com/anthonypillot/anthonypillotOS/commit/e9c39f0f1c592ee7c0c53e8957e8b1651ed7aa1a))
+* reorganize ready health endpoint ([87a05dc](https://github.com/anthonypillot/anthonypillotOS/commit/87a05dcce7a631d365d330924f73521cb16be818))
+* use distroless base image ([ae92666](https://github.com/anthonypillot/anthonypillotOS/commit/ae926660822f05ca201cc86c5ba756cabbdf29f2))
+* use main Node.js image by removing alpine ([5772684](https://github.com/anthonypillot/anthonypillotOS/commit/5772684bece2f39bc7e69ab18ee7c002f9d58625))
+
 ## [1.2.7](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.6...v1.2.7) (2024-08-10)
 
 
