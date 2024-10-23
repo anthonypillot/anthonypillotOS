@@ -90,11 +90,13 @@ export default defineNitroPlugin((nitro: NitroApp) => {
     "/api/websocket/task-holdem",
     defineEventHandler({
       handler(event) {
+        // @ts-expect-error
         engine.handleRequest(event.node.req, event.node.res);
         event._handled = true;
       },
       websocket: {
         open(peer) {
+          // @ts-expect-error
           const nodeContext = peer.ctx.node;
           const req = nodeContext.req;
 
