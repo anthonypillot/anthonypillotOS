@@ -3,16 +3,17 @@ import type { ClientToServerEvents, Room, ServerToClientEvents } from "@/types/t
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
-import type { NitroApp } from "nitropack";
 import pg from "pg";
 import { Server } from "socket.io";
 
-export default defineNitroPlugin((nitro: NitroApp) => {
+const websocketPrefixLog = "[WEBSOCKET]";
+
+export default defineNitroPlugin((nitro) => {
   const connectionString = process.env.POSTGRES_PRISMA_URL;
   const pool = new pg.Pool({ connectionString });
 
   pool.on("error", (error) => {
-    logger.error(`Socket - Error while connecting to Postgres: ${error}`);
+    logger.error(`${websocketPrefixLog} Error while connecting to Postgres: ${error}`);
   });
 
   const engine = new Engine();
@@ -47,7 +48,7 @@ export default defineNitroPlugin((nitro: NitroApp) => {
       socket.on("user-create", async (userToCreate) => {
         const room: Room = await dao.createOrUpdateRoom(roomId);
         if (!room.users.find((user) => user.id === userToCreate.id)) {
-          logger.debug(`Socket - User create: ${userToCreate.name}`);
+          logger.debug(`${websocketPrefixLog} User to create: ${userToCreate.name}`);
           room.users.push(userToCreate);
         }
         const updatedRoom = await dao.updateRoom(roomId, room);
@@ -55,7 +56,7 @@ export default defineNitroPlugin((nitro: NitroApp) => {
       });
 
       socket.on("user-remove", async (userToRemove) => {
-        logger.debug(`Socket - User remove: ${userToRemove.name}`);
+        logger.debug(`${websocketPrefixLog} User to remove: ${userToRemove.name}`);
 
         const room: Room = await dao.createOrUpdateRoom(roomId);
         room.users = room.users.filter((user) => user.id !== userToRemove.id);
@@ -76,7 +77,7 @@ export default defineNitroPlugin((nitro: NitroApp) => {
     }
 
     socket.on("error", (error) => {
-      logger.error(`Socket - Error: ${error}`);
+      logger.error(`${websocketPrefixLog} Error: ${error}`);
     });
 
     socket.on("disconnect", async () => {
