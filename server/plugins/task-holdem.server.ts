@@ -90,24 +90,16 @@ export default defineNitroPlugin((nitro: NitroApp) => {
     "/api/websocket/task-holdem",
     defineEventHandler({
       handler(event) {
-        // @ts-expect-error
+        // @ts-expect-error private method and property
         engine.handleRequest(event.node.req, event.node.res);
         event._handled = true;
       },
       websocket: {
         open(peer) {
-          // @ts-expect-error
-          const nodeContext = peer.ctx.node;
-          const req = nodeContext.req;
-
-          // @ts-expect-error private method
-          engine.prepare(req);
-
-          const rawSocket = nodeContext.req.socket;
-          const websocket = nodeContext.ws;
-
-          // @ts-expect-error private method
-          engine.onWebSocket(req, rawSocket, websocket);
+          // @ts-expect-error private method and property
+          engine.prepare(peer._internal.nodeReq);
+          // @ts-expect-error private method and property
+          engine.onWebSocket(peer._internal.nodeReq, peer._internal.nodeReq.socket, peer.websocket);
         },
       },
     })
