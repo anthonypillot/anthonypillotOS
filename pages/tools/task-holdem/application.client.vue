@@ -111,6 +111,7 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
   transports: ["websocket"],
   query: {
     id: roomId,
+    userId: user.value?.id,
   },
 });
 

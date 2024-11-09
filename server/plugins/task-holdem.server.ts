@@ -5,6 +5,7 @@ import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
 import pg from "pg";
 import { Server } from "socket.io";
+import type { User } from "@/components/task-holdem/CreateUser.vue";
 
 const websocketPrefixLog = "[WEBSOCKET]";
 
@@ -29,6 +30,14 @@ export default defineNitroPlugin((nitro) => {
     });
 
     const roomId = socket.handshake.query.id as string;
+    const userId = socket.handshake.query.userId as string;
+
+    if (userId) {
+      const user: User | null = await dao.getUser(roomId, userId);
+      if (user && user.name) {
+        logger.debug(`${websocketPrefixLog} User reconnected: ${user.name}`);
+      }
+    }
 
     if (roomId) {
       socket.join(roomId);
@@ -56,13 +65,13 @@ export default defineNitroPlugin((nitro) => {
       });
 
       socket.on("user-remove", async (userToRemove) => {
-        logger.debug(`${websocketPrefixLog} User to remove: ${userToRemove.name}`);
-
         const room: Room = await dao.createOrUpdateRoom(roomId);
         room.users = room.users.filter((user) => user.id !== userToRemove.id);
 
         const updatedRoom = await dao.updateRoom(roomId, room);
         io.to(roomId).emit("room", updatedRoom);
+
+        logger.debug(`${websocketPrefixLog} User removed: ${userToRemove.name}`);
       });
 
       socket.on("room-restart", async (room: Room) => {
@@ -81,6 +90,21 @@ export default defineNitroPlugin((nitro) => {
     });
 
     socket.on("disconnect", async () => {
+      const roomId = socket.handshake.query.id as string;
+      const userId = socket.handshake.query.userId as string;
+
+      if (roomId && userId) {
+        const room: Room = await dao.createOrUpdateRoom(roomId);
+        room.users = room.users.filter((user) => {
+          return user.id !== userId;
+        });
+
+        logger.debug(`${websocketPrefixLog} User disconnected: ${(await dao.getUser(roomId, userId))?.name}`);
+
+        const updatedRoom = await dao.updateRoom(roomId, room);
+        io.to(roomId).emit("room", updatedRoom);
+      }
+
       io.emit("data", {
         socketNumber: (await io.fetchSockets()).length,
       });

@@ -1,5 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import type { User } from "@/components/task-holdem/CreateUser.vue";
 import type { Room } from "@/types/task-holdem.type";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -36,7 +37,6 @@ export async function createRoom(id: string): Promise<Room> {
     const room = await prisma.taskHoldemRoom.create({
       data: {
         id,
-        // @ts-ignore
         data: createEmptyRoom(),
       },
     });
@@ -65,7 +65,6 @@ export async function updateRoom(id: string, updatedRoom: Room): Promise<Room> {
         id,
       },
       data: {
-        // @ts-ignore
         data: updatedRoom,
       },
     });
@@ -74,5 +73,15 @@ export async function updateRoom(id: string, updatedRoom: Room): Promise<Room> {
   } catch (error: any) {
     logger.error(`Error while updating room: ${error}`);
     throw new Error(error);
+  }
+}
+
+export async function getUser(roomId: string, userId: string): Promise<User | null> {
+  const room: Room | null = await getRoom(roomId);
+  if (room) {
+    const user = room.users.find((user) => user.id === userId);
+    return user || null;
+  } else {
+    return null;
   }
 }
