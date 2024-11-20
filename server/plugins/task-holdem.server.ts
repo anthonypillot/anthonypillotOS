@@ -1,20 +1,21 @@
+import type { User } from "@/components/task-holdem/CreateUser.vue";
 import * as dao from "@/server/dao/task-holdem.dao";
 import type { ClientToServerEvents, Room, ServerToClientEvents } from "@/types/task-holdem.type";
+import { application } from "@/types/task-holdem.type";
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
 import pg from "pg";
 import { Server } from "socket.io";
-import type { User } from "@/components/task-holdem/CreateUser.vue";
 
-const websocketPrefixLog = "[WEBSOCKET]";
+const prefixLog = `[WEBSOCKET - ${application.name}]`;
 
 export default defineNitroPlugin((nitro) => {
   const connectionString = process.env.POSTGRES_PRISMA_URL;
   const pool = new pg.Pool({ connectionString });
 
   pool.on("error", (error) => {
-    logger.error(`${websocketPrefixLog} Error while connecting to Postgres: ${error}`);
+    logger.error(`${prefixLog} Error while connecting to Postgres: ${error}`);
   });
 
   const engine = new Engine();
@@ -35,7 +36,7 @@ export default defineNitroPlugin((nitro) => {
     if (userId) {
       const user: User | null = await dao.getUser(roomId, userId);
       if (user && user.name) {
-        logger.debug(`${websocketPrefixLog} User reconnected: ${user.name}`);
+        logger.debug(`${prefixLog} User reconnected: [${user.name}]`);
       }
     }
 
@@ -57,7 +58,7 @@ export default defineNitroPlugin((nitro) => {
       socket.on("user-create", async (userToCreate) => {
         const room: Room = await dao.createOrUpdateRoom(roomId);
         if (!room.users.find((user) => user.id === userToCreate.id)) {
-          logger.debug(`${websocketPrefixLog} User to create: ${userToCreate.name}`);
+          logger.debug(`${prefixLog} User to create: [${userToCreate.name}]`);
           room.users.push(userToCreate);
         }
         const updatedRoom = await dao.updateRoom(roomId, room);
@@ -71,7 +72,7 @@ export default defineNitroPlugin((nitro) => {
         const updatedRoom = await dao.updateRoom(roomId, room);
         io.to(roomId).emit("room", updatedRoom);
 
-        logger.debug(`${websocketPrefixLog} User removed: ${userToRemove.name}`);
+        logger.debug(`${prefixLog} User removed: [${userToRemove.name}]`);
       });
 
       socket.on("room-restart", async (room: Room) => {
@@ -86,7 +87,7 @@ export default defineNitroPlugin((nitro) => {
     }
 
     socket.on("error", (error) => {
-      logger.error(`${websocketPrefixLog} Error: ${error}`);
+      logger.error(`${prefixLog} Error: ${error}`);
     });
 
     socket.on("disconnect", async () => {
@@ -99,7 +100,7 @@ export default defineNitroPlugin((nitro) => {
           return user.id !== userId;
         });
 
-        logger.debug(`${websocketPrefixLog} User disconnected: ${(await dao.getUser(roomId, userId))?.name}`);
+        logger.debug(`${prefixLog} User disconnected: [${(await dao.getUser(roomId, userId))?.name}]`);
 
         const updatedRoom = await dao.updateRoom(roomId, room);
         io.to(roomId).emit("room", updatedRoom);
