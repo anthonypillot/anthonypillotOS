@@ -8,7 +8,7 @@
     <div class="flex flex-col gap-y-2 justify-center items-center h-56 w-full p-4 bg-indigo-950 sm:rounded-2xl border border-indigo-400">
       <div v-if="props.game.status === 'playing' || props.game.status === 'revealing'">
         <button
-          :class="`text-white bg-indigo-900 border border-white rounded-md px-4 py-2 min-w-40 ${
+          :class="`text-white bg-black border border-white rounded-md px-4 py-2 min-w-40 ${
             isAnyUserWithSelectedCard ? 'cursor-pointer hover:bg-white hover:text-black' : 'cursor-not-allowed bg-gray-800 opacity-50'
           } ${isEveryoneReady ? 'shadow-xl shadow-indigo-400' : ''}`"
           @click="reveal()"
@@ -27,7 +27,7 @@
         <p class="text-white text-lg">Result</p>
         <p class="text-white"><span class="text-gray-200">Average</span>: {{ getAverage() }}</p>
         <button
-          class="text-white bg-indigo-900 border border-white rounded-md px-2 py-1 mt-4 hover:bg-white hover:text-black"
+          class="text-white bg-black border border-white min-w-24 rounded-md px-2 py-1 mt-4 hover:bg-white hover:text-black"
           @click="emit('restart')"
         >
           Restart

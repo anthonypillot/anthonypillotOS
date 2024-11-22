@@ -2,7 +2,7 @@
   <div class="text-white text-lg">
     <button
       class="flex gap-x-2 text-white text-sm border border-white rounded-md px-4 py-2 hover:bg-white hover:text-black"
-      @click="copyInvitationToClipboard"
+      @click="copyInvitationToClipboard()"
     >
       <UserPlusIcon class="h-5 w-5" />
       {{ isInvitationButtonClicked ? "Invitation link copied!" : "Invite players" }}
@@ -20,6 +20,6 @@ function copyInvitationToClipboard() {
   isInvitationButtonClicked.value = true;
   setTimeout(() => {
     isInvitationButtonClicked.value = false;
-  }, 2000);
+  }, 3000);
 }
 </script>
