@@ -21,7 +21,7 @@
             </div>
             <a
               class="text-white border border-white rounded-md px-4 py-2 text-center hover:bg-white hover:text-black"
-              href="/tools/task-holdem/application"
+              :href="application.path"
               >Launch {{ application.name }}</a
             >
           </div>

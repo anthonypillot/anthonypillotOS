@@ -8,12 +8,43 @@
         >Beta</span
       >
     </div>
+    <div
+      class="absolute inset-x-0 -top-16 flex transform-gpu justify-center overflow-hidden blur-3xl pointer-events-none"
+      aria-hidden="true"
+    >
+      <div
+        class="aspect-[1318/752] w-[82.375rem] flex-none bg-gradient-to-r from-[#80caff] to-[#4f46e5] opacity-25"
+        style="
+          clip-path: polygon(
+            73.6% 51.7%,
+            91.7% 11.8%,
+            100% 46.4%,
+            97.4% 82.2%,
+            92.5% 84.9%,
+            75.7% 64%,
+            55.3% 47.5%,
+            46.5% 49.4%,
+            45% 62.9%,
+            50.3% 87.2%,
+            21.3% 64.1%,
+            0.1% 100%,
+            5.4% 51.1%,
+            21.4% 63.9%,
+            58.9% 0.2%,
+            73.6% 51.7%
+          );
+        "
+      />
+    </div>
 
     <TaskHoldemCreateUser v-if="!user" @create="createUser" />
 
     <section v-if="user" class="flex flex-col gap-y-8">
-      <TaskHoldemUser :user @remove="removeUser" />
-      <TaskHoldemPokerTable :users="room.users" :game="room.game" @revealing="revealing" @revealed="revealed" @restart="restart" />
+      <div class="flex flex-col md:flex-row md:justify-between gap-4">
+        <TaskHoldemUser :user @remove="removeUser" />
+        <TaskHoldemInvitation />
+      </div>
+      <TaskHoldemPokerTable :users="room.users" :game="room.game" @revealing="revealing()" @revealed="revealed()" @restart="restart()" />
       <section class="flex flex-col gap-2">
         <p class="text-white">Select a card:</p>
         <div class="flex flex-wrap gap-x-2 gap-y-4">
@@ -23,11 +54,10 @@
             :type="card.type"
             :value="card.value"
             :isSelected="card.isSelected"
-            @select="selectedCard"
+            @select="selectedCard(card)"
           />
         </div>
       </section>
-      <TaskHoldemInvitation />
       <TaskHoldemChat :user="user" v-model:messages="messages" v-model:message="message" @submit="sendMessage(user, message)" />
     </section>
 
