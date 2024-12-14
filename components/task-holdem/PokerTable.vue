@@ -15,6 +15,7 @@
           } ${isEveryoneReady ? 'shadow-lg shadow-indigo-400' : ''}`"
           @click="reveal()"
           :disabled="!isAnyUserWithSelectedCard"
+          data-testid="reveal-button"
         >
           {{
             isAnyUserWithSelectedCard
@@ -31,6 +32,7 @@
         <button
           class="text-white bg-indigo-800 border border-white min-w-24 rounded-md px-2 py-1 mt-4 hover:bg-white hover:text-black"
           @click="emit('restart')"
+          data-testid="restart-button"
         >
           Restart
         </button>

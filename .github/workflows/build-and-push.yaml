@@ -34,10 +34,25 @@ jobs:
     secrets:
       registry_password: ${{ secrets.GITHUB_TOKEN }}
 
+  deploy:
+    name: 🚀 Deploy
+    needs: [extract, push]
+    uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
+    with:
+      registry_url: ghcr.io
+      registry_username: ${{ github.repository_owner }}
+      environment: pre-production
+      namespace_name: os
+      deployment_name: os-prep
+      image_name: os
+      image_tag: ${{ needs.extract.outputs.result }}
+    secrets:
+      kubeconfig: ${{ secrets.KUBECONFIG }}
+
   e2e:
     name: 🎭 End-to-end tests
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [deploy]
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout repository
@@ -65,18 +80,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
-
-  deploy:
-    name: 🚀 Deploy
-    needs: [extract, push]
-    uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
-    with:
-      registry_url: ghcr.io
-      registry_username: ${{ github.repository_owner }}
-      environment: pre-production
-      namespace_name: os
-      deployment_name: os-prep
-      image_name: os
-      image_tag: ${{ needs.extract.outputs.result }}
-    secrets:
-      kubeconfig: ${{ secrets.KUBECONFIG }}
