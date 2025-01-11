@@ -43,7 +43,7 @@ export default defineNitroPlugin((nitro) => {
     if (roomId) {
       socket.join(roomId);
 
-      const room: Room = await dao.createOrUpdateRoom(roomId);
+      const room: Room = await dao.getOrCreateRoom(roomId);
       io.to(roomId).emit("room", room);
 
       socket.on("message", (message) => {
@@ -56,7 +56,7 @@ export default defineNitroPlugin((nitro) => {
       });
 
       socket.on("user-create", async (userToCreate) => {
-        const room: Room = await dao.createOrUpdateRoom(roomId);
+        const room: Room = await dao.getOrCreateRoom(roomId);
         if (!room.users.find((user) => user.id === userToCreate.id)) {
           logger.debug(`${prefixLog} User to create: [${userToCreate.name}]`);
           room.users.push(userToCreate);
@@ -66,7 +66,7 @@ export default defineNitroPlugin((nitro) => {
       });
 
       socket.on("user-remove", async (userToRemove) => {
-        const room: Room = await dao.createOrUpdateRoom(roomId);
+        const room: Room = await dao.getOrCreateRoom(roomId);
         room.users = room.users.filter((user) => user.id !== userToRemove.id);
 
         const updatedRoom = await dao.updateRoom(roomId, room);
@@ -95,7 +95,7 @@ export default defineNitroPlugin((nitro) => {
       const userId = socket.handshake.query.userId as string;
 
       if (roomId && userId) {
-        const room: Room = await dao.createOrUpdateRoom(roomId);
+        const room: Room = await dao.getOrCreateRoom(roomId);
         room.users = room.users.filter((user) => {
           return user.id !== userId;
         });

@@ -48,7 +48,7 @@ export async function createRoom(id: string): Promise<Room> {
   }
 }
 
-export async function createOrUpdateRoom(id: string): Promise<Room> {
+export async function getOrCreateRoom(id: string): Promise<Room> {
   const room = await getRoom(id);
 
   if (room) {
