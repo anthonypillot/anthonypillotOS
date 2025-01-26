@@ -37,6 +37,7 @@ import type { Card } from "@/components/task-holdem/Card.vue";
 
 export type User = {
   id: string;
+  sessionId: string | null;
   avatar: Avatar;
   name: string;
   selectedCard: Card | null;
@@ -64,6 +65,7 @@ function create(userName: string): void {
   if (userName) {
     user.value = {
       id: crypto.randomUUID(),
+      sessionId: null,
       name: userName,
       avatar: userAvatar.value,
       selectedCard: null,

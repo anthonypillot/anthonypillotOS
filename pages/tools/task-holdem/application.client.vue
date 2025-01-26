@@ -136,12 +136,14 @@ const room = ref<Room>({
 
 //#region Socket
 
+const sessionId = crypto.randomUUID();
+
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
   path: "/api/websocket/task-holdem",
   transports: ["websocket"],
   query: {
     id: roomId,
-    userId: user.value?.id,
+    sessionId,
   },
 });
 
