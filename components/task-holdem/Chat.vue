@@ -1,5 +1,5 @@
 <template>
-  <section v-if="!open" class="bg-gray-800 z-10 fixed right-8 bottom-12">
+  <section v-if="!isOpen" class="bg-gray-800 z-10 fixed right-8 bottom-12">
     <button
       class="text-white text-xs border border-gray-700 shadow-indigo-800 shadow-md rounded-md px-4 py-2 cursor-pointer hover:bg-white hover:text-black"
       @click="toggleChat()"
@@ -9,7 +9,7 @@
   </section>
   <Transition>
     <section
-      v-if="open"
+      v-if="isOpen"
       class="p-4 bg-gray-800 border border-gray-700 shadow-indigo-800 shadow-md rounded max-w-sm z-10 fixed right-8 bottom-12"
     >
       <div class="flex flex-col gap-y-8">
@@ -67,9 +67,9 @@
 
 <script setup lang="ts">
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import { XMarkIcon, ChatBubbleLeftRightIcon } from "@heroicons/vue/20/solid";
+import { ChatBubbleLeftRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 
-const open = ref<boolean>(isChatOpen());
+const isOpen = ref<boolean>(isChatOpen());
 
 function isChatOpen(): boolean {
   return localStorage.getItem("isChatOpen") === "true";
@@ -79,11 +79,11 @@ function setChatOpen(open: boolean): void {
   localStorage.setItem("isChatOpen", open.toString());
 }
 
-setChatOpen(open.value);
+setChatOpen(isOpen.value);
 
 function toggleChat(): void {
-  open.value = !open.value;
-  setChatOpen(open.value);
+  isOpen.value = !isOpen.value;
+  setChatOpen(isOpen.value);
 }
 
 export type Message = {
@@ -110,12 +110,15 @@ function submit(user: User, messageContent?: string): void {
   }
 }
 
-watch(messages.value!, () => {
-  const messagesElement = document.getElementById("messages");
-  if (messagesElement) {
-    messagesElement.scrollTop = messagesElement.scrollHeight;
+watch(
+  computed(() => messages.value),
+  () => {
+    const messagesElement = document.getElementById("messages");
+    if (messagesElement) {
+      messagesElement.scrollTop = messagesElement.scrollHeight; // TODO: Fix this, it's not working as expected
+    }
   }
-});
+);
 </script>
 
 <style scoped>

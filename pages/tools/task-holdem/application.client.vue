@@ -44,7 +44,13 @@
         <TaskHoldemUser :user @remove="removeUser" />
         <TaskHoldemInvitation />
       </div>
-      <TaskHoldemPokerTable :users="room.users" :game="room.game" @revealing="revealing()" @revealed="revealed()" @restart="restart()" />
+      <TaskHoldemPokerTable
+        :users="room.users"
+        :game="room.game"
+        @revealing="setGameStatus('revealing')"
+        @revealed="setGameStatus('revealed')"
+        @restart="setGameStatus('playing')"
+      />
       <section class="flex flex-col gap-2">
         <p class="text-white">Select a card:</p>
         <div class="flex flex-wrap gap-x-2 gap-y-4">
@@ -54,7 +60,7 @@
             :type="card.type"
             :value="card.value"
             :isSelected="card.isSelected"
-            @select="selectedCard(card)"
+            @select="selectCard(card)"
           />
         </div>
       </section>
@@ -71,7 +77,7 @@
 import type { Card } from "@/components/task-holdem/Card.vue";
 import type { Message } from "@/components/task-holdem/Chat.vue";
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import type { ClientToServerEvents, Data, Room, ServerToClientEvents } from "@/types/task-holdem.type";
+import type { ClientToServerEvents, Data, GameStatus, Room, ServerToClientEvents } from "@/types/task-holdem.type";
 import { application } from "@/types/task-holdem.type";
 import { io, type Socket } from "socket.io-client";
 
@@ -273,7 +279,7 @@ const cards = ref<Card[]>([
   },
 ]);
 
-function selectedCard(selectedCard: Card): void {
+function selectCard(selectedCard: Card): void {
   const currentUserInRoom = room.value.users.find((userRoom) => userRoom.id === user.value?.id);
 
   if (currentUserInRoom) {
@@ -291,19 +297,9 @@ function selectedCard(selectedCard: Card): void {
   }
 }
 
-function revealing(): void {
-  room.value.game.status = "revealing";
+function setGameStatus(status: GameStatus): void {
+  room.value.game.status = status;
   socket.emit("room", room.value);
-}
-
-function revealed(): void {
-  room.value.game.status = "revealed";
-  socket.emit("room", room.value);
-}
-
-function restart(): void {
-  room.value.game.status = "playing";
-  socket.emit("room-restart", room.value);
 }
 
 socket.on("room-restart", (roomFromServer: Room) => {

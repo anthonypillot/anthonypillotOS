@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center p-4 border border-gray-400 rounded bg-gray-700 bg-opacity-50">
+  <div class="flex flex-col items-center p-4 border border-gray-400 rounded bg-gray-700 bg-opacity-25">
     <NuxtImg class="max-h-12 lg:max-h-16 z-10" :src="useAvatar(user.avatar)" :alt="'poker player ' + user.avatar" />
     <div class="absolute bg-indigo-400 h-10 w-10 blur-md"></div>
     <p class="text-xs text-white text-ellipsis overflow-hidden text-center max-w-16">{{ user.name }}</p>
@@ -30,6 +30,7 @@ const props = defineProps<{
   status: GameStatus;
 }>();
 
+// TODO: This function is called each time the Player is clicking on a card. It should stay the same until the end of the game.
 function getRandomEmoji(): string {
   const emojis = ["♠️", "♣️", "♥️", "♦️"];
   return emojis[Math.floor(Math.random() * emojis.length)];

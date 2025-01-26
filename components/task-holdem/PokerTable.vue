@@ -5,7 +5,9 @@
         <TaskHoldemPokerPlayer :user :status="props.game.status" />
       </div>
     </div>
-    <div class="flex flex-col gap-y-2 justify-center items-center h-56 w-full p-4 bg-indigo-950 sm:rounded-2xl border border-indigo-400">
+    <div
+      class="flex flex-col gap-y-2 justify-center items-center h-56 w-full p-4 border-gray-400 rounded bg-gray-700 bg-opacity-10 sm:rounded-2xl border"
+    >
       <div v-if="props.game.status === 'playing' || props.game.status === 'revealing'">
         <button
           :class="`text-white bg-indigo-950 border border-white rounded-sm px-4 py-2 min-w-40 ${
@@ -65,11 +67,6 @@ function reveal(): void {
 }
 
 const scalar = 2;
-const clubCard = confetti.shapeFromText({ text: "♣️", scalar });
-const spadeCard = confetti.shapeFromText({ text: "♠️", scalar });
-const diamondCard = confetti.shapeFromText({ text: "♦️", scalar });
-const heartCard = confetti.shapeFromText({ text: "♥️", scalar });
-const whiteHeartCard = confetti.shapeFromText({ text: "🤍", scalar });
 
 watch(
   () => props.game.status,
@@ -86,7 +83,13 @@ watch(
             particleCount: 100,
             spread: 70,
             origin: { y: 0.6 },
-            shapes: [clubCard, spadeCard, diamondCard, heartCard, whiteHeartCard],
+            shapes: [
+              confetti.shapeFromText({ text: "♣️", scalar }),
+              confetti.shapeFromText({ text: "♠️", scalar }),
+              confetti.shapeFromText({ text: "♦️", scalar }),
+              confetti.shapeFromText({ text: "♥️", scalar }),
+              confetti.shapeFromText({ text: "🤍", scalar }),
+            ],
             scalar,
           });
         }

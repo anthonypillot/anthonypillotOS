@@ -7,14 +7,14 @@
     <p class="text-gray-400">
       Transport: <span class="text-white">{{ props.transport }}</span>
     </p>
-    <p class="text-gray-400">
-      Socket ID: <span class="text-white">{{ props.socket?.id || "N/A" }}</span>
+    <p v-if="props.socket" class="text-gray-400">
+      Socket ID: <span class="text-white">{{ props.socket.id || "N/A" }}</span>
+    </p>
+    <p v-if="props.socket" class="text-gray-400">
+      Socket state: <span class="text-white">{{ props.socket.active ? "active" : "inactive" }}</span>
     </p>
     <p class="text-gray-400">
-      Socket state: <span class="text-white">{{ props.socket?.active ? "active" : "inactive" }}</span>
-    </p>
-    <p class="text-gray-400">
-      Socket number: <span class="text-white">{{ props.socketNumber || 0 }}</span>
+      Socket number: <span class="text-white">{{ props.socketNumber || "N/A" }}</span>
     </p>
   </section>
 </template>
