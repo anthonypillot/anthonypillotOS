@@ -1,12 +1,14 @@
-import type { User } from "@/components/task-holdem/CreateUser.vue";
-import * as dao from "@/server/dao/task-holdem.dao";
-import type { ClientToServerEvents, Room, ServerToClientEvents } from "@/types/task-holdem.type";
-import { prefixLog } from "@/types/task-holdem.type";
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
 import pg from "pg";
 import { Server } from "socket.io";
+
+import type { User } from "@/components/task-holdem/CreateUser.vue";
+import type { ClientToServerEvents, Room, ServerToClientEvents } from "@/types/task-holdem.type";
+import { prefixLog } from "@/types/task-holdem.type";
+
+import * as service from "@/server/services/task-holdem.service";
 
 export default defineNitroPlugin((nitro) => {
   const connectionString = process.env.POSTGRES_PRISMA_URL;
@@ -32,7 +34,7 @@ export default defineNitroPlugin((nitro) => {
     const sessionId = socket.handshake.query.sessionId as string;
 
     if (sessionId) {
-      const user: User | null = await dao.getUserBySessionId(roomId, sessionId);
+      const user: User | null = await service.getUserBySessionId(roomId, sessionId);
       if (user && user.name) {
         logger.debug(`${prefixLog} User reconnected: [${user.name}]`);
       }
@@ -41,79 +43,44 @@ export default defineNitroPlugin((nitro) => {
     if (roomId) {
       socket.join(roomId);
 
-      const room: Room = await dao.getOrCreateRoom(roomId);
-      io.to(roomId).emit("room-update", room);
+      io.to(roomId).emit("room-update", await service.getOrCreateRoom(roomId));
 
       socket.on("message", (message) => {
         io.to(roomId).emit("message", message);
       });
 
       socket.on("room-update", async (room) => {
-        const updatedRoom: Room = await dao.updateRoom(roomId, room);
-        io.to(roomId).emit("room-update", updatedRoom);
+        io.to(roomId).emit("room-update", await service.updateRoom(roomId, room));
       });
 
       socket.on("user-create", async (userToCreate: User) => {
-        const room: Room = await dao.getOrCreateRoom(roomId);
-        if (!room.users.find((user) => user.id === userToCreate.id)) {
-          logger.debug(`${prefixLog} User to create: [${userToCreate.name}]`);
-          userToCreate.sessionId = sessionId;
-          room.users.push(userToCreate);
-        }
-        const updatedRoom = await dao.updateRoom(roomId, room);
-        io.to(roomId).emit("room-update", updatedRoom);
+        io.to(roomId).emit("room-update", await service.createUser(roomId, sessionId, userToCreate));
       });
 
       socket.on("user-remove", async (userToRemove: User) => {
-        const room: Room = await dao.getOrCreateRoom(roomId);
-        room.users = room.users.filter((user) => user.id !== userToRemove.id);
-
-        const updatedRoom = await dao.updateRoom(roomId, room);
-        io.to(roomId).emit("room-update", updatedRoom);
-
-        logger.debug(`${prefixLog} User removed: [${userToRemove.name}]`);
+        io.to(roomId).emit("room-update", await service.removeUser(roomId, userToRemove));
       });
 
       socket.on("room-restart", async (room: Room) => {
-        room.game.status = "playing";
-        room.users.forEach((user) => {
-          user.selectedCard = null;
-        });
-
-        const updatedRoom = await dao.updateRoom(roomId, room);
-        io.to(roomId).emit("room-restart", updatedRoom);
+        io.to(roomId).emit("room-restart", await service.restartRoom(roomId, room));
       });
     }
 
-    socket.on("error", (error) => {
-      logger.error(`${prefixLog} Error: ${error}`);
-    });
-
     socket.on("disconnect", async () => {
-      const roomId = socket.handshake.query.id as string;
-      const sessionId = socket.handshake.query.sessionId as string;
-
       if (roomId && sessionId) {
-        const room: Room | null = await dao.getRoom(roomId);
+        const room: Room | null = await service.removeUserBySessionId(roomId, sessionId);
         if (room) {
-          const userToRemove = room.users.find((user) => user.sessionId === sessionId);
-
-          if (userToRemove) {
-            room.users = room.users.filter((user) => {
-              return user.sessionId !== sessionId;
-            });
-
-            logger.debug(`${prefixLog} User disconnected: [${userToRemove.name}]`);
-
-            const updatedRoom = await dao.updateRoom(roomId, room);
-            io.to(roomId).emit("room-update", updatedRoom);
-          }
+          io.to(roomId).emit("room-update", room);
         }
       }
 
       io.emit("data", {
         socketNumber: (await io.fetchSockets()).length,
       });
+    });
+
+    socket.on("error", (error) => {
+      logger.error(`${prefixLog} Error: ${error}`);
     });
   });
 
