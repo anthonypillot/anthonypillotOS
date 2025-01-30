@@ -10,6 +10,8 @@ export const application = {
   path: "/tools/task-holdem/application",
 };
 
+export const prefixLog = `[WEBSOCKET - ${application.name}]`;
+
 export type GameStatus = "playing" | "revealing" | "revealed";
 
 export type Room = {
@@ -31,7 +33,7 @@ export type Data = {
 export interface ServerToClientEvents {
   data: (data: Data) => void;
   message: (message: Message) => void;
-  room: (room: Room) => void;
+  "room-update": (room: Room) => void;
   "room-restart": (room: Room) => void;
   "user-create": (user: User) => void;
   "user-remove": (user: User) => void;
@@ -40,7 +42,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   data: (data: Data) => void;
   message: (message: Message) => void;
-  room: (room: Room) => void;
+  "room-update": (room: Room) => void;
   "room-restart": (room: Room) => void;
   "user-create": (user: User) => void;
   "user-remove": (user: User) => void;

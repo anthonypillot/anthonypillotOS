@@ -1,14 +1,12 @@
 import type { User } from "@/components/task-holdem/CreateUser.vue";
 import * as dao from "@/server/dao/task-holdem.dao";
 import type { ClientToServerEvents, Room, ServerToClientEvents } from "@/types/task-holdem.type";
-import { application } from "@/types/task-holdem.type";
+import { prefixLog } from "@/types/task-holdem.type";
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
 import pg from "pg";
 import { Server } from "socket.io";
-
-const prefixLog = `[WEBSOCKET - ${application.name}]`;
 
 export default defineNitroPlugin((nitro) => {
   const connectionString = process.env.POSTGRES_PRISMA_URL;
@@ -44,15 +42,15 @@ export default defineNitroPlugin((nitro) => {
       socket.join(roomId);
 
       const room: Room = await dao.getOrCreateRoom(roomId);
-      io.to(roomId).emit("room", room);
+      io.to(roomId).emit("room-update", room);
 
       socket.on("message", (message) => {
         io.to(roomId).emit("message", message);
       });
 
-      socket.on("room", async (room) => {
+      socket.on("room-update", async (room) => {
         const updatedRoom: Room = await dao.updateRoom(roomId, room);
-        io.to(roomId).emit("room", updatedRoom);
+        io.to(roomId).emit("room-update", updatedRoom);
       });
 
       socket.on("user-create", async (userToCreate: User) => {
@@ -63,7 +61,7 @@ export default defineNitroPlugin((nitro) => {
           room.users.push(userToCreate);
         }
         const updatedRoom = await dao.updateRoom(roomId, room);
-        io.to(roomId).emit("room", updatedRoom);
+        io.to(roomId).emit("room-update", updatedRoom);
       });
 
       socket.on("user-remove", async (userToRemove: User) => {
@@ -71,7 +69,7 @@ export default defineNitroPlugin((nitro) => {
         room.users = room.users.filter((user) => user.id !== userToRemove.id);
 
         const updatedRoom = await dao.updateRoom(roomId, room);
-        io.to(roomId).emit("room", updatedRoom);
+        io.to(roomId).emit("room-update", updatedRoom);
 
         logger.debug(`${prefixLog} User removed: [${userToRemove.name}]`);
       });
@@ -108,7 +106,7 @@ export default defineNitroPlugin((nitro) => {
             logger.debug(`${prefixLog} User disconnected: [${userToRemove.name}]`);
 
             const updatedRoom = await dao.updateRoom(roomId, room);
-            io.to(roomId).emit("room", updatedRoom);
+            io.to(roomId).emit("room-update", updatedRoom);
           }
         }
       }

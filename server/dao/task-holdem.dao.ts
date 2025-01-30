@@ -76,16 +76,6 @@ export async function updateRoom(id: string, updatedRoom: Room): Promise<Room> {
   }
 }
 
-export async function getUserByUserId(roomId: string, userId: string): Promise<User | null> {
-  const room: Room | null = await getRoom(roomId);
-  if (room) {
-    const user = room.users.find((user) => user.id === userId);
-    return user || null;
-  } else {
-    return null;
-  }
-}
-
 export async function getUserBySessionId(roomId: string, sessionId: string): Promise<User | null> {
   const room: Room | null = await getRoom(roomId);
   if (room) {

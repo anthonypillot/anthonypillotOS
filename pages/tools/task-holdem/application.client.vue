@@ -196,7 +196,7 @@ socket.on("data", (socketData: Data) => {
 
 //#endregion
 
-socket.on("room", (roomFromServer: Room) => {
+socket.on("room-update", (roomFromServer: Room) => {
   room.value = roomFromServer;
 });
 
@@ -293,13 +293,13 @@ function selectCard(selectedCard: Card): void {
       }
     });
 
-    socket.emit("room", room.value);
+    socket.emit("room-update", room.value);
   }
 }
 
 function setGameStatus(status: GameStatus): void {
   room.value.game.status = status;
-  socket.emit("room", room.value);
+  socket.emit("room-update", room.value);
 }
 
 socket.on("room-restart", (roomFromServer: Room) => {
