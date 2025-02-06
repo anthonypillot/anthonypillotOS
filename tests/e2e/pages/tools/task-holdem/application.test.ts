@@ -1,18 +1,18 @@
 import { test, expect, type Page } from "@playwright/test";
 import { application } from "@/tests/e2e/configuration";
 
-test("should display the TaskHold’em application", async ({ page }) => {
+test("should be able to create a player", async ({ page }) => {
   await page.goto(application.taskHoldem.url);
 
   await expect(page.getByRole("heading", { name: "TaskHold’em" })).toBeVisible();
   await expect(page.getByText("To join the game, please enter your informations")).toBeVisible();
 
-  await joinGame(page, "Anthony", "boy");
+  await joinGame(page, "test-0", "boy");
 });
 
-test("should allow multiple players to join and interact in the game", async ({ browser, page }) => {
+test("should be able to play with multiple players", async ({ browser, page }) => {
   await page.goto(application.taskHoldem.url);
-  await joinGame(page, "Anthony", "boy");
+  await joinGame(page, "test-1", "boy");
 
   const url = new URL(page.url());
   const gameId = url.searchParams.get("id");
@@ -20,21 +20,30 @@ test("should allow multiple players to join and interact in the game", async ({ 
   const context = await browser.newContext();
   const secondPage = await context.newPage();
   await secondPage.goto(application.taskHoldem.url + `?id=${gameId}`);
-  await joinGame(secondPage, "Emmanuelle", "girl");
+  await joinGame(secondPage, "test-2", "girl");
 
   const revealButton = page.getByTestId("reveal-button");
   await expect(revealButton).toBeVisible();
   await expect(revealButton).toBeDisabled();
 
+  const revealButtonSecondPage = secondPage.getByTestId("reveal-button");
+  await expect(revealButtonSecondPage).toBeVisible();
+  await expect(revealButtonSecondPage).toBeDisabled();
+
   const cardOnFirstPageValue = 8;
   const cardOnFirstPage = page.getByText(cardOnFirstPageValue.toString(), { exact: true });
+  await expect(cardOnFirstPage).toBeVisible();
   await cardOnFirstPage.click();
+  await page.waitForTimeout(1000); // TODO: Find a better way to wait for the card to be visible
 
   const cardOnSecondPageValue = 21;
   const cardOnSecondPage = secondPage.getByText(cardOnSecondPageValue.toString(), { exact: true });
+  await expect(cardOnSecondPage).toBeVisible();
   await cardOnSecondPage.click();
+  await secondPage.waitForTimeout(1000); // TODO: Find a better way to wait for the card to be visible
 
   await expect(revealButton).toBeEnabled();
+  await expect(revealButtonSecondPage).toBeEnabled();
   await revealButton.click();
 
   await expect(page.getByText("Result")).toBeVisible();
@@ -72,7 +81,10 @@ async function joinGame(page: Page, name: string, gender: "boy" | "girl"): Promi
   await button.click();
 
   await expect(page.getByText(`Name: ${name}`)).toBeVisible();
-  await expect(page.locator("p").filter({ hasText: new RegExp(`^${name}$`) })).toBeVisible();
+
+  const playerCard = page.getByTestId(name);
+  await page.waitForTimeout(1000); // TODO: Find a better way to wait for the card to be visible
+  await expect(playerCard).toBeVisible();
 
   if (gender === "boy") {
     await expect(page.getByRole("img", { name: "poker player boy" })).toBeVisible();
