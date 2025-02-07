@@ -13,21 +13,6 @@ import workflowRunsApiResponse from "@/server/tests/data/workflowRunsApiResponse
 
 const uuid: string = "00000000-0000-0000-0000-000000000000";
 
-const expectedResultArray = [
-  {
-    id: uuid,
-  },
-  {
-    id: 2,
-  },
-  {
-    id: 3,
-  },
-  {
-    id: 4,
-  },
-];
-
 const now = new Date();
 
 beforeAll(() => {
@@ -66,11 +51,11 @@ describe("HistoryCleaner service", async () => {
     expect(result.workflow?.unauthorized.length).toEqual(0);
     expect(result.workflow?.unknown.length).toEqual(0);
 
-    expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
-    expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
-    expect(spyPostgresUpdate.mock.results[0].value.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
-    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
-    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
+    expect(spyPostgresUpdate.mock.settledResults[0].value.account).toEqual("my-account");
+    expect(spyPostgresUpdate.mock.settledResults[0].value.repository).toEqual("my-repository");
+    expect(spyPostgresUpdate.mock.settledResults[0].value.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
+    expect(spyPostgresUpdate.mock.settledResults[0].value.createdAt).toEqual(now);
+    expect(spyPostgresUpdate.mock.settledResults[0].value.updatedAt).toEqual(now);
   });
 
   test("should not clean all workflow runs if workflows are not found", async () => {
@@ -104,11 +89,13 @@ describe("HistoryCleaner service", async () => {
     expect(result.workflow?.unauthorized.length).toBe(0);
     expect(result.workflow?.unknown.length).toBe(0);
 
-    expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
-    expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
-    expect(spyPostgresUpdate.mock.results[0].value.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
-    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
-    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
+    const firstSpyPostgresUpdateResult = spyPostgresUpdate.mock.settledResults[0].value;
+
+    expect(firstSpyPostgresUpdateResult.account).toEqual("my-account");
+    expect(firstSpyPostgresUpdateResult.repository).toEqual("my-repository");
+    expect(firstSpyPostgresUpdateResult.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
+    expect(firstSpyPostgresUpdateResult.createdAt).toEqual(now);
+    expect(firstSpyPostgresUpdateResult.updatedAt).toEqual(now);
   });
 
   test("should not clean all workflow runs if workflows are unauthorized", async () => {
@@ -142,11 +129,13 @@ describe("HistoryCleaner service", async () => {
     expect(result.workflow?.unauthorized.length).toBe(100);
     expect(result.workflow?.unknown.length).toBe(0);
 
-    expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
-    expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
-    expect(spyPostgresUpdate.mock.results[0].value.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
-    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
-    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
+    const firstSpyPostgresUpdateResult = spyPostgresUpdate.mock.settledResults[0].value;
+
+    expect(firstSpyPostgresUpdateResult.account).toEqual("my-account");
+    expect(firstSpyPostgresUpdateResult.repository).toEqual("my-repository");
+    expect(firstSpyPostgresUpdateResult.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
+    expect(firstSpyPostgresUpdateResult.createdAt).toEqual(now);
+    expect(firstSpyPostgresUpdateResult.updatedAt).toEqual(now);
   });
 
   test("should not clean all workflow runs if workflows are unknown", async () => {
@@ -180,11 +169,13 @@ describe("HistoryCleaner service", async () => {
     expect(result.workflow?.unauthorized.length).toBe(0);
     expect(result.workflow?.unknown.length).toBe(100);
 
-    expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
-    expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
-    expect(spyPostgresUpdate.mock.results[0].value.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
-    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
-    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
+    const firstSpyPostgresUpdateResult = spyPostgresUpdate.mock.settledResults[0].value;
+
+    expect(firstSpyPostgresUpdateResult.account).toEqual("my-account");
+    expect(firstSpyPostgresUpdateResult.repository).toEqual("my-repository");
+    expect(firstSpyPostgresUpdateResult.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
+    expect(firstSpyPostgresUpdateResult.createdAt).toEqual(now);
+    expect(firstSpyPostgresUpdateResult.updatedAt).toEqual(now);
   });
 
   test("should not clean all workflow runs if no workflow runs are found", async () => {
@@ -216,10 +207,12 @@ describe("HistoryCleaner service", async () => {
     expect(result.workflow?.unauthorized.length).not.toBeTruthy();
     expect(result.workflow?.unknown.length).not.toBeTruthy();
 
-    expect(spyPostgresUpdate.mock.results[0].value.account).toEqual("my-account");
-    expect(spyPostgresUpdate.mock.results[0].value.repository).toEqual("my-repository");
-    expect(spyPostgresUpdate.mock.results[0].value.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
-    expect(spyPostgresUpdate.mock.results[0].value.createdAt).toEqual(now);
-    expect(spyPostgresUpdate.mock.results[0].value.updatedAt).toEqual(now);
+    const firstSpyPostgresUpdateResult = spyPostgresUpdate.mock.settledResults[0].value;
+
+    expect(firstSpyPostgresUpdateResult.account).toEqual("my-account");
+    expect(firstSpyPostgresUpdateResult.repository).toEqual("my-repository");
+    expect(firstSpyPostgresUpdateResult.status).toEqual(HistoryCleanerJobStatus.COMPLETED);
+    expect(firstSpyPostgresUpdateResult.createdAt).toEqual(now);
+    expect(firstSpyPostgresUpdateResult.updatedAt).toEqual(now);
   });
 });
