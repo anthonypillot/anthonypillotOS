@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.8...v1.3.0) (2025-02-07)
+
+
+### Features
+
+* TaskHold'em application ([#40](https://github.com/anthonypillot/anthonypillotOS/issues/40)) ([d735d9a](https://github.com/anthonypillot/anthonypillotOS/commit/d735d9a1e371438da179ba5c99e3071e7a41fafe))
+
 ## [1.2.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.7...v1.2.8) (2024-10-23)
 
 
