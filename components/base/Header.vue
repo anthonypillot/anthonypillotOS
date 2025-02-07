@@ -17,14 +17,14 @@
           <Bars3Icon class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
-      <div class="hidden lg:flex lg:gap-x-12">
+      <div class="hidden lg:flex lg:gap-x-12 lg:items-center">
         <a
           v-for="item in navigation"
           :key="item.name"
           :href="item.href"
           :rel="item.rel"
           :target="item.target"
-          class="text-sm font-semibold leading-6 text-white"
+          class="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-black rounded-md px-2 py-1"
           >{{ item.name }}</a
         >
         <Popover class="relative">
