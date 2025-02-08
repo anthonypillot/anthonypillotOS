@@ -75,3 +75,15 @@ model TaskHoldemRoom {
 
   @@map("task_holdem_room")
 }
+
+model FeedbackData {
+  id String @id @default(uuid())
+
+  name    String?
+  email   String?
+  message String
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("feedback")
+}
