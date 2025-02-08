@@ -42,7 +42,7 @@
     <section v-if="user" class="flex flex-col gap-y-8">
       <div class="flex flex-col md:flex-row md:justify-between gap-4">
         <TaskHoldemUser :user @remove="removeUser" />
-        <TaskHoldemInvitation />
+        <TaskHoldemActions />
       </div>
       <TaskHoldemPokerTable
         :users="room.users"
