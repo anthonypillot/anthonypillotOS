@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.0...v1.3.1) (2025-02-10)
+
+
+### Performance Improvements
+
+* add error handling plugin for Nitro application ([8934f01](https://github.com/anthonypillot/anthonypillotOS/commit/8934f01c7a85a469402ed58b69e54fa9cdd60105))
+* **style:** enhance header navigation links with hover effects ([9d5b513](https://github.com/anthonypillot/anthonypillotOS/commit/9d5b513c947284a9dcdab0a001145242661bfa39))
+
 # [1.3.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.2.8...v1.3.0) (2025-02-07)
 
 
