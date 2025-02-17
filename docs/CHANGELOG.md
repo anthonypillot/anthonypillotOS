@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.1...v1.3.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* improve error logging for Nuxt errors ([f8c3729](https://github.com/anthonypillot/anthonypillotOS/commit/f8c37292609e794d650b654c09861ed403d29ea3))
+
 ## [1.3.1](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.0...v1.3.1) (2025-02-10)
 
 
