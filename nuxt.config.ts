@@ -41,16 +41,6 @@ export default defineNuxtConfig({
 
   css: ["@/assets/css/main.css"],
 
-  vite: {
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: '@use "@/assets/css/_variables.css" as *;',
-        },
-      },
-    },
-  },
-
   nitro: {
     experimental: {
       websocket: true,
