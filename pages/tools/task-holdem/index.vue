@@ -59,17 +59,18 @@
 <script setup lang="ts">
 import { application } from "@/types/task-holdem.type";
 
-const config = useRuntimeConfig();
+//#region SEO
 
-const title = `${application.name} | ${config.app.website.title}`;
-const description = application.description;
+const { name, description } = application;
 
 useSeo({
-  title,
+  title: name,
   description,
   favicon: {
     type: "image/svg",
     href: "/svg/task-holdem/poker-hand.svg",
   },
 });
+
+//#endregion
 </script>
