@@ -83,13 +83,10 @@ import { io, type Socket } from "socket.io-client";
 
 //#region SEO
 
-const config = useRuntimeConfig();
-
-const title = `${application.name} | ${config.app.website.title}`;
-const description = application.description;
+const { name, description } = application;
 
 useSeo({
-  title,
+  title: name,
   description,
   favicon: {
     type: "image/svg",
