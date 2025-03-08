@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.2...v1.3.3) (2025-03-08)
+
+
+### Bug Fixes
+
+* **task-holdem:** HTML title ([6ce0bb2](https://github.com/anthonypillot/anthonypillotOS/commit/6ce0bb282a7fb4b8db71a25ffe1a7b011951f273))
+
 ## [1.3.2](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.1...v1.3.2) (2025-02-27)
 
 
