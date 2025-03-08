@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.3...v1.3.4) (2025-03-08)
+
+
+### Performance Improvements
+
+* **task-holdem:** add feedback ([d7d225e](https://github.com/anthonypillot/anthonypillotOS/commit/d7d225ed01eaf471589dc0784946f0e3bd5f73b1))
+
 ## [1.3.3](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.2...v1.3.3) (2025-03-08)
 
 
