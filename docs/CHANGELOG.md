@@ -1,3 +1,10 @@
+## [1.3.6](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.5...v1.3.6) (2025-03-09)
+
+
+### Bug Fixes
+
+* **task-holdem:** selected card not reset after clicking on restart button [#52](https://github.com/anthonypillot/anthonypillotOS/issues/52) ([4ca1504](https://github.com/anthonypillot/anthonypillotOS/commit/4ca15049cc909c37b5496bc99a54eece7c434e54))
+
 ## [1.3.5](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.4...v1.3.5) (2025-03-09)
 
 
