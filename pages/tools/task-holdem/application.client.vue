@@ -49,7 +49,7 @@
         :game="room.game"
         @revealing="setGameStatus('revealing')"
         @revealed="setGameStatus('revealed')"
-        @restart="setGameStatus('playing')"
+        @restart="setGameStatus('restarting')"
       />
       <section class="flex flex-col gap-2">
         <p class="text-white">Select a card:</p>
@@ -197,6 +197,14 @@ socket.on("room-update", (roomFromServer: Room) => {
   room.value = roomFromServer;
 });
 
+socket.on("room-restart", (roomFromServer: Room) => {
+  cards.value.forEach((card) => {
+    card.isSelected = false;
+  });
+
+  room.value = roomFromServer;
+});
+
 function createUser(userToCreate: User | null) {
   if (userToCreate) {
     user.value = userToCreate;
@@ -296,16 +304,13 @@ function selectCard(selectedCard: Card): void {
 
 function setGameStatus(status: GameStatus): void {
   room.value.game.status = status;
-  socket.emit("room-update", room.value);
+
+  if (status === "restarting") {
+    socket.emit("room-restart", room.value);
+  } else {
+    socket.emit("room-update", room.value);
+  }
 }
-
-socket.on("room-restart", (roomFromServer: Room) => {
-  cards.value.forEach((card) => {
-    card.isSelected = false;
-  });
-
-  room.value = roomFromServer;
-});
 
 //#region Chat
 
