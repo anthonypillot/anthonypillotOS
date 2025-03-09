@@ -26,11 +26,13 @@
           }}
         </button>
       </div>
-      <div v-else-if="game.status === 'revealed'" class="text-center">
-        <p class="text-white text-lg">Result</p>
-        <p class="text-white"><span class="text-gray-200">Average</span>: {{ getAverage() }}</p>
+      <div v-else-if="game.status === 'revealed'" class="flex flex-col gap-4 text-center">
+        <div>
+          <p class="text-white text-lg">Result</p>
+          <p class="text-white"><span class="text-gray-200">Average</span>: {{ getAverage() }}</p>
+        </div>
         <button
-          class="text-white bg-indigo-800 border border-white min-w-24 rounded-md px-2 py-1 mt-4 hover:bg-white hover:text-black"
+          class="text-white bg-indigo-950 border border-white rounded-sm px-4 py-2 cursor-pointer hover:bg-white hover:text-black"
           @click="emit('restart')"
           data-testid="restart-button"
         >
