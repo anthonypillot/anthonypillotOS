@@ -18,8 +18,8 @@ FROM gcr.io/distroless/nodejs22-debian12 AS application
 
 WORKDIR /app
 
-# Copy dependencies from the first stage
-COPY --from=build /app/node_modules ./node_modules
+# Copy only needed dependencies from the first stage
+COPY --from=build /app/node_modules/@opentelemetry ./node_modules/@opentelemetry
 
 # Copy the build files from the first stage
 COPY --from=build /app/.output ./
