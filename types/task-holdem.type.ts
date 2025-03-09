@@ -12,7 +12,7 @@ export const application = {
 
 export const prefixLog = `[WEBSOCKET - ${application.name}]`;
 
-export type GameStatus = "playing" | "revealing" | "revealed";
+export type GameStatus = "playing" | "revealing" | "revealed" | "restarting";
 
 export type Room = {
   users: User[];
