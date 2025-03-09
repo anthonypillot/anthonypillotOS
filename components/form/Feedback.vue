@@ -113,7 +113,9 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-const isSubmitDisabled = computed(() => !feedback.value.message);
+const isSubmitDisabled = computed(() => {
+  return !feedback.value.message || isLoading.value;
+});
 
 export type Feedback = {
   name: string | null;
