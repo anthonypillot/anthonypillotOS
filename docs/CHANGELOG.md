@@ -1,3 +1,10 @@
+## [1.3.5](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.4...v1.3.5) (2025-03-09)
+
+
+### Bug Fixes
+
+* **task-holdem:** disable feedback submit button when loading ([d84827c](https://github.com/anthonypillot/anthonypillotOS/commit/d84827cac9b17bb2b90c5716b1189b4c379d292e))
+
 ## [1.3.4](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.3...v1.3.4) (2025-03-08)
 
 
