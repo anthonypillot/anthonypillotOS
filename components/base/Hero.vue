@@ -33,7 +33,7 @@
       />
     </div>
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl py-24 sm:py-48 lg:py-20">
+      <div class="mx-auto max-w-2xl py-12 lg:py-32">
         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
           <div class="relative rounded-lg px-3 py-1 text-sm leading-6 bg-white/5 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
             Discover my new <span class="font-semibold text-white">poker planning tool</span>: the
@@ -78,56 +78,13 @@
               </div> -->
         </div>
       </div>
-
-      <!-- Logo cloud -->
+    </div>
+    <div class="flex flex-row justify-between mx-4 gap-4 sm:mx-24 p-2 bg-white/10 border border-gray-400 backdrop-blur-sm rounded-full">
       <div
-        class="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5"
+        v-for="(logo, index) in logos"
+        class="flex flex-row text-center items-center justify-center p-2 bg-white/15 rounded-full hover:scale-90 transition-transform"
       >
-        <NuxtImg
-          quality="80"
-          class="col-span-2 max-h-16 w-full object-contain sm:col-start-2 lg:col-span-1"
-          src="svg/icons/vue.svg"
-          alt="Vue.js"
-          width="158"
-          height="48"
-          style="filter: hue-rotate(110deg)"
-        />
-        <NuxtImg
-          quality="80"
-          class="col-span-2 max-h-20 w-full object-contain lg:col-span-1"
-          src="svg/icons/nuxt.svg"
-          alt="Nuxt"
-          width="158"
-          height="48"
-          style="filter: hue-rotate(110deg)"
-        />
-        <NuxtImg
-          quality="80"
-          class="col-span-2 max-h-14 w-full object-contain lg:col-span-1"
-          src="svg/icons/typescript.svg"
-          alt="TypeScript"
-          width="158"
-          height="48"
-          style="filter: hue-rotate(30deg)"
-        />
-        <NuxtImg
-          quality="80"
-          class="col-span-2 max-h-14 w-full object-contain lg:col-span-1"
-          src="svg/icons/node.svg"
-          alt="Node.js"
-          width="158"
-          height="48"
-          style="filter: hue-rotate(145deg)"
-        />
-        <NuxtImg
-          quality="80"
-          class="col-span-2 col-start-2 max-h-14 w-full object-contain sm:col-start-auto lg:col-span-1"
-          src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg"
-          alt="Kubernetes"
-          width="158"
-          height="48"
-          style="filter: hue-rotate(20deg)"
-        />
+        <NuxtImg :key="index" quality="80" class="h-10 w-full object-contain" :src="logo.src" :alt="logo.alt" />
       </div>
     </div>
     <div
@@ -172,4 +129,35 @@ const writers = ["Operating System", "Open Source", "Object Storage", "Organic S
 const config = useRuntimeConfig();
 
 const logo = config.app.website.logo.hero.white;
+
+const logos = [
+  {
+    src: "svg/icons/vue.svg",
+    alt: "Vue.js",
+  },
+  {
+    src: "svg/icons/nuxt.svg",
+    alt: "Nuxt",
+  },
+  {
+    src: "svg/icons/typescript.svg",
+    alt: "TypeScript",
+  },
+  {
+    src: "svg/icons/node.svg",
+    alt: "Node.js",
+  },
+  {
+    src: "https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg",
+    alt: "Kubernetes",
+  },
+  {
+    src: "https://signoz.io/img/SigNozLogo-orange.svg",
+    alt: "SigNoz",
+  },
+  {
+    src: "https://user-images.githubusercontent.com/273120/63394474-f0823a80-c413-11e9-927c-a5ff2e540976.png",
+    alt: "Matomo",
+  },
+];
 </script>
