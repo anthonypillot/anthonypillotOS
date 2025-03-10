@@ -48,9 +48,9 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    "/": { swr: 21600 }, // Homepage generated on demand, revalidates in background, cached for 6 hours (21600 seconds)
-    "/tools/github/history-cleaner": { swr: 21600 }, // Landing page generated on demand, revalidates in background, cached for 6 hours (21600 seconds),
-    "/tools/task-holdem": { swr: 21600 }, // Landing page generated on demand, revalidates in background, cached for 6 hours (21600 seconds),
+    "/": { swr: true },
+    "/tools/github/history-cleaner": { swr: true },
+    "/tools/task-holdem": { swr: true },
   },
 
   modules: ["@nuxt/image", "@nuxtjs/tailwindcss", "@nuxt/test-utils/module"],
