@@ -1,12 +1,5 @@
 <template>
-  <section class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
-    <NuxtImg
-      quality="80"
-      src="https://images.unsplash.com/photo-1518050947974-4be8c7469f0c?q=80&w=1600&h=1000"
-      alt=""
-      class="absolute inset-0 -z-10 h-full w-full object-cover"
-      style="filter: blur(4px) hue-rotate(60deg) brightness(25%)"
-    />
+  <section class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20 gradient-background">
     <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
       <div
         class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
@@ -79,12 +72,18 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-row justify-between mx-4 gap-4 sm:mx-24 p-2 bg-white/10 border border-gray-400 backdrop-blur-sm rounded-full">
+    <div
+      class="grid grid-cols-2 justify-center sm:flex sm:flex-row sm:justify-between mx-4 gap-4 sm:mx-24 p-2 sm:bg-white/10 sm:border border-white/30 backdrop-blur-sm rounded-lg sm:rounded-full"
+    >
       <div
         v-for="(logo, index) in logos"
-        class="flex flex-row text-center items-center justify-center p-2 bg-white/15 rounded-full hover:scale-90 transition-transform"
+        :key="index"
+        :class="[
+          'flex flex-row text-center items-center justify-center min-w-14 p-2 bg-white/15 border border-white/15 rounded-full hover:scale-90 transition-transform',
+          isLastItem(index) && logos.length % 2 !== 0 ? 'col-span-2' : '',
+        ]"
       >
-        <NuxtImg :key="index" quality="80" class="h-10 w-full object-contain" :src="logo.src" :alt="logo.alt" />
+        <NuxtImg :key="index" quality="80" class="h-10 w-full object-contain" style="padding: 0.1rem" :src="logo.src" :alt="logo.alt" />
       </div>
     </div>
     <div
@@ -148,16 +147,43 @@ const logos = [
     alt: "Node.js",
   },
   {
-    src: "https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg",
+    src: "svg/icons/kubernetes.svg",
     alt: "Kubernetes",
   },
   {
-    src: "https://signoz.io/img/SigNozLogo-orange.svg",
+    src: "svg/icons/signoz.svg",
     alt: "SigNoz",
   },
   {
-    src: "https://user-images.githubusercontent.com/273120/63394474-f0823a80-c413-11e9-927c-a5ff2e540976.png",
+    src: "svg/icons/matomo.svg",
     alt: "Matomo",
   },
 ];
+
+/**
+ * Check if the current item is the last one in the list
+ */
+function isLastItem(index: number): boolean {
+  return index === logos.length - 1;
+}
 </script>
+
+<style scoped>
+.gradient-background {
+  background: linear-gradient(300deg, var(--secondary-color), var(--primary-color), var(--secondary-color));
+  background-size: 180% 180%;
+  animation: gradient-animation 10s ease infinite;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+</style>
