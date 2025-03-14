@@ -72,18 +72,20 @@
         </div>
       </div>
     </div>
-    <div
-      class="grid grid-cols-2 justify-center sm:flex sm:flex-row sm:justify-between mx-4 gap-4 sm:mx-24 p-2 sm:bg-white/10 sm:border border-white/30 backdrop-blur-sm rounded-lg sm:rounded-full"
-    >
+    <div class="xl:flex xl:justify-center">
       <div
-        v-for="(logo, index) in logos"
-        :key="index"
-        :class="[
-          'flex flex-row text-center items-center justify-center min-w-14 p-2 bg-white/15 border border-white/15 rounded-full hover:scale-90 transition-transform',
-          isLastItem(index) && logos.length % 2 !== 0 ? 'col-span-2' : '',
-        ]"
+        class="grid grid-cols-2 justify-center sm:flex sm:flex-row sm:justify-between mx-4 gap-4 xl:gap-32 md:mx-24 p-2 sm:bg-white/10 sm:border border-white/30 backdrop-blur-sm rounded-lg sm:rounded-full"
       >
-        <NuxtImg :key="index" quality="80" class="h-10 w-full object-contain" style="padding: 0.1rem" :src="logo.src" :alt="logo.alt" />
+        <div
+          v-for="(logo, index) in logos"
+          :key="index"
+          :class="[
+            'flex flex-row text-center items-center justify-center min-w-14 p-2 bg-white/15 border border-white/15 rounded-full hover:scale-90 transition-transform',
+            isLastItem(index) && logos.length % 2 !== 0 ? 'col-span-2' : '',
+          ]"
+        >
+          <NuxtImg :key="index" quality="80" class="h-10 w-full object-contain" style="padding: 0.1rem" :src="logo.src" :alt="logo.alt" />
+        </div>
       </div>
     </div>
     <div

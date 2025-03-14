@@ -71,7 +71,16 @@ const benefits = [
   "Freeing up old deployment history that is no longer needed.",
 ];
 
-function scrollToTool() {
-  document.getElementById("github-history-cleaner")?.scrollIntoView({ behavior: "smooth" });
+function scrollToTool(): void {
+  const element = document.getElementById("github-history-cleaner");
+  const offset = 150;
+  if (element) {
+    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - offset;
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
 }
 </script>
