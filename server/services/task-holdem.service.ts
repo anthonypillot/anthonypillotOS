@@ -8,7 +8,6 @@ export function getOrCreateRoom(id: string): Promise<Room> {
 }
 
 export function updateRoom(id: string, roomToUpdate: Room): Promise<Room> {
-  logger.debug(`${prefixLog} Room updated`);
   return dao.updateRoom(id, roomToUpdate);
 }
 
