@@ -1,108 +1,153 @@
 <template>
-  <section class="mx-auto max-w-7xl px-6 lg:px-8 lg:max-w-4xl xl:max-w-7xl">
-    <h2 class="text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">Career history</h2>
-    <p class="mt-2 text-lg leading-8 text-gray-400">In the field of the IT world.</p>
-    <div class="mt-8 flex flex-col gap-8">
-      <article v-for="xp in experiences" :key="xp.title" class="flex flex-col gap-8 md:flex-row">
-        <div class="min-w-60 md:w-64 lg:shrink-0">
-          <NuxtImg
-            :src="xp.imageUrl"
-            :alt="xp.title + ' logo'"
-            class="p-4 h-full max-h-52 md:max-h-full w-full object-contain rounded-2xl bg-gray-50"
-          />
-        </div>
-        <div>
-          <div class="flex items-center gap-x-4 text-xs">
-            <div>
-              <time class="text-gray-400">{{ xp.date.from }}</time
-              ><span class="text-gray-400"> > </span><time class="text-gray-400">{{ xp.date.to }}</time>
-            </div>
-            <div class="z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-400 hover:bg-gray-100">
-              {{ xp.category.title }}
-            </div>
-          </div>
-          <div>
-            <h3 class="mt-3 text-lg font-semibold leading-6 text-gray-100">
-              {{ xp.title }}
-            </h3>
-            <span class="mt-5 text-sm leading-6 text-gray-400" v-html="xp.description"></span>
-          </div>
-        </div>
-      </article>
-    </div>
+  <section class="flex flex-col gap-8">
+    <BaseExperienceCard v-for="experience in experiences" :key="experience.company.name" :experience="experience" />
   </section>
 </template>
 
-<script setup>
-const experiences = [
-  {
-    title: "ADEO - Leroy Merlin",
-    description: `Design of the projects section for the creation and renovation of living spaces in a residence, using estimators and quantity calculation tools, development of qualification and store appointment scheduling pages on the <span class="text-gray-100">Leroy Merlin website (France, Spain, Portugal, Italy, and Poland)</span>.<br>
+<script setup lang="ts">
+import type { Experience } from "@/components/base/ExperienceCard.vue";
 
-<p class="text-gray-100">Functional animation, implementation, and support:</p>
+const config = useRuntimeConfig();
 
-- Lead developer in the scope of implementation.<br>
-- Communication, facilitation, and inter-team synchronization.<br>
-- Participation in the onboarding of various Business Units for the acquisition of new applications.<br>
-- Support in bringing various components up to the company's standards.<br>
-- Reduction of technical debt and construction of new components.<br>
-- Monitoring of quality, performance, deliveries, and production releases.<br>
-`,
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Leroy_Merlin.svg",
-    date: {
-      from: "April 2022",
-      to: "Now",
+const logo = config.app.website.logo.os.raw;
+
+const os: Experience = {
+  company: {
+    name: "anthonypillotOS",
+    logo: {
+      url: logo,
+      alt: "anthonypillotOS logo",
     },
-    category: { title: "Lead developer - Freelance" },
   },
-  {
-    title: "Auchan Retail France",
-    description: `Dismantling of the <span class="text-gray-100">Web Accounts Repository</span>.<br>
+  period: {
+    from: "January 2020",
+    to: "Now",
+  },
+  role: "Full Stack Developer - Freelance",
+  description:
+    "<p>Development of a personal project, anthonypillotOS, a website dedicated to my professional career and personal projects.</p><p>Design and development of the website, including the creation of a documentation section and some tools.</p><p>Implementation of a CI/CD pipeline for automatic deployment on my Kubernetes cluster.</p><p>Integration of various tools for monitoring and analytics.</p>",
+  technology: {
+    language: ["JavaScript", "TypeScript", "Node.js 18", "Node.js 20", "Node.js 22"],
+    backend: ["Fastify", "Express.js", "NestJS"],
+    frontend: ["Nuxt", "Vue.js", "Tailwind CSS"],
+    testing: ["Vitest", "Playwright"],
+    data: ["PostgreSQL"],
+    devops: ["Kubernetes", "k3s", "Docker"],
+    cicd: ["GitHub Actions"],
+    security: ["GitHub Advanced Security"],
+    cloud: ["Oracle Cloud (Compute Instance)"],
+    analytics: ["SigNoz", "Matomo"],
+    ide: ["Visual Studio Code"],
+    architecture: ["Layered / N-Tier"],
+  },
+};
 
-Replacing a legacy monolithic component by optimizing performance, adhering to GDPR standards, and enhancing the security level for accessing customer data.<br>
-
-<p class="text-gray-100">Functional animation and support:</p>
-
-- Facilitating workshops on technical and functional aspects.<br>
-- Communication, facilitation, and inter-team synchronization.<br>
-- Support in development and testing.<br>
-- Technical reference within the scope of implementation.<br>
-- Participation in workshops on functional and technical architecture for cross-functional projects.<br>
-
-<p class="text-gray-100">Implementation:</p>
-
-- Development of a REST API in hexagonal architecture, reactive and asynchronous environment.<br>
-- Test-driven development (TDD), integration testing, mutation testing.<br>
-- Challenging various project teams.<br>
-- Securing the API, implementing the OIDC OAuth 2.0 protocol, tracking callers via API Manager (Gravitee).<br>
-- Provision and development of comprehensive monitoring (Prometheus, Grafana, ELK Suite).<br>
-- Drafting technical and functional specifications.<br>
-`,
-    imageUrl: "https://upload.wikimedia.org/wikipedia/fr/archive/9/90/20120504132214%21Logo_Auchan_%281983-2015%29.svg",
-    date: {
-      from: "January 2020",
-      to: "April 2022",
+const adeo: Experience = {
+  company: {
+    name: "ADEO",
+    logo: {
+      url: "svg/logos/adeo.svg",
+      alt: "ADEO logo",
     },
-    category: { title: "Developer - Mission" },
   },
-  {
-    title: "Zenika",
-    description: `Use and practice of the following technologies:<br/>
-  Languages and frameworks: <p class="text-gray-100">JavaScript, TypeScript, Node.js, NestJS, Java, Spring Boot, Vue.js, Nuxt.js.</p>
-  Testing: <p class="text-gray-100">Unit test, integration test, end-to-end test using Jest, JUnit5, Cypress.</p>
-  Data: <p class="text-gray-100">SQL and NoSQL (PostgreSQL, Google Cloud BigQuery, MongoDB, Azure CosmosDB).</p>
-  DevOps: <p class="text-gray-100">Kubernetes, k3s, Rancher, Docker.</p>
-  Security: <p class="text-gray-100">JWT management, API Gateway (Gravitee, Kong), OAuth 2.0 OIDC (Keycloak).</p>
-  Cloud and serverless: <p class="text-gray-100">Google Cloud, Oracle Cloud Infrastructure (Compute Instance, Autonomous Database).</p>
-  Analytics: <p class="text-gray-100">Elastic suite (Elasticsearch, Kibana, Filebeat, APM), Datadog, Prometheus, Grafana.</p>
-  Architectural design pattern: <p class="text-gray-100">TDD, MVC, N-tier, Hexagonal.</p>
-`,
-    imageUrl: "https://zenika-website.cdn.prismic.io/zenika-website/1e2a5d61-1007-4ddb-851a-3cbb14574a3e_Monogramme.svg",
-    date: {
-      from: "January 2020",
-      to: "December 2022",
+  period: {
+    from: "April 2022",
+    to: "Now",
+  },
+  role: "IT Consultant - Freelance",
+  description:
+    "<p>Design of the projects section for the creation and renovation of living spaces in a residence, using estimators and quantity calculation tools, development of qualification and store appointment scheduling pages and journeys on the Leroy Merlin website (France, Spain, Portugal, Italy, and Poland).</p><p>Functional animation, implementation, and support:</p>Development of an integrated solution enabling various Business Units to independently create scheduling and estimation journeys.<br/>Participation in the onboarding of various Business Units for the acquisition of new applications.<br/>Lead developer in the scope of implementation.<br/>Support in bringing various components up to the company's standards.<br/>Reduction of technical debt and construction of new components.<br/>Monitoring of quality, performance, deliveries, and production releases.<br/>Conduct workshops on architecture and design between teams.<br/>Facilitate the implementation and introduce the concept of innersourcing.<br/>",
+  technology: {
+    language: [
+      "Node.js 16",
+      "Node.js 18",
+      "Node.js 20",
+      "Node.js 22",
+      "Java 17",
+      "Java 21",
+      "Golang 1.20",
+      "Golang 1.21",
+      "Golang 1.22",
+      "Golang 1.23",
+    ],
+    backend: ["NestJS", "Spring Webflux", "Fastify"],
+    frontend: ["Nuxt", "Vue.js", "Freemarker"],
+    testing: ["Unit tests", "Integration testing", "End-to-end testing", "Vitest", "JUnit", "Cerberus", "Cypress", "Playwright"],
+    data: ["PostgreSQL", "BigQuery"],
+    devops: ["Terraform", "Kubernetes", "Docker"],
+    cicd: ["GitHub Actions", "GitLab CI", "CircleCI"],
+    security: ["JWT management", "API Gateway", "OAuth 2.0 OIDC", "GitHub Advanced Security"],
+    cloud: ["Google Cloud (Compute Engine, GKE, Cloud Run, BigQuery)"],
+    analytics: ["Datadog"],
+    ide: ["Visual Studio Code"],
+    architecture: ["Layered / N-Tier", "Modular"],
+  },
+};
+
+const auchan: Experience = {
+  company: {
+    name: "Auchan",
+    logo: {
+      url: "svg/logos/auchan.svg",
+      alt: "Auchan logo",
     },
-    category: { title: "IT consultant - CDI" },
   },
-];
+  period: {
+    from: "April 2020",
+    to: "April 2022",
+  },
+  role: "IT Consultant - Mission",
+  description:
+    "<p>Dismantling of Auchan Retail France's Web Accounts Repository.</p><p>Replacing a legacy monolithic component by optimizing performance, adhering to GDPR standards, and enhancing the security level for accessing customer data.</p><p>Functional animation and support:</p>Facilitating workshops on technical and functional aspects.<br/>Communication, facilitation, and inter-team synchronization.<br/>Support in development and testing.<br/>Technical reference within the scope of implementation.<br/>Participation in workshops on functional and technical architecture for cross-functional projects.<br/><p>Implementation:</p>Development of a REST API in hexagonal architecture, reactive and asynchronous environment.<br/>Test-driven development (TDD), unit, integration and mutation testing.<br/>Ensure API security, implement the OIDC OAuth 2.0 authorization protocol, and configure access using Gravitee's API Manager/Gateway.<br/>Provision and development of comprehensive monitoring (Prometheus, Grafana, ELK Suite).<br/>Drafting technical and functional specifications.<br/>Challenging various project teams.<br/>Scale the database and implement other performance enhancements in the API.<br/>",
+  technology: {
+    language: ["Java 11", "Java 17"],
+    backend: ["Spring Webflux"],
+    testing: ["TDD", "Unit testing", "Integration testing", "Mutation testing", "JUnit5"],
+    data: ["Azure CosmosDB (NoSQL)"],
+    devops: ["Kubernetes", "Docker", "Rancher"],
+    cicd: ["GitLab CI"],
+    security: ["JWT management", "API Gateway (Gravitee)", "OAuth 2.0 OIDC (Keycloak)"],
+    cloud: ["Azure"],
+    analytics: ["Elasticsearch", "Kibana", "Filebeat", "APM", "Prometheus", "Grafana"],
+    ide: ["IntelliJ IDEA Ultimate"],
+    architecture: ["TDD", "Hexagonal"],
+  },
+};
+
+const zenika: Experience = {
+  company: {
+    name: "Zenika",
+    logo: {
+      url: "svg/logos/zenika.svg",
+      alt: "Zenika logo",
+    },
+  },
+  period: {
+    from: "January 2020",
+    to: "December 2022",
+  },
+  role: "IT Consultant - CDI",
+  description:
+    "<p>IT consulting firm specializing in helping companies with their digital transformation.</p><p>At Zenika, a commitment to excellence is matched by a passion for innovation. They leverage cutting-edge technologies and methodologies to deliver impactful results that drive business growth and efficiency. From developing custom applications to providing strategic consulting services, Zenika partners with clients across diverse industries to transform challenges into opportunities.</p><p>During my three-year tenure at Zenika, I experienced a profoundly enriching journey that left an indelible mark on both my professional and personal growth. Surrounded by some of the best minds in the industry, I was guided with exceptional well-being and support every step of the way. Each day brought new lessons and opportunities for learning, making every moment at Zenika both inspiring and transformative.</p>",
+  technology: {
+    language: ["JavaScript", "TypeScript", "Java 11", "Java 17"],
+    backend: ["Spring Boot", "Spring Webflux", "NestJS", "Express.js"],
+    frontend: ["Vue.js", "Nuxt.js"],
+    testing: ["Unit test", "Integration test", "End-to-end test", "Jest", "JUnit5", "Cypress"],
+    data: ["PostgreSQL", "Google Cloud BigQuery", "MongoDB", "Azure CosmosDB"],
+    devops: ["Kubernetes", "k3s", "Rancher", "Docker"],
+    cicd: ["GitHub Actions", "GitLab CI", "Circle CI"],
+    security: ["JWT management", "API Gateway (Gravitee, Kong)", "OAuth 2.0 OIDC (Keycloak)"],
+    cloud: [
+      "Google Cloud (Compute Engine, GKE, Cloud Run, BigQuery)",
+      "Azure",
+      "Oracle Cloud Infrastructure (Compute Instance, Autonomous Database)",
+    ],
+    analytics: ["Elasticsearch", "Kibana", "Filebeat", "APM", "Datadog", "Prometheus", "Grafana"],
+    ide: ["VisualStudio Code", "IntelliJ IDEA Ultimate"],
+    architecture: ["TDD", "Layered / N-Tier", "Hexagonal"],
+  },
+};
+
+const experiences = ref<Experience[]>([os, adeo, auchan, zenika]);
 </script>
