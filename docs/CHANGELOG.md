@@ -1,3 +1,12 @@
+## [1.3.7](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.6...v1.3.7) (2025-04-25)
+
+
+### Performance Improvements
+
+* **career:** refactor and enhance career history part ([f79f6eb](https://github.com/anthonypillot/anthonypillotOS/commit/f79f6ebc165adbc42b0a8febd03e2e82af731614))
+* **deps:** update dependencies ([7308095](https://github.com/anthonypillot/anthonypillotOS/commit/7308095cb797a6161ca7bba1ad09428d30f551df))
+* **style:** gradient background, fixed header and refactor logos ([2244999](https://github.com/anthonypillot/anthonypillotOS/commit/2244999b52f39490808905a17a4e00f3d9dbaa4f))
+
 ## [1.3.6](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.5...v1.3.6) (2025-03-09)
 
 
