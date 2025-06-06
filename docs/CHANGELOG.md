@@ -1,3 +1,16 @@
+## [1.3.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.7...v1.3.8) (2025-06-06)
+
+
+### Bug Fixes
+
+* `node_modules/oxc-parser/bindings.js` not found issue ([bfeaa15](https://github.com/anthonypillot/anthonypillotOS/commit/bfeaa157fa3b94e9e52245824a9d127ab6c7bd57))
+
+
+### Performance Improvements
+
+* **dependabot:** add configuration for npm dependency updates ([7658645](https://github.com/anthonypillot/anthonypillotOS/commit/76586456698c209bdf22c113211e73685d2de0fb))
+* **deps:** update dependencies ([996067d](https://github.com/anthonypillot/anthonypillotOS/commit/996067dbe85f4d67d20380c99b8d690de141d8fd))
+
 ## [1.3.7](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.6...v1.3.7) (2025-04-25)
 
 
