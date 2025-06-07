@@ -1,3 +1,15 @@
+## [1.3.9](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.8...v1.3.9) (2025-06-07)
+
+
+### Bug Fixes
+
+* adjust height of ExperienceCard layer and transition duration ([a274f43](https://github.com/anthonypillot/anthonypillotOS/commit/a274f4302a8e4fee47518265c3414d2f0eee59c4))
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([37e673d](https://github.com/anthonypillot/anthonypillotOS/commit/37e673d174679685068190da22eae125bb794f3d))
+
 ## [1.3.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.7...v1.3.8) (2025-06-06)
 
 
