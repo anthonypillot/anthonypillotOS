@@ -1,6 +1,6 @@
 <template>
   <section class="mx-auto sm:max-w-screen-xl text-white bg-white/5 p-8 md:rounded-lg">
-    <div class="flex flex-col sm:flex-row gap-4 sm:gap-8 sm:grid sm:grid-cols-[1fr,3fr]">
+    <div class="flex flex-col gap-4 experience-card">
       <div class="flex flex-col justify-center h-full bg-gray-50 rounded-2xl">
         <NuxtImg :src="experience.company.logo.url" :alt="experience.company.logo.alt" class="p-4 object-contain" />
       </div>
@@ -14,26 +14,31 @@
           <div class="flex flex-col gap-2 text-sm text-justify">
             <div v-html="experience.description" class="bg-gray-800/40 p-4 rounded-lg border-l-4 border-indigo-400" />
           </div>
-          <button
-            class="rounded-sm border border-gray-400 bg-gray-700 px-12 py-2 text-sm text-gray-200 hover:bg-transparent hover:text-white focus:ring-3 focus:outline-hidden"
-            @click="isLayerOpen = true"
-          >
-            Technologies and tools used
-          </button>
+          <UButton
+            label="Technologies and tools used"
+            color="neutral"
+            variant="outline"
+            trailing-icon="i-lucide-chevron-right"
+            @click="isDrawerOpen = true"
+          />
         </div>
       </div>
     </div>
   </section>
-  <Transition name="slide-fade">
-    <section
-      v-if="isLayerOpen"
-      ref="layer"
-      class="z-50 fixed bottom-0 inset-x-0 bg-[#111827]/90 backdrop-blur-md p-8 h-[70vh] sm:h-[60vh] overflow-y-auto"
-    >
-      <div class="flex flex-col gap-4 mx-auto max-w-4xl">
+
+  <UDrawer
+    v-model:open="isDrawerOpen"
+    class="bg-gray-900 sm:max-w-[75dvw]"
+    direction="right"
+    :fixed="false"
+    should-scale-background
+    set-background-color-on-scale
+  >
+    <template #content>
+      <div class="flex flex-col gap-4 m-8">
         <div class="flex justify-between">
           <h2 class="text-xl text-white">{{ experience.company.name }}</h2>
-          <button class="text-white" @click="isLayerOpen = false">
+          <button class="text-white" @click="isDrawerOpen = false">
             <XCircleIcon class="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
@@ -155,21 +160,14 @@
           </div>
         </div>
       </div>
-    </section>
-  </Transition>
+    </template>
+  </UDrawer>
 </template>
 
 <script setup lang="ts">
 import { XCircleIcon } from "@heroicons/vue/24/outline";
 
-const isLayerOpen = ref<boolean>(false);
-const layer = ref<HTMLElement | null>(null);
-
-useClickOutside(layer, () => {
-  if (isLayerOpen.value) {
-    isLayerOpen.value = false;
-  }
-});
+const isDrawerOpen = ref<boolean>(false);
 
 export type Experience = {
   company: {
@@ -207,12 +205,20 @@ defineProps<{
 </script>
 
 <style scoped>
+.experience-card {
+  @media screen and (min-width: 640px) {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 2rem;
+  }
+}
+
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }
 
 .slide-fade-leave-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .slide-fade-enter-from,

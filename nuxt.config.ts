@@ -39,7 +39,7 @@ export default defineNuxtConfig({
 
   compatibilityDate: "2025-03-15",
 
-  css: ["@/assets/css/main.css"],
+  css: ["~/assets/css/main.css"],
 
   nitro: {
     experimental: {
@@ -53,7 +53,7 @@ export default defineNuxtConfig({
     "/tools/task-holdem": { swr: true },
   },
 
-  modules: ["@nuxt/image", "@nuxtjs/tailwindcss", "@nuxt/test-utils/module"],
+  modules: ["@nuxt/ui", "@nuxt/image", "@nuxt/test-utils/module"],
 
   devtools: { enabled: true },
 });
