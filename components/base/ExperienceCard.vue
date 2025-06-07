@@ -28,7 +28,7 @@
     <section
       v-if="isLayerOpen"
       ref="layer"
-      class="z-50 fixed bottom-0 inset-x-0 bg-[#111827]/90 backdrop-blur-md p-8 h-[70vh] sm:h-[60vh] overflow-y-auto"
+      class="z-50 fixed bottom-0 inset-x-0 bg-[#111827]/90 backdrop-blur-md p-8 h-[80vh] overflow-y-auto"
     >
       <div class="flex flex-col gap-4 mx-auto max-w-4xl">
         <div class="flex justify-between">
@@ -212,7 +212,7 @@ defineProps<{
 }
 
 .slide-fade-leave-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .slide-fade-enter-from,
