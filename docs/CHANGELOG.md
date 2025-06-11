@@ -1,3 +1,10 @@
+## [1.3.10](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.9...v1.3.10) (2025-06-11)
+
+
+### Performance Improvements
+
+* simplify readiness check by removing external service dependency ([63469c4](https://github.com/anthonypillot/anthonypillotOS/commit/63469c406f93ebefc2f860b5339d87116e8b6cdb))
+
 ## [1.3.9](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.8...v1.3.9) (2025-06-07)
 
 
