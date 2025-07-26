@@ -77,11 +77,7 @@
         </Popover>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <a
-          :href="config.public.link.githubRepository"
-          rel="noopener"
-          target="_blank"
-          class="text-sm font-semibold leading-6 text-white"
+        <a :href="config.public.link.githubRepository" rel="noopener" target="_blank" class="text-sm font-semibold leading-6 text-white"
           >GitHub repository <span aria-hidden="true">&rarr;</span></a
         >
       </div>
@@ -230,7 +226,7 @@ import { ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
 const popover = {
   links: [
     {
-      name: application.name,
+      name: taskHoldemApplication.name,
       description: "Poker planning tool for agile teams",
       to: "/tools/task-holdem",
       icon: SquaresPlusIcon,
