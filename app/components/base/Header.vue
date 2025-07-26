@@ -3,8 +3,8 @@
     <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
       <div class="flex lg:flex-1">
         <NuxtLink to="/" class="-m-1.5 p-1.5">
-          <span class="sr-only">{{ config.app.website.title }}</span>
-          <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" style="filter: invert(1)" />
+          <span class="sr-only">{{ config.public.title }}</span>
+          <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.public.title" style="filter: invert(1)" />
         </NuxtLink>
       </div>
       <div class="flex lg:hidden">
@@ -78,7 +78,7 @@
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <a
-          :href="config.app.website.link.githubRepository"
+          :href="config.public.link.githubRepository"
           rel="noopener"
           target="_blank"
           class="text-sm font-semibold leading-6 text-white"
@@ -102,8 +102,8 @@
                 }
               "
             >
-              <span class="sr-only">{{ config.app.website.title }}</span>
-              <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.app.website.title" />
+              <span class="sr-only">{{ config.public.title }}</span>
+              <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.public.title" />
             </NuxtLink>
             <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = false">
               <span class="sr-only">Close menu</span>
@@ -191,7 +191,7 @@
               </div>
               <div class="py-6">
                 <a
-                  :href="config.app.website.link.githubRepository"
+                  :href="config.public.link.githubRepository"
                   rel="noopener"
                   target="_blank"
                   class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
@@ -214,13 +214,13 @@ const mobileMenuOpen: Ref<boolean> = ref(false);
 
 const config = useRuntimeConfig();
 
-const logo = config.app.website.logo.os.raw;
+const logo = config.public.logo.os.raw;
 
 const navigation = [
-  { name: "My LinkedIn", href: config.app.website.link.linkedIn, rel: "noopener", target: "_blank" },
-  { name: "My GitHub", href: config.app.website.link.githubAccount, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Org.", href: config.app.website.link.githubOrganization, rel: "noopener", target: "_blank" },
-  // { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "", target: "_blank" },
+  { name: "My LinkedIn", href: config.public.link.linkedIn, rel: "noopener", target: "_blank" },
+  { name: "My GitHub", href: config.public.link.githubAccount, rel: "noopener", target: "_blank" },
+  { name: "Size Up - Org.", href: config.public.link.githubOrganization, rel: "noopener", target: "_blank" },
+  // { name: "Size Up - Documentation", href: config.public.link.sizeUpDocumentation, rel: "", target: "_blank" },
 ];
 
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
@@ -245,7 +245,7 @@ const popover = {
   callsToAction: [
     {
       name: "Size Up docs. about GitHub actions",
-      href: config.app.website.link.sizeUpDocumentation + "/docs/category/actions",
+      href: config.public.link.sizeUpDocumentation + "/docs/category/actions",
       target: "_blank",
       icon: DocumentIcon,
     },

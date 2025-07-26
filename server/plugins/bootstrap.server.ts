@@ -7,7 +7,7 @@ import { version } from "@@/package.json";
 export default defineNitroPlugin(async (nitro) => {
   convertConsoleLogToCustomLogger();
   logger.start(
-    `Starting [${useRuntimeConfig().app.website.title}] with version [${version}] (${process.env.GIT_SHA || "local"}) and env. [${
+    `Starting [${useRuntimeConfig().public.title}] with version [${version}] (${process.env.GIT_SHA || "local"}) and env. [${
       process.env.ENV || "local"
     }]`
   );
