@@ -2,7 +2,7 @@ import type { Message } from "@/components/task-holdem/Chat.vue";
 import type { User } from "@/components/task-holdem/CreateUser.vue";
 import { BellSnoozeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 
-export const application = {
+export const taskHoldemApplication = {
   id: "task-holdem",
   name: "TaskHold’em",
   description:
@@ -10,7 +10,7 @@ export const application = {
   path: "/tools/task-holdem/application",
 };
 
-export const prefixLog = `[WEBSOCKET - ${application.name}]`;
+export const prefixLog = `[WEBSOCKET - ${taskHoldemApplication.name}]`;
 
 export type GameStatus = "playing" | "revealing" | "revealed" | "restarting";
 
