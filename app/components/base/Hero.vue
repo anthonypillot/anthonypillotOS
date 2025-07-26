@@ -1,5 +1,13 @@
 <template>
-  <section class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20 gradient-background">
+  <section class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20">
+    <EffectAurora
+      :color-stops="['#818bf7', '#171D22', '#5a62b5']"
+      :amplitude="1.0"
+      :blend="0.5"
+      :speed="1.0"
+      :intensity="1.0"
+      class="w-full h-full"
+    />
     <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
       <div
         class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
