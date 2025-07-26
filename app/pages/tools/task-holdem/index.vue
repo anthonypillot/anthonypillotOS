@@ -57,8 +57,6 @@
 </template>
 
 <script setup lang="ts">
-import { application } from "@/types/task-holdem.type";
-
 //#region SEO
 
 const { name, description } = application;

@@ -1,5 +1,4 @@
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import type { Room } from "@/types/task-holdem.type";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

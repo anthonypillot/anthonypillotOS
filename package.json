@@ -65,7 +65,7 @@
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^17.6.3",
     "msw": "^2.9.0",
-    "nuxt": "^3.17.5",
+    "nuxt": "^4.0.1",
     "prisma": "^6.9.0",
     "semantic-release": "^24.2.5",
     "typescript": "^5.8.3",

@@ -259,8 +259,7 @@ import {
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/vue/24/outline";
-
-import { HistoryCleanerOptions } from "@/server/types/history-cleaner.type";
+import { HistoryCleanerOptions } from "@@/server/types/history-cleaner.type";
 
 const config = useRuntimeConfig();
 

@@ -1,7 +1,7 @@
-import { getApiConfiguration } from "@/server/config/api/github.config";
-import { GitHubDeletionStatusType, type GitHubDeployments,  type GitHubWorkflowRun, type GitHubWorkflowRunApiResponse } from "@/server/types/github.type";
+import { getApiConfiguration } from "@@/server/config/api/github.config";
+import { GitHubDeletionStatusType, type GitHubDeployments,  type GitHubWorkflowRun, type GitHubWorkflowRunApiResponse } from "@@/server/types/github.type";
 
-import { logger } from "@/server/utils/logger";
+import { logger } from "@@/server/utils/logger";
 
 const api = getApiConfiguration();
 
