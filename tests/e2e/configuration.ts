@@ -1,4 +1,4 @@
-import { application as taskHoldemApplication } from "../../shared/types/task-holdem.type";
+import { taskHoldemApplication } from "../../shared/types/task-holdem.type";
 
 const baseUrls = {
   local: "http://localhost:3000",

@@ -8,6 +8,7 @@ import { defineVitestConfig } from "@nuxt/test-utils/config";
  */
 export default defineVitestConfig({
   test: {
+    environment: "nuxt",
     include: ["server/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
     coverage: {
       include: ["server/**/*.{js,ts}"],
