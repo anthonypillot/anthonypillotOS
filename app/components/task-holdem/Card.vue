@@ -12,8 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import { valueToComponent } from "@/types/task-holdem.type";
-
 export type Card = {
   type: "number" | "icon";
   value: number | "skip" | "break";

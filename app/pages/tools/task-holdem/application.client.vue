@@ -77,8 +77,6 @@
 import type { Card } from "@/components/task-holdem/Card.vue";
 import type { Message } from "@/components/task-holdem/Chat.vue";
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import type { ClientToServerEvents, Data, GameStatus, Room, ServerToClientEvents } from "@/types/task-holdem.type";
-import { application } from "@/types/task-holdem.type";
 import { io, type Socket } from "socket.io-client";
 
 //#region SEO

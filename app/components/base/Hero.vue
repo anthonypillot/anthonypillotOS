@@ -30,7 +30,7 @@
         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
           <div class="relative rounded-lg px-3 py-1 text-sm leading-6 bg-white/5 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
             Discover my new <span class="font-semibold text-white">poker planning tool</span>: the
-            <span class="font-semibold text-white">{{ taskHoldemApplication.name }}</span> !
+            <span class="font-semibold text-white">{{ application.name }}</span> !
             <NuxtLink to="/tools/task-holdem" class="font-semibold text-white"
               ><span class="absolute inset-0" aria-hidden="true" />This is here <span aria-hidden="true">&rarr;</span></NuxtLink
             >
@@ -124,8 +124,6 @@
 <script setup lang="ts">
 // @ts-ignore
 import VueWriter from "vue-writer";
-
-import { application as taskHoldemApplication } from "@/types/task-holdem.type";
 
 const writers = ["Operating System", "Open Source", "Object Storage", "Organic Search", "Omniscient System", "Oh my god, So good"];
 

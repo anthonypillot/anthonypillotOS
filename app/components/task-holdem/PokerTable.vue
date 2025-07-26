@@ -49,7 +49,8 @@
 <script setup lang="ts">
 // @ts-ignore
 import confetti from "canvas-confetti";
-import type { Room } from "@/types/task-holdem.type";
+
+import type { Room } from "@@/shared/types/task-holdem.type";
 
 const props = defineProps<Room>();
 

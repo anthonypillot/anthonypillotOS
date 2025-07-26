@@ -223,7 +223,6 @@ const navigation = [
   // { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "", target: "_blank" },
 ];
 
-import { application as taskHoldemApplication } from "@/types/task-holdem.type";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 import { ChevronDownIcon, DocumentIcon } from "@heroicons/vue/20/solid";
 import { ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
@@ -231,7 +230,7 @@ import { ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
 const popover = {
   links: [
     {
-      name: taskHoldemApplication.name,
+      name: application.name,
       description: "Poker planning tool for agile teams",
       to: "/tools/task-holdem",
       icon: SquaresPlusIcon,
