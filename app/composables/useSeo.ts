@@ -15,21 +15,21 @@ type CustomMetadata = {
 export default function (customMetadata?: CustomMetadata) {
   const config = useRuntimeConfig();
 
-  const endTitle = `| ${config.app.website.title}`;
+  const endTitle = `| ${config.public.title}`;
   const title = `${
-    customMetadata?.title ? `${customMetadata.title} ${endTitle}` : `The Operating System by ${config.app.website.author.name} ${endTitle}`
+    customMetadata?.title ? `${customMetadata.title} ${endTitle}` : `The Operating System by ${config.public.author.name} ${endTitle}`
   }`;
 
   useSeoMeta({
     title,
     ogTitle: title,
-    description: customMetadata?.description ?? config.app.website.description,
-    ogDescription: customMetadata?.description ?? config.app.website.description,
-    ogImage: config.app.website.logo.os.raw,
-    ogUrl: config.app.website.url,
-    twitterTitle: config.app.website.title,
-    twitterDescription: customMetadata?.description ?? config.app.website.description,
-    twitterImage: config.app.website.logo.os.raw,
+    description: customMetadata?.description ?? config.public.description,
+    ogDescription: customMetadata?.description ?? config.public.description,
+    ogImage: config.public.logo.os.raw,
+    ogUrl: config.public.url,
+    twitterTitle: config.public.title,
+    twitterDescription: customMetadata?.description ?? config.public.description,
+    twitterImage: config.public.logo.os.raw,
     twitterCard: "summary",
   });
 

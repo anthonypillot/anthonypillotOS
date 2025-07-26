@@ -6,7 +6,7 @@
           <img
             class="rounded-xl lg:rounded-3xl"
             src="https://avatars.githubusercontent.com/u/51130139"
-            :alt="config.app.website.author.name"
+            :alt="config.public.author.name"
           />
         </aside>
         <article class="w-full max-w-2xl xl:max-w-none xl:flex-auto xl:px-16 xl:py-24">
@@ -27,7 +27,7 @@
               </p>
             </blockquote>
             <figcaption class="mt-8 text-base">
-              <div class="font-semibold text-white">{{ config.app.website.author.name }}</div>
+              <div class="font-semibold text-white">{{ config.public.author.name }}</div>
               <div class="mt-1 text-gray-400">Software Engineer</div>
             </figcaption>
           </figure>

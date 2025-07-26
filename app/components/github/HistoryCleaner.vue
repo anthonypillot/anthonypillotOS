@@ -10,7 +10,7 @@
         </p>
         <p class="text-sm leading-6 text-gray-400">
           If you want to learn more about how we use your token, please see how we use your token in our
-          <NuxtLink :href="config.app.website.link.githubRepository" target="_blank" class="text-indigo-500 hover:text-indigo-400"
+          <NuxtLink :href="config.public.link.githubRepository" target="_blank" class="text-indigo-500 hover:text-indigo-400"
             >GitHub repository</NuxtLink
           >.
         </p>

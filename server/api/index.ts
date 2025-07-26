@@ -14,9 +14,9 @@ export default defineEventHandler(async (event): Promise<ApplicationResponse> =>
   const config = useRuntimeConfig();
 
   return {
-    name: config.app.website.title,
-    description: config.app.website.description,
-    version: config.app.website.version,
+    name: config.public.title,
+    description: config.public.description,
+    version: config.public.version,
     git_sha: process.env.GIT_SHA || "local",
     environment: process.env.ENV || "local",
     dependencies,

@@ -37,7 +37,7 @@
           </div>
         </div>
         <div class="flex flex-col text-center">
-          <NuxtImg quality="80" class="h-80" :src="logo" :alt="config.app.website.title" />
+          <NuxtImg quality="80" class="h-80" :src="logo" :alt="config.public.title" />
           <div class="hidden sm:flex sm:flex-col items-center my-8">
             <div>
               <span class="text-white text-4xl mr-2">OS</span>
@@ -51,7 +51,7 @@
             </div>
           </div>
           <h1 class="hidden text-4xl font-bold tracking-tight text-white sm:text-6xl">
-            {{ config.app.website.title }} | {{ config.app.website.description }}
+            {{ config.public.title }} | {{ config.public.description }}
           </h1>
           <p class="mt-2 text-lg leading-8 text-gray-300">
             <span class="text-indigo-400">Freelance</span> Software Engineer, <span class="text-indigo-400">Real</span> Full Stack
@@ -129,7 +129,7 @@ const writers = ["Operating System", "Open Source", "Object Storage", "Organic S
 
 const config = useRuntimeConfig();
 
-const logo = config.app.website.logo.hero.white;
+const logo = config.public.logo.hero.white;
 
 const logos = [
   {
