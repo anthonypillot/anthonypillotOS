@@ -60,16 +60,16 @@
                   </div>
                 </div>
                 <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                  <a
+                  <NuxtLink
                     v-for="item in popover.callsToAction"
                     :key="item.name"
-                    :href="item.href"
-                    :target="item.target"
+                    :to="item.href"
                     class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                    @click="close()"
                   >
                     <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
                     {{ item.name }}
-                  </a>
+                  </NuxtLink>
                 </div>
               </div>
             </PopoverPanel>
@@ -173,16 +173,16 @@
                           </div>
                         </div>
                         <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                          <a
+                          <NuxtLink
                             v-for="item in popover.callsToAction"
                             :key="item.name"
-                            :href="item.href"
-                            :target="item.target"
+                            :to="item.href"
                             class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                            @click="close()"
                           >
                             <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
                             {{ item.name }}
-                          </a>
+                          </NuxtLink>
                         </div>
                       </div>
                     </PopoverPanel>
@@ -223,32 +223,23 @@ const navigation = [
   // { name: "Size Up - Documentation", href: config.app.website.link.sizeUpDocumentation, rel: "", target: "_blank" },
 ];
 
-import { application as taskHoldemApplication } from "@/types/task-holdem.type";
+import { tools } from "@/types/tools.type";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
-import { ChevronDownIcon, DocumentIcon } from "@heroicons/vue/20/solid";
-import { ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
+import { ChevronDownIcon, ViewColumnsIcon } from "@heroicons/vue/20/solid";
 
 const popover = {
-  links: [
-    {
-      name: taskHoldemApplication.name,
-      description: "Poker planning tool for agile teams",
-      to: "/tools/task-holdem",
-      icon: SquaresPlusIcon,
-    },
-    {
-      name: "GitHub History Cleaner",
-      description: "Delete all your GitHub project history",
-      to: "/tools/github/history-cleaner",
-      icon: ArrowPathRoundedSquareIcon,
-    },
-  ],
+  links: tools.map(tool => ({
+    name: tool.name,
+    description: tool.description,
+    to: tool.href,
+    icon: tool.icon,
+  })),
   callsToAction: [
     {
-      name: "Size Up docs. about GitHub actions",
-      href: config.app.website.link.sizeUpDocumentation + "/docs/category/actions",
-      target: "_blank",
-      icon: DocumentIcon,
+      name: "View all tools",
+      href: "/tools",
+      target: "",
+      icon: ViewColumnsIcon,
     },
   ],
 };
