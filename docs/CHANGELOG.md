@@ -1,3 +1,16 @@
+## [1.3.11](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.10...v1.3.11) (2025-10-20)
+
+
+### Bug Fixes
+
+* warning "app namespace is reserved for Nuxt" ([9228fe9](https://github.com/anthonypillot/anthonypillotOS/commit/9228fe9cdaba4299e43cf7e5038e4443e16c9604))
+
+
+### Performance Improvements
+
+* **deps:** update all dependencies and rename application to taskHoldemApplication for consistency ([3945a4a](https://github.com/anthonypillot/anthonypillotOS/commit/3945a4a3931e1e7b21d5410d0cec4448b336668a))
+* **deps:** upgrade to Nuxt v4 ([52aeb5c](https://github.com/anthonypillot/anthonypillotOS/commit/52aeb5cfaa7fb16d660bd53950ebc77840a81afa))
+
 ## [1.3.10](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.9...v1.3.10) (2025-06-11)
 
 
