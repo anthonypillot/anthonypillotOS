@@ -44,7 +44,7 @@ for vue_file in $(find "$VUE_DIR" -name "*.vue" -type f | sort); do
         fi
         
         # Pattern 4: Generic & nesting (excluding pseudo-selectors which are valid)
-        if echo "$style_content" | grep -E "^\s*&[^:&]" | grep -v "&:hover\|&:focus\|&:active\|&:disabled\|&:checked\|&::before\|&::after" > /dev/null; then
+        if echo "$style_content" | grep -E "\s*&[^:&]" | grep -v "&:hover\|&:focus\|&:active\|&:disabled\|&:checked\|&::before\|&::after" > /dev/null; then
             echo "  ⚠️  Found potential nested selector using &"
             NESTED_FOUND=$((NESTED_FOUND + 1))
         fi
