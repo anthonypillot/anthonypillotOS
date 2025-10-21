@@ -10,7 +10,7 @@ interface ApplicationResponse {
   devDependencies: Record<string, string>;
 }
 
-export default defineEventHandler(async (event): Promise<ApplicationResponse> => {
+export default defineEventHandler(async (_event): Promise<ApplicationResponse> => {
   const config = useRuntimeConfig();
 
   return {
