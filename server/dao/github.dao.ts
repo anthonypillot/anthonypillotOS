@@ -95,7 +95,9 @@ export async function getWorkflowRuns(
  */
 export async function getDeployments(account: string, repository: string, token: string, _page: number = 1): Promise<GitHubDeployments[]> {
   try {
-    return await api(`/repos/${account}/${repository}/deployments`, {
+    const path: string = `/repos/${account}/${repository}/deployments`;
+
+    return await api<GitHubDeployments[]>(path, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
