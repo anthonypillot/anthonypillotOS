@@ -93,7 +93,7 @@ export async function getWorkflowRuns(
  * @returns A promise that resolves to an array of GitHubDeployments.
  * @throws An error if there is an issue retrieving the deployments.
  */
-export async function getDeployments(account: string, repository: string, token: string, page: number = 1): Promise<GitHubDeployments[]> {
+export async function getDeployments(account: string, repository: string, token: string, _page: number = 1): Promise<GitHubDeployments[]> {
   try {
     return await api(`/repos/${account}/${repository}/deployments`, {
       method: "GET",
@@ -130,13 +130,13 @@ export async function deleteWorkflowRun(account: string, repository: string, tok
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      async onResponse({ request, response, options }) {
+      async onResponse({ response }) {
         if (response.status === 204) {
           logger.debug(`Workflow run [${id}] from [${account}/${repository}] repository deleted successfully`);
           deletionStatus = GitHubDeletionStatusType.SUCCESS;
         }
       },
-      async onResponseError({ request, response, options }) {
+      async onResponseError({ response }) {
         switch (response.status) {
           case 404:
             logger.debug(`Workflow run [${id}] from [${account}/${repository}] repository not found`);
