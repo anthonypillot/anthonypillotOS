@@ -1,5 +1,10 @@
 import { getApiConfiguration } from "@@/server/config/api/github.config";
-import { GitHubDeletionStatusType, type GitHubDeployments,  type GitHubWorkflowRun, type GitHubWorkflowRunApiResponse } from "@@/server/types/github.type";
+import {
+  GitHubDeletionStatusType,
+  type GitHubDeployments,
+  type GitHubWorkflowRun,
+  type GitHubWorkflowRunApiResponse,
+} from "@@/server/types/github.type";
 
 import { logger } from "@@/server/utils/logger";
 
@@ -53,9 +58,8 @@ export async function getWorkflowRuns(
   account: string,
   repository: string,
   token: string,
-  page: number = 1
+  page: number = 1,
 ): Promise<GitHubWorkflowRunApiResponse> {
-  // @ts-ignore
   return await api(`/repos/${account}/${repository}/actions/runs`, {
     method: "GET",
     headers: {
@@ -95,9 +99,7 @@ export async function getWorkflowRuns(
  */
 export async function getDeployments(account: string, repository: string, token: string, _page: number = 1): Promise<GitHubDeployments[]> {
   try {
-    const path: string = `/repos/${account}/${repository}/deployments`;
-
-    return await api<GitHubDeployments[]>(path, {
+    return await api<GitHubDeployments[]>(`/repos/${account}/${repository}/deployments`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
