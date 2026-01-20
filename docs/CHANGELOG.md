@@ -1,3 +1,16 @@
+## [1.3.12](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.11...v1.3.12) (2026-01-20)
+
+
+### Bug Fixes
+
+* correct years of experience calculation in TechnologyShowcase component ([179be61](https://github.com/anthonypillot/anthonypillotOS/commit/179be61c0551d4d1d502c2e41a17ea7838ff027c))
+
+
+### Performance Improvements
+
+* **deps:** update minor dependencies and fix lint ([bc5b0a0](https://github.com/anthonypillot/anthonypillotOS/commit/bc5b0a078ff62d849a0a14651013292627f02d5d))
+* **logo:** add proxmox icon SVG file ([73eef2c](https://github.com/anthonypillot/anthonypillotOS/commit/73eef2c49c7b301fa43e8e8a1e854bc0d57224e0))
+
 ## [1.3.11](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.10...v1.3.11) (2025-10-20)
 
 
