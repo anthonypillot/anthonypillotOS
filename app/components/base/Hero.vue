@@ -39,13 +39,27 @@
         <div class="flex flex-col text-center">
           <NuxtImg quality="80" class="h-80" :src="logo" :alt="config.public.title" />
           <div class="hidden sm:flex sm:flex-col items-center my-8">
-            <div>
-              <span class="text-white text-4xl mr-2">OS</span>
-              <span class="text-indigo-400 text-4xl mr-2">stands for</span>
-              <span class="text-white text-4xl mr-2">:</span>
+            <div class="flex flex-col items-center">
+              <div class="flex flex-row gap-2">
+                <span class="text-white text-4xl">OS</span>
+                <span class="text-indigo-400 text-4xl">stands for</span>
+                <span class="text-white text-4xl">:</span>
+              </div>
+              <!-- class="h-8" is here to avoid layout shift -->
               <div class="h-8">
                 <ClientOnly>
-                  <VueWriter class="text-white text-4xl" :array="writers" :typeSpeed="80" :eraseSpeed="40" :start="1000" />
+                  <BaseTextType
+                    class="text-white text-4xl"
+                    :text="textTypeTexts"
+                    :typingSpeed="50"
+                    :deletingSpeed="30"
+                    :pauseDuration="2000"
+                    :initialDelay="1500"
+                    :variable-speed="{ min: 40, max: 80 }"
+                    :showCursor="true"
+                    cursorCharacter="|"
+                    :loop="true"
+                  />
                 </ClientOnly>
               </div>
             </div>
@@ -122,10 +136,18 @@
 </template>
 
 <script setup lang="ts">
-// @ts-expect-error
-import { VueWriter } from "vue-writer";
-
-const writers = ["Operating System", "Open Source", "Object Storage", "Organic Search", "Omniscient System", "Oh my god, So good"];
+const textTypeTexts = [
+  "Operating System",
+  "Open Source",
+  "Online Services",
+  "Optimal Solution",
+  "Operational Security",
+  "Omniscient Sage",
+  "Organic Software",
+  "Observability Study",
+  "Oh my god, So good",
+  "Oh, you're Still reading?",
+];
 
 const config = useRuntimeConfig();
 
