@@ -1,3 +1,11 @@
+## [1.3.14](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.13...v1.3.14) (2026-01-27)
+
+
+### Performance Improvements
+
+* **deps:** add gsap ([795fa59](https://github.com/anthonypillot/anthonypillotOS/commit/795fa5986ee8dc942b9595555800a490071dc094))
+* replace VueWriter with BaseTextType component and remove vue-writer dependency ([3d1d167](https://github.com/anthonypillot/anthonypillotOS/commit/3d1d167b02e1f10e45a3b924d891bca521e56254))
+
 ## [1.3.13](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.12...v1.3.13) (2026-01-27)
 
 
