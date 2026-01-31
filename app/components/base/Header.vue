@@ -220,8 +220,7 @@ const logo = config.public.logo.os.raw;
 const navigation = [
   { name: "My LinkedIn", href: config.public.link.linkedIn, rel: "noopener", target: "_blank" },
   { name: "My GitHub", href: config.public.link.githubAccount, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Org.", href: config.public.link.githubOrganization, rel: "noopener", target: "_blank" },
-  // { name: "Size Up - Documentation", href: config.public.link.sizeUpDocumentation, rel: "", target: "_blank" },
+  { name: "My Stack", href: "/my-stack", rel: "", target: "" },
 ];
 
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
