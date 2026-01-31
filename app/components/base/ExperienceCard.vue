@@ -1,6 +1,6 @@
 <template>
   <section class="mx-auto sm:max-w-screen-xl text-white bg-white/5 p-8 md:rounded-lg">
-    <div class="flex flex-col gap-4 experience-card">
+    <div class="flex flex-col sm:flex-row gap-4 sm:gap-8 sm:grid sm:grid-cols-[1fr,3fr]">
       <div class="flex flex-col justify-center h-full bg-gray-50 rounded-2xl">
         <NuxtImg :src="experience.company.logo.url" :alt="experience.company.logo.alt" class="p-4 object-contain" />
       </div>
@@ -26,21 +26,12 @@
     </div>
   </section>
 
-  <UDrawer
-    v-model:open="isDrawerOpen"
-    class="bg-gray-900 sm:max-w-[75dvw]"
-    direction="right"
-    :fixed="false"
-    should-scale-background
-    set-background-color-on-scale
-  >
+  <UDrawer v-model:open="isDrawerOpen" direction="bottom" :handle="true">
     <template #content>
-      <div class="flex flex-col gap-4 m-8">
-        <div class="flex justify-between">
-          <h2 class="text-xl text-white">{{ experience.company.name }}</h2>
-          <button class="text-white" @click="isDrawerOpen = false">
-            <XCircleIcon class="h-6 w-6" aria-hidden="true" />
-          </button>
+      <div class="flex flex-col gap-4 p-6 max-h-[80vh] overflow-y-auto">
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl text-white font-semibold">{{ experience.company.name }}</h2>
+          <UButton icon="i-lucide-x" color="neutral" variant="ghost" @click="isDrawerOpen = false" />
         </div>
         <div class="flex flex-col gap-6 text-white">
           <p class="text-sm text-gray-300 font-medium">Technologies and tools used:</p>
@@ -165,8 +156,6 @@
 </template>
 
 <script setup lang="ts">
-import { XCircleIcon } from "@heroicons/vue/24/outline";
-
 const isDrawerOpen = ref<boolean>(false);
 
 export type Experience = {
@@ -211,19 +200,5 @@ defineProps<{
     grid-template-columns: 1fr 3fr;
     gap: 2rem;
   }
-}
-
-.slide-fade-enter-active {
-  transition: all 0.3s ease-out;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateY(100px);
-  opacity: 0;
 }
 </style>

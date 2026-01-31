@@ -1,4 +1,4 @@
-import { dependencies, devDependencies } from "@/package.json";
+import { dependencies, devDependencies } from "@@/package.json";
 
 interface ApplicationResponse {
   name: string;
@@ -10,13 +10,13 @@ interface ApplicationResponse {
   devDependencies: Record<string, string>;
 }
 
-export default defineEventHandler(async (event): Promise<ApplicationResponse> => {
+export default defineEventHandler(async (_event): Promise<ApplicationResponse> => {
   const config = useRuntimeConfig();
 
   return {
-    name: config.app.website.title,
-    description: config.app.website.description,
-    version: config.app.website.version,
+    name: config.public.title,
+    description: config.public.description,
+    version: config.public.version,
     git_sha: process.env.GIT_SHA || "local",
     environment: process.env.ENV || "local",
     dependencies,

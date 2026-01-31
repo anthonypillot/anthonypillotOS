@@ -9,7 +9,7 @@
           status === 'revealed' ? 'bg-gray-800' : 'poker-card-back'
         }`"
       >
-        <span v-if="status === 'playing' || status === 'revealing'" class="text-white">{{ getRandomEmoji() }}</span>
+        <span v-if="status === 'playing' || status === 'revealing'" class="text-white">{{ randomEmoji }}</span>
         <span v-else-if="status === 'revealed' && typeof getSelectedCardValue() === 'number'" class="text-white text-xl">{{
           getSelectedCardValue()
         }}</span>
@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import { valueToComponent, type GameStatus } from "@/types/task-holdem.type";
 import { QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps<{
@@ -30,16 +29,17 @@ const props = defineProps<{
   status: GameStatus;
 }>();
 
-// TODO: This function is called each time the Player is clicking on a card. It should stay the same until the end of the game.
+const randomEmoji = getRandomEmoji();
+
 function getRandomEmoji(): string {
   const emojis = ["♠️", "♣️", "♥️", "♦️"];
-  return emojis[Math.floor(Math.random() * emojis.length)];
+  return emojis[Math.floor(Math.random() * emojis.length)] ?? "♠️";
 }
 
 function getSelectedCardValue(): number | Component | null {
   if (props.user.selectedCard) {
     if (props.user.selectedCard.type === "icon") {
-      return valueToComponent[props.user.selectedCard.value];
+      return valueToComponent[props.user.selectedCard.value] ?? null;
     } else if (props.user.selectedCard.type === "number" && typeof props.user.selectedCard.value === "number") {
       return props.user.selectedCard.value;
     } else {

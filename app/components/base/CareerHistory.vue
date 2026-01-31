@@ -9,7 +9,7 @@ import type { Experience } from "@/components/base/ExperienceCard.vue";
 
 const config = useRuntimeConfig();
 
-const logo = config.app.website.logo.os.raw;
+const logo = config.public.logo.os.raw;
 
 const os: Experience = {
   company: {

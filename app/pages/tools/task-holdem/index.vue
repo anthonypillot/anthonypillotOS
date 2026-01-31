@@ -8,21 +8,21 @@
           <NuxtImg
             class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
             src="/svg/task-holdem/poker-hand.svg"
-            :alt="application.name"
+            :alt="taskHoldemApplication.name"
           />
           <div class="flex flex-col gap-y-8">
             <div class="w-full flex-auto">
-              <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ application.name }}</h1>
+              <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ taskHoldemApplication.name }}</h1>
               <span
                 class="inline-flex items-center rounded-md bg-indigo-400/10 px-2 py-1 text-xs font-medium text-indigo-400 ring-1 ring-inset ring-indigo-400/30"
                 >Beta</span
               >
-              <h2 class="mt-6 text-lg leading-8 text-gray-300">{{ application.description }}</h2>
+              <h2 class="mt-6 text-lg leading-8 text-gray-300">{{ taskHoldemApplication.description }}</h2>
             </div>
             <a
               class="text-white border border-white rounded-md px-4 py-2 text-center hover:bg-white hover:text-black"
-              :href="application.path"
-              >Launch {{ application.name }}</a
+              :href="taskHoldemApplication.path"
+              >Launch {{ taskHoldemApplication.name }}</a
             >
           </div>
         </div>
@@ -57,11 +57,9 @@
 </template>
 
 <script setup lang="ts">
-import { application } from "@/types/task-holdem.type";
-
 //#region SEO
 
-const { name, description } = application;
+const { name, description } = taskHoldemApplication;
 
 useSeo({
   title: name,

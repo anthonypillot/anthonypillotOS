@@ -1,0 +1,22 @@
+@import "./_variables.css";
+@import url(https://fonts.googleapis.com/css?family=Poppins);
+
+html,
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--primary-color);
+  scrollbar-color: var(--secondary-color) var(--primary-color);
+}
+
+/**
+  * Used by the Vue transition component
+  */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}

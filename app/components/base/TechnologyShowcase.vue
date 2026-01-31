@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-const yearsOfExperience: number = new Date().getFullYear() - 2018;
+const yearsOfExperience: number = new Date().getFullYear() - 2020;
 
 const { data } = await useFetch("/api/icons", {
   key: "icons",

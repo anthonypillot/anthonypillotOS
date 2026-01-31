@@ -1,5 +1,4 @@
-import { version } from "@/package.json";
-import { convertConsoleLogToCustomLogger, logger } from "@/server/utils/logger";
+import { version } from "@@/package.json";
 
 /**
  * Initializes all the necessary configurations and checks before starting the server.
@@ -8,7 +7,7 @@ import { convertConsoleLogToCustomLogger, logger } from "@/server/utils/logger";
 export default defineNitroPlugin(async (nitro) => {
   convertConsoleLogToCustomLogger();
   logger.start(
-    `Starting [${useRuntimeConfig().app.website.title}] with version [${version}] (${process.env.GIT_SHA || "local"}) and env. [${
+    `Starting [${useRuntimeConfig().public.title}] with version [${version}] (${process.env.GIT_SHA || "local"}) and env. [${
       process.env.ENV || "local"
     }]`
   );

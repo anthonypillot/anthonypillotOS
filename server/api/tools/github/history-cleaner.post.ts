@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { proceed } from "@/server/services/history-cleaner.service";
-import { type HistoryCleanerJob, HistoryCleanerOptions } from "@/server/types/history-cleaner.type";
+import { proceed } from "@@/server/services/history-cleaner.service";
+import { type HistoryCleanerJob, HistoryCleanerOptions } from "@@/server/types/history-cleaner.type";
 
 export default defineEventHandler(async (event): Promise<HistoryCleanerResultFiltered> => {
   const body: Readonly<HistoryCleanerForm> = await Object.freeze(readBody(event));

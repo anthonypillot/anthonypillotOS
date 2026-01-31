@@ -1,14 +1,10 @@
+import type { User } from "@/components/task-holdem/CreateUser.vue";
+import * as service from "@@/server/services/task-holdem.service";
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
 import pg from "pg";
 import { Server } from "socket.io";
-
-import type { User } from "@/components/task-holdem/CreateUser.vue";
-import type { ClientToServerEvents, Room, ServerToClientEvents } from "@/types/task-holdem.type";
-import { prefixLog } from "@/types/task-holdem.type";
-
-import * as service from "@/server/services/task-holdem.service";
 
 export default defineNitroPlugin((nitro) => {
   const connectionString = process.env.POSTGRES_PRISMA_URL;

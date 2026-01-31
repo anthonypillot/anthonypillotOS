@@ -1,12 +1,12 @@
 import { type Feedback } from "@/components/form/Feedback.vue";
-import { create } from "@/server/services/feedback.service";
+import { create } from "@@/server/services/feedback.service";
 import { type FeedbackData } from "@prisma/client";
 import { z } from "zod";
 
 export default defineEventHandler(async (event): Promise<FeedbackData> => {
   const schema = z.object({
     name: z.nullable(z.string().nonempty({ message: "Name cannot be empty" })),
-    email: z.nullable(z.string().email()),
+    email: z.nullable(z.email()),
     message: z.string().nonempty({ message: "Message cannot be empty" }),
   });
 
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event): Promise<FeedbackData> => {
       throw createError({
         statusCode: 400,
         statusMessage: "Bad request",
-        message: error.errors.map((error) => error.message).join(", "),
+        message: error.issues.map((issue) => issue.message).join(", "),
       });
     } else {
       throw createError({

@@ -1,7 +1,7 @@
 import type { ConsolaInstance, LogLevel } from "consola";
 import { createConsola } from "consola";
 
-import { version } from "@/package.json";
+import { version } from "@@/package.json";
 
 /**
  * Returns a logger instance.

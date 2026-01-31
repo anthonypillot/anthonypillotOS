@@ -1,4 +1,6 @@
-export function getApiConfiguration() {
+import { $fetch, type $Fetch } from "ofetch";
+
+export function getApiConfiguration(): $Fetch {
   return $fetch.create({
     baseURL: "https://api.github.com",
     headers: {

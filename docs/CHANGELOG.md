@@ -1,3 +1,63 @@
+## [1.3.14](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.13...v1.3.14) (2026-01-27)
+
+
+### Performance Improvements
+
+* **deps:** add gsap ([795fa59](https://github.com/anthonypillot/anthonypillotOS/commit/795fa5986ee8dc942b9595555800a490071dc094))
+* replace VueWriter with BaseTextType component and remove vue-writer dependency ([3d1d167](https://github.com/anthonypillot/anthonypillotOS/commit/3d1d167b02e1f10e45a3b924d891bca521e56254))
+
+## [1.3.13](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.12...v1.3.13) (2026-01-27)
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([9c8cfca](https://github.com/anthonypillot/anthonypillotOS/commit/9c8cfcad618921421efd2108ad208b3b09b98aa0))
+
+## [1.3.12](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.11...v1.3.12) (2026-01-20)
+
+
+### Bug Fixes
+
+* correct years of experience calculation in TechnologyShowcase component ([179be61](https://github.com/anthonypillot/anthonypillotOS/commit/179be61c0551d4d1d502c2e41a17ea7838ff027c))
+
+
+### Performance Improvements
+
+* **deps:** update minor dependencies and fix lint ([bc5b0a0](https://github.com/anthonypillot/anthonypillotOS/commit/bc5b0a078ff62d849a0a14651013292627f02d5d))
+* **logo:** add proxmox icon SVG file ([73eef2c](https://github.com/anthonypillot/anthonypillotOS/commit/73eef2c49c7b301fa43e8e8a1e854bc0d57224e0))
+
+## [1.3.11](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.10...v1.3.11) (2025-10-20)
+
+
+### Bug Fixes
+
+* warning "app namespace is reserved for Nuxt" ([9228fe9](https://github.com/anthonypillot/anthonypillotOS/commit/9228fe9cdaba4299e43cf7e5038e4443e16c9604))
+
+
+### Performance Improvements
+
+* **deps:** update all dependencies and rename application to taskHoldemApplication for consistency ([3945a4a](https://github.com/anthonypillot/anthonypillotOS/commit/3945a4a3931e1e7b21d5410d0cec4448b336668a))
+* **deps:** upgrade to Nuxt v4 ([52aeb5c](https://github.com/anthonypillot/anthonypillotOS/commit/52aeb5cfaa7fb16d660bd53950ebc77840a81afa))
+
+## [1.3.10](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.9...v1.3.10) (2025-06-11)
+
+
+### Performance Improvements
+
+* simplify readiness check by removing external service dependency ([63469c4](https://github.com/anthonypillot/anthonypillotOS/commit/63469c406f93ebefc2f860b5339d87116e8b6cdb))
+
+## [1.3.9](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.8...v1.3.9) (2025-06-07)
+
+
+### Bug Fixes
+
+* adjust height of ExperienceCard layer and transition duration ([a274f43](https://github.com/anthonypillot/anthonypillotOS/commit/a274f4302a8e4fee47518265c3414d2f0eee59c4))
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([37e673d](https://github.com/anthonypillot/anthonypillotOS/commit/37e673d174679685068190da22eae125bb794f3d))
+
 ## [1.3.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.7...v1.3.8) (2025-06-06)
 
 
