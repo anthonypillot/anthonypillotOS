@@ -13,6 +13,7 @@
             v-for="tool in tools"
             :key="tool.name"
             :to="tool.to"
+            :aria-label="`Go to ${tool.name}`"
             class="flex flex-col bg-white/5 px-6 py-8 ring-1 ring-white/10 sm:rounded-3xl hover:bg-white/10 transition-colors cursor-pointer"
           >
             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
