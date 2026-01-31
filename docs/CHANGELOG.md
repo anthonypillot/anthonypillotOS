@@ -1,3 +1,10 @@
+## [1.3.16](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.15...v1.3.16) (2026-01-31)
+
+
+### Performance Improvements
+
+* replace Size Up docs link with View all tools button ([df91608](https://github.com/anthonypillot/anthonypillotOS/commit/df916082e5b40ea367d9118dcbf91e085a583996))
+
 ## [1.3.15](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.14...v1.3.15) (2026-01-31)
 
 
