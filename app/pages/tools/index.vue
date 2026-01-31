@@ -3,11 +3,9 @@
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl lg:text-center">
         <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Tools</h1>
-        <p class="mt-6 text-lg leading-8 text-gray-300">
-          A collection of free and open-source tools to help you with your daily tasks.
-        </p>
+        <p class="mt-6 text-lg leading-8 text-gray-300">A collection of free and open-source tools to help you with your daily tasks.</p>
       </div>
-      <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+      <div class="mx-auto mt-16 max-w-2xl lg:max-w-none">
         <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
           <NuxtLink
             v-for="tool in tools"
