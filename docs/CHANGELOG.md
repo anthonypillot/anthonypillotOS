@@ -1,3 +1,10 @@
+## [1.3.15](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.14...v1.3.15) (2026-01-31)
+
+
+### Performance Improvements
+
+* add animated counter component to Technology Showcase ([623ad04](https://github.com/anthonypillot/anthonypillotOS/commit/623ad04166ea472a6dd1aa77085db1561f814400))
+
 ## [1.3.14](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.13...v1.3.14) (2026-01-27)
 
 
