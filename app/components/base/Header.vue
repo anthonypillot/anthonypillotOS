@@ -60,16 +60,16 @@
                   </div>
                 </div>
                 <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                  <a
+                  <NuxtLink
                     v-for="item in popover.callsToAction"
                     :key="item.name"
-                    :href="item.href"
-                    :target="item.target"
+                    :to="item.to"
                     class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                    @click="close()"
                   >
                     <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
                     {{ item.name }}
-                  </a>
+                  </NuxtLink>
                 </div>
               </div>
             </PopoverPanel>
@@ -169,16 +169,21 @@
                           </div>
                         </div>
                         <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                          <a
+                          <NuxtLink
                             v-for="item in popover.callsToAction"
                             :key="item.name"
-                            :href="item.href"
-                            :target="item.target"
+                            :to="item.to"
                             class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                            @click="
+                              {
+                                close();
+                                mobileMenuOpen = false;
+                              }
+                            "
                           >
                             <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
                             {{ item.name }}
-                          </a>
+                          </NuxtLink>
                         </div>
                       </div>
                     </PopoverPanel>
@@ -220,7 +225,7 @@ const navigation = [
 ];
 
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
-import { ChevronDownIcon, DocumentIcon } from "@heroicons/vue/20/solid";
+import { ChevronDownIcon } from "@heroicons/vue/20/solid";
 import { ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
 
 const popover = {
@@ -240,10 +245,9 @@ const popover = {
   ],
   callsToAction: [
     {
-      name: "Size Up docs. about GitHub actions",
-      href: config.public.link.sizeUpDocumentation + "/docs/category/actions",
-      target: "_blank",
-      icon: DocumentIcon,
+      name: "View all tools",
+      to: "/tools",
+      icon: SquaresPlusIcon,
     },
   ],
 };
