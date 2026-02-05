@@ -1,3 +1,10 @@
+## [1.3.17](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.16...v1.3.17) (2026-02-05)
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([1dd97e3](https://github.com/anthonypillot/anthonypillotOS/commit/1dd97e3782e7379b5cbac9404e3b6d7c6e9954f0))
+
 ## [1.3.16](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.15...v1.3.16) (2026-01-31)
 
 
