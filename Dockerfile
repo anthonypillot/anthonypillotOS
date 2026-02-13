@@ -1,5 +1,5 @@
 # First stage is to build the application
-FROM node:22 AS build
+FROM node:24 AS build
 
 # Define working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN npm ci
 RUN npm run build
 
 # Second stage is to run the application
-FROM gcr.io/distroless/nodejs22-debian12 AS application
+FROM gcr.io/distroless/nodejs24-debian13 AS application
 
 WORKDIR /app
 
