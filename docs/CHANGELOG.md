@@ -1,3 +1,12 @@
+## [1.3.18](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.17...v1.3.18) (2026-02-19)
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([a8b9fc6](https://github.com/anthonypillot/anthonypillotOS/commit/a8b9fc68943d35be081fa6161e780aaddc91d08d))
+* **deps:** update dependencies ([377fd8f](https://github.com/anthonypillot/anthonypillotOS/commit/377fd8f6a6d9073acc1236f31e149e42d3368bdc))
+* **deps:** upgrade Node.js version to 24 ([fce9c07](https://github.com/anthonypillot/anthonypillotOS/commit/fce9c0738c566951317645051e9de052ece11f82))
+
 ## [1.3.17](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.16...v1.3.17) (2026-02-05)
 
 
