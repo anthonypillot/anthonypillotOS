@@ -1,9 +1,9 @@
-import { deleteWorkflowRun, getAllWorkflowRuns } from "@@/server/dao/github.dao";
-import { create as createHistoryCleanerJob, update as updateHistoryCleanerJob } from "@@/server/dao/history-cleaner.dao";
-import { GitHubDeletionStatusType, type GitHubWorkflowRun, type GitHubWorkflowRunDeletionResult } from "@@/server/types/github.type";
-import { type HistoryCleanerJob, HistoryCleanerJobStatus, HistoryCleanerOptions } from "@@/server/types/history-cleaner.type";
+import { deleteWorkflowRun, getAllWorkflowRuns } from "#server/dao/github.dao";
+import { create as createHistoryCleanerJob, update as updateHistoryCleanerJob } from "#server/dao/history-cleaner.dao";
+import { GitHubDeletionStatusType, type GitHubWorkflowRun, type GitHubWorkflowRunDeletionResult } from "#server/types/github.type";
+import { type HistoryCleanerJob, HistoryCleanerJobStatus, HistoryCleanerOptions } from "#server/types/history-cleaner.type";
 
-import { logger } from "@@/server/utils/logger";
+import { logger } from "#server/utils/logger";
 
 /**
  * Starts the history cleaner for the specified repository.

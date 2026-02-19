@@ -1,4 +1,4 @@
-import { create } from "@@/server/services/feedback.service";
+import { create } from "#server/services/feedback.service";
 import type { FeedbackData } from "@prisma/client";
 import { z } from "zod";
 
