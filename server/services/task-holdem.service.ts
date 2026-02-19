@@ -1,5 +1,5 @@
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import * as dao from "@@/server/dao/task-holdem.dao";
+import * as dao from "#server/dao/task-holdem.dao";
 
 export function getOrCreateRoom(id: string): Promise<Room> {
   logger.debug(`${prefixLog} Room created or fetched`);
