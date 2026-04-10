@@ -1,3 +1,15 @@
+## [1.3.19](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.18...v1.3.19) (2026-04-10)
+
+
+### Bug Fixes
+
+* correct years of experience calculation ([be42411](https://github.com/anthonypillot/anthonypillotOS/commit/be424115e5cb171b8905be5e81d4a29b22a96f28))
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([a30e908](https://github.com/anthonypillot/anthonypillotOS/commit/a30e90847cbc6b133b488344a69475c7b6ea7c48))
+
 ## [1.3.18](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.17...v1.3.18) (2026-02-19)
 
 
