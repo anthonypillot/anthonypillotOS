@@ -67,6 +67,7 @@
     "@types/pg": "^8.20.0",
     "@vitest/coverage-v8": "^4.1.6",
     "@vue/test-utils": "^2.4.10",
+    "commander": "^13.1.0",
     "happy-dom": "^20.9.0",
     "msw": "^2.14.6",
     "prisma": "^6.19.3",
