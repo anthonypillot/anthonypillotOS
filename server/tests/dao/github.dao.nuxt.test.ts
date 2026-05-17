@@ -6,6 +6,8 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+afterEach(() => vi.clearAllMocks());
+
 const information = {
   account: "my-account",
   repository: "my-repository",
