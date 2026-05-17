@@ -22,7 +22,7 @@
   "scripts": {
     "postinstall": "prisma generate && nuxt prepare",
     "clean": "rm -rf .nuxt .output coverage playwright-report test-results",
-    "lint": "nuxt typecheck",
+    "lint": "nuxt typecheck && eslint .",
     "build": "npm run clean && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -38,6 +38,7 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
+    "@nuxt/eslint": "^1.15.2",
     "@nuxt/image": "^2.0.0",
     "@nuxt/test-utils": "^4.0.3",
     "@opentelemetry/api": "^1.9.1",
@@ -45,6 +46,7 @@
     "@prisma/client": "^6.19.3",
     "@socket.io/postgres-adapter": "^0.5.0",
     "canvas-confetti": "^1.9.4",
+    "eslint": "^10.4.0",
     "gsap": "^3.15.0",
     "matter-js": "^0.20.0",
     "nuxt": "^4.0.2",
