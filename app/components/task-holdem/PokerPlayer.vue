@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center p-4 border border-gray-400 rounded bg-gray-700 bg-opacity-25">
     <NuxtImg class="max-h-12 lg:max-h-16 z-10" :src="useAvatar(user.avatar)" :alt="'poker player ' + user.avatar" />
-    <div class="absolute bg-indigo-400 h-10 w-10 blur-md"></div>
+    <div class="absolute bg-indigo-400 h-10 w-10 blur-md"/>
     <p class="text-xs text-white text-ellipsis overflow-hidden text-center max-w-16" :data-testid="user.name">{{ user.name }}</p>
     <div class="flex justify-center mt-2">
       <div
@@ -13,8 +13,8 @@
         <span v-else-if="status === 'revealed' && typeof getSelectedCardValue() === 'number'" class="text-white text-xl">{{
           getSelectedCardValue()
         }}</span>
-        <component v-else-if="status === 'revealed' && getSelectedCardValue()" :is="getSelectedCardValue()" class="text-white w-8" />
-        <component v-else :is="QuestionMarkCircleIcon" class="text-white w-8" />
+        <component :is="getSelectedCardValue()" v-else-if="status === 'revealed' && getSelectedCardValue()" class="text-white w-8" />
+        <component :is="QuestionMarkCircleIcon" v-else class="text-white w-8" />
       </div>
     </div>
   </div>

@@ -59,16 +59,16 @@
             :key="card.value"
             :type="card.type"
             :value="card.value"
-            :isSelected="card.isSelected"
+            :is-selected="card.isSelected"
             @select="selectCard(card)"
           />
         </div>
       </section>
-      <TaskHoldemChat :user="user" v-model:messages="messages" v-model:message="message" @submit="sendMessage(user, message)" />
+      <TaskHoldemChat v-model:messages="messages" v-model:message="message" :user="user" @submit="sendMessage(user, message)" />
     </section>
 
     <DevOnly>
-      <SocketTechnicalData :isConnected="isConnected" :transport="transport" :socket="socket" :socketNumber="data.socketNumber || 0" />
+      <SocketTechnicalData :is-connected="isConnected" :transport="transport" :socket="socket" :socket-number="data.socketNumber || 0" />
     </DevOnly>
   </section>
 </template>
@@ -287,7 +287,11 @@ function selectCard(selectedCard: Card): void {
 
   if (currentUserInRoom) {
     cards.value.forEach((card) => {
-      card.value === selectedCard.value ? (card.isSelected = !card.isSelected) : (card.isSelected = false);
+      if (card.value === selectedCard.value) {
+        card.isSelected = !card.isSelected;
+      } else {
+        card.isSelected = false;
+      }
     });
 
     room.value.users.forEach((user) => {

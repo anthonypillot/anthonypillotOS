@@ -29,7 +29,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   server.use(
-    http.options("https://api.github.com/repos/*", ({ request, params, cookies }) => {
+    http.options("https://api.github.com/repos/*", () => {
       return new HttpResponse(null, {
         status: 200,
         headers: {
@@ -51,7 +51,7 @@ describe("GitHub DAO", async () => {
     server.use(
       http.get(
         `https://api.github.com/repos/${information.account}/${information.repository}/actions/runs`,
-        ({ request, params, cookies }) => {
+        () => {
           return HttpResponse.json(workflowRunsApiResponse);
         }
       )
@@ -73,7 +73,7 @@ describe("GitHub DAO", async () => {
     server.use(
       http.get(
         `https://api.github.com/repos/${information.account}/${information.repository}/actions/runs`,
-        ({ request, params, cookies }) => {
+        () => {
           return HttpResponse.json(workflowRunsApiResponse);
         }
       )
@@ -95,7 +95,7 @@ describe("GitHub DAO", async () => {
     server.use(
       http.get(
         `https://api.github.com/repos/${information.account}/${information.repository}/actions/runs`,
-        ({ request, params, cookies }) => {
+        () => {
           return HttpResponse.text(null, {
             status: 500,
           });
@@ -116,7 +116,7 @@ describe("GitHub DAO", async () => {
     server.use(
       http.delete(
         `https://api.github.com/repos/${information.account}/${information.repository}/actions/runs/*`,
-        ({ request, params, cookies }) => {
+        () => {
           return HttpResponse.text(null, {
             status: 204,
           });
@@ -138,7 +138,7 @@ describe("GitHub DAO", async () => {
     server.use(
       http.delete(
         `https://api.github.com/repos/${information.account}/${information.repository}/actions/runs/*`,
-        ({ request, params, cookies }) => {
+        () => {
           return HttpResponse.text(null, {
             status: 404,
           });
@@ -155,7 +155,7 @@ describe("GitHub DAO", async () => {
     server.use(
       http.delete(
         `https://api.github.com/repos/${information.account}/${information.repository}/actions/runs/*`,
-        ({ request, params, cookies }) => {
+        () => {
           return HttpResponse.text(null, {
             status: 401,
           });
@@ -172,7 +172,7 @@ describe("GitHub DAO", async () => {
     server.use(
       http.delete(
         `https://api.github.com/repos/${information.account}/${information.repository}/actions/runs/*`,
-        ({ request, params, cookies }) => {
+        () => {
           return HttpResponse.text(null, {
             status: 502,
           });

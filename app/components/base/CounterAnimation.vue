@@ -110,7 +110,7 @@ const setupIntersectionObserver = () => {
 
   intersectionObserver = new IntersectionObserver(
     ([entry]) => {
-      // @ts-expect-error
+      // @ts-expect-error IntersectionObserver entry type not fully typed in DOM lib
       if (entry.isIntersecting && !isInView.value) {
         isInView.value = true;
         startAnimation();

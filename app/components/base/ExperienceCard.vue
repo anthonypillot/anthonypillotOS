@@ -12,7 +12,7 @@
         </div>
         <div class="flex flex-col gap-8">
           <div class="flex flex-col gap-2 text-sm text-justify">
-            <div v-html="experience.description" class="bg-gray-800/40 p-4 rounded-lg border-l-4 border-indigo-400" />
+            <div class="bg-gray-800/40 p-4 rounded-lg border-l-4 border-indigo-400" v-html="experience.description" />
           </div>
           <button
             class="rounded-sm border border-gray-400 bg-gray-700 px-12 py-2 text-sm text-gray-200 hover:bg-transparent hover:text-white focus:ring-3 focus:outline-hidden"

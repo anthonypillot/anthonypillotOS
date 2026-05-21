@@ -16,9 +16,9 @@ export async function getRoom(id: string): Promise<Room | null> {
     } else {
       return null;
     }
-  } catch (error: any) {
-    logger.error(`Error while getting room: ${error}`);
-    throw new Error(error);
+  } catch (error: unknown) {
+    logger.error(`Error while getting room: ${error instanceof Error ? error.message : String(error)}`);
+    throw error;
   }
 }
 
@@ -41,9 +41,9 @@ export async function createRoom(id: string): Promise<Room> {
     });
 
     return room.data as Room;
-  } catch (error: any) {
-    logger.error(`Error while creating room: ${error}`);
-    throw new Error(error);
+  } catch (error: unknown) {
+    logger.error(`Error while creating room: ${error instanceof Error ? error.message : String(error)}`);
+    throw error;
   }
 }
 
@@ -69,9 +69,9 @@ export async function updateRoom(id: string, updatedRoom: Room): Promise<Room> {
     });
 
     return room.data as Room;
-  } catch (error: any) {
-    logger.error(`Error while updating room: ${error}`);
-    throw new Error(error);
+  } catch (error: unknown) {
+    logger.error(`Error while updating room: ${error instanceof Error ? error.message : String(error)}`);
+    throw error;
   }
 }
 

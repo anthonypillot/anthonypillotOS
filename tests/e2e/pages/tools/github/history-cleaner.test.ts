@@ -18,7 +18,7 @@ test("should have the form filled with the default values", async ({ page }) => 
 
   const [account, repository, token] = await page.getByRole("textbox").all();
   const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
-  const [openMenu, tool, clearButton, submitButton] = await page.getByRole("button").all();
+  const [__openMenu, __tool, clearButton, submitButton] = await page.getByRole("button").all();
 
   expect(await account.inputValue()).toBe("");
 
@@ -42,7 +42,7 @@ test("should have the form cleared after clicking on the clear button", async ({
 
   const [account, repository, token] = await page.getByRole("textbox").all();
   const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
-  const [openMenu, tool, clearButton, submitButton] = await page.getByRole("button").all();
+  const [_openMenu, _tool, clearButton, _submitButton] = await page.getByRole("button").all();
 
   await account.fill("my-account");
   await repository.fill("my-repository");
@@ -94,7 +94,7 @@ if (!process.env.CI) {
 
     const [account, repository, token] = await page.getByRole("textbox").all();
     const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
-    const [openMenu, tool, clearButton, submitButton] = await page.getByRole("button").all();
+    const [_openMenu, _tool, _clearButton, submitButton] = await page.getByRole("button").all();
 
     await account.fill("my-account");
     await repository.fill("my-repository");

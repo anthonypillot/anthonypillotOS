@@ -1,4 +1,4 @@
-import { type Feedback } from "@/components/form/Feedback.vue";
+import type { Feedback } from "@/components/form/Feedback.vue";
 import { type FeedbackData, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

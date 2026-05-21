@@ -1,7 +1,5 @@
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-afterEach(() => vi.clearAllMocks());
-
 import { proceed } from "@@/server/services/history-cleaner.service";
 import { GitHubDeletionStatusType, type GitHubWorkflowRun } from "@@/server/types/github.type";
 import { HistoryCleanerJobStatus, HistoryCleanerOptions, type HistoryCleanerJob } from "@@/server/types/history-cleaner.type";
@@ -12,6 +10,8 @@ import * as githubDao from "@@/server/dao/github.dao";
 import * as historyCleanerRepository from "@@/server/dao/history-cleaner.dao";
 
 import workflowRunsApiResponse from "@@/server/tests/data/workflowRunsApiResponse.github.json";
+
+afterEach(() => vi.clearAllMocks());
 
 const uuid: string = "00000000-0000-0000-0000-000000000000";
 

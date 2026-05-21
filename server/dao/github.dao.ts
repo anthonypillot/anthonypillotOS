@@ -108,8 +108,8 @@ export async function getDeployments(account: string, repository: string, token:
         per_page: maximumPerPage, // max allowed by GitHub API
       },
     });
-  } catch (error: any) {
-    const message = `Error while retrieving deployments for [${account}/${repository}] repository. Error: [${error.message}] from GitHub API`;
+  } catch (error: unknown) {
+    const message = `Error while retrieving deployments for [${account}/${repository}] repository. Error: [${error instanceof Error ? error.message : String(error)}] from GitHub API`;
     logger.error(message);
     throw new Error(message);
   }
@@ -157,7 +157,9 @@ export async function deleteWorkflowRun(account: string, repository: string, tok
         }
       },
     });
-  } catch (error: any) {}
+  } catch {
+    // Silently ignore errors from deleteWorkflowRun - status is already set from response handler
+  }
 
   return deletionStatus;
 }

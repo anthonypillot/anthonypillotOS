@@ -1,13 +1,15 @@
 <template>
-  <!-- Hero section -->
-  <BaseHero />
+  <div>
+    <!-- Hero section -->
+    <BaseHero />
 
-  <!-- Technology showcase section -->
-  <BaseTechnologyShowcase />
+    <!-- Technology showcase section -->
+    <BaseTechnologyShowcase />
 
-  <!-- Profile overview section -->
-  <BaseProfileOverview />
+    <!-- Profile overview section -->
+    <BaseProfileOverview />
 
-  <!-- Career history section -->
-  <BaseCareerHistory />
+    <!-- Career history section -->
+    <BaseCareerHistory />
+  </div>
 </template>

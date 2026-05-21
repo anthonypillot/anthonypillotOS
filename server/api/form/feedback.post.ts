@@ -1,6 +1,6 @@
-import { type Feedback } from "@/components/form/Feedback.vue";
+import type { Feedback } from "@/components/form/Feedback.vue";
 import { create } from "@@/server/services/feedback.service";
-import { type FeedbackData } from "@prisma/client";
+import type { FeedbackData } from "@prisma/client";
 import { z } from "zod";
 
 export default defineEventHandler(async (event): Promise<FeedbackData> => {

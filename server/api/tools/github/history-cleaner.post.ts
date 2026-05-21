@@ -40,12 +40,13 @@ export default defineEventHandler(async (event): Promise<HistoryCleanerResultFil
   try {
     const job: HistoryCleanerJob = await proceed(body.account, body.repository, body.token, body.options);
     return extractAndFilterHistoryCleanerJob(job);
-  } catch (error: any) {
-    logger.error(`History cleaner request failed, error: ${JSON.stringify(error.message)}`);
+  } catch (error: unknown) {
+    logger.error(`History cleaner request failed, error: ${error instanceof Error ? JSON.stringify(error.message) : String(error)}`);
+    const h3Error = error as { statusCode?: number; statusMessage?: string; message?: string };
     throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || "Internal Server Error",
-      message: error.message || "An unknown error occurred while processing the request",
+      statusCode: h3Error.statusCode || 500,
+      statusMessage: h3Error.statusMessage || "Internal Server Error",
+      message: h3Error.message || "An unknown error occurred while processing the request",
     });
   }
 });
