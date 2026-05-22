@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col gap-y-16">
     <!-- Hero section -->
     <BaseHero />
 
