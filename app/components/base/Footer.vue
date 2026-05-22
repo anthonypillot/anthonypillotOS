@@ -97,7 +97,6 @@ const navigation = {
     { name: "Organization", href: config.public.link.githubOrganization, rel: "noopener", target: "_blank" },
   ],
   contact: [
-    { name: "Email", href: "mailto:" + config.public.author.email },
     { name: "LinkedIn", href: config.public.link.linkedIn, rel: "noopener", target: "_blank" },
   ],
 };

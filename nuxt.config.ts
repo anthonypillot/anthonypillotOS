@@ -21,7 +21,6 @@ export default defineNuxtConfig({
       author: {
         name: author.name,
         url: author.url,
-        email: author.email,
       },
       link: {
         linkedIn: "https://linkedin.com/in/anthony-pillot",
