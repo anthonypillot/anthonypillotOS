@@ -25,6 +25,8 @@ See [README.md](README.md) for setup, deployment, and git conventions. See [docs
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Start dev server (localhost:3000) |
+| `npm run dev:detached` | Start dev server detached (background process) |
+| `npm run dev:stop-detached` | Stop the detached dev server |
 | `npm run build` | Clean + production build |
 | `npm run preview` | Preview production build locally |
 | `npm run start` | Build + preview in one step |
@@ -36,6 +38,10 @@ See [README.md](README.md) for setup, deployment, and git conventions. See [docs
 | `npm run clean` | Remove `.nuxt`, `.output`, coverage/test artifacts |
 
 > **Note**: `postinstall` runs `prisma generate && nuxt prepare` automatically.
+
+> **Dev server**: Use `npm run dev:detached` instead of `npm run dev`. This spawns `nuxt dev` as a detached process so the command returns immediately. Output goes to `logs/nuxt-dev.log`. Use `npm run dev:stop-detached` to stop it. The PID is stored in `logs/nuxt-dev.pid` for manual cleanup (`kill $(cat logs/nuxt-dev.pid)`).
+>
+> The underlying scripts are `scripts/start-dev-detached.mjs` and `scripts/stop-dev-detached.mjs`.
 
 ## Environment Variables
 
