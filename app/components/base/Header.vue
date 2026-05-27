@@ -208,8 +208,8 @@
 </template>
 
 <script setup lang="ts">
-import { Dialog, DialogPanel, Popover, PopoverButton, PopoverPanel  } from "@headlessui/vue";
-import { Bars3Icon, SquaresPlusIcon, XMarkIcon, ArrowPathRoundedSquareIcon  } from "@heroicons/vue/24/outline";
+import { Dialog, DialogPanel, Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
+import { Bars3Icon, SquaresPlusIcon, XMarkIcon, ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
 
 import { ChevronDownIcon } from "@heroicons/vue/20/solid";
 
@@ -222,8 +222,6 @@ const logo = config.public.logo.os.raw;
 const navigation = [
   { name: "My LinkedIn", href: config.public.link.linkedIn, rel: "noopener", target: "_blank" },
   { name: "My GitHub", href: config.public.link.githubAccount, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Org.", href: config.public.link.githubOrganization, rel: "noopener", target: "_blank" },
-  // { name: "Size Up - Documentation", href: config.public.link.sizeUpDocumentation, rel: "", target: "_blank" },
 ];
 
 const popover = {
