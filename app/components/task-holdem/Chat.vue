@@ -20,10 +20,10 @@
           <p class="text-white text-xs pb-2">Messages:</p>
           <div v-if="messages && messages.length > 0">
             <div id="messages" class="flex flex-col border rounded p-2 max-h-40 overflow-y-scroll">
-              <section v-for="message in messages" :key="message.id">
+              <section v-for="chatMessage in messages" :key="chatMessage.id">
                 <div id="message" class="flex gap-2">
-                  <span class="text-sm text-gray-400">{{ message.user.name }}:</span>
-                  <span class="text-sm text-white break-all">{{ message.content }}</span>
+                  <span class="text-sm text-gray-400">{{ chatMessage.user.name }}:</span>
+                  <span class="text-sm text-white break-all">{{ chatMessage.content }}</span>
                 </div>
               </section>
             </div>

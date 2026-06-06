@@ -26,6 +26,8 @@ const props = withDefaults(defineProps<Props>(), {
   className: "",
   startWhen: true,
   separator: "",
+  onStart: () => {},
+  onEnd: () => {},
 });
 
 const elementRef = useTemplateRef<HTMLSpanElement>("elementRef");
