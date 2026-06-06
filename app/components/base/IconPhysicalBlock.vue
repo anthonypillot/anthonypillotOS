@@ -1,5 +1,5 @@
 <template>
-  <aside id="icon-physical-block"></aside>
+  <aside id="icon-physical-block"/>
 </template>
 
 <script setup>

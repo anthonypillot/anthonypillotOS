@@ -21,7 +21,6 @@ export default defineNuxtConfig({
       author: {
         name: author.name,
         url: author.url,
-        email: author.email,
       },
       link: {
         linkedIn: "https://linkedin.com/in/anthony-pillot",
@@ -51,7 +50,7 @@ export default defineNuxtConfig({
     "/tools/task-holdem": { swr: true },
   },
 
-  modules: ["@nuxt/image", "@nuxtjs/tailwindcss", "@nuxt/test-utils/module"],
+  modules: ["@nuxt/eslint", "@nuxt/image", "@nuxtjs/tailwindcss", "@nuxt/test-utils/module"],
 
   devtools: { enabled: true },
 });

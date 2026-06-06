@@ -51,13 +51,13 @@
                   <BaseTextType
                     class="text-white text-4xl"
                     :text="textTypeTexts"
-                    :typingSpeed="50"
-                    :deletingSpeed="30"
-                    :pauseDuration="2000"
-                    :initialDelay="1500"
+                    :typing-speed="50"
+                    :deleting-speed="30"
+                    :pause-duration="2000"
+                    :initial-delay="1500"
                     :variable-speed="{ min: 40, max: 80 }"
-                    :showCursor="true"
-                    cursorCharacter="|"
+                    :show-cursor="true"
+                    cursor-character="|"
                     :loop="true"
                   />
                 </ClientOnly>

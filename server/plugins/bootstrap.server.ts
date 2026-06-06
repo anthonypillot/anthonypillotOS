@@ -4,7 +4,7 @@ import { version } from "@@/package.json";
  * Initializes all the necessary configurations and checks before starting the server.
  * @param nitro - The Nitro instance.
  */
-export default defineNitroPlugin(async (nitro) => {
+export default defineNitroPlugin(async (_nitro) => {
   convertConsoleLogToCustomLogger();
   logger.start(
     `Starting [${useRuntimeConfig().public.title}] with version [${version}] (${process.env.GIT_SHA || "local"}) and env. [${

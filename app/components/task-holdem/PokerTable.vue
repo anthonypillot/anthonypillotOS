@@ -1,7 +1,7 @@
 <template>
   <section class="flex flex-col gap-y-6 w-full">
     <div class="flex justify-between">
-      <div v-for="user in topHalfUsers" class="flex flex-col flex-wrap">
+      <div v-for="(user, index) in topHalfUsers" :key="index" class="flex flex-col flex-wrap">
         <TaskHoldemPokerPlayer :user :status="props.game.status" />
       </div>
     </div>
@@ -13,9 +13,9 @@
           :class="`text-white bg-indigo-950 border border-white rounded-sm px-4 py-2 min-w-40 ${
             isAnyUserWithSelectedCard ? 'cursor-pointer hover:bg-white hover:text-black' : 'cursor-not-allowed bg-indigo-800 opacity-50'
           } ${isEveryoneReady ? 'shadow-lg shadow-indigo-400' : ''}`"
-          @click="reveal()"
           :disabled="!isAnyUserWithSelectedCard"
           data-testid="reveal-button"
+          @click="reveal()"
         >
           {{
             isAnyUserWithSelectedCard
@@ -33,21 +33,21 @@
         </div>
         <button
           class="text-white bg-indigo-950 border border-white rounded-sm px-4 py-2 cursor-pointer hover:bg-white hover:text-black"
-          @click="emit('restart')"
           data-testid="restart-button"
+          @click="emit('restart')"
         >
           Restart
         </button>
       </div>
     </div>
     <div v-if="bottomHalfUsers" class="flex flex-wrap justify-between">
-      <TaskHoldemPokerPlayer v-for="user in bottomHalfUsers" :user :status="props.game.status" />
+      <TaskHoldemPokerPlayer v-for="(user, index) in bottomHalfUsers" :key="index" :user :status="props.game.status" />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-// @ts-ignore
+// @ts-expect-error canvas-confetti lacks proper TypeScript declarations
 import confetti from "canvas-confetti";
 
 import type { Room } from "@@/shared/types/task-holdem.type";
@@ -67,7 +67,6 @@ const countdownDuration = 2;
 const countdown = ref<number>(countdownDuration);
 
 function reveal(): void {
-  props.game.status = "revealing";
   emit("revealing");
 }
 

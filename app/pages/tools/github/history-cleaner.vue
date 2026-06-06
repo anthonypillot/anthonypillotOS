@@ -1,9 +1,11 @@
 <template>
-  <!-- GitHub History Cleaner hero section -->
-  <GithubHistoryCleanerHero />
+  <div>
+    <!-- GitHub History Cleaner hero section -->
+    <GithubHistoryCleanerHero />
 
-  <!-- GitHub History Cleaner application section -->
-  <GithubHistoryCleaner />
+    <!-- GitHub History Cleaner application section -->
+    <GithubHistoryCleaner />
+  </div>
 </template>
 
 <script setup lang="ts">

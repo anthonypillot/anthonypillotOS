@@ -83,7 +83,7 @@
       </div>
     </nav>
     <ClientOnly>
-      <Dialog as="div" class="lg:hidden" @close="mobileMenuOpen = false" :open="mobileMenuOpen">
+      <Dialog as="div" class="lg:hidden" :open="mobileMenuOpen" @close="mobileMenuOpen = false">
         <div class="fixed inset-0 z-50" />
         <DialogPanel
           class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-lg sm:ring-1 sm:ring-gray-900/10"
@@ -208,8 +208,10 @@
 </template>
 
 <script setup lang="ts">
-import { Dialog, DialogPanel } from "@headlessui/vue";
-import { Bars3Icon, SquaresPlusIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { Dialog, DialogPanel, Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
+import { Bars3Icon, SquaresPlusIcon, XMarkIcon, ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
+
+import { ChevronDownIcon } from "@heroicons/vue/20/solid";
 
 const mobileMenuOpen: Ref<boolean> = ref(false);
 
@@ -220,13 +222,7 @@ const logo = config.public.logo.os.raw;
 const navigation = [
   { name: "My LinkedIn", href: config.public.link.linkedIn, rel: "noopener", target: "_blank" },
   { name: "My GitHub", href: config.public.link.githubAccount, rel: "noopener", target: "_blank" },
-  { name: "Size Up - Org.", href: config.public.link.githubOrganization, rel: "noopener", target: "_blank" },
-  // { name: "Size Up - Documentation", href: config.public.link.sizeUpDocumentation, rel: "", target: "_blank" },
 ];
-
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
-import { ChevronDownIcon } from "@heroicons/vue/20/solid";
-import { ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
 
 const popover = {
   links: [

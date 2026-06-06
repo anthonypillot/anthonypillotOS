@@ -9,7 +9,7 @@
             class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
             src="https://images.unsplash.com/photo-1654277041218-84424c78f0ae?q=80&w=800"
             alt="github history cleaner"
-          />
+          >
           <div class="w-full flex-auto">
             <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">GitHub History Cleaner</h1>
             <div class="mt-6 text-lg leading-8 text-gray-300">
@@ -24,7 +24,7 @@
               </li>
             </ul>
             <div class="mt-10 flex">
-              <button @click="scrollToTool()" class="text-sm font-semibold leading-6 text-indigo-400">
+              <button class="text-sm font-semibold leading-6 text-indigo-400" @click="scrollToTool()">
                 Go to the GitHub History Cleaner tool
                 <span aria-hidden="true">&rarr;</span>
               </button>

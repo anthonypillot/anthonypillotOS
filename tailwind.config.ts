@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
+import forms from "@tailwindcss/forms";
 
 export default <Partial<Config>>{
   theme: {},
   content: [],
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [forms],
 };

@@ -67,8 +67,8 @@ async function findAndDeleteWorkflowRuns(
       `Deletion report for [${account}/${repository}] repository: [success: ${workflowRunDeletionResult.success.length}, not found: ${workflowRunDeletionResult.notFound.length}, unauthorized: ${workflowRunDeletionResult.unauthorized.length}, unknown: ${workflowRunDeletionResult.unknown.length}]`
     );
     status = HistoryCleanerJobStatus.COMPLETED;
-  } catch (error: any) {
-    logger.error(`Failed to delete workflow runs for [${account}/${repository}] repository: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error(`Failed to delete workflow runs for [${account}/${repository}] repository: ${error instanceof Error ? error.message : String(error)}`);
     status = HistoryCleanerJobStatus.FAILED;
     throw error;
   }

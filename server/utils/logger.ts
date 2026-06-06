@@ -73,16 +73,16 @@ function mapLevel(level: number): string {
 export function convertConsoleLogToCustomLogger() {
   const consoleMethods = ["error", "warn", "info", "debug", "trace"];
   consoleMethods.forEach((method) => {
-    // @ts-ignore
-    console[method] = function () {
-      if (arguments[0]) {
+    // @ts-expect-error overriding console method is intentional for custom logging
+    console[method] = (...args: unknown[]) => {
+      if (args[0]) {
         const vueRouterWarn = "[Vue Router warn]: ";
-        if (arguments[0].startsWith(vueRouterWarn)) {
-          const argument: string = arguments[0].replace(vueRouterWarn, "");
+        if (typeof args[0] === "string" && args[0].startsWith(vueRouterWarn)) {
+          const argument = args[0].replace(vueRouterWarn, "");
           logger.warn(argument);
         } else {
-          // @ts-ignore
-          logger[method](arguments[0]);
+          // @ts-expect-error dynamic logger method call is safe for known console methods
+          logger[method](args[0]);
         }
       }
     };

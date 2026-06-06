@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error vue-matomo lacks proper TypeScript type definitions
 import VueMatomo from "vue-matomo";
 
 export default defineNuxtPlugin((nuxtApp) => {

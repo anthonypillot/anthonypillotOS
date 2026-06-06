@@ -4,7 +4,7 @@
       <div class="pb-4 px-4 sm:px-0 lg:pb-0">
         <h2 class="text-white font-semibold leading-7">GitHub History Cleaner</h2>
         <p class="text-sm leading-6 text-gray-400">
-          This tool will help you clean up your GitHub history by deleting all workflow runs, deployments, releases, packages, and other.<br />
+          This tool will help you clean up your GitHub history by deleting all workflow runs, deployments, releases, packages, and other.<br >
           The application needs a GitHub Personal Access Token (PAT) to be able to delete your history. However,
           <span class="text-gray-200">your GitHub Personal Access Token will never be stored</span>.
         </p>
@@ -17,7 +17,7 @@
       </div>
 
       <div class="lg:col-start-2 lg:col-end-4">
-        <form @submit.prevent="submit()" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+        <form class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl" @submit.prevent="submit()">
           <div class="px-4 py-6 sm:px-8 sm:py-6">
             <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div class="sm:col-span-3">
@@ -30,7 +30,7 @@
                     placeholder="my-account-or-organization"
                     autocomplete="username"
                     class="block w-full rounded-md border-0 mt-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
+                  >
                 </div>
               </div>
               <div class="sm:col-span-3">
@@ -43,7 +43,7 @@
                     placeholder="my-repository"
                     autocomplete="username"
                     class="block w-full rounded-md border-0 mt-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
+                  >
                 </div>
               </div>
               <div class="sm:col-span-4">
@@ -76,7 +76,7 @@
                         ? 'text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500'
                         : 'text-gray-900 ring-gray-300 placeholder:text-gray-400'
                     }`"
-                  />
+                  >
                   <div v-if="validation.githubPatIsNotValid" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                     <ExclamationCircleIcon class="h-5 w-5 text-red-500" aria-hidden="true" />
                   </div>
@@ -87,11 +87,11 @@
               </div>
               <div class="sm:col-span-6">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Deleting options</label>
-                <div v-for="option in options" class="relative flex items-start pt-1.5">
+                <div v-for="(option, index) in options" :key="index" class="relative flex items-start pt-1.5">
                   <div class="flex h-6 items-center">
                     <input
-                      type="checkbox"
                       :id="option.name"
+                      type="checkbox"
                       :name="option.name"
                       :aria-describedby="option.description"
                       :checked="option.checked"
@@ -101,11 +101,11 @@
                         option.checked = !option.checked;
                         option.checked ? form.options.push(option.name) : form.options.splice(form.options.indexOf(option.name), 1);
                       "
-                    />
+                    >
                   </div>
                   <div class="ml-3 text-sm">
                     <label :for="option.name" class="font-medium text-gray-900">
-                      <span v-html="option.label" :class="option.disabled ? 'cursor-not-allowed' : 'cursor-pointer'" />
+                      <span :class="option.disabled ? 'cursor-not-allowed' : 'cursor-pointer'" v-html="option.label" />
                     </label>
                     <p class="text-gray-400">{{ option.description }}</p>
                   </div>
@@ -114,7 +114,7 @@
             </div>
           </div>
           <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 p-4 sm:px-8 sm:py-6">
-            <button @click="clear()" type="button" class="text-sm font-semibold leading-6 text-gray-900">Clear</button>
+            <button type="button" class="text-sm font-semibold leading-6 text-gray-900" @click="clear()">Clear</button>
             <button
               :class="`rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600`"
               :disabled="disabled.submit"
@@ -207,13 +207,13 @@
                       <span class="font-semibold">{{ form.repository }}</span> ?
                     </p>
                   </div>
-                  <div v-for="formOption in form.options" class="pt-2">
+                  <div v-for="(formOption, index) in form.options" :key="index" class="pt-2">
                     <div class="flex">
                       <ArrowRightCircleIcon class="h-5 w-5 mr-1" aria-hidden="true" />
                       <p
-                        v-html="`${options.find((option) => option.name === formOption)?.label} will be deleted.`"
                         class="text-sm text-gray-600"
-                      ></p>
+                        v-html="`${options.find((option) => option.name === formOption)?.label} will be deleted.`"
+                      />
                     </div>
                   </div>
                   <div class="pt-2">

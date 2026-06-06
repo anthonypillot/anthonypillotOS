@@ -7,7 +7,7 @@
             class="rounded-xl lg:rounded-3xl"
             src="https://avatars.githubusercontent.com/u/51130139"
             :alt="config.public.author.name"
-          />
+          >
         </aside>
         <article class="w-full max-w-2xl xl:max-w-none xl:flex-auto xl:px-16 xl:py-24">
           <figure class="relative isolate pt-6 sm:pt-12">
@@ -20,10 +20,10 @@
             </svg>
             <blockquote class="text-xl font-semibold leading-8 text-white sm:text-2xl sm:leading-9">
               <p>
-                <span class="text-indigo-400">Who am I?</span> Anthony, passionate developer.<br />Who tries and wants to remain a
+                <span class="text-indigo-400">Who am I?</span> Anthony, passionate developer.<br >Who tries and wants to remain a
                 <span class="text-indigo-400">real</span>
                 Full-Stack (Project Architecture, Database, Back-end, Front-end, Testing, Integration, and Deployment through
-                DevOps/FinOps).<br />Exotic supplement: a background in <span class="text-indigo-400">work psychology</span>.
+                DevOps/FinOps).<br >Exotic supplement: a background in <span class="text-indigo-400">work psychology</span>.
               </p>
             </blockquote>
             <figcaption class="mt-8 text-base">

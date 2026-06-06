@@ -16,7 +16,7 @@
     </button>
   </section>
   <Transition>
-    <FormFeedback :isOpen="isFeedbackOpen" @close="isFeedbackOpen = false" />
+    <FormFeedback :is-open="isFeedbackOpen" @close="isFeedbackOpen = false" />
   </Transition>
 </template>
 

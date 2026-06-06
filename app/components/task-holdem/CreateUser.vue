@@ -3,18 +3,18 @@
     <div class="flex flex-col gap-y-4 items-start">
       <p class="text-white">To join the game, please enter your informations:</p>
       <input
+        v-model="userName"
         class="text-black rounded"
         type="text"
         autofocus
-        v-model="userName"
         placeholder="Your name"
         @keydown.enter="create(userName)"
-      />
+      >
       <div class="flex flex-col items-start">
         <p class="text-white">Select your avatar:</p>
         <div class="flex gap-x-4">
-          <label v-for="avatar in avatars" class="text-white cursor-pointer">
-            <input class="cursor-pointer" type="radio" :value="avatar.value" v-model="userAvatar" />
+          <label v-for="(avatar, index) in avatars" :key="index" class="text-white cursor-pointer">
+            <input v-model="userAvatar" class="cursor-pointer" type="radio" :value="avatar.value" >
             {{ avatar.label }}
           </label>
         </div>

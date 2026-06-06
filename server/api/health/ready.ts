@@ -30,8 +30,8 @@ async function checkDatabase(): Promise<boolean> {
   try {
     await prisma.$queryRaw`SELECT 1`;
     return true;
-  } catch (error: any) {
-    logger.error(`Failed to connect to the database: [${error.message}]`);
+  } catch (error: unknown) {
+    logger.error(`Failed to connect to the database: [${error instanceof Error ? error.message : String(error)}]`);
     return false;
   }
 }

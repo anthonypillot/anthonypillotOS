@@ -36,6 +36,7 @@
           <div class="flex flex-col gap-y-2 w-full max-w-sm">
             <p class="text-white text-xs">Write a message:</p>
             <input
+              v-model="message"
               class="text-black text-sm rounded-md"
               type="text"
               autofocus
@@ -44,17 +45,16 @@
               data-bwignore
               data-lpignore
               data-form-type="other"
-              v-model="message"
               placeholder="Your message"
               @keydown.enter="submit(user, message)"
-            />
+            >
             <button
               :class="
                 'text-white text-xs border border-white rounded-md px-4 py-2  ' +
                 (message === '' ? ' opacity-50 cursor-not-allowed' : 'hover:bg-white hover:text-black cursor-pointer')
               "
-              @click="submit(user, message)"
               :disabled="message === ''"
+              @click="submit(user, message)"
             >
               Send
             </button>

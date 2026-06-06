@@ -16,7 +16,7 @@
               {{ props.error.message || "An error occurred" }}
             </p>
             <p class="mt-6 text-base leading-7 text-gray-300">
-              Something went wrong. Please try again later.<br />Or maybe you're lost? No worries, we'll help you find your way. Just click
+              Something went wrong. Please try again later.<br >Or maybe you're lost? No worries, we'll help you find your way. Just click
               the button below to go back to the home page.
             </p>
             <div class="mt-8">
