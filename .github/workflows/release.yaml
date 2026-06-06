@@ -13,13 +13,13 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           persist-credentials: false # needed for semantic-release (see: https://github.com/semantic-release/semantic-release/blob/8fda7fd423d24e7b425fbee83790f49dd0478e2d/docs/recipes/ci-configurations/github-actions.md#pushing-packagejson-changes-to-a-master-branch)
 
       - name: 🌐 Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
