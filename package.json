@@ -71,7 +71,7 @@
     "@vitest/coverage-v8": "^4.1.6",
     "@vue/test-utils": "^2.4.11",
     "commander": "^13.1.0",
-    "happy-dom": "^20.10.1",
+    "happy-dom": "^20.10.2",
     "msw": "^2.14.6",
     "prisma": "^6.19.3",
     "semantic-release": "^25.0.3",
