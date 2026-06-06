@@ -91,15 +91,15 @@
         class="grid grid-cols-2 justify-center sm:flex sm:flex-row sm:justify-between mx-4 gap-4 xl:gap-32 md:mx-24 p-2 sm:bg-white/10 sm:border border-white/30 backdrop-blur-sm rounded-lg sm:rounded-full"
       >
         <div
-          v-for="(logo, index) in logos"
+          v-for="(logoItem, index) in logos"
           :key="index"
           :class="[
             'flex flex-row text-center items-center justify-center min-w-14 p-2 bg-white/15 border border-white/15 rounded-full hover:scale-90 transition-transform',
             isLastItem(index) && logos.length % 2 !== 0 ? 'col-span-2' : '',
           ]"
         >
-          <NuxtLink :to="logo.link" target="_blank">
-            <NuxtImg :key="index" class="h-10 w-full object-contain" style="padding: 0.1rem" :src="logo.src" :alt="logo.alt" />
+          <NuxtLink :to="logoItem.link" target="_blank">
+            <NuxtImg :key="index" class="h-10 w-full object-contain" style="padding: 0.1rem" :src="logoItem.src" :alt="logoItem.alt" />
           </NuxtLink>
         </div>
       </div>
