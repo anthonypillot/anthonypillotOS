@@ -1,3 +1,10 @@
+## [1.3.20](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.19...v1.3.20) (2026-06-06)
+
+
+### Performance Improvements
+
+* misc. enhancements ([#87](https://github.com/anthonypillot/anthonypillotOS/issues/87)) ([74d4d45](https://github.com/anthonypillot/anthonypillotOS/commit/74d4d456095418828a9f899510dd05a9a116b385))
+
 ## [1.3.19](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.18...v1.3.19) (2026-04-10)
 
 
