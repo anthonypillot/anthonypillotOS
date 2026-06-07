@@ -70,7 +70,7 @@
 
 ---
 
-### 3. `app/components/task-holdem/Chat.vue` — Priority: MEDIUM
+### 3. `app/components/task-holdem/Chat.vue` — Priority: MEDIUM ✅ COMPLETED
 
 **Elements**: 1 `<input>`, 3 `<button>` (4 total)
 
@@ -78,17 +78,30 @@
 
 | Element | Current | Nuxt UI Replacement |
 |---------|---------|---------------------|
-| Message input | `<input type="text">` with inline classes | `<UInput v-model="message" placeholder="Your message" @keydown.enter="submit(user, message)" />` |
-| Toggle chat open button | `<button>` with icon | `<UButton icon="heroicons:pencil-square" variant="outline" size="sm" @click="toggleChat()" />` |
-| Toggle chat close button | `<button>` with icon | `<UButton icon="heroicons:x-mark" variant="ghost" size="sm" @click="toggleChat()" />` |
-| Send button | `<button>` with disabled state | `<UButton label="Send" :disabled="message === ''" @click="submit(user, message)" />` |
+| Message input | `<input type="text">` with inline classes | `<UInput v-model="message" placeholder="Your message" autofocus @keydown.enter="submit(user, message)" />` |
+| Toggle chat open button | `<button>` with icon | `<UButton icon="heroicons:chat-bubble-left-right" variant="outline" size="xs" class="text-white shadow-indigo-800 shadow-md rounded-md" @click="toggleChat()" />` |
+| Toggle chat close button | `<button>` with icon | `<UButton icon="heroicons:x-mark" variant="ghost" size="sm" class="text-white absolute right-1 top-1" @click="toggleChat()" />` |
+| Send button | `<button>` with disabled state | `<UButton label="Send" variant="outline" size="xs" class="text-white" :disabled="message === ''" @click="submit(user, message)" />` |
 
-**Considerations**:
-- The chat uses a dark theme (`text-white`, `border-gray-700`). The `color` prop on `UButton` (e.g., `color="white"`) will handle the dark styling context.
+**Implementation details**:
+- `variant="outline"` replaces `border border-gray-700` / `border border-white` (outline variant has border by default)
+- `color="white"` is NOT a valid prop — valid values are `"error" | "primary" | "secondary" | "success" | "info" | "warning" | "neutral"`
+- Dark theme achieved via `class="text-white"` + `variant="outline"`
+- `size="xs"` for toggle open button (matches `text-xs`), `size="sm"` for close button and send button
+- `shadow-indigo-800 shadow-md` kept as class on toggle open button (unique visual touch)
+- `absolute right-1 top-1` positioning preserved on close button
+- `autofocus` prop works on `UInput` (replaces HTML `autofocus` attribute)
+- Removed manual Heroicons imports — Nuxt Icon resolves `heroicons:*` strings automatically
+
+**Key learnings**:
+- `color="white"` is invalid for `UButton`; use `variant="outline"` + `class="text-white"` for dark theme with borders
+- `size="xs"` available on `UButton` (matches `text-xs` from raw buttons)
+- `shadow-indigo-800 shadow-md` can be preserved as custom class on `UButton`
+- `autofocus` works as a prop on `UInput` (maps to HTML `autofocus` attribute)
 
 ---
 
-### 4. `app/components/task-holdem/PokerTable.vue` — Priority: MEDIUM
+### 4. `app/components/task-holdem/PokerTable.vue` — Priority: MEDIUM ✅ COMPLETED
 
 **Elements**: 2 `<button>` (2 total)
 
@@ -96,15 +109,18 @@
 
 | Element | Current | Nuxt UI Replacement |
 |---------|---------|---------------------|
-| Reveal cards button | `<button>` with conditional classes (disabled, hover, shadow) | `<UButton label="Reveal cards!" :disabled="!isAnyUserWithSelectedCard" :variant="isEveryoneReady ? 'solid' : 'outline'" />` |
-| Restart button | `<button>` with hover effect | `<UButton label="Restart" @click="emit('restart')" />` |
+| Reveal cards button | `<button>` with conditional classes (disabled, hover, shadow) | `<UButton :label="revealButtonLabel" variant="outline" class="text-white min-w-40" :class="isEveryoneReady ? 'shadow-lg shadow-indigo-400' : ''" :disabled="!isAnyUserWithSelectedCard" @click="reveal()" />` |
+| Restart button | `<button>` with hover effect | `<UButton label="Restart" variant="outline" class="text-white" @click="emit('restart')" />` |
 
-**Considerations**:
-- The reveal button has conditional styling based on `isEveryoneReady` (shadow effect). This can be handled via `UButton`'s `variant` prop. The dark theme (`bg-indigo-950`, `border-white`) maps to `color="white"`.
+**Implementation details**:
+- Dynamic label via `revealButtonLabel` computed property (3 states: "Waiting..." / "Reveal cards!" / countdown as string)
+- `:disabled="!isAnyUserWithSelectedCard"` disables button when no user has selected a card
+- Conditional shadow `class="shadow-lg shadow-indigo-400"` applied when `isEveryoneReady`
+- `countdown.value.toString()` required because `UButton` label expects `string | undefined`
 
 ---
 
-### 5. `app/components/task-holdem/Actions.vue` — Priority: MEDIUM
+### 5. `app/components/task-holdem/Actions.vue` — Priority: MEDIUM ✅ COMPLETED
 
 **Elements**: 2 `<button>` (2 total)
 
@@ -112,11 +128,21 @@
 
 | Element | Current | Nuxt UI Replacement |
 |---------|---------|---------------------|
-| Invite players button | `<button>` with icon + text | `<UButton label="Invite players" icon="heroicons:user-plus" @click="copyInvitationToClipboard()" />` |
-| Feedback button | `<button>` with icon + text | `<UButton label="Feedback (bug, suggestion, etc.)" icon="heroicons:paper-airplane" @click="isFeedbackOpen = true" />` |
+| Invite players button | `<button>` with icon + text | `<UButton :label="computedLabel" icon="heroicons:user-plus" variant="outline" class="text-white" />` |
+| Feedback button | `<button>` with icon + text | `<UButton label="Feedback (bug, suggestion, etc.)" icon="heroicons:paper-airplane" variant="outline" class="text-white" />` |
 
-**Considerations**:
-- Both buttons use `flex gap-x-2` for icon-text spacing. `UButton` handles this with `trailing-icon` prop automatically.
+**Implementation details**:
+- `variant="outline"` replaces `border border-white` (outline variant has border by default)
+- `color="white"` is NOT a valid prop — valid values are `"error" | "primary" | "secondary" | "success" | "info" | "warning" | "neutral"`
+- Dark theme achieved via `class="text-white"` + `variant="outline"`
+- Icon-text spacing handled automatically by `icon` prop (leading placement)
+- Invitation button dynamic label via ternary: `"Invite players"` → `"Invitation link copied!"` on click
+
+**Key learnings**:
+- `color="white"` is invalid for `UButton`; use `variant="outline"` + `class="text-white"` for dark theme with borders
+- `icon` prop places icon before text (leading); use `trailing-icon` for after
+- `UButton` handles icon-text spacing (`flex gap-x-2`) automatically
+- Importing Heroicons manually is unnecessary — Nuxt Icon resolves string aliases (e.g., `heroicons:user-plus`)
 
 ---
 
@@ -192,15 +218,15 @@
 | Priority | Files | Raw Elements | Nuxt UI Components Used |
 |---|---|---|---|
 | **HIGH** | `form/Feedback.vue` ✅, `task-holdem/CreateUser.vue` ✅ | 8 | `UInput`, `UTextarea`, `UButton`, `URadioGroup`, `URadio`, `UForm`, `UFormField` |
-| **MEDIUM** | `task-holdem/Chat.vue`, `task-holdem/PokerTable.vue`, `task-holdem/Actions.vue` | 8 | `UInput`, `UButton` |
+| **MEDIUM** | `task-holdem/Actions.vue` ✅, `task-holdem/Chat.vue` ✅, `task-holdem/PokerTable.vue` ✅ | 8 | `UInput`, `UButton` |
 | **LOW** | `task-holdem/User.vue`, `github/HistoryCleaner.vue`, `github/HistoryCleanerHero.vue`, `base/Header.vue`, `base/ExperienceCard.vue` | 7 | `UButton` |
 
-**Total**: 10 files, 23 raw elements to migrate. **2 completed** (8 elements migrated).
+**Total**: 10 files, 23 raw elements to migrate. **5 completed** (16 elements migrated).
 
 ## Implementation Order
 
 1. **HIGH priority** — Form components first (Feedback.vue, CreateUser.vue) since they involve form state management and validation
-2. **MEDIUM priority** — Game UI components (Chat.vue, PokerTable.vue, Actions.vue)
+2. **MEDIUM priority** — Game UI components (Actions.vue ✅, Chat.vue ✅, PokerTable.vue ✅)
 3. **LOW priority** — Navigation and utility buttons (User.vue, HistoryCleaner.vue, HistoryCleanerHero.vue, Header.vue, ExperienceCard.vue)
 
 ## Notes
@@ -209,4 +235,8 @@
 - Nuxt UI components support Tailwind CSS theming via CSS variables, so existing color schemes should carry over.
 - The `floating` prop on `<UInput>` and `<UTextarea>` replicates the current floating-label pattern used in `Feedback.vue`.
 - Icon integration uses Iconify via Nuxt Icon (200,000+ icons), matching the current Heroicons usage.
-- Dark theme context (used in Task Hold'em components) is handled via `UButton`'s `color` prop (e.g., `color="white"` for light text on dark backgrounds).
+- **Dark theme**: `color="white"` is NOT valid for `UButton` (valid: `"error" | "primary" | "secondary" | "success" | "info" | "warning" | "neutral"`). Use `variant="outline"` + `class="text-white"` for buttons with borders and white text.
+- **Sizes**: `size="xs"` available on `UButton` (replaces `text-xs` on raw buttons).
+- **Autofocus**: `autofocus` works as a prop on `UInput` (maps to HTML `autofocus` attribute).
+- **Shadows**: Custom shadows (e.g., `shadow-indigo-800 shadow-md`) can be preserved as classes on `UButton`.
+- **Icons**: Manual `@heroicons/vue` imports are unnecessary — Nuxt Icon resolves `heroicons:*` strings automatically.

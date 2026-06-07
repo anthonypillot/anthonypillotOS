@@ -9,35 +9,28 @@
       class="flex flex-col gap-y-2 justify-center items-center h-56 w-full p-4 border-gray-400 rounded bg-gray-700 bg-opacity-10 sm:rounded-2xl border"
     >
       <div v-if="props.game.status === 'playing' || props.game.status === 'revealing'">
-        <button
-          :class="`text-white bg-indigo-950 border border-white rounded-sm px-4 py-2 min-w-40 ${
-            isAnyUserWithSelectedCard ? 'cursor-pointer hover:bg-white hover:text-black' : 'cursor-not-allowed bg-indigo-800 opacity-50'
-          } ${isEveryoneReady ? 'shadow-lg shadow-indigo-400' : ''}`"
+        <UButton
+          :label="revealButtonLabel"
+          variant="solid"
+          class="justify-center text-white"
+          :class="isEveryoneReady ? 'shadow-lg shadow-indigo-400' : ''"
           :disabled="!isAnyUserWithSelectedCard"
           data-testid="reveal-button"
           @click="reveal()"
-        >
-          {{
-            isAnyUserWithSelectedCard
-              ? game.status === "revealing"
-                ? countdown
-                : "Reveal cards!"
-              : "Waiting at least one user to select a card"
-          }}
-        </button>
+        />
       </div>
       <div v-else-if="game.status === 'revealed'" class="flex flex-col gap-4 text-center">
         <div>
           <p class="text-white text-lg">Result</p>
           <p class="text-white"><span class="text-gray-200">Average</span>: {{ getAverage() }}</p>
         </div>
-        <button
-          class="text-white bg-indigo-950 border border-white rounded-sm px-4 py-2 cursor-pointer hover:bg-white hover:text-black"
+        <UButton
+          label="Restart"
+          variant="outline"
+          class="justify-center text-white"
           data-testid="restart-button"
           @click="emit('restart')"
-        >
-          Restart
-        </button>
+        />
       </div>
     </div>
     <div v-if="bottomHalfUsers" class="flex flex-wrap justify-between">
@@ -104,6 +97,12 @@ watch(
 
 const isAnyUserWithSelectedCard = computed(() => props.users.some((user) => user.selectedCard !== null));
 const isEveryoneReady = computed(() => props.users.every((user) => user.selectedCard !== null));
+
+const revealButtonLabel = computed(() => {
+  if (!isAnyUserWithSelectedCard.value) return "Waiting at least one user to select a card";
+  if (props.game.status === "revealing") return countdown.value.toString();
+  return "Reveal cards!";
+});
 
 function getAverage(): number | string {
   const onlyNumberValues: number[] = props.users.map((user) => user.selectedCard?.value).filter((value) => typeof value === "number");
