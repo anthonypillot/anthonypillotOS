@@ -67,7 +67,7 @@
             </div>
 
             <div v-if="experience.technology.frontend" class="bg-gray-800/60 p-3 rounded-lg">
-              <h3 class="text-sm font-semibold text-purple-400 mb-2">Front-end</h3>
+              <h3 class="text-sm font-semibold text-indigo-400 mb-2">Front-end</h3>
               <p class="flex flex-wrap gap-2">
                 <span v-for="frontend in experience.technology.frontend" :key="frontend" class="bg-gray-700 text-xs px-2 py-1 rounded-md">{{
                   frontend
