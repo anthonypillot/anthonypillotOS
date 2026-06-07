@@ -146,7 +146,7 @@
 
 ---
 
-### 6. `app/components/task-holdem/User.vue` — Priority: LOW
+### 6. `app/components/task-holdem/User.vue` — Priority: LOW ✅ COMPLETED
 
 **Elements**: 1 `<button>` (1 total)
 
@@ -154,11 +154,11 @@
 
 | Element | Current | Nuxt UI Replacement |
 |---------|---------|---------------------|
-| Remove user button | `<button>` with hover effect | `<UButton label="Remove" variant="outline" size="sm" @click="remove(user)" />` |
+| Remove user button | `<button>` with hover effect | `<UButton label="Remove" variant="outline" size="sm" class="text-white" @click="remove(user)" />` |
 
 ---
 
-### 7. `app/components/github/HistoryCleaner.vue` — Priority: LOW
+### 7. `app/components/github/HistoryCleaner.vue` — Priority: LOW ✅ COMPLETED
 
 **Elements**: 2 `<button>` (2 total)
 
@@ -168,15 +168,18 @@
 
 | Element | Current | Nuxt UI Replacement |
 |---------|---------|---------------------|
-| Confirm button | `<button>` inside Headless UI `<Dialog>` | `<UButton label="Confirm" color="white" @click="confirm()" />` |
-| Cancel button | `<button>` inside Headless UI `<Dialog>` | `<UButton label="Cancel" variant="outline" @click="confirmationModal = false" />` |
+| Confirm button | `<button>` inside Headless UI `<Dialog>` | `<UButton label="Confirm" color="error" :loading="loading" @click="confirm()" />` |
+| Cancel button | `<button>` inside Headless UI `<Dialog>` | `<UButton label="Cancel" variant="outline" :disabled="loading" @click="confirmationModal = false" />` |
 
-**Considerations**:
-- These buttons live inside a `<Dialog>` from `@headlessui/vue`. They can be replaced with `UButton` without migrating the dialog itself. Alternatively, consider migrating to Nuxt UI's `<UDialog>` for consistency.
+**Implementation details**:
+- `color="error"` replaces the red background (`bg-red-600`)
+- `:loading="loading"` replaces the manual `ArrowPathIcon` spinner
+- Manual `@heroicons/vue` imports removed — `<NuxtIcon name="heroicons:*" />` used for remaining template icons (exclamation-triangle, bars-arrow-down, arrow-right-circle)
+- Headless UI `<Dialog>` kept as-is (no migration to `UDialog`)
 
 ---
 
-### 8. `app/components/github/HistoryCleanerHero.vue` — Priority: LOW
+### 8. `app/components/github/HistoryCleanerHero.vue` — Priority: LOW ✅ COMPLETED
 
 **Elements**: 1 `<button>` (1 total)
 
@@ -186,9 +189,14 @@
 |---------|---------|---------------------|
 | CTA link button | `<button>` with arrow text | `<UButton label="Go to the GitHub History Cleaner tool" trailing-icon="heroicons:arrow-right" size="sm" variant="link" @click="scrollToTool()" />` |
 
+**Implementation details**:
+- `variant="link"` replaces the text-only button style (`text-sm font-semibold leading-6 text-indigo-400`)
+- `trailing-icon="heroicons:arrow-right"` replaces the manual `&rarr;` HTML entity
+- Manual `@heroicons/vue` import removed — `<NuxtIcon name="heroicons:check-circle" />` used for the benefits list icon
+
 ---
 
-### 9. `app/components/base/Header.vue` — Priority: LOW
+### 9. `app/components/base/Header.vue` — Priority: LOW ✅ COMPLETED
 
 **Elements**: 2 `<button>` (2 total)
 
@@ -199,9 +207,14 @@
 | Open mobile menu button | `<button>` with hamburger icon | `<UButton icon="heroicons:bars-3" variant="ghost" size="sm" @click="mobileMenuOpen = true" aria-label="Open main menu" />` |
 | Close mobile menu button | `<button>` with X icon | `<UButton icon="heroicons:x-mark" variant="ghost" size="sm" @click="mobileMenuOpen = false" aria-label="Close menu" />` |
 
+**Implementation details**:
+- `variant="ghost"` replaces the transparent background with hover effect
+- Manual `@heroicons/vue` imports removed — `<NuxtIcon name="heroicons:*" />` used for all icons (bars-3, x-mark, chevron-down, squares-plus, arrow-path-rounded-square)
+- Popover data `icon` field changed from imported component to string (`"heroicons:squares-plus"`)
+
 ---
 
-### 10. `app/components/base/ExperienceCard.vue` — Priority: LOW
+### 10. `app/components/base/ExperienceCard.vue` — Priority: LOW ✅ COMPLETED
 
 **Elements**: 1 `<button>` (1 total)
 
@@ -209,7 +222,11 @@
 
 | Element | Current | Nuxt UI Replacement |
 |---------|---------|---------------------|
-| Close drawer button | `<button>` with X icon | `<UButton icon="heroicons:x-circle" variant="ghost" size="sm" @click="isDrawerOpen = false" />` |
+| Close drawer button | `<button>` with X icon | `<UButton icon="heroicons:x-circle" variant="ghost" size="sm" class="text-white" @click="isDrawerOpen = false" />` |
+
+**Implementation details**:
+- `variant="ghost"` replaces transparent background
+- Manual `@heroicons/vue` import removed — `<NuxtIcon>` resolved by `icon` prop automatically
 
 ---
 
@@ -219,15 +236,15 @@
 |---|---|---|---|
 | **HIGH** | `form/Feedback.vue` ✅, `task-holdem/CreateUser.vue` ✅ | 8 | `UInput`, `UTextarea`, `UButton`, `URadioGroup`, `URadio`, `UForm`, `UFormField` |
 | **MEDIUM** | `task-holdem/Actions.vue` ✅, `task-holdem/Chat.vue` ✅, `task-holdem/PokerTable.vue` ✅ | 8 | `UInput`, `UButton` |
-| **LOW** | `task-holdem/User.vue`, `github/HistoryCleaner.vue`, `github/HistoryCleanerHero.vue`, `base/Header.vue`, `base/ExperienceCard.vue` | 7 | `UButton` |
+| **LOW** | `task-holdem/User.vue` ✅, `github/HistoryCleaner.vue` ✅, `github/HistoryCleanerHero.vue` ✅, `base/Header.vue` ✅, `base/ExperienceCard.vue` ✅ | 7 | `UButton` |
 
-**Total**: 10 files, 23 raw elements to migrate. **5 completed** (16 elements migrated).
+**Total**: 10 files, 23 raw elements to migrate. **10 completed** (23 elements migrated).
 
 ## Implementation Order
 
-1. **HIGH priority** — Form components first (Feedback.vue, CreateUser.vue) since they involve form state management and validation
+1. **HIGH priority** — Form components first (Feedback.vue ✅, CreateUser.vue ✅) since they involve form state management and validation
 2. **MEDIUM priority** — Game UI components (Actions.vue ✅, Chat.vue ✅, PokerTable.vue ✅)
-3. **LOW priority** — Navigation and utility buttons (User.vue, HistoryCleaner.vue, HistoryCleanerHero.vue, Header.vue, ExperienceCard.vue)
+3. **LOW priority** — Navigation and utility buttons (User.vue ✅, HistoryCleaner.vue ✅, HistoryCleanerHero.vue ✅, Header.vue ✅, ExperienceCard.vue ✅)
 
 ## Notes
 
@@ -239,4 +256,4 @@
 - **Sizes**: `size="xs"` available on `UButton` (replaces `text-xs` on raw buttons).
 - **Autofocus**: `autofocus` works as a prop on `UInput` (maps to HTML `autofocus` attribute).
 - **Shadows**: Custom shadows (e.g., `shadow-indigo-800 shadow-md`) can be preserved as classes on `UButton`.
-- **Icons**: Manual `@heroicons/vue` imports are unnecessary — Nuxt Icon resolves `heroicons:*` strings automatically.
+- **Icons**: Manual `@heroicons/vue` imports are unnecessary — Nuxt Icon resolves `heroicons:*` strings automatically. Use `<NuxtIcon name="heroicons:*" />` in templates or `icon: "heroicons:*"` in data.

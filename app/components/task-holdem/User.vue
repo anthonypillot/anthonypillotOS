@@ -12,12 +12,7 @@
           <p class="text-gray-400">
             Name: <span class="text-white">{{ user.name }}</span>
           </p>
-          <button
-            class="text-white text-sm border border-white rounded-md mt-2 px-2 py-1 cursor-pointer hover:bg-white hover:text-black"
-            @click="remove(user)"
-          >
-            Remove
-          </button>
+          <UButton label="Remove" variant="outline" size="sm" class="text-white mt-2" @click="remove(user)" />
         </div>
       </div>
     </div>

@@ -8,14 +8,7 @@
         </NuxtLink>
       </div>
       <div class="flex lg:hidden">
-        <button
-          type="button"
-          class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-400"
-          @click="mobileMenuOpen = true"
-        >
-          <span class="sr-only">Open main menu</span>
-          <Bars3Icon class="h-6 w-6" aria-hidden="true" />
-        </button>
+        <UButton icon="heroicons:bars-3" variant="ghost" size="sm" aria-label="Open main menu" @click="mobileMenuOpen = true" />
       </div>
       <div class="hidden lg:flex lg:gap-x-12 lg:items-center">
         <a
@@ -30,7 +23,7 @@
         <Popover class="relative">
           <PopoverButton id="popover-button-tools" class="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
             <span>Tools</span>
-            <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
+            <NuxtIcon name="heroicons:chevron-down" class="h-5 w-5" />
           </PopoverButton>
 
           <transition
@@ -101,10 +94,7 @@
               <span class="sr-only">{{ config.public.title }}</span>
               <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.public.title" />
             </NuxtLink>
-            <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = false">
-              <span class="sr-only">Close menu</span>
-              <XMarkIcon class="h-6 w-6" aria-hidden="true" />
-            </button>
+            <UButton icon="heroicons:x-mark" variant="ghost" size="sm" aria-label="Close menu" @click="mobileMenuOpen = false" />
           </div>
           <div class="mt-6 flow-root">
             <div class="-my-6 divide-y divide-gray-500/10">
@@ -124,7 +114,7 @@
                     class="inline-flex items-center -mx-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >
                     <span class="text-black">Tools</span>
-                    <ChevronDownIcon class="h-5 w-5 text-black" aria-hidden="true" />
+                    <NuxtIcon name="heroicons:chevron-down" class="h-5 w-5 text-black" />
                   </PopoverButton>
 
                   <transition
@@ -209,9 +199,6 @@
 
 <script setup lang="ts">
 import { Dialog, DialogPanel, Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
-import { Bars3Icon, SquaresPlusIcon, XMarkIcon, ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
-
-import { ChevronDownIcon } from "@heroicons/vue/20/solid";
 
 const mobileMenuOpen: Ref<boolean> = ref(false);
 
@@ -230,20 +217,20 @@ const popover = {
       name: taskHoldemApplication.name,
       description: "Poker planning tool for agile teams",
       to: "/tools/task-holdem",
-      icon: SquaresPlusIcon,
+      icon: "heroicons:squares-plus",
     },
     {
       name: "GitHub History Cleaner",
       description: "Delete all your GitHub project history",
       to: "/tools/github/history-cleaner",
-      icon: ArrowPathRoundedSquareIcon,
+      icon: "heroicons:arrow-path-rounded-square",
     },
   ],
   callsToAction: [
     {
       name: "View all tools",
       to: "/tools",
-      icon: SquaresPlusIcon,
+      icon: "heroicons:squares-plus",
     },
   ],
 };

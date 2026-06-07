@@ -40,9 +40,7 @@
       <div class="flex flex-col gap-4 m-8">
         <div class="flex justify-between">
           <h2 class="text-xl text-white">{{ experience.company.name }}</h2>
-          <button class="text-white" @click="isDrawerOpen = false">
-            <XCircleIcon class="h-6 w-6" aria-hidden="true" />
-          </button>
+          <UButton icon="heroicons:x-circle" variant="ghost" size="sm" class="text-white" @click="isDrawerOpen = false" />
         </div>
         <div class="flex flex-col gap-6 text-white">
           <p class="text-sm text-gray-300 font-medium">Technologies and tools used:</p>
@@ -167,8 +165,6 @@
 </template>
 
 <script setup lang="ts">
-import { XCircleIcon } from "@heroicons/vue/24/outline";
-
 const isDrawerOpen = ref<boolean>(false);
 
 function openDrawer() {
