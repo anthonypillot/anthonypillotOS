@@ -5,8 +5,8 @@ import { z } from "zod";
 
 export default defineEventHandler(async (event): Promise<FeedbackData> => {
   const schema = z.object({
-    name: z.nullable(z.string().nonempty({ message: "Name cannot be empty" })),
-    email: z.nullable(z.email()),
+    name: z.string().nonempty({ message: "Name cannot be empty" }).optional(),
+    email: z.email().optional(),
     message: z.string().nonempty({ message: "Message cannot be empty" }),
   });
 
