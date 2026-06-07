@@ -33,6 +33,36 @@ Make sure to install the dependencies:
 npm install
 ```
 
+### Local PostgreSQL
+
+The project uses PostgreSQL. Start a local container:
+
+```bash
+docker run --name postgres \
+  -e POSTGRES_USER=anthonypillot \
+  -e POSTGRES_PASSWORD=password \
+  -e POSTGRES_DB=anthonypillotOS \
+  -v postgres-data:/var/lib/postgresql/data \
+  -p 5432:5432 \
+  -d postgres:16-alpine
+```
+
+Then copy `.env.example` to `.env` and fill in `POSTGRES_PRISMA_URL`:
+
+```bash
+cp .env.example .env
+```
+
+Set up your database:
+
+```bash
+# First-time setup:
+npx prisma db push
+
+# Or for existing setups:
+npx prisma migrate dev
+```
+
 ## 🚧 Development
 
 Start the development server on `http://localhost:3000`:
