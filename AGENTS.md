@@ -158,23 +158,6 @@ export default function useMyComposable() {
 - **String quotes**: Double quotes (`"`), unless within template `<script>` tags where single quotes may appear
 - **JSX/Export syntax**: Uses `export default` for composables and API handlers
 
-## Post-Edit Verification
-
-**After every code change, dependency addition, or any modification that affects the application state, you MUST run:**
-
-```bash
-npm run lint && npm run build
-```
-
-Both commands must pass before considering the task complete. If either fails, fix the issues before proceeding. This applies to:
-
-- Adding or modifying components, pages, composables, or server files
-- Adding or updating dependencies
-- Changing TypeScript types or interfaces
-- Any refactoring that touches multiple files
-
-If the build fails due to the Nuxt cache issue (`ENOTDIR`), run `npm run clean` first, then retry.
-
 ## Testing Conventions
 
 ### Unit Tests (Vitest)
