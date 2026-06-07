@@ -1,6 +1,6 @@
 <template>
   <div id="github-history-cleaner" class="flex justify-center space-y-10 divide-y divide-gray-900/10 md:px-8">
-    <div class="lg:grid lg:grid-cols-3 lg:gap-x-4 max-w-screen-xl">
+    <div class="lg:grid lg:grid-cols-3 lg:gap-x-4 max-w-7xl">
       <div class="pb-4 px-4 sm:px-0 lg:pb-0">
         <h2 class="text-white font-semibold leading-7">GitHub History Cleaner</h2>
         <p class="text-sm leading-6 text-gray-400">
@@ -17,112 +17,58 @@
       </div>
 
       <div class="lg:col-start-2 lg:col-end-4">
-        <form class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl" @submit.prevent="submit()">
+        <UForm :schema="schema" :state="form" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl" @submit="onSubmit">
           <div class="px-4 py-6 sm:px-8 sm:py-6">
             <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div class="sm:col-span-3">
-                <label for="account-name" class="block text-sm font-medium leading-6 text-gray-900">Account name or organization</label>
-                <div class="">
-                  <input
-                    v-model="form.account"
-                    type="text"
-                    required
-                    placeholder="my-account-or-organization"
-                    autocomplete="username"
-                    class="block w-full rounded-md border-0 mt-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  >
-                </div>
-              </div>
-              <div class="sm:col-span-3">
-                <label for="repository-name" class="block text-sm font-medium leading-6 text-gray-900">Repository</label>
-                <div class="">
-                  <input
-                    v-model="form.repository"
-                    type="text"
-                    required
-                    placeholder="my-repository"
-                    autocomplete="username"
-                    class="block w-full rounded-md border-0 mt-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  >
-                </div>
-              </div>
-              <div class="sm:col-span-4">
-                <label for="github-pat" class="block text-sm font-medium leading-6 text-gray-900">GitHub Personal Access Token (PAT)</label>
-                <p class="text-sm leading-6 text-gray-400">
-                  <NuxtLink
-                    href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic"
-                    class="text-indigo-500 hover:text-indigo-400"
-                    rel="noopener noreferrer nofollow"
-                    target="_blank"
-                    >How to create a GitHub Personal Access Token (PAT) ?</NuxtLink
-                  >
-                </p>
-                <p class="text-sm leading-6 text-gray-400">
-                  The PAT should have the "<span class="text-gray-800">repo</span>" <span class="text-gray-800">scope</span>, with "<span
-                    class="text-gray-800"
-                    >Full control of private repositories</span
-                  >", which grants access to all repositories associated with your GitHub account. It ensures that your project can interact
-                  with all repositories, including fetching private repositories, and performing other necessary operations.
-                </p>
-                <div class="relative">
-                  <input
-                    v-model="form.token"
-                    type="password"
-                    required
-                    placeholder="ghp_1234567890abcdefghij"
-                    autocomplete="current-password"
-                    :class="`block w-full rounded-md border-0 mt-1 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 ${
-                      validation.githubPatIsNotValid
-                        ? 'text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500'
-                        : 'text-gray-900 ring-gray-300 placeholder:text-gray-400'
-                    }`"
-                  >
-                  <div v-if="validation.githubPatIsNotValid" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <ExclamationCircleIcon class="h-5 w-5 text-red-500" aria-hidden="true" />
-                  </div>
-                </div>
-                <p v-if="validation.githubPatIsNotValid" class="text-sm text-red-600">
-                  GitHub PAT should start with <span style="font-family: monospace">ghp_</span>.
-                </p>
-              </div>
+              <UFormField name="account" label="Account name or organization" class="sm:col-span-3" required>
+                <UInput v-model="form.account" placeholder="my-account-or-organization" class="w-full" />
+              </UFormField>
+              <UFormField name="repository" label="Repository" class="sm:col-span-3" required>
+                <UInput v-model="form.repository" placeholder="my-repository" class="w-full" />
+              </UFormField>
+              <UFormField name="token" label="GitHub Personal Access Token (PAT)" class="sm:col-span-4">
+                <template #help>
+                  <p class="text-sm leading-6 text-gray-400">
+                    <NuxtLink
+                      href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic"
+                      class="text-indigo-500 hover:text-indigo-400"
+                      rel="noopener noreferrer nofollow"
+                      target="_blank"
+                      >How to create a GitHub Personal Access Token (PAT) ?</NuxtLink
+                    >
+                  </p>
+                  <p class="text-sm leading-6 text-gray-400">
+                    The PAT should have the "<span class="text-gray-800">repo</span>" <span class="text-gray-800">scope</span>, with "<span
+                      class="text-gray-800"
+                      >Full control of private repositories</span
+                    >", which grants access to all repositories associated with your GitHub account. It ensures that your project can interact
+                    with all repositories, including fetching private repositories, and performing other necessary operations.
+                  </p>
+                </template>
+                <UInput v-model="form.token" type="password" placeholder="ghp_1234567890abcdefghij" class="w-full" />
+              </UFormField>
               <div class="sm:col-span-6">
                 <label class="block text-sm font-medium leading-6 text-gray-900">Deleting options</label>
                 <div v-for="(option, index) in options" :key="index" class="relative flex items-start pt-1.5">
-                  <div class="flex h-6 items-center">
-                    <input
-                      :id="option.name"
-                      type="checkbox"
-                      :name="option.name"
-                      :aria-describedby="option.description"
-                      :checked="option.checked"
-                      :disabled="option.disabled"
-                      class="h-4 w-4 rounded focus:ring-indigo-600 text-indigo-600 cursor-pointer disabled:cursor-not-allowed border-gray-400 disabled:border-gray-300"
-                      @click="
-                        option.checked = !option.checked;
-                        option.checked ? form.options.push(option.name) : form.options.splice(form.options.indexOf(option.name), 1);
-                      "
-                    >
-                  </div>
-                  <div class="ml-3 text-sm">
-                    <label :for="option.name" class="font-medium text-gray-900">
-                      <span :class="option.disabled ? 'cursor-not-allowed' : 'cursor-pointer'" v-html="option.label" />
-                    </label>
-                    <p class="text-gray-400">{{ option.description }}</p>
-                  </div>
+                  <UCheckbox
+                    :model-value="option.checked"
+                    :description="option.description"
+                    :disabled="option.disabled"
+                    @update:model-value="handleOptionToggle(option.name, $event as boolean)"
+                  >
+                    <template #label>
+                      <span v-html="option.label" />
+                    </template>
+                  </UCheckbox>
                 </div>
               </div>
             </div>
           </div>
           <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 p-4 sm:px-8 sm:py-6">
-            <button type="button" class="text-sm font-semibold leading-6 text-gray-900" @click="clear()">Clear</button>
-            <button
-              :class="`rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600`"
-              :disabled="disabled.submit"
-            >
-              Submit
-            </button>
+            <UButton type="button" variant="ghost" @click="clear()">Clear</UButton>
+            <UButton type="submit" :disabled="loading">Submit</UButton>
           </div>
-        </form>
+        </UForm>
         <div v-if="result" class="pt-8">
           <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
             <div class="px-4 py-6 sm:px-8 sm:py-6">
@@ -251,21 +197,31 @@
 </template>
 
 <script setup lang="ts">
+import { HistoryCleanerOptions } from "@@/server/types/history-cleaner.type";
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import {
-  ArrowPathIcon,
-  ArrowRightCircleIcon,
-  BarsArrowDownIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon,
+    ArrowPathIcon,
+    ArrowRightCircleIcon,
+    BarsArrowDownIcon,
+    ExclamationTriangleIcon,
 } from "@heroicons/vue/24/outline";
-import { HistoryCleanerOptions } from "@@/server/types/history-cleaner.type";
+import type { FormSubmitEvent } from "@nuxt/ui";
+import * as z from "zod";
 
 const config = useRuntimeConfig();
 
-const disabled = ref({
-  submit: true,
+const schema = z.object({
+  account: z.string().min(1, "Account name is required"),
+  repository: z.string().min(1, "Repository name is required"),
+  token: z
+    .string()
+    .min(1, "GitHub PAT is required")
+    .regex(/^ghp_/, "GitHub PAT should start with ghp_"),
+  options: z.array(z.string()).min(1, "At least one option is required"),
 });
+
+type Schema = z.output<typeof schema>;
+
 const options = ref([
   {
     name: HistoryCleanerOptions.WORKFLOW_RUNS,
@@ -282,65 +238,32 @@ const options = ref([
     checked: false,
   },
 ]);
-const form = ref<HistoryCleanerForm>({
+
+const form = ref<Schema>({
   account: "",
   repository: "",
   token: "",
   options: [],
 });
-const validation = ref({
-  githubPatIsNotValid: false,
-});
+
 const confirmationModal = ref(false);
 const loading = ref<boolean>(false);
 const result = ref<HistoryCleanerResultFiltered | null>(null);
 const resultHtml = ref<HTMLDivElement | null>(null);
 
-/**
- * Add checked options to form.
- */
-options.value.forEach((option) => {
-  if (option.checked) {
-    form.value.options.push(option.name);
-  }
-});
-
-/**
- * Form validation.
- */
-watch(
-  form.value,
-  (updated) => {
-    let submitIsDisabled = false;
-    let githubPatIsInvalid = false;
-
-    if (updated.account && updated.repository && updated.options.length > 0) {
-      submitIsDisabled = false;
+function handleOptionToggle(name: string, checked: boolean): void {
+  const option = options.value.find((o) => o.name === name);
+  if (option && !option.disabled) {
+    option.checked = checked;
+    if (checked) {
+      form.value.options.push(name);
     } else {
-      submitIsDisabled = true;
+      form.value.options = form.value.options.filter((o) => o !== name);
     }
-
-    if (updated.token !== "") {
-      if (updated.token.startsWith("ghp_")) {
-        githubPatIsInvalid = false;
-      } else {
-        submitIsDisabled = true;
-        githubPatIsInvalid = true;
-      }
-    } else {
-      submitIsDisabled = true;
-      githubPatIsInvalid = false;
-    }
-
-    disabled.value.submit = submitIsDisabled;
-    validation.value.githubPatIsNotValid = githubPatIsInvalid;
-  },
-  {
-    deep: true,
   }
-);
+}
 
-function submit(): void {
+async function onSubmit(_event: FormSubmitEvent<Schema>): Promise<void> {
   confirmationModal.value = true;
 }
 

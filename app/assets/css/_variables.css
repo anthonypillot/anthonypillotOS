@@ -1,6 +1,30 @@
 :root {
-  /* Colors */
-  --primary-color: #111827;
-  --secondary-color: #818bf7;
-  --background-color: #1e293b;
+    /* Colors */
+    --primary-color: #111827;
+    --secondary-color: var(--purple-300);
+    --purple-50: #e8eafe;
+    --purple-100: #d0d4fa;
+    --purple-200: #a8b2f4;
+    --purple-300: #8290ed;
+    --purple-400: #6366f1;
+    --purple-500: #5557e0;
+    --purple-600: #4547be;
+    --purple-700: #36389a;
+    --purple-800: #272977;
+    --purple-900: #181a53;
+    --purple-950: #0c0d30;
+}
+
+@theme static {
+    --color-purple-50: var(--purple-50);
+    --color-purple-100: var(--purple-100);
+    --color-purple-200: var(--purple-200);
+    --color-purple-300: var(--purple-300);
+    --color-purple-400: var(--purple-400);
+    --color-purple-500: var(--purple-500);
+    --color-purple-600: var(--purple-600);
+    --color-purple-700: var(--purple-700);
+    --color-purple-800: var(--purple-800);
+    --color-purple-900: var(--purple-900);
+    --color-purple-950: var(--purple-950);
 }
