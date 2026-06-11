@@ -17,7 +17,7 @@
       </div>
 
       <div class="lg:col-start-2 lg:col-end-4">
-        <UForm :schema="schema" :state="form" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl" @submit="onSubmit">
+        <UForm :schema="schema" :state="form" class="bg-gray-900 shadow-sm ring-1 ring-white/10 sm:rounded-xl" @submit="onSubmit">
           <div class="px-4 py-6 sm:px-8 sm:py-6">
             <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <UFormField name="account" label="Account name or organization" class="sm:col-span-3" required>
@@ -38,8 +38,8 @@
                     >
                   </p>
                   <p class="text-sm leading-6 text-gray-400">
-                    The PAT should have the "<span class="text-gray-800">repo</span>" <span class="text-gray-800">scope</span>, with "<span
-                      class="text-gray-800"
+                    The PAT should have the "<span class="text-gray-200">repo</span>" <span class="text-gray-200">scope</span>, with "<span
+                      class="text-gray-200"
                       >Full control of private repositories</span
                     >", which grants access to all repositories associated with your GitHub account. It ensures that your project can interact
                     with all repositories, including fetching private repositories, and performing other necessary operations.
@@ -48,7 +48,7 @@
                 <UInput v-model="form.token" type="password" placeholder="ghp_1234567890abcdefghij" class="w-full" />
               </UFormField>
               <div class="sm:col-span-6">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Deleting options</label>
+                <label class="block text-sm font-medium leading-6 text-white">Deleting options</label>
                 <div v-for="(option, index) in options" :key="index" class="relative flex items-start pt-1.5">
                   <UCheckbox
                     :model-value="option.checked"
@@ -64,41 +64,41 @@
               </div>
             </div>
           </div>
-          <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 p-4 sm:px-8 sm:py-6">
+          <div class="flex items-center justify-end gap-x-6 border-t border-white/10 p-4 sm:px-8 sm:py-6">
             <UButton type="button" variant="ghost" @click="clear()">Clear</UButton>
             <UButton type="submit" :disabled="loading">Submit</UButton>
           </div>
         </UForm>
         <div v-if="result" class="pt-8">
-          <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+          <div class="bg-gray-900 shadow-sm ring-1 ring-white/10 sm:rounded-xl md:col-span-2">
             <div class="px-4 py-6 sm:px-8 sm:py-6">
               <div class="px-4 sm:px-0">
                 <div ref="resultHtml" class="flex">
                       <UIcon name="i-heroicons-bars-arrow-down" class="h-10 w-10 mr-2" />
-                  <p class="text-xl text-gray-900 font-semibold leading-7">Cleaner history result</p>
+                  <p class="text-xl text-white font-semibold leading-7">Cleaner history result</p>
                 </div>
                 <div v-if="result.workflow">
-                  <p class="pt-1 text-gray-900 font-semibold leading-7">Workflow deletion</p>
-                  <p v-if="result.workflow.success > 0" class="text-sm leading-6 text-gray-600">
+                  <p class="pt-1 text-white font-semibold leading-7">Workflow deletion</p>
+                  <p v-if="result.workflow.success > 0" class="text-sm leading-6 text-gray-300">
                     Number of workflow runs deleted with success: <span class="font-semibold">{{ result.workflow.success }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.notFound > 0" class="text-sm leading-6 text-gray-600">
+                  <p v-if="result.workflow.notFound > 0" class="text-sm leading-6 text-gray-300">
                     Number workflow runs not found: <span class="font-semibold">{{ result.workflow.notFound }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.unauthorized > 0" class="text-sm leading-6 text-gray-600">
+                  <p v-if="result.workflow.unauthorized > 0" class="text-sm leading-6 text-gray-300">
                     Number of workflow unauthorized to delete: <span class="font-semibold">{{ result.workflow.unauthorized }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.unknown > 0" class="text-sm leading-6 text-gray-600">
+                  <p v-if="result.workflow.unknown > 0" class="text-sm leading-6 text-gray-300">
                     Number of workflow runs not deleted for unknown reason:
                     <span class="font-semibold">{{ result.workflow.unknown }}</span
                     >.
                   </p>
                 </div>
                 <div v-else>
-                  <p class="pt-1 text-gray-900 leading-7">Everything went as expected, but nothing was found to delete.</p>
+                  <p class="pt-1 text-white leading-7">Everything went as expected, but nothing was found to delete.</p>
                 </div>
               </div>
             </div>
@@ -116,7 +116,7 @@
           <UIcon name="i-heroicons-exclamation-triangle" class="h-6 w-6 text-red-600" />
         </div>
         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-          <p class="text-sm text-gray-600">
+          <p class="text-sm text-gray-300">
             Are you sure you want to delete the history of your GitHub account
             <span class="font-semibold">{{ form.account }}</span>
             and repository
@@ -126,13 +126,13 @@
             <div class="flex">
               <UIcon name="i-heroicons-arrow-right-circle" class="h-5 w-5 mr-1" />
               <p
-                class="text-sm text-gray-600"
+                class="text-sm text-gray-300"
                 v-html="`${options.find((option) => option.name === formOption)?.label} will be deleted.`"
               />
             </div>
           </div>
           <div class="pt-2">
-            <p class="text-sm text-gray-600">This action <span class="font-semibold">cannot be undone</span>.</p>
+            <p class="text-sm text-gray-300">This action <span class="font-semibold">cannot be undone</span>.</p>
           </div>
         </div>
       </div>

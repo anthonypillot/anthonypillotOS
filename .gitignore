@@ -37,3 +37,4 @@ coverage
 
 # Playwright screenshots
 /tests/e2e/**/*.png
+.playwright-mcp/

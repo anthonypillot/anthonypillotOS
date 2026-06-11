@@ -89,7 +89,7 @@
       </template>
       <template #body>
         <div class="flow-root">
-          <div class="-my-6 divide-y divide-gray-500/10">
+          <div class="-my-6 divide-y divide-white/10">
             <div class="space-y-2 py-6">
               <a
                 v-for="item in navigation"
@@ -97,7 +97,7 @@
                 :href="item.href"
                 :rel="item.rel"
                 :target="item.target"
-                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/10"
                 >{{ item.name }}</a
               >
               <UPopover :content="{ align: 'center', side: 'bottom', sideOffset: 8 }">
@@ -106,7 +106,7 @@
                   label="Tools"
                   variant="ghost"
                   trailing-icon="i-heroicons-chevron-down"
-                  class="-mx-3 text-base font-semibold text-gray-900 hover:bg-gray-50"
+                  class="-mx-3 text-base font-semibold text-white hover:bg-white/10"
                 />
 
                 <template #content="{ close }">
@@ -168,7 +168,7 @@
                 :href="config.public.link.githubRepository"
                 rel="noopener"
                 target="_blank"
-                class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-white/10"
                 >GitHub repository &rarr;</a
               >
             </div>
