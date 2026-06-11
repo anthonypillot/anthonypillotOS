@@ -21,10 +21,13 @@
           >{{ item.name }}</a
         >
         <UPopover :content="{ align: 'center', side: 'bottom', sideOffset: 8 }">
-          <button id="popover-button-tools" class="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
-            <span>Tools</span>
-            <UIcon name="i-heroicons-chevron-down" class="h-5 w-5" />
-          </button>
+          <UButton
+            id="popover-button-tools"
+            label="Tools"
+            variant="ghost"
+            trailing-icon="i-heroicons-chevron-down"
+            class="text-sm font-semibold text-white"
+          />
 
           <template #content="{ close }">
             <div
@@ -98,13 +101,13 @@
                 >{{ item.name }}</a
               >
               <UPopover :content="{ align: 'center', side: 'bottom', sideOffset: 8 }">
-                <button
+                <UButton
                   id="popover-button-tools-mobile"
-                  class="inline-flex items-center -mx-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  <span class="text-black">Tools</span>
-                  <UIcon name="i-heroicons-chevron-down" class="h-5 w-5 text-black" />
-                </button>
+                  label="Tools"
+                  variant="ghost"
+                  trailing-icon="i-heroicons-chevron-down"
+                  class="-mx-3 text-base font-semibold text-gray-900 hover:bg-gray-50"
+                />
 
                 <template #content="{ close }">
                   <div
