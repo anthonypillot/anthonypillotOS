@@ -37,7 +37,7 @@
     :set-background-color-on-scale="true"
   >
     <template #content>
-      <div class="flex flex-col gap-4 m-8">
+      <div class="flex flex-col gap-4 m-8 overflow-y-auto">
         <div class="flex justify-between">
           <h2 class="text-xl text-white">{{ experience.company.name }}</h2>
           <UButton icon="i-heroicons-x-circle" variant="ghost" size="sm" class="text-white" @click="isDrawerOpen = false" />
