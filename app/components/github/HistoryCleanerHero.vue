@@ -19,12 +19,12 @@
             </div>
             <ul role="list" class="mt-10 grid grid-cols-1 gap-x-8 gap-y-3 text-base leading-7 text-white sm:grid-cols-2">
               <li v-for="benefit in benefits" :key="benefit" class="flex gap-x-3">
-                <NuxtIcon name="heroicons:check-circle" class="h-7 w-5 flex-none" />
+                <UIcon name="i-heroicons-check-circle" class="h-7 w-5 flex-none" />
                 {{ benefit }}
               </li>
             </ul>
             <div class="mt-10 flex">
-              <UButton label="Go to the GitHub History Cleaner tool" variant="link" trailing-icon="heroicons:arrow-right" size="sm" class="text-indigo-400" @click="scrollToTool()" />
+              <UButton label="Go to the GitHub History Cleaner tool" variant="link" trailing-icon="i-heroicons-arrow-right" size="sm" class="text-indigo-400" @click="scrollToTool()" />
             </div>
           </div>
         </div>

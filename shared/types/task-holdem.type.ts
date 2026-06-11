@@ -1,6 +1,5 @@
 import type { Message } from "@/components/task-holdem/Chat.vue";
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import { BellSnoozeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 
 export const taskHoldemApplication = {
   id: "task-holdem",
@@ -21,9 +20,9 @@ export type Room = {
   };
 };
 
-export const valueToComponent: Record<string, Component> = {
-  skip: BellSnoozeIcon,
-  break: QuestionMarkCircleIcon,
+export const valueToIconName: Record<string, string> = {
+  skip: "i-heroicons-bell-snooze",
+  break: "i-heroicons-question-mark-circle",
 };
 
 export type Data = {

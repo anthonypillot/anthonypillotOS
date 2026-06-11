@@ -2,14 +2,14 @@
   <section class="flex flex-col gap-2 text-white md:items-end">
     <UButton
       :label="isInvitationButtonClicked ? 'Invitation link copied!' : 'Invite players'"
-      icon="heroicons:user-plus"
+      icon="i-heroicons-user-plus"
       variant="solid"
       class="text-white"
       @click="copyInvitationToClipboard()"
     />
     <UButton
       label="Feedback (bug, suggestion, etc.)"
-      icon="heroicons:paper-airplane"
+      icon="i-heroicons-paper-airplane"
       variant="soft"
       class="text-white"
       @click="isFeedbackOpen = true"

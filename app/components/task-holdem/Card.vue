@@ -6,7 +6,7 @@
     "
     @click="select()"
   >
-    <component :is="valueToComponent[props.value]" v-if="props.type === 'icon'" class="text-white" />
+    <UIcon v-if="props.type === 'icon'" :name="valueToIconName[props.value]" class="text-white" />
     <span v-else class="text-white text-xl">{{ props.value }}</span>
   </div>
 </template>

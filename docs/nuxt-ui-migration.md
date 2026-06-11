@@ -1,259 +1,382 @@
 # Nuxt UI Migration Plan
 
-> Strategy for migrating raw HTML UI elements (`<input>`, `<button>`, `<textarea>`) to Nuxt UI v4 components.
+> Strategy for migrating the UI layer to Nuxt UI v4 components and removing legacy dependencies (`@headlessui/vue`, `@heroicons/vue`).
 
 ## Current Status
 
 - **Nuxt UI version**: `^4.8.2` (already installed in `package.json`)
-- **Existing Nuxt UI usage**: `app/components/github/HistoryCleaner.vue` already uses `UForm`, `UFormField`, `UInput`, `UCheckbox`, `UButton`
-- **Raw elements remaining**: 23 across 10 files (5 `<input>`, 1 `<textarea>`, 17 `<button>`)
+- **Phase 1** (raw HTML elements → Nuxt UI components): ✅ **COMPLETED** — 23 elements across 10 files
+- **Phase 2** (remove `@headlessui/vue` and `@heroicons/vue`): ✅ **COMPLETED** — 7 files migrated, dependencies removed
+- **Phase 3** (dependency cleanup): ✅ **COMPLETED** — `@headlessui/vue`, `@heroicons/vue`, `@tailwindcss/forms` removed
 
-## Component Mapping Reference
+### Removed Dependencies
 
-| Raw HTML Element | Nuxt UI Component | Notes |
+| Package | Status |
+|---|---|
+| `@headlessui/vue` | ✅ Removed |
+| `@heroicons/vue` | ✅ Removed |
+| `@tailwindcss/forms` | ✅ Removed |
+
+### Added Dependencies
+
+| Package | Purpose |
+|---|---|
+| `@iconify-json/heroicons` | Local icon data for heroicons (required by `@nuxt/icon`) |
+
+---
+
+## Phase 1: Raw HTML Elements → Nuxt UI Components ✅ COMPLETED
+
+All 23 raw HTML elements (`<input>`, `<button>`, `<textarea>`) across 10 files have been migrated to Nuxt UI components.
+
+| Priority | Files | Elements | Nuxt UI Components |
+|---|---|---|---|
+| **HIGH** | `form/Feedback.vue` ✅, `task-holdem/CreateUser.vue` ✅ | 8 | `UInput`, `UTextarea`, `UButton`, `URadioGroup`, `UForm`, `UFormField` |
+| **MEDIUM** | `task-holdem/Actions.vue` ✅, `task-holdem/Chat.vue` ✅, `task-holdem/PokerTable.vue` ✅ | 8 | `UInput`, `UButton` |
+| **LOW** | `task-holdem/User.vue` ✅, `github/HistoryCleaner.vue` ✅, `github/HistoryCleanerHero.vue` ✅, `base/Header.vue` ✅, `base/ExperienceCard.vue` ✅ | 7 | `UButton` |
+
+### Key Learnings (Phase 1)
+
+- `UInput`/`UTextarea` v-model expects `string | undefined`, not `string | null` — use Zod `.optional()` instead of `.nullable()`
+- `color="white"` is invalid for `UButton`; use `variant="outline"` + `class="text-white"` for dark theme
+- `size="xs"` available on `UButton` (replaces `text-xs`)
+- `autofocus` works as a prop on `UInput`
+- Custom shadows (e.g., `shadow-indigo-800 shadow-md`) can be preserved as classes on `UButton`
+- Manual `@heroicons/vue` imports are unnecessary — Nuxt Icon resolves `i-heroicons-*` strings automatically
+
+---
+
+## Phase 2: Remove `@headlessui/vue` and `@heroicons/vue`
+
+### Component Mapping Reference
+
+| Old Pattern | Nuxt UI Replacement | Notes |
 |---|---|---|
-| `<input type="text/email">` | `<UInput>` | Use `label` prop for labels, `error` prop for validation |
-| `<textarea>` | `<UTextarea>` | Use `label` prop, auto-resize support |
-| `<button>` | `<UButton>` | Use `variant`, `color`, `size`, `loading`, `icon` props |
-| `<input type="radio">` | `<URadioGroup>` + `<URadio>` | Group with `label` prop |
-| `<input type="checkbox">` | `<UCheckbox>` | Already used in HistoryCleaner |
-| `<select>` | `<USelect>` / `<USelectMenu>` | None found in codebase |
+| Headless UI `<Dialog>` + `<DialogPanel>` (slide-in) | `<UDrawer direction="right" v-model:open="...">` | Use `#content` slot for drawer body |
+| Headless UI `<Dialog>` + `<TransitionRoot>` (modal) | `<UModal v-model:open="..." title="...">` | Use `#body` and `#footer` slots |
+| Headless UI `<Popover>` + `<PopoverButton>` + `<PopoverPanel>` | `<UPopover>` | Default slot = trigger, `#content` slot = panel |
+| `<component :is="ImportedHeroicon" />` | `<UIcon name="i-heroicons-icon-name" />` | Use string-based icon names |
+| `import { XIcon } from "@heroicons/vue/24/outline"` | `<UIcon name="i-heroicons-x" />` | No import needed |
+| `import { XIcon } from "@heroicons/vue/20/solid"` | `<UIcon name="i-heroicons-20-solid-check-circle" />` | Suffix `-20-solid` for 20px solid variant |
 
-## Files Requiring Migration
+---
 
-### 1. `app/components/form/Feedback.vue` — Priority: HIGH ✅ COMPLETED
+### 1. `app/components/base/Header.vue` — Priority: HIGH
 
-**Elements**: 2 `<input>`, 1 `<textarea>`, 2 `<button>` (5 total)
+**Old imports**: `Dialog`, `DialogPanel`, `Popover`, `PopoverButton`, `PopoverPanel` from `@headlessui/vue`
 
-**Current implementation**: Custom floating-label pattern using `@tailwindcss/forms` peer classes (`border-none bg-transparent placeholder-transparent focus:border-transparent focus:ring-0`).
+#### 1a. Mobile menu: `<Dialog>` → `<UDrawer>`
 
-**Migration plan**:
+The current mobile menu uses Headless UI `<Dialog>` with a `<DialogPanel>` that slides in from the right. This maps directly to `<UDrawer direction="right">`.
 
 | Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Name input | `<input type="text">` with custom CSS | `<UFormField name="name" label="Name" hint="Optional"><UInput v-model="state.name" type="text" /></UFormField>` |
-| Email input | `<input type="email">` with custom CSS | `<UFormField name="email" label="Email" hint="Optional"><UInput v-model="state.email" type="email" /></UFormField>` |
-| Message textarea | `<textarea>` with custom CSS | `<UFormField name="message" label="Feedback" required><UTextarea v-model="state.message" /></UFormField>` |
-| Cancel button | `<button>` with Tailwind styles | `<UButton label="Cancel" variant="outline" @click="$emit('close')" />` |
-| Submit button | `<button>` with conditional classes | `<UButton label="Submit" type="submit" :loading="isLoading" />` |
+|---|---|---|
+| Mobile menu overlay + panel | `<Dialog>` + `<DialogPanel>` with `v-if` and manual backdrop | `<UDrawer v-model:open="mobileMenuOpen" direction="right" :handle="false" :ui="{ content: 'w-full sm:max-w-lg' }">` |
+| Drawer content | Manual `<div>` with padding, logo, close button, links | `#content` slot with same inner HTML |
 
 **Implementation details**:
-- `UForm` with `:state="state"` and `:validate="validate"` for client-side validation
-- `validate` function checks only `message` (name/email are optional — no validation)
-- `UFormField` with `hint="Optional"` for name/email, `required` for message
-- Server API updated: `z.nullable()` → `.optional()` so Zod output type (`string | undefined`) matches `UInput` v-model
-- Submit button automatically disabled by `UForm` when validation fails (empty message)
-- Floating-label effect replaced by `UFormField`'s built-in label rendering
+- `v-model:open="mobileMenuOpen"` replaces `:open="mobileMenuOpen" @close="mobileMenuOpen = false"`
+- `direction="right"` matches the current slide-in-from-right behavior
+- `:handle="false"` hides the drag handle (not needed for a navigation drawer)
+- Remove `<ClientOnly>` wrapper — `UDrawer` handles SSR correctly
+- Remove the manual `<div class="fixed inset-0 z-50" />` backdrop — `UDrawer` renders its own overlay
+- The close button already uses `<UButton>` — no change needed
+- Navigation links remain as `<a>` tags with Tailwind classes
+- The `<Popover>` inside the mobile menu also needs migration (see 1c)
 
-**Key learnings**:
-- `UInput`/`UTextarea` v-model expects `string | undefined`, not `string | null`
-- Zod v4 `z.nullable()` outputs `string | null` — use `.optional()` for `string | undefined`
-- `UForm` with `:validate` disables submit button when validation errors exist
-- `UFormField` with `hint="Optional"` shows "Optional" text next to label
-
----
-
-### 2. `app/components/task-holdem/CreateUser.vue` — Priority: HIGH
-
-**Elements**: 2 `<input>`, 1 `<button>` (3 total)
-
-**Migration plan**:
+#### 1b. Desktop tools popover: `<Popover>` → `<UPopover>`
 
 | Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Name text input | `<input type="text">` with inline classes | `<UInput v-model="userName" placeholder="Your name" @keydown.enter="create(userName)" />` |
-| Avatar radio buttons | `<input type="radio">` | `<URadioGroup v-model="userAvatar" :items="avatars" variant="table" color="neutral" :ui="{ label: 'text-white' }" />` |
-| Join game button | `<button>` with disabled state | `<UButton label="Join game" :disabled="!userName" @click="create(userName)" />` |
-
-**Considerations**:
-- The avatar selection uses custom radio buttons with image previews. `<URadioGroup>` with custom `class` slots on `<URadio>` can replicate the visual design.
-
----
-
-### 3. `app/components/task-holdem/Chat.vue` — Priority: MEDIUM ✅ COMPLETED
-
-**Elements**: 1 `<input>`, 3 `<button>` (4 total)
-
-**Migration plan**:
-
-| Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Message input | `<input type="text">` with inline classes | `<UInput v-model="message" placeholder="Your message" autofocus @keydown.enter="submit(user, message)" />` |
-| Toggle chat open button | `<button>` with icon | `<UButton icon="heroicons:chat-bubble-left-right" variant="outline" size="xs" class="text-white shadow-indigo-800 shadow-md rounded-md" @click="toggleChat()" />` |
-| Toggle chat close button | `<button>` with icon | `<UButton icon="heroicons:x-mark" variant="ghost" size="sm" class="text-white absolute right-1 top-1" @click="toggleChat()" />` |
-| Send button | `<button>` with disabled state | `<UButton label="Send" variant="outline" size="xs" class="text-white" :disabled="message === ''" @click="submit(user, message)" />` |
+|---|---|---|
+| Popover wrapper | `<Popover class="relative">` | `<UPopover :content="{ align: 'center', side: 'bottom', sideOffset: 8 }">` |
+| Trigger button | `<PopoverButton>` with custom classes | Default slot: `<button>` with same classes (or `<UButton variant="ghost">`) |
+| Panel content | `<PopoverPanel v-slot="{ close }">` with transition | `#content="{ close }"` slot, no manual `<transition>` needed |
+| Icon rendering | `<component :is="item.icon">` | `<UIcon :name="item.icon" />` |
 
 **Implementation details**:
-- `variant="outline"` replaces `border border-gray-700` / `border border-white` (outline variant has border by default)
-- `color="white"` is NOT a valid prop — valid values are `"error" | "primary" | "secondary" | "success" | "info" | "warning" | "neutral"`
-- Dark theme achieved via `class="text-white"` + `variant="outline"`
-- `size="xs"` for toggle open button (matches `text-xs`), `size="sm"` for close button and send button
-- `shadow-indigo-800 shadow-md` kept as class on toggle open button (unique visual touch)
-- `absolute right-1 top-1` positioning preserved on close button
-- `autofocus` prop works on `UInput` (replaces HTML `autofocus` attribute)
-- Removed manual Heroicons imports — Nuxt Icon resolves `heroicons:*` strings automatically
+- The trigger button keeps its custom styling (`text-sm font-semibold leading-6 text-white`) — use a plain `<button>` in the default slot
+- Remove the manual `<transition>` wrapper — `UPopover` has built-in animations
+- `v-slot="{ close }"` on `<PopoverPanel>` → `#content="{ close }"` slot on `<UPopover>`
+- `<component :is="item.icon">` → `<UIcon :name="item.icon" />` (icon data is already string-based: `"i-heroicons-squares-plus"`)
+- The `close()` function from the slot is called on `<NuxtLink @click="close()">` — same pattern works
 
-**Key learnings**:
-- `color="white"` is invalid for `UButton`; use `variant="outline"` + `class="text-white"` for dark theme with borders
-- `size="xs"` available on `UButton` (matches `text-xs` from raw buttons)
-- `shadow-indigo-800 shadow-md` can be preserved as custom class on `UButton`
-- `autofocus` works as a prop on `UInput` (maps to HTML `autofocus` attribute)
+#### 1c. Mobile tools popover: `<Popover>` → `<UPopover>` (inside mobile drawer)
 
----
-
-### 4. `app/components/task-holdem/PokerTable.vue` — Priority: MEDIUM ✅ COMPLETED
-
-**Elements**: 2 `<button>` (2 total)
-
-**Migration plan**:
-
-| Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Reveal cards button | `<button>` with conditional classes (disabled, hover, shadow) | `<UButton :label="revealButtonLabel" variant="outline" class="text-white min-w-40" :class="isEveryoneReady ? 'shadow-lg shadow-indigo-400' : ''" :disabled="!isAnyUserWithSelectedCard" @click="reveal()" />` |
-| Restart button | `<button>` with hover effect | `<UButton label="Restart" variant="outline" class="text-white" @click="emit('restart')" />` |
+Same migration as 1b, applied to the Popover nested inside the mobile menu drawer.
 
 **Implementation details**:
-- Dynamic label via `revealButtonLabel` computed property (3 states: "Waiting..." / "Reveal cards!" / countdown as string)
-- `:disabled="!isAnyUserWithSelectedCard"` disables button when no user has selected a card
-- Conditional shadow `class="shadow-lg shadow-indigo-400"` applied when `isEveryoneReady`
-- `countdown.value.toString()` required because `UButton` label expects `string | undefined`
+- Same trigger/content slot mapping as 1b
+- The `close()` function from UPopover's `#content` slot closes the popover; `mobileMenuOpen = false` closes the drawer — both are called on link click
+- `<component :is="item.icon">` → `<UIcon :name="item.icon" />`
+
+#### 1d. Script changes
+
+```diff
+- import { Dialog, DialogPanel, Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
+```
+
+No new imports needed — `UDrawer`, `UPopover`, `UButton`, `UIcon` are auto-imported.
 
 ---
 
-### 5. `app/components/task-holdem/Actions.vue` — Priority: MEDIUM ✅ COMPLETED
+### 2. `app/components/github/HistoryCleaner.vue` — Priority: HIGH
 
-**Elements**: 2 `<button>` (2 total)
+**Old imports**: `Dialog`, `DialogPanel`, `DialogTitle`, `TransitionChild`, `TransitionRoot` from `@headlessui/vue`
 
-**Migration plan**:
+**What needs to change**: Confirmation modal built with Headless UI `<Dialog>` + manual transitions → `<UModal>`
 
 | Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Invite players button | `<button>` with icon + text | `<UButton :label="computedLabel" icon="heroicons:user-plus" variant="outline" class="text-white" />` |
-| Feedback button | `<button>` with icon + text | `<UButton label="Feedback (bug, suggestion, etc.)" icon="heroicons:paper-airplane" variant="outline" class="text-white" />` |
+|---|---|---|
+| Modal wrapper | `<TransitionRoot>` + `<Dialog>` + `<TransitionChild>` (backdrop + panel) | `<UModal v-model:open="confirmationModal" title="Confirm deletion">` |
+| Modal title | `<DialogTitle as="h3">` | `title` prop on `<UModal>` |
+| Modal body | Manual layout with icon, text, option list | `#body` slot with same inner HTML |
+| Modal footer | Confirm + Cancel buttons | `#footer` slot with existing `<UButton>` elements |
 
 **Implementation details**:
-- `variant="outline"` replaces `border border-white` (outline variant has border by default)
-- `color="white"` is NOT a valid prop — valid values are `"error" | "primary" | "secondary" | "success" | "info" | "warning" | "neutral"`
-- Dark theme achieved via `class="text-white"` + `variant="outline"`
-- Icon-text spacing handled automatically by `icon` prop (leading placement)
-- Invitation button dynamic label via ternary: `"Invite players"` → `"Invitation link copied!"` on click
+- `v-model:open="confirmationModal"` replaces `:show="confirmationModal"` + `@close="confirmationModal = false"`
+- Remove `<TransitionRoot>`, `<TransitionChild>`, `<DialogPanel>`, `<DialogTitle>` — `UModal` handles all of this
+- The red circle icon (`<UIcon name="i-heroicons-exclamation-triangle">`) and option list remain as-is in the `#body` slot
+- The existing `<UButton>` elements move into the `#footer` slot
+- `UModal` has built-in overlay, transitions, and dismiss-on-outside-click behavior
+- The `:dismissible="!loading"` prop can prevent closing while the request is in flight
 
-**Key learnings**:
-- `color="white"` is invalid for `UButton`; use `variant="outline"` + `class="text-white"` for dark theme with borders
-- `icon` prop places icon before text (leading); use `trailing-icon` for after
-- `UButton` handles icon-text spacing (`flex gap-x-2`) automatically
-- Importing Heroicons manually is unnecessary — Nuxt Icon resolves string aliases (e.g., `heroicons:user-plus`)
-
----
-
-### 6. `app/components/task-holdem/User.vue` — Priority: LOW ✅ COMPLETED
-
-**Elements**: 1 `<button>` (1 total)
-
-**Migration plan**:
-
-| Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Remove user button | `<button>` with hover effect | `<UButton label="Remove" variant="outline" size="sm" class="text-white" @click="remove(user)" />` |
+**Script changes**:
+```diff
+- import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
+```
 
 ---
 
-### 7. `app/components/github/HistoryCleaner.vue` — Priority: LOW ✅ COMPLETED
+### 3. `app/components/form/Feedback.vue` — Priority: MEDIUM
 
-**Elements**: 2 `<button>` (2 total)
-
-**Current state**: The main form already uses NuxtUI (`UForm`, `UFormField`, `UInput`, `UCheckbox`, `UButton`). Only the confirmation modal (built with `@headlessui/vue`) has raw buttons.
-
-**Migration plan**:
+**Old import**: `CheckCircleIcon` from `@heroicons/vue/20/solid`
 
 | Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Confirm button | `<button>` inside Headless UI `<Dialog>` | `<UButton label="Confirm" color="error" :loading="loading" @click="confirm()" />` |
-| Cancel button | `<button>` inside Headless UI `<Dialog>` | `<UButton label="Cancel" variant="outline" :disabled="loading" @click="confirmationModal = false" />` |
+|---|---|---|
+| Success icon | `<CheckCircleIcon class="h-10 w-10" />` | `<UIcon name="i-heroicons-20-solid-check-circle" class="h-10 w-10" />` |
 
 **Implementation details**:
-- `color="error"` replaces the red background (`bg-red-600`)
-- `:loading="loading"` replaces the manual `ArrowPathIcon` spinner
-- Manual `@heroicons/vue` imports removed — `<NuxtIcon name="heroicons:*" />` used for remaining template icons (exclamation-triangle, bars-arrow-down, arrow-right-circle)
-- Headless UI `<Dialog>` kept as-is (no migration to `UDialog`)
+- The `20/solid` variant maps to the `-20-solid` suffix in UIcon naming: `i-heroicons-20-solid-check-circle`
+- Remove the import statement
+
+**Script changes**:
+```diff
+- import { CheckCircleIcon } from "@heroicons/vue/20/solid";
+```
 
 ---
 
-### 8. `app/components/github/HistoryCleanerHero.vue` — Priority: LOW ✅ COMPLETED
+### 4. `shared/types/task-holdem.type.ts` — Priority: MEDIUM
 
-**Elements**: 1 `<button>` (1 total)
+**Old import**: `BellSnoozeIcon`, `QuestionMarkCircleIcon` from `@heroicons/vue/24/outline`
 
-**Migration plan**:
+**What needs to change**: The `valueToComponent` record maps card values to Vue components. This needs to become a string-based icon name map.
 
 | Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| CTA link button | `<button>` with arrow text | `<UButton label="Go to the GitHub History Cleaner tool" trailing-icon="heroicons:arrow-right" size="sm" variant="link" @click="scrollToTool()" />` |
+|---|---|---|
+| `valueToComponent` record | `Record<string, Component>` with imported icon components | `Record<string, string>` with UIcon string names |
 
 **Implementation details**:
-- `variant="link"` replaces the text-only button style (`text-sm font-semibold leading-6 text-indigo-400`)
-- `trailing-icon="heroicons:arrow-right"` replaces the manual `&rarr;` HTML entity
-- Manual `@heroicons/vue` import removed — `<NuxtIcon name="heroicons:check-circle" />` used for the benefits list icon
+- Rename `valueToComponent` → `valueToIconName`
+- Change type from `Record<string, Component>` to `Record<string, string>`
+- `BellSnoozeIcon` → `"i-heroicons-bell-snooze"`
+- `QuestionMarkCircleIcon` → `"i-heroicons-question-mark-circle"`
+- Consumers (`PokerPlayer.vue`) update their import and template accordingly
+
+**Changes**:
+```diff
+- import { BellSnoozeIcon, QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
+-
+- export const valueToComponent: Record<string, Component> = {
+-   skip: BellSnoozeIcon,
+-   break: QuestionMarkCircleIcon,
+- };
++ export const valueToIconName: Record<string, string> = {
++   skip: "i-heroicons-bell-snooze",
++   break: "i-heroicons-question-mark-circle",
++ };
+```
 
 ---
 
-### 9. `app/components/base/Header.vue` — Priority: LOW ✅ COMPLETED
+### 5. `app/components/task-holdem/PokerPlayer.vue` — Priority: MEDIUM
 
-**Elements**: 2 `<button>` (2 total)
+**Old import**: `QuestionMarkCircleIcon` from `@heroicons/vue/24/outline`
 
-**Migration plan**:
+**What needs to change**: The fallback icon and the dynamic component rendering need to switch from imported components to `<UIcon>`.
 
 | Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Open mobile menu button | `<button>` with hamburger icon | `<UButton icon="heroicons:bars-3" variant="ghost" size="sm" @click="mobileMenuOpen = true" aria-label="Open main menu" />` |
-| Close mobile menu button | `<button>` with X icon | `<UButton icon="heroicons:x-mark" variant="ghost" size="sm" @click="mobileMenuOpen = false" aria-label="Close menu" />` |
+|---|---|---|
+| Fallback card icon | `<component :is="QuestionMarkCircleIcon" class="text-white w-8" />` | `<UIcon name="i-heroicons-question-mark-circle" class="text-white w-8" />` |
+| Dynamic icon from `valueToComponent` | `<component :is="getSelectedCardValue()" />` | `<UIcon :name="getSelectedCardValue()" />` (returns string instead of Component) |
 
 **Implementation details**:
-- `variant="ghost"` replaces the transparent background with hover effect
-- Manual `@heroicons/vue` imports removed — `<NuxtIcon name="heroicons:*" />` used for all icons (bars-3, x-mark, chevron-down, squares-plus, arrow-path-rounded-square)
-- Popover data `icon` field changed from imported component to string (`"heroicons:squares-plus"`)
+- `getSelectedCardValue()` return type changes from `number | Component | null` to `number | string | null`
+- The `valueToComponent` import from `shared/types/task-holdem.type.ts` changes to `valueToIconName` (see file 4 above)
+- Template condition `v-else-if="status === 'revealed' && getSelectedCardValue()"` now renders `<UIcon :name="getSelectedCardValue()" />` instead of `<component :is>`
+- The fallback `<component :is="QuestionMarkCircleIcon">` becomes `<UIcon name="i-heroicons-question-mark-circle" />`
+
+**Script changes**:
+```diff
+- import { QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
+- // import valueToComponent → valueToIconName from shared types
+```
 
 ---
 
-### 10. `app/components/base/ExperienceCard.vue` — Priority: LOW ✅ COMPLETED
+### 6. `app/pages/tools/index.vue` — Priority: LOW
 
-**Elements**: 1 `<button>` (1 total)
-
-**Migration plan**:
+**Old import**: `SquaresPlusIcon`, `ArrowPathRoundedSquareIcon` from `@heroicons/vue/24/outline`
 
 | Element | Current | Nuxt UI Replacement |
-|---------|---------|---------------------|
-| Close drawer button | `<button>` with X icon | `<UButton icon="heroicons:x-circle" variant="ghost" size="sm" class="text-white" @click="isDrawerOpen = false" />` |
+|---|---|---|
+| Tool icon rendering | `<component :is="tool.icon">` with imported component | `<UIcon :name="tool.icon" />` with string name |
+| Tool data `icon` field | `icon: SquaresPlusIcon` (component reference) | `icon: "i-heroicons-squares-plus"` (string) |
 
-**Implementation details**:
-- `variant="ghost"` replaces transparent background
-- Manual `@heroicons/vue` import removed — `<NuxtIcon>` resolved by `icon` prop automatically
+**Script changes**:
+```diff
+- import { SquaresPlusIcon, ArrowPathRoundedSquareIcon } from "@heroicons/vue/24/outline";
+-
+  const tools = [
+    {
+      name: taskHoldemApplication.name,
+      description: "...",
+      to: "/tools/task-holdem",
+-     icon: SquaresPlusIcon,
++     icon: "i-heroicons-squares-plus",
+    },
+    {
+      name: "GitHub History Cleaner",
+      description: "...",
+      to: "/tools/github/history-cleaner",
+-     icon: ArrowPathRoundedSquareIcon,
++     icon: "i-heroicons-arrow-path-rounded-square",
+    },
+  ];
+```
+
+**Template changes**:
+```diff
+- <component :is="tool.icon" class="h-6 w-6 flex-none text-indigo-400" aria-hidden="true" />
++ <UIcon :name="tool.icon" class="h-6 w-6 flex-none text-indigo-400" aria-hidden="true" />
+```
+
+---
+
+## Phase 3: Dependency Cleanup
+
+After all Phase 2 migrations are complete:
+
+### 3a. Remove `@headlessui/vue`
+
+```bash
+npm uninstall @headlessui/vue
+```
+
+### 3b. Remove `@heroicons/vue`
+
+```bash
+npm uninstall @heroicons/vue
+```
+
+### 3c. Remove `@tailwindcss/forms` (optional)
+
+No usage of `@tailwindcss/forms` patterns (`form-input`, `form-select`, `form-checkbox`, `form-radio`) was found in the codebase. Nuxt UI provides its own form styling. Safe to remove:
+
+```bash
+npm uninstall -D @tailwindcss/forms
+```
+
+> **Note**: Verify the Tailwind config does not reference `@tailwindcss/forms` as a plugin before removing.
 
 ---
 
 ## Migration Summary
 
-| Priority | Files | Raw Elements | Nuxt UI Components Used |
-|---|---|---|---|
-| **HIGH** | `form/Feedback.vue` ✅, `task-holdem/CreateUser.vue` ✅ | 8 | `UInput`, `UTextarea`, `UButton`, `URadioGroup`, `URadio`, `UForm`, `UFormField` |
-| **MEDIUM** | `task-holdem/Actions.vue` ✅, `task-holdem/Chat.vue` ✅, `task-holdem/PokerTable.vue` ✅ | 8 | `UInput`, `UButton` |
-| **LOW** | `task-holdem/User.vue` ✅, `github/HistoryCleaner.vue` ✅, `github/HistoryCleanerHero.vue` ✅, `base/Header.vue` ✅, `base/ExperienceCard.vue` ✅ | 7 | `UButton` |
+### Phase 1: Raw HTML Elements ✅ COMPLETED
 
-**Total**: 10 files, 23 raw elements to migrate. **10 completed** (23 elements migrated).
+| # | File | Elements | Status |
+|---|---|---|---|
+| 1 | `app/components/form/Feedback.vue` | 5 | ✅ |
+| 2 | `app/components/task-holdem/CreateUser.vue` | 3 | ✅ |
+| 3 | `app/components/task-holdem/Chat.vue` | 4 | ✅ |
+| 4 | `app/components/task-holdem/PokerTable.vue` | 2 | ✅ |
+| 5 | `app/components/task-holdem/Actions.vue` | 2 | ✅ |
+| 6 | `app/components/task-holdem/User.vue` | 1 | ✅ |
+| 7 | `app/components/github/HistoryCleaner.vue` | 2 | ✅ |
+| 8 | `app/components/github/HistoryCleanerHero.vue` | 1 | ✅ |
+| 9 | `app/components/base/Header.vue` | 2 | ✅ |
+| 10 | `app/components/base/ExperienceCard.vue` | 1 | ✅ |
+
+### Phase 2: Remove Old Dependencies ✅ COMPLETED
+
+| # | File | Old Library | What to Migrate | Status |
+|---|---|---|---|---|
+| 1 | `app/components/base/Header.vue` | `@headlessui/vue` | `Dialog` → `UDrawer`, `Popover` → `UPopover` | ✅ |
+| 2 | `app/components/github/HistoryCleaner.vue` | `@headlessui/vue` | `Dialog` + transitions → `UModal` | ✅ |
+| 3 | `app/components/form/Feedback.vue` | `@heroicons/vue` | `CheckCircleIcon` → `UIcon` | ✅ |
+| 4 | `shared/types/task-holdem.type.ts` | `@heroicons/vue` | `valueToComponent` → `valueToIconName` (string map) | ✅ |
+| 5 | `app/components/task-holdem/PokerPlayer.vue` | `@heroicons/vue` | `QuestionMarkCircleIcon` → `UIcon` | ✅ |
+| 6 | `app/components/task-holdem/Card.vue` | `@heroicons/vue` | `valueToComponent` → `valueToIconName` + `UIcon` | ✅ |
+| 7 | `app/pages/tools/index.vue` | `@heroicons/vue` | Component refs → string icon names | ✅ |
+
+### Phase 3: Dependency Cleanup ✅ COMPLETED
+
+| # | Action | Status |
+|---|---|---|
+| 1 | `npm uninstall @headlessui/vue` | ✅ |
+| 2 | `npm uninstall @heroicons/vue` | ✅ |
+| 3 | `npm uninstall -D @tailwindcss/forms` + remove from `tailwind.config.ts` | ✅ |
+
+---
 
 ## Implementation Order
 
-1. **HIGH priority** — Form components first (Feedback.vue ✅, CreateUser.vue ✅) since they involve form state management and validation
-2. **MEDIUM priority** — Game UI components (Actions.vue ✅, Chat.vue ✅, PokerTable.vue ✅)
-3. **LOW priority** — Navigation and utility buttons (User.vue ✅, HistoryCleaner.vue ✅, HistoryCleanerHero.vue ✅, Header.vue ✅, ExperienceCard.vue ✅)
+1. **`shared/types/task-holdem.type.ts`** — Rename `valueToComponent` → `valueToIconName` (shared dependency, must go first)
+2. **`app/components/task-holdem/PokerPlayer.vue`** — Update to use `valueToIconName` + `UIcon` (depends on step 1)
+3. **`app/components/form/Feedback.vue`** — Simple icon swap (`CheckCircleIcon` → `UIcon`)
+4. **`app/pages/tools/index.vue`** — Simple icon data + template swap
+5. **`app/components/github/HistoryCleaner.vue`** — Confirmation modal (`Dialog` → `UModal`)
+6. **`app/components/base/Header.vue`** — Most complex: mobile drawer + two popovers
+7. **Dependency cleanup** — Remove `@headlessui/vue`, `@heroicons/vue`, optionally `@tailwindcss/forms`
+
+## Verification
+
+After each file migration:
+1. `npm run lint` — Ensure no type errors
+2. `npm run test` — Ensure unit tests pass
+3. Visual check in browser (dev server) for the affected page/component
+
+After full Phase 2 + 3 completion:
+1. `npm run lint` — No references to removed packages
+2. `npm run test` — All unit tests pass
+3. `npm run build` — Production build succeeds
+4. Grep for `@headlessui/vue` and `@heroicons/vue` — zero results
 
 ## Notes
 
-- The project already uses `@nuxt/ui` v4.8.2, so no dependency changes are required.
-- Nuxt UI components support Tailwind CSS theming via CSS variables, so existing color schemes should carry over.
-- The `floating` prop on `<UInput>` and `<UTextarea>` replicates the current floating-label pattern used in `Feedback.vue`.
-- Icon integration uses Iconify via Nuxt Icon (200,000+ icons), matching the current Heroicons usage.
+- **UIcon naming convention**: `i-heroicons-icon-name` for 24/outline (default), `i-heroicons-solid-icon-name` for 24/solid, `i-heroicons-20-solid-icon-name` for 20/solid
+- **`UPopover` transitions**: Built-in — no need for manual `<transition>` wrappers
+- **`UModal` transitions**: Built-in — no need for `<TransitionRoot>` / `<TransitionChild>`
+- **`UDrawer` transitions**: Built-in via Vaul — smooth slide animation
+- **`<component :is>` pattern**: When icon data changes from component references to strings, all `<component :is="...">` usages must become `<UIcon :name="..." />`
+- **`UModal` slots**: `#content` (full custom), or `#header` + `#body` + `#footer` for structured layout
+- **`UPopover` slots**: Default slot = trigger, `#content` = panel. The `close` function is available in `#content` slot when `mode="click"` (default)
+- **`UDrawer` slots**: Default slot = trigger, `#content` = drawer body. Use `v-model:open` to control programmatically when trigger is external
 - **Dark theme**: `color="white"` is NOT valid for `UButton` (valid: `"error" | "primary" | "secondary" | "success" | "info" | "warning" | "neutral"`). Use `variant="outline"` + `class="text-white"` for buttons with borders and white text.
 - **Sizes**: `size="xs"` available on `UButton` (replaces `text-xs` on raw buttons).
 - **Autofocus**: `autofocus` works as a prop on `UInput` (maps to HTML `autofocus` attribute).
 - **Shadows**: Custom shadows (e.g., `shadow-indigo-800 shadow-md`) can be preserved as classes on `UButton`.
-- **Icons**: Manual `@heroicons/vue` imports are unnecessary — Nuxt Icon resolves `heroicons:*` strings automatically. Use `<NuxtIcon name="heroicons:*" />` in templates or `icon: "heroicons:*"` in data.
+- **Icons**: Manual `@heroicons/vue` imports are unnecessary — Nuxt Icon resolves `i-heroicons-*` strings automatically. Use `<UIcon name="i-heroicons-*" />` in templates or `icon: "i-heroicons-*"` in data.
+
+### Key Learnings (Phase 2)
+
+- **`UModal` with `#content` slot**: Use for full custom layouts (e.g., confirmation modals with custom icon + text arrangement). The `title` prop can be omitted when the title is part of the custom body layout.
+- **`UModal` `:dismissible` prop**: Set to `:dismissible="!loading"` to prevent closing the modal while an async operation is in flight.
+- **`UDrawer` for mobile menus**: Use `direction="right"` and `:handle="false"` for navigation drawers. The `:ui="{ content: '...' }"` prop allows custom styling of the drawer content.
+- **`UDrawer` removes need for `<ClientOnly>`**: Unlike Headless UI's `Dialog`, `UDrawer` handles SSR correctly.
+- **`UPopover` replaces manual transitions**: The `<transition>` wrapper used with Headless UI's `PopoverPanel` is unnecessary — `UPopover` has built-in animations.
+- **`UPopover` `#content` slot**: Receives `{ close }` function for closing the popover on link click.
+- **`<component :is>` → `<UIcon>`**: When migrating from imported Heroicon components to string-based icon names, all `<component :is="iconRef">` usages must become `<UIcon :name="iconName">`.
+- **`valueToComponent` → `valueToIconName` pattern**: When storing icon references in data objects, use string names (`"i-heroicons-icon-name"`) instead of component imports. This eliminates the need for `@heroicons/vue` imports in shared type files.
+- **`@tailwindcss/forms` removal**: After migrating to Nuxt UI form components, `@tailwindcss/forms` is no longer needed. Remember to also remove it from `tailwind.config.ts` plugins array.

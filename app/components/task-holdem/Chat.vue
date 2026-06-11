@@ -1,7 +1,7 @@
 <template>
   <section v-if="!isOpen" class="bg-gray-800 z-10 fixed right-8 bottom-12">
     <UButton
-      icon="heroicons:chat-bubble-left-right"
+      icon="i-heroicons-chat-bubble-left-right"
       variant="outline"
       size="xs"
       class="text-white shadow-indigo-800 shadow-md rounded-md"
@@ -15,7 +15,7 @@
     >
       <div class="flex flex-col gap-y-8">
         <UButton
-          icon="heroicons:x-mark"
+          icon="i-heroicons-x-mark"
           variant="ghost"
           size="sm"
           class="text-white absolute right-1 top-1"

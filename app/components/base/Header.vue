@@ -8,7 +8,7 @@
         </NuxtLink>
       </div>
       <div class="flex lg:hidden">
-        <UButton icon="heroicons:bars-3" variant="ghost" size="sm" aria-label="Open main menu" @click="mobileMenuOpen = true" />
+        <UButton icon="i-heroicons-bars-3" variant="ghost" size="sm" aria-label="Open main menu" @click="mobileMenuOpen = true" />
       </div>
       <div class="hidden lg:flex lg:gap-x-12 lg:items-center">
         <a
@@ -20,54 +20,45 @@
           class="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-black rounded-md px-2 py-1"
           >{{ item.name }}</a
         >
-        <Popover class="relative">
-          <PopoverButton id="popover-button-tools" class="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
+        <UPopover :content="{ align: 'center', side: 'bottom', sideOffset: 8 }">
+          <button id="popover-button-tools" class="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-white">
             <span>Tools</span>
-            <NuxtIcon name="heroicons:chevron-down" class="h-5 w-5" />
-          </PopoverButton>
+            <UIcon name="i-heroicons-chevron-down" class="h-5 w-5" />
+          </button>
 
-          <transition
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0 translate-y-1"
-            enter-to-class="opacity-100 translate-y-0"
-            leave-active-class="transition ease-in duration-150"
-            leave-from-class="opacity-100 translate-y-0"
-            leave-to-class="opacity-0 translate-y-1"
-          >
-            <PopoverPanel v-slot="{ close }" class="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4">
-              <div
-                class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5"
-              >
-                <div class="p-4">
-                  <div v-for="item in popover.links" :key="item.name" class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                    <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <component :is="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                    </div>
-                    <div>
-                      <NuxtLink :to="item.to" class="font-semibold text-gray-900" @click="close()">
-                        {{ item.name }}
-                        <span class="absolute inset-0" />
-                      </NuxtLink>
-                      <p class="mt-1 text-gray-600">{{ item.description }}</p>
-                    </div>
+          <template #content="{ close }">
+            <div
+              class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5"
+            >
+              <div class="p-4">
+                <div v-for="item in popover.links" :key="item.name" class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
+                  <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                    <UIcon :name="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <NuxtLink :to="item.to" class="font-semibold text-gray-900" @click="close()">
+                      {{ item.name }}
+                      <span class="absolute inset-0" />
+                    </NuxtLink>
+                    <p class="mt-1 text-gray-600">{{ item.description }}</p>
                   </div>
                 </div>
-                <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                  <NuxtLink
-                    v-for="item in popover.callsToAction"
-                    :key="item.name"
-                    :to="item.to"
-                    class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
-                    @click="close()"
-                  >
-                    <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-                    {{ item.name }}
-                  </NuxtLink>
-                </div>
               </div>
-            </PopoverPanel>
-          </transition>
-        </Popover>
+              <div class="grid divide-x divide-gray-900/5 bg-gray-50">
+                <NuxtLink
+                  v-for="item in popover.callsToAction"
+                  :key="item.name"
+                  :to="item.to"
+                  class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                  @click="close()"
+                >
+                  <UIcon :name="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                  {{ item.name }}
+                </NuxtLink>
+              </div>
+            </div>
+          </template>
+        </UPopover>
       </div>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <a :href="config.public.link.githubRepository" rel="noopener" target="_blank" class="text-sm font-semibold leading-6 text-white"
@@ -75,95 +66,65 @@
         >
       </div>
     </nav>
-    <ClientOnly>
-      <Dialog as="div" class="lg:hidden" :open="mobileMenuOpen" @close="mobileMenuOpen = false">
-        <div class="fixed inset-0 z-50" />
-        <DialogPanel
-          class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-lg sm:ring-1 sm:ring-gray-900/10"
-        >
-          <div class="flex items-center justify-between">
-            <NuxtLink
-              to="/"
-              class="-m-1.5 p-1.5"
-              @click="
-                {
-                  mobileMenuOpen = false;
-                }
-              "
-            >
-              <span class="sr-only">{{ config.public.title }}</span>
-              <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.public.title" />
-            </NuxtLink>
-            <UButton icon="heroicons:x-mark" variant="ghost" size="sm" aria-label="Close menu" @click="mobileMenuOpen = false" />
-          </div>
-          <div class="mt-6 flow-root">
-            <div class="-my-6 divide-y divide-gray-500/10">
-              <div class="space-y-2 py-6">
-                <a
-                  v-for="item in navigation"
-                  :key="item.name"
-                  :href="item.href"
-                  :rel="item.rel"
-                  :target="item.target"
-                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >{{ item.name }}</a
+    <UDrawer v-model:open="mobileMenuOpen" direction="right" :handle="false" :close="false" :ui="{ content: 'w-full sm:max-w-lg' }">
+      <template #header>
+        <div class="flex items-center justify-between">
+          <NuxtLink
+            to="/"
+            class="-m-1.5 p-1.5"
+            @click="
+              {
+                mobileMenuOpen = false;
+              }
+            "
+          >
+            <span class="sr-only">{{ config.public.title }}</span>
+            <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.public.title" />
+          </NuxtLink>
+          <UButton icon="i-heroicons-x-mark" variant="ghost" size="sm" aria-label="Close menu" @click="mobileMenuOpen = false" />
+        </div>
+      </template>
+      <template #body>
+        <div class="flow-root">
+          <div class="-my-6 divide-y divide-gray-500/10">
+            <div class="space-y-2 py-6">
+              <a
+                v-for="item in navigation"
+                :key="item.name"
+                :href="item.href"
+                :rel="item.rel"
+                :target="item.target"
+                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >{{ item.name }}</a
+              >
+              <UPopover :content="{ align: 'center', side: 'bottom', sideOffset: 8 }">
+                <button
+                  id="popover-button-tools-mobile"
+                  class="inline-flex items-center -mx-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
-                <Popover class="relative">
-                  <PopoverButton
-                    id="popover-button-tools-mobile"
-                    class="inline-flex items-center -mx-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    <span class="text-black">Tools</span>
-                    <NuxtIcon name="heroicons:chevron-down" class="h-5 w-5 text-black" />
-                  </PopoverButton>
+                  <span class="text-black">Tools</span>
+                  <UIcon name="i-heroicons-chevron-down" class="h-5 w-5 text-black" />
+                </button>
 
-                  <transition
-                    enter-active-class="transition ease-out duration-200"
-                    enter-from-class="opacity-0 translate-y-1"
-                    enter-to-class="opacity-100 translate-y-0"
-                    leave-active-class="transition ease-in duration-150"
-                    leave-from-class="opacity-100 translate-y-0"
-                    leave-to-class="opacity-0 translate-y-1"
+                <template #content="{ close }">
+                  <div
+                    class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5"
                   >
-                    <PopoverPanel v-slot="{ close }" class="absolute left-1/2 z-10 mt-5 flex w-screen max-w-max -translate-x-1/2 px-4">
+                    <div class="p-4">
                       <div
-                        class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5"
+                        v-for="item in popover.links"
+                        :key="item.name"
+                        class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50"
                       >
-                        <div class="p-4">
-                          <div
-                            v-for="item in popover.links"
-                            :key="item.name"
-                            class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50"
-                          >
-                            <div
-                              class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white"
-                            >
-                              <component :is="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                            </div>
-                            <div>
-                              <NuxtLink
-                                :to="item.to"
-                                class="font-semibold text-gray-900"
-                                @click="
-                                  {
-                                    close();
-                                    mobileMenuOpen = false;
-                                  }
-                                "
-                              >
-                                {{ item.name }}
-                                <span class="absolute inset-0" />
-                              </NuxtLink>
-                              <p class="mt-1 text-gray-600">{{ item.description }}</p>
-                            </div>
-                          </div>
+                        <div
+                          class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white"
+                        >
+                          <UIcon :name="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
                         </div>
-                        <div class="grid divide-x divide-gray-900/5 bg-gray-50">
+                        <div>
                           <NuxtLink
-                            v-for="item in popover.callsToAction"
-                            :key="item.name"
                             :to="item.to"
-                            class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                            class="font-semibold text-gray-900"
                             @click="
                               {
                                 close();
@@ -171,35 +132,51 @@
                               }
                             "
                           >
-                            <component :is="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
                             {{ item.name }}
+                            <span class="absolute inset-0" />
                           </NuxtLink>
+                          <p class="mt-1 text-gray-600">{{ item.description }}</p>
                         </div>
                       </div>
-                    </PopoverPanel>
-                  </transition>
-                </Popover>
-              </div>
-              <div class="py-6">
-                <a
-                  :href="config.public.link.githubRepository"
-                  rel="noopener"
-                  target="_blank"
-                  class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >GitHub repository &rarr;</a
-                >
-              </div>
+                    </div>
+                    <div class="grid divide-x divide-gray-900/5 bg-gray-50">
+                      <NuxtLink
+                        v-for="item in popover.callsToAction"
+                        :key="item.name"
+                        :to="item.to"
+                        class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
+                        @click="
+                          {
+                            close();
+                            mobileMenuOpen = false;
+                          }
+                        "
+                      >
+                        <UIcon :name="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                        {{ item.name }}
+                      </NuxtLink>
+                    </div>
+                  </div>
+                </template>
+              </UPopover>
+            </div>
+            <div class="py-6">
+              <a
+                :href="config.public.link.githubRepository"
+                rel="noopener"
+                target="_blank"
+                class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >GitHub repository &rarr;</a
+              >
             </div>
           </div>
-        </DialogPanel>
-      </Dialog>
-    </ClientOnly>
+        </div>
+      </template>
+    </UDrawer>
   </header>
 </template>
 
 <script setup lang="ts">
-import { Dialog, DialogPanel, Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
-
 const mobileMenuOpen: Ref<boolean> = ref(false);
 
 const config = useRuntimeConfig();
@@ -217,20 +194,20 @@ const popover = {
       name: taskHoldemApplication.name,
       description: "Poker planning tool for agile teams",
       to: "/tools/task-holdem",
-      icon: "heroicons:squares-plus",
+      icon: "i-heroicons-squares-plus",
     },
     {
       name: "GitHub History Cleaner",
       description: "Delete all your GitHub project history",
       to: "/tools/github/history-cleaner",
-      icon: "heroicons:arrow-path-rounded-square",
+      icon: "i-heroicons-arrow-path-rounded-square",
     },
   ],
   callsToAction: [
     {
       name: "View all tools",
       to: "/tools",
-      icon: "heroicons:squares-plus",
+      icon: "i-heroicons-squares-plus",
     },
   ],
 };

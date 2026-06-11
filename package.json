@@ -37,8 +37,7 @@
     "test:e2e:update-snapshots": "playwright test --update-snapshots"
   },
   "dependencies": {
-    "@headlessui/vue": "^1.7.23",
-    "@heroicons/vue": "^2.2.0",
+    "@iconify-json/heroicons": "^1.2.3",
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/image": "^2.0.0",
     "@nuxt/test-utils": "^4.0.3",
@@ -66,7 +65,6 @@
     "@playwright/test": "^1.60.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@tailwindcss/forms": "^0.5.11",
     "@types/node": "^24.13.1",
     "@types/pg": "^8.20.0",
     "@vitest/coverage-v8": "^4.1.6",

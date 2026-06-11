@@ -40,7 +40,7 @@
       <div class="flex flex-col gap-4 m-8">
         <div class="flex justify-between">
           <h2 class="text-xl text-white">{{ experience.company.name }}</h2>
-          <UButton icon="heroicons:x-circle" variant="ghost" size="sm" class="text-white" @click="isDrawerOpen = false" />
+          <UButton icon="i-heroicons-x-circle" variant="ghost" size="sm" class="text-white" @click="isDrawerOpen = false" />
         </div>
         <div class="flex flex-col gap-6 text-white">
           <p class="text-sm text-gray-300 font-medium">Technologies and tools used:</p>
