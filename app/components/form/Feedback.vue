@@ -23,7 +23,7 @@
           </div>
         </UForm>
         <div v-else class="flex flex-col gap-2">
-          <UIcon name="i-heroicons-20-solid-check-circle" class="h-10 w-10" />
+          <UIcon name="i-heroicons-check-circle-20-solid" class="h-10 w-10" />
           <p class="text-2xl">Thank you!</p>
           <p class="text-sm">Your feedback has been submitted.</p>
         </div>

@@ -15,20 +15,32 @@
       @click="isFeedbackOpen = true"
     />
   </section>
-  <Transition>
-    <FormFeedback :is-open="isFeedbackOpen" @close="isFeedbackOpen = false" />
-  </Transition>
+  <FormFeedback :is-open="isFeedbackOpen" @close="isFeedbackOpen = false" />
 </template>
 
 <script setup lang="ts">
 const isInvitationButtonClicked = ref<boolean>(false);
 
-function copyInvitationToClipboard() {
-  navigator.clipboard.writeText(window.location.href);
-  isInvitationButtonClicked.value = true;
-  setTimeout(() => {
-    isInvitationButtonClicked.value = false;
-  }, 3000);
+async function copyInvitationToClipboard() {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    isInvitationButtonClicked.value = true;
+    setTimeout(() => {
+      isInvitationButtonClicked.value = false;
+    }, 3000);
+  } catch {
+    const textArea = document.createElement("textarea");
+    textArea.value = window.location.href;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+
+    isInvitationButtonClicked.value = true;
+    setTimeout(() => {
+      isInvitationButtonClicked.value = false;
+    }, 3000);
+  }
 }
 
 const isFeedbackOpen = ref<boolean>(false);
