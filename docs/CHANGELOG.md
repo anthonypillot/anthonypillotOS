@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.21...v1.4.0) (2026-06-13)
+
+
+### Features
+
+* migrate to Nuxt UI ([#89](https://github.com/anthonypillot/anthonypillotOS/issues/89)) ([e6e03da](https://github.com/anthonypillot/anthonypillotOS/commit/e6e03da65c3cb48e1b5d6e3a4cbc3bb8d6a11359))
+
 ## [1.3.21](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.20...v1.3.21) (2026-06-06)
 
 
