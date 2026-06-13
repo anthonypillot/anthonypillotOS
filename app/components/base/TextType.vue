@@ -37,7 +37,10 @@ const props = withDefaults(defineProps<TextTypeProps>(), {
   cursorBlinkDuration: 0.5,
   textColors: () => [],
   startOnVisible: false,
-  reverseMode: false
+  reverseMode: false,
+  cursorClassName: '',
+  variableSpeed: undefined,
+  onSentenceComplete: undefined,
 });
 
 const displayedText = ref('');

@@ -12,6 +12,6 @@ export async function create(feedback: Feedback): Promise<FeedbackData> {
   } catch (error) {
     const message = "Failed to create feedback\n" + error;
     logger.error(message);
-    throw new Error(message);
+    throw new Error(message, { cause: error });
   }
 }
