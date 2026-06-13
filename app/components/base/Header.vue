@@ -26,7 +26,7 @@
             label="Tools"
             variant="ghost"
             trailing-icon="i-heroicons-chevron-down"
-            class="text-sm font-semibold text-white"
+            class="text-sm font-semibold text-white rounded-md px-2 py-1 hover:bg-white hover:text-black"
           />
 
           <template #content="{ close }">
