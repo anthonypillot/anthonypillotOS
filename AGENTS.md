@@ -6,7 +6,8 @@ Personal portfolio / "OS" built with **Nuxt 4** + **Vue 3** + **TypeScript** + *
 
 - Setup, deployment, license: see [README.md](README.md)
 - Version history: [docs/CHANGELOG.md](docs/CHANGELOG.md)
-- Nuxt UI v4 migration gotchas (icon names, UModal slots, etc.): [docs/nuxt-ui-migration.md](docs/nuxt-ui-migration.md)
+- Framework reference (LLM-friendly): [nuxt.com/llms.txt](https://nuxt.com/llms.txt)
+- UI library reference (LLM-friendly): [ui.nuxt.com/llms.txt](https://ui.nuxt.com/llms.txt)
 
 ## Stack
 
@@ -242,7 +243,7 @@ Public config lives in `nuxt.config.ts` under `runtimeConfig.public` (title, des
 
 - **Nuxt 4 cache issue**: If `.nuxt/cache/nuxt/payload` becomes a file instead of a directory, you'll get `ENOTDIR` errors when visiting SWR routes. Fix by running `npm run clean && npm run dev`.
 - **SWR routeRules**: Routes with `swr: true` in `nuxt.config.ts` (`/`, `/tools/github/history-cleaner`, `/tools/task-holdem`) require the cache directory to exist properly.
-- **UModal programmatic open**: Use `#body` + `#footer` slots, not `#content` (requires a default-slot trigger). See `docs/nuxt-ui-migration.md`.
+- **UModal programmatic open**: Use `#body` + `#footer` slots, not `#content` (requires a default-slot trigger).
 - **Icon name variants**: `i-heroicons-<name>-20-solid` (suffix comes after the name), not `i-heroicons-20-solid-<name>`.
 
 ## Docker Build
