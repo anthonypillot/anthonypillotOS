@@ -17,10 +17,11 @@ Build with ❤️ and [Nuxt](https://nuxt.com).
 - [Table of Contents](#table-of-contents)
   - [⚙️ Setup](#️-setup)
   - [🚧 Development](#-development)
-  - [🧪 Unit tests](#-unit-tests)
+  - [🧪 Tests](#-tests)
   - [🚀 Production](#-production)
     - [Local preview](#local-preview)
     - [Docker image](#docker-image)
+  - [🛠️ Linting & type checking](#️-linting--type-checking)
 - [🚀 Deployment](#-deployment)
 - [🌳 Git conventions](#-git-conventions)
 - [📜 License](#-license)
@@ -33,9 +34,11 @@ Make sure to install the dependencies:
 npm install
 ```
 
+> `postinstall` automatically runs `prisma generate && nuxt prepare`.
+
 ### Local PostgreSQL
 
-The project uses PostgreSQL. Start a local container:
+The project uses PostgreSQL (Task Hold'em stores rooms, history-cleaner jobs, feedback and Socket.IO attachments). Start a local container:
 
 ```bash
 docker run --name postgres \
@@ -71,14 +74,24 @@ Start the development server on `http://localhost:3000`:
 npm run dev
 ```
 
-## 🧪 Unit tests
-
-The project uses [Vitest](https://vitest.dev/) for unit tests.
-
-Run the unit tests:
+Or run it in the background (logs in `logs/nuxt-dev.log`, PID in `logs/nuxt-dev.pid`):
 
 ```bash
-npm run test:unit
+npm run dev:detached
+npm run dev:stop-detached
+```
+
+> More context for contributors: see [AGENTS.md](AGENTS.md).
+
+## 🧪 Tests
+
+The project uses [Vitest](https://vitest.dev/) for server-side unit tests and [Playwright](https://playwright.dev/) for end-to-end tests.
+
+```bash
+npm run test            # Vitest unit tests
+npm run test:coverage   # Vitest with v8 coverage
+npm run test:e2e        # Playwright (auto-starts npm run start locally)
+npm run test:e2e:ui     # Playwright UI mode
 ```
 
 ## 🚀 Production
@@ -110,6 +123,14 @@ Local Docker image build and run:
 ```bash
 docker build --no-cache -t os:latest . \
 && docker run --rm --name=os -p 3000:3000 os:latest
+```
+
+The image is multi-stage (`node:24` builder → `gcr.io/distroless/nodejs24-debian13` runtime) and exposes port 3000. Pass `GIT_SHA` as a build arg to surface the commit in `/api` and the startup logs.
+
+## 🛠️ Linting & type checking
+
+```bash
+npm run lint            # nuxt typecheck && eslint .
 ```
 
 # 🚀 Deployment
