@@ -19,15 +19,12 @@
             </div>
             <ul role="list" class="mt-10 grid grid-cols-1 gap-x-8 gap-y-3 text-base leading-7 text-white sm:grid-cols-2">
               <li v-for="benefit in benefits" :key="benefit" class="flex gap-x-3">
-                <CheckCircleIcon class="h-7 w-5 flex-none" aria-hidden="true" />
+                <UIcon name="i-heroicons-check-circle" class="h-7 w-5 flex-none" />
                 {{ benefit }}
               </li>
             </ul>
             <div class="mt-10 flex">
-              <button class="text-sm font-semibold leading-6 text-indigo-400" @click="scrollToTool()">
-                Go to the GitHub History Cleaner tool
-                <span aria-hidden="true">&rarr;</span>
-              </button>
+              <UButton label="Go to the GitHub History Cleaner tool" variant="link" trailing-icon="i-heroicons-arrow-right" size="sm" class="text-indigo-400" @click="scrollToTool()" />
             </div>
           </div>
         </div>
@@ -62,8 +59,6 @@
 </template>
 
 <script setup lang="ts">
-import { CheckCircleIcon } from "@heroicons/vue/20/solid";
-
 const benefits = [
   "Reducing the risk of exposing sensitive data or secrets by purging workflow runs that may contain them.",
   "Freeing up storage space on your repository by deleting old or unnecessary workflow artifacts and logs.",

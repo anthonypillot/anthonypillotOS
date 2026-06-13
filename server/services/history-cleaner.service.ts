@@ -69,7 +69,6 @@ async function findAndDeleteWorkflowRuns(
     status = HistoryCleanerJobStatus.COMPLETED;
   } catch (error: unknown) {
     logger.error(`Failed to delete workflow runs for [${account}/${repository}] repository: ${error instanceof Error ? error.message : String(error)}`);
-    status = HistoryCleanerJobStatus.FAILED;
     throw error;
   }
 

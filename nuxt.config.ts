@@ -50,7 +50,7 @@ export default defineNuxtConfig({
     "/tools/task-holdem": { swr: true },
   },
 
-  modules: ["@nuxt/eslint", "@nuxt/image", "@nuxtjs/tailwindcss", "@nuxt/test-utils/module"],
+  modules: ["@nuxt/ui", "@nuxt/eslint", "@nuxt/image", "@nuxt/test-utils/module"],
 
   devtools: { enabled: true },
 });

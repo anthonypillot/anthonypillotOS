@@ -1,6 +1,6 @@
 <template>
   <div id="github-history-cleaner" class="flex justify-center space-y-10 divide-y divide-gray-900/10 md:px-8">
-    <div class="lg:grid lg:grid-cols-3 lg:gap-x-4 max-w-screen-xl">
+    <div class="lg:grid lg:grid-cols-3 lg:gap-x-4 max-w-7xl">
       <div class="pb-4 px-4 sm:px-0 lg:pb-0">
         <h2 class="text-white font-semibold leading-7">GitHub History Cleaner</h2>
         <p class="text-sm leading-6 text-gray-400">
@@ -17,142 +17,88 @@
       </div>
 
       <div class="lg:col-start-2 lg:col-end-4">
-        <form class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl" @submit.prevent="submit()">
+        <UForm :schema="schema" :state="form" class="bg-elevated shadow-sm ring-1 ring-muted sm:rounded-xl" @submit="onSubmit">
           <div class="px-4 py-6 sm:px-8 sm:py-6">
             <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div class="sm:col-span-3">
-                <label for="account-name" class="block text-sm font-medium leading-6 text-gray-900">Account name or organization</label>
-                <div class="">
-                  <input
-                    v-model="form.account"
-                    type="text"
-                    required
-                    placeholder="my-account-or-organization"
-                    autocomplete="username"
-                    class="block w-full rounded-md border-0 mt-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  >
-                </div>
-              </div>
-              <div class="sm:col-span-3">
-                <label for="repository-name" class="block text-sm font-medium leading-6 text-gray-900">Repository</label>
-                <div class="">
-                  <input
-                    v-model="form.repository"
-                    type="text"
-                    required
-                    placeholder="my-repository"
-                    autocomplete="username"
-                    class="block w-full rounded-md border-0 mt-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  >
-                </div>
-              </div>
-              <div class="sm:col-span-4">
-                <label for="github-pat" class="block text-sm font-medium leading-6 text-gray-900">GitHub Personal Access Token (PAT)</label>
-                <p class="text-sm leading-6 text-gray-400">
-                  <NuxtLink
-                    href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic"
-                    class="text-indigo-500 hover:text-indigo-400"
-                    rel="noopener noreferrer nofollow"
-                    target="_blank"
-                    >How to create a GitHub Personal Access Token (PAT) ?</NuxtLink
-                  >
-                </p>
-                <p class="text-sm leading-6 text-gray-400">
-                  The PAT should have the "<span class="text-gray-800">repo</span>" <span class="text-gray-800">scope</span>, with "<span
-                    class="text-gray-800"
-                    >Full control of private repositories</span
-                  >", which grants access to all repositories associated with your GitHub account. It ensures that your project can interact
-                  with all repositories, including fetching private repositories, and performing other necessary operations.
-                </p>
-                <div class="relative">
-                  <input
-                    v-model="form.token"
-                    type="password"
-                    required
-                    placeholder="ghp_1234567890abcdefghij"
-                    autocomplete="current-password"
-                    :class="`block w-full rounded-md border-0 mt-1 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 ${
-                      validation.githubPatIsNotValid
-                        ? 'text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500'
-                        : 'text-gray-900 ring-gray-300 placeholder:text-gray-400'
-                    }`"
-                  >
-                  <div v-if="validation.githubPatIsNotValid" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                    <ExclamationCircleIcon class="h-5 w-5 text-red-500" aria-hidden="true" />
-                  </div>
-                </div>
-                <p v-if="validation.githubPatIsNotValid" class="text-sm text-red-600">
-                  GitHub PAT should start with <span style="font-family: monospace">ghp_</span>.
-                </p>
-              </div>
-              <div class="sm:col-span-6">
-                <label class="block text-sm font-medium leading-6 text-gray-900">Deleting options</label>
-                <div v-for="(option, index) in options" :key="index" class="relative flex items-start pt-1.5">
-                  <div class="flex h-6 items-center">
-                    <input
-                      :id="option.name"
-                      type="checkbox"
-                      :name="option.name"
-                      :aria-describedby="option.description"
-                      :checked="option.checked"
-                      :disabled="option.disabled"
-                      class="h-4 w-4 rounded focus:ring-indigo-600 text-indigo-600 cursor-pointer disabled:cursor-not-allowed border-gray-400 disabled:border-gray-300"
-                      @click="
-                        option.checked = !option.checked;
-                        option.checked ? form.options.push(option.name) : form.options.splice(form.options.indexOf(option.name), 1);
-                      "
+              <UFormField name="account" label="Account name or organization" class="sm:col-span-3" required>
+                <UInput v-model="form.account" placeholder="my-account-or-organization" class="w-full" />
+              </UFormField>
+              <UFormField name="repository" label="Repository" class="sm:col-span-3" required>
+                <UInput v-model="form.repository" placeholder="my-repository" class="w-full" />
+              </UFormField>
+              <UFormField name="token" label="GitHub Personal Access Token (PAT)" class="sm:col-span-4">
+                <template #help>
+                  <p class="text-sm leading-6 text-muted">
+                    <NuxtLink
+                      href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic"
+                      class="text-primary hover:text-primary/80"
+                      rel="noopener noreferrer nofollow"
+                      target="_blank"
+                      >How to create a GitHub Personal Access Token (PAT) ?</NuxtLink
                     >
-                  </div>
-                  <div class="ml-3 text-sm">
-                    <label :for="option.name" class="font-medium text-gray-900">
-                      <span :class="option.disabled ? 'cursor-not-allowed' : 'cursor-pointer'" v-html="option.label" />
-                    </label>
-                    <p class="text-gray-400">{{ option.description }}</p>
-                  </div>
+                  </p>
+                  <p class="text-sm leading-6 text-muted">
+                    The PAT should have the "<span class="text-default">repo</span>" <span class="text-default">scope</span>, with "<span
+                      class="text-default"
+                      >Full control of private repositories</span
+                    >", which grants access to all repositories associated with your GitHub account. It ensures that your project can interact
+                    with all repositories, including fetching private repositories, and performing other necessary operations.
+                  </p>
+                </template>
+                <UInput v-model="form.token" type="password" placeholder="ghp_1234567890abcdefghij" class="w-full" />
+              </UFormField>
+              <div class="sm:col-span-6">
+                <label class="block text-sm font-medium leading-6 text-default">Deleting options</label>
+                <div v-for="(option, index) in options" :key="index" class="relative flex items-start pt-1.5">
+                  <UCheckbox
+                    :model-value="option.checked"
+                    :description="option.description"
+                    :disabled="option.disabled"
+                    @update:model-value="handleOptionToggle(option.name, $event as boolean)"
+                  >
+                    <template #label>
+                      <span v-html="option.label" />
+                    </template>
+                  </UCheckbox>
                 </div>
               </div>
             </div>
           </div>
-          <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 p-4 sm:px-8 sm:py-6">
-            <button type="button" class="text-sm font-semibold leading-6 text-gray-900" @click="clear()">Clear</button>
-            <button
-              :class="`rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-600`"
-              :disabled="disabled.submit"
-            >
-              Submit
-            </button>
+          <div class="flex items-center justify-end gap-x-6 border-t border-muted p-4 sm:px-8 sm:py-6">
+            <UButton type="button" variant="ghost" @click="clear()">Clear</UButton>
+            <UButton type="submit" :disabled="loading">Submit</UButton>
           </div>
-        </form>
+        </UForm>
         <div v-if="result" class="pt-8">
-          <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+          <div class="bg-elevated shadow-sm ring-1 ring-muted sm:rounded-xl md:col-span-2">
             <div class="px-4 py-6 sm:px-8 sm:py-6">
               <div class="px-4 sm:px-0">
                 <div ref="resultHtml" class="flex">
-                  <BarsArrowDownIcon class="h-10 w-10 mr-2" aria-hidden="true" />
-                  <p class="text-xl text-gray-900 font-semibold leading-7">Cleaner history result</p>
+                      <UIcon name="i-heroicons-bars-arrow-down" class="h-10 w-10 mr-2" />
+                  <p class="text-xl text-default font-semibold leading-7">Cleaner history result</p>
                 </div>
                 <div v-if="result.workflow">
-                  <p class="pt-1 text-gray-900 font-semibold leading-7">Workflow deletion</p>
-                  <p v-if="result.workflow.success > 0" class="text-sm leading-6 text-gray-600">
+                  <p class="pt-1 text-default font-semibold leading-7">Workflow deletion</p>
+                  <p v-if="result.workflow.success > 0" class="text-sm leading-6 text-muted">
                     Number of workflow runs deleted with success: <span class="font-semibold">{{ result.workflow.success }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.notFound > 0" class="text-sm leading-6 text-gray-600">
+                  <p v-if="result.workflow.notFound > 0" class="text-sm leading-6 text-muted">
                     Number workflow runs not found: <span class="font-semibold">{{ result.workflow.notFound }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.unauthorized > 0" class="text-sm leading-6 text-gray-600">
+                  <p v-if="result.workflow.unauthorized > 0" class="text-sm leading-6 text-muted">
                     Number of workflow unauthorized to delete: <span class="font-semibold">{{ result.workflow.unauthorized }}</span
                     >.
                   </p>
-                  <p v-if="result.workflow.unknown > 0" class="text-sm leading-6 text-gray-600">
+                  <p v-if="result.workflow.unknown > 0" class="text-sm leading-6 text-muted">
                     Number of workflow runs not deleted for unknown reason:
                     <span class="font-semibold">{{ result.workflow.unknown }}</span
                     >.
                   </p>
                 </div>
                 <div v-else>
-                  <p class="pt-1 text-gray-900 leading-7">Everything went as expected, but nothing was found to delete.</p>
+                  <p class="pt-1 text-default leading-7">Everything went as expected, but nothing was found to delete.</p>
                 </div>
               </div>
             </div>
@@ -163,109 +109,60 @@
   </div>
 
   <!-- Confirmation modal -->
-  <TransitionRoot as="template" :show="confirmationModal">
-    <Dialog as="div" class="relative z-10" @close="confirmationModal = false">
-      <TransitionChild
-        as="template"
-        enter="ease-out duration-300"
-        enter-from="opacity-0"
-        enter-to="opacity-100"
-        leave="ease-in duration-200"
-        leave-from="opacity-100"
-        leave-to="opacity-0"
-      >
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-      </TransitionChild>
-
-      <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <TransitionChild
-            as="template"
-            enter="ease-out duration-300"
-            enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enter-to="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leave-from="opacity-100 translate-y-0 sm:scale-100"
-            leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            <DialogPanel
-              class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
-            >
-              <div class="sm:flex sm:items-start">
-                <div
-                  class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
-                >
-                  <ExclamationTriangleIcon class="h-6 w-6 text-red-600" aria-hidden="true" />
-                </div>
-                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                  <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">Confirm deletion</DialogTitle>
-                  <div class="">
-                    <p class="text-sm text-gray-600 pt-2">
-                      Are you sure you want to delete the history of your GitHub account
-                      <span class="font-semibold">{{ form.account }}</span>
-                      and repository
-                      <span class="font-semibold">{{ form.repository }}</span> ?
-                    </p>
-                  </div>
-                  <div v-for="(formOption, index) in form.options" :key="index" class="pt-2">
-                    <div class="flex">
-                      <ArrowRightCircleIcon class="h-5 w-5 mr-1" aria-hidden="true" />
-                      <p
-                        class="text-sm text-gray-600"
-                        v-html="`${options.find((option) => option.name === formOption)?.label} will be deleted.`"
-                      />
-                    </div>
-                  </div>
-                  <div class="pt-2">
-                    <p class="text-sm text-gray-600">This action <span class="font-semibold">cannot be undone</span>.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <button
-                  type="button"
-                  class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-red-600"
-                  :disabled="loading"
-                  @click="confirm()"
-                >
-                  <div v-if="loading">
-                    <ArrowPathIcon class="animate-spin h-5 w-5" />
-                  </div>
-                  <div v-else>Confirm</div>
-                </button>
-                <button
-                  type="button"
-                  class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-gray-50"
-                  :disabled="loading"
-                  @click="confirmationModal = false"
-                >
-                  Cancel
-                </button>
-              </div>
-            </DialogPanel>
-          </TransitionChild>
+  <UModal v-model:open="confirmationModal" :dismissible="!loading" title="Confirm deletion" :ui="{ footer: 'justify-end' }">
+    <template #body>
+      <div class="sm:flex sm:items-start">
+        <div class="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+          <UIcon name="i-heroicons-exclamation-triangle" class="h-6 w-6 text-red-600" />
+        </div>
+        <div class="mt-3 sm:ml-4 sm:mt-0 sm:text-left">
+          <p class="text-sm text-muted">
+            Are you sure you want to delete the history of your GitHub account
+            <span class="font-semibold">{{ form.account }}</span>
+            and repository
+            <span class="font-semibold">{{ form.repository }}</span> ?
+          </p>
+          <div v-for="(formOption, index) in form.options" :key="index" class="pt-2">
+            <div class="flex">
+              <UIcon name="i-heroicons-arrow-right-circle" class="h-5 w-5 mr-1" />
+              <p
+                class="text-sm text-muted"
+                v-html="`${options.find((option) => option.name === formOption)?.label} will be deleted.`"
+              />
+            </div>
+          </div>
+          <div class="pt-2">
+            <p class="text-sm text-muted">This action <span class="font-semibold">cannot be undone</span>.</p>
+          </div>
         </div>
       </div>
-    </Dialog>
-  </TransitionRoot>
+    </template>
+    <template #footer>
+      <UButton label="Confirm" color="error" :loading="loading" @click="confirm()" />
+      <UButton label="Cancel" variant="outline" :disabled="loading" @click="confirmationModal = false" />
+    </template>
+  </UModal>
 </template>
 
 <script setup lang="ts">
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from "@headlessui/vue";
-import {
-  ArrowPathIcon,
-  ArrowRightCircleIcon,
-  BarsArrowDownIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon,
-} from "@heroicons/vue/24/outline";
 import { HistoryCleanerOptions } from "@@/server/types/history-cleaner.type";
+import type { FormSubmitEvent } from "@nuxt/ui";
+import * as z from "zod";
 
 const config = useRuntimeConfig();
 
-const disabled = ref({
-  submit: true,
+const schema = z.object({
+  account: z.string().min(1, "Account name is required"),
+  repository: z.string().min(1, "Repository name is required"),
+  token: z
+    .string()
+    .min(1, "GitHub PAT is required")
+    .regex(/^ghp_/, "GitHub PAT should start with ghp_"),
+  options: z.array(z.string()).min(1, "At least one option is required"),
 });
+
+type Schema = z.output<typeof schema>;
+
 const options = ref([
   {
     name: HistoryCleanerOptions.WORKFLOW_RUNS,
@@ -282,65 +179,32 @@ const options = ref([
     checked: false,
   },
 ]);
-const form = ref<HistoryCleanerForm>({
+
+const form = ref<Schema>({
   account: "",
   repository: "",
   token: "",
-  options: [],
+  options: [HistoryCleanerOptions.WORKFLOW_RUNS],
 });
-const validation = ref({
-  githubPatIsNotValid: false,
-});
+
 const confirmationModal = ref(false);
 const loading = ref<boolean>(false);
 const result = ref<HistoryCleanerResultFiltered | null>(null);
 const resultHtml = ref<HTMLDivElement | null>(null);
 
-/**
- * Add checked options to form.
- */
-options.value.forEach((option) => {
-  if (option.checked) {
-    form.value.options.push(option.name);
-  }
-});
-
-/**
- * Form validation.
- */
-watch(
-  form.value,
-  (updated) => {
-    let submitIsDisabled = false;
-    let githubPatIsInvalid = false;
-
-    if (updated.account && updated.repository && updated.options.length > 0) {
-      submitIsDisabled = false;
+function handleOptionToggle(name: string, checked: boolean): void {
+  const option = options.value.find((o) => o.name === name);
+  if (option && !option.disabled) {
+    option.checked = checked;
+    if (checked) {
+      form.value.options.push(name);
     } else {
-      submitIsDisabled = true;
+      form.value.options = form.value.options.filter((o) => o !== name);
     }
-
-    if (updated.token !== "") {
-      if (updated.token.startsWith("ghp_")) {
-        githubPatIsInvalid = false;
-      } else {
-        submitIsDisabled = true;
-        githubPatIsInvalid = true;
-      }
-    } else {
-      submitIsDisabled = true;
-      githubPatIsInvalid = false;
-    }
-
-    disabled.value.submit = submitIsDisabled;
-    validation.value.githubPatIsNotValid = githubPatIsInvalid;
-  },
-  {
-    deep: true,
   }
-);
+}
 
-function submit(): void {
+async function onSubmit(_event: FormSubmitEvent<Schema>): Promise<void> {
   confirmationModal.value = true;
 }
 

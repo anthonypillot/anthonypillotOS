@@ -1,11 +1,12 @@
 <template>
   <section v-if="!isOpen" class="bg-gray-800 z-10 fixed right-8 bottom-12">
-    <button
-      class="text-white text-xs border border-gray-700 shadow-indigo-800 shadow-md rounded-md px-4 py-2 cursor-pointer hover:bg-white hover:text-black"
+    <UButton
+      icon="i-heroicons-chat-bubble-left-right"
+      variant="outline"
+      size="xs"
+      class="text-white shadow-indigo-800 shadow-md rounded-md"
       @click="toggleChat()"
-    >
-      <ChatBubbleLeftRightIcon class="w-4 h-4" />
-    </button>
+    />
   </section>
   <Transition>
     <section
@@ -13,9 +14,13 @@
       class="p-4 bg-gray-800 border border-gray-700 shadow-indigo-800 shadow-md rounded max-w-sm z-10 fixed right-8 bottom-12"
     >
       <div class="flex flex-col gap-y-8">
-        <button class="text-sm text-white absolute right-1 top-1" @click="toggleChat()">
-          <XMarkIcon class="h-4 w-4" />
-        </button>
+        <UButton
+          icon="i-heroicons-x-mark"
+          variant="ghost"
+          size="sm"
+          class="text-white absolute right-1 top-1"
+          @click="toggleChat()"
+        />
         <div>
           <p class="text-white text-xs pb-2">Messages:</p>
           <div v-if="messages && messages.length > 0">
@@ -35,29 +40,20 @@
         <div class="flex flex-col gap-y-4 items-start">
           <div class="flex flex-col gap-y-2 w-full max-w-sm">
             <p class="text-white text-xs">Write a message:</p>
-            <input
+            <UInput
               v-model="message"
-              class="text-black text-sm rounded-md"
-              type="text"
-              autofocus
-              autocomplete="off"
-              data-1p-ignore
-              data-bwignore
-              data-lpignore
-              data-form-type="other"
               placeholder="Your message"
+              autofocus
               @keydown.enter="submit(user, message)"
-            >
-            <button
-              :class="
-                'text-white text-xs border border-white rounded-md px-4 py-2  ' +
-                (message === '' ? ' opacity-50 cursor-not-allowed' : 'hover:bg-white hover:text-black cursor-pointer')
-              "
+            />
+            <UButton
+              label="Send"
+              variant="outline"
+              size="xs"
+              class="text-white"
               :disabled="message === ''"
               @click="submit(user, message)"
-            >
-              Send
-            </button>
+            />
           </div>
         </div>
       </div>
@@ -67,7 +63,6 @@
 
 <script setup lang="ts">
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import { ChatBubbleLeftRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 
 const isOpen = ref<boolean>(isChatOpen());
 

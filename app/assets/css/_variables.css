@@ -1,6 +1,7 @@
 :root {
-  /* Colors */
-  --primary-color: #111827;
-  --secondary-color: #818bf7;
-  --background-color: #1e293b;
+    /* Colors */
+    --primary-color: #111827;
+    --secondary-color: var(--indigo-400);
+
+    --indigo-400: #6366f1;
 }

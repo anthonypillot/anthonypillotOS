@@ -3,10 +3,7 @@
     <div class="flex items-start flex-col bg-white/5 px-6 py-6 ring-1 ring-white/10 sm:rounded-3xl">
       <NuxtImg class="h-16" src="svg/task-holdem/poker-hand.svg" :alt="taskHoldemApplication.name" />
       <h1 class="text-4xl text-white">{{ taskHoldemApplication.name }}</h1>
-      <span
-        class="inline-flex items-center rounded-md bg-indigo-400/10 px-2 py-1 text-xs font-medium text-indigo-400 ring-1 ring-inset ring-indigo-400/30"
-        >Beta</span
-      >
+      <UBadge color="primary" variant="subtle" label="Beta" />
     </div>
     <div
       class="absolute inset-x-0 -top-16 flex transform-gpu justify-center overflow-hidden blur-3xl pointer-events-none"

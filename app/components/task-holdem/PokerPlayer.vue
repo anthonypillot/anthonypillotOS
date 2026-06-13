@@ -13,8 +13,8 @@
         <span v-else-if="status === 'revealed' && typeof getSelectedCardValue() === 'number'" class="text-white text-xl">{{
           getSelectedCardValue()
         }}</span>
-        <component :is="getSelectedCardValue()" v-else-if="status === 'revealed' && getSelectedCardValue()" class="text-white w-8" />
-        <component :is="QuestionMarkCircleIcon" v-else class="text-white w-8" />
+        <UIcon v-else-if="status === 'revealed' && getSelectedCardValue()" :name="getSelectedCardValue()" class="text-white w-8" />
+        <UIcon v-else name="i-heroicons-question-mark-circle" class="text-white w-8" />
       </div>
     </div>
   </div>
@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import { QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps<{
   user: User;
@@ -36,10 +35,10 @@ function getRandomEmoji(): string {
   return emojis[Math.floor(Math.random() * emojis.length)] ?? "♠️";
 }
 
-function getSelectedCardValue(): number | Component | null {
+function getSelectedCardValue(): number | string | null {
   if (props.user.selectedCard) {
     if (props.user.selectedCard.type === "icon") {
-      return valueToComponent[props.user.selectedCard.value] ?? null;
+      return valueToIconName[props.user.selectedCard.value] ?? null;
     } else if (props.user.selectedCard.type === "number" && typeof props.user.selectedCard.value === "number") {
       return props.user.selectedCard.value;
     } else {

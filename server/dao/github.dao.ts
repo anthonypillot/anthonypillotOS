@@ -111,7 +111,7 @@ export async function getDeployments(account: string, repository: string, token:
   } catch (error: unknown) {
     const message = `Error while retrieving deployments for [${account}/${repository}] repository. Error: [${error instanceof Error ? error.message : String(error)}] from GitHub API`;
     logger.error(message);
-    throw new Error(message);
+    throw new Error(message, { cause: error });
   }
 }
 

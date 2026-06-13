@@ -1,11 +1,19 @@
-@import "_variables.css";
 @import url(https://fonts.googleapis.com/css?family=Poppins);
+
+@import "./_variables.css";
+
+@import "tailwindcss";
+@import "@nuxt/ui";
 
 html,
 body {
   font-family: "Poppins", sans-serif;
   background-color: var(--primary-color);
   scrollbar-color: var(--secondary-color) var(--primary-color);
+}
+
+button {
+  cursor: pointer;
 }
 
 /**
