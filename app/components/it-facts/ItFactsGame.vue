@@ -125,6 +125,21 @@
                         >
                             {{ currentFact.explanation }}
                         </p>
+                        <div v-if="currentFact.source">
+                            <ULink
+                                :href="currentFact.source"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="inline-flex items-center gap-x-1 text-xs text-indigo-400 hover:text-indigo-300"
+                                data-testid="it-facts-source"
+                            >
+                                Learn more
+                                <UIcon
+                                    name="i-heroicons-arrow-top-right-on-square-20-solid"
+                                    class="h-3 w-3"
+                                />
+                            </ULink>
+                        </div>
                     </div>
                 </div>
                 <UButton
