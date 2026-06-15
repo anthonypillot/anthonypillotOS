@@ -127,7 +127,7 @@ The page at `/tools/it-facts` MUST set its own `title`, `description`, and (when
 #### Scenario: SEO metadata
 
 - **WHEN** a user views `/tools/it-facts`
-- **THEN** the document `<title>` is "IT Facts True/False" (or a clearly equivalent custom title set via `useSeo`)
+- **THEN** the document `<title>` is "IT Facts" (or a clearly equivalent custom title set via `useSeo`)
 - **AND** the meta description is set from `useSeo`
 - **AND** the page does not reuse the home page's default SEO
 

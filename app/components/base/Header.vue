@@ -205,6 +205,12 @@ const popover = {
       to: "/tools/github/history-cleaner",
       icon: "i-heroicons-arrow-path-rounded-square",
     },
+    {
+      name: itFactsApplication.name,
+      description: "True or false about the IT universe",
+      to: "/tools/it-facts",
+      icon: "i-heroicons-check-badge",
+    },
   ],
   callsToAction: [
     {

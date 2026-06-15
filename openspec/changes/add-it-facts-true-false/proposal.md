@@ -32,7 +32,7 @@ anthonypillotOS currently hosts two tools (Task Hold'em and GitHub History Clean
   - `app/components/it-facts/ItFactsGame.vue`
   - `app/components/it-facts/ItFactsResult.vue`
   - `app/pages/tools/it-facts/index.vue`
-  - `public/svg/it-facts/true-false.svg` (illustration, optional)
+  - `public/svg/it-facts/logo.svg` (illustration, optional)
   - `tests/e2e/pages/tools/it-facts/index.test.ts`
 - Modified files:
   - `app/pages/tools/index.vue` (add a third tool card)

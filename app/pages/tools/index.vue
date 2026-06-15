@@ -52,5 +52,11 @@ const tools = [
     to: "/tools/github/history-cleaner",
     icon: "i-heroicons-arrow-path-rounded-square",
   },
+  {
+    name: itFactsApplication.name,
+    description: "Guess whether statements about the IT universe are true or false",
+    to: "/tools/it-facts",
+    icon: "i-heroicons-check-badge",
+  },
 ];
 </script>

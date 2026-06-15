@@ -21,5 +21,6 @@ export const currentUrl = getBaseUrl();
 
 export const application = {
   githubHistoryCleaner: createConfig("/tools/github/history-cleaner"),
+  itFacts: createConfig("/tools/it-facts"),
   taskHoldem: createConfig(taskHoldemApplication.path),
 };

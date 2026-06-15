@@ -87,12 +87,12 @@ Alternatives considered: time-based mode (60s) — rejected, AGENTS recommends k
 
 ### D5. Page structure and SEO
 
-- `useSeo({ title: "IT Facts True/False", description: ..., favicon: { type: "image/svg", href: "/svg/it-facts/true-false.svg" } })`.
+- `useSeo({ title: "IT Facts", description: ..., favicon: { type: "image/svg", href: "/svg/it-facts/logo.svg" } })`.
 - Route rule `"/tools/it-facts": { swr: true }` in `nuxt.config.ts` so the static hero benefits from SWR caching like the other tool pages.
 
 ### D6. Discoverability
 
-- Add a third card to `app/pages/tools/index.vue`'s `tools` array: `{ name: "IT Facts True/False", description: "Guess whether statements about the IT universe are true or false.", to: "/tools/it-facts", icon: "i-heroicons-check-badge" }`.
+- Add a third card to `app/pages/tools/index.vue`'s `tools` array: `{ name: "IT Facts", description: "Guess whether statements about the IT universe are true or false.", to: "/tools/it-facts", icon: "i-heroicons-check-badge" }`.
 - Add a third entry in `popover.links` in `app/components/base/Header.vue` (matching fields).
 - Icon chosen from the existing `i-heroicons-*` set per AGENTS note: `i-heroicons-check-badge` is unused elsewhere.
 
@@ -118,7 +118,7 @@ Alternatives considered: time-based mode (60s) — rejected, AGENTS recommends k
 - **Strict TS `noUncheckedIndexedAccess`.** [Risk] → Indexing `facts[qIndex]` yields `ItFact | undefined`. Mitigation: guard with a non-null check before rendering, or destructure into a local.
 - **SWR + `localStorage` interaction.** [Risk] → SWR caches the page payload; on the client, `localStorage` is read on mount, so SWR does not block reading/writing the best score. Mitigation: keep `useItFactsScore` reads in `onMounted`/computed-time only.
 - **Accessibility of feedback.** [Risk] → Visual-only feedback (color) may not be conveyed to screen readers. Mitigation: use `UBadge` with text labels ("Correct" / "Incorrect") in addition to colors, and a visible score counter.
-- **Hero illustration is optional.** [Risk] → If `public/svg/it-facts/true-false.svg` is not added, the page still works but the hero uses the gradient background only. Mitigation: ship a minimal hand-rolled SVG (check/cross glyph) or a simple `NuxtImg` placeholder. Listed as a task; non-blocking.
+- **Hero illustration is optional.** [Risk] → If `public/svg/it-facts/logo.svg` is not added, the page still works but the hero uses the gradient background only. Mitigation: ship a minimal hand-rolled SVG (check/cross glyph) or a simple `NuxtImg` placeholder. Listed as a task; non-blocking.
 
 ## Open Questions
 
