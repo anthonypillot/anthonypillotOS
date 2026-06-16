@@ -1,3 +1,4 @@
+import { itFactsApplication } from "../../shared/types/it-facts.type";
 import { taskHoldemApplication } from "../../shared/types/task-holdem.type";
 
 const baseUrls = {
@@ -21,6 +22,7 @@ export const currentUrl = getBaseUrl();
 
 export const application = {
   githubHistoryCleaner: createConfig("/tools/github/history-cleaner"),
-  itFacts: createConfig("/tools/it-facts"),
+  itFacts: createConfig(itFactsApplication.path),
+  itFactsLanding: createConfig("/tools/it-facts"),
   taskHoldem: createConfig(taskHoldemApplication.path),
 };

@@ -4,12 +4,14 @@ anthonypillotOS currently hosts two tools (Task Hold'em and GitHub History Clean
 
 ## What Changes
 
-- Add a new public page at `/tools/it-facts` that hosts a single-player True/False mini-game about the IT universe.
+- Add a new public landing page at `/tools/it-facts` that introduces the IT Facts mini-game and exposes a "Launch IT Facts" control that links to the full game.
+- Add a new public application page at `/tools/it-facts/application` that hosts the single-player True/False mini-game about the IT universe.
+- Mirror Task Hold'em's two-page architecture: hero + Launch link on the landing, the full game on the application page.
 - Add a curated, typed dataset of IT facts (statement, correct answer, short explanation) shipped with the codebase.
 - Add a reusable composable for reading and writing the player's best score to `localStorage`.
-- Add a "Tools" entry for the new game in `app/pages/tools/index.vue` and the BaseHeader popover.
-- Register the new page in the SWR `routeRules` of `nuxt.config.ts`.
-- Extend `tests/e2e/configuration.ts` with an `itFacts` application path and add a Playwright E2E test that walks through one full round.
+- Add a "Tools" entry for the new game in `app/pages/tools/index.vue` and the BaseHeader popover (linking to the landing page).
+- Register the landing page in the SWR `routeRules` of `nuxt.config.ts`.
+- Extend `tests/e2e/configuration.ts` with `itFacts` (pointing at the application page) and `itFactsLanding` (pointing at the landing page) entries, and add Playwright E2E tests that cover both pages.
 - No new API routes, no Prisma model, no Socket.IO server, no authentication.
 
 ## Capabilities
@@ -31,14 +33,15 @@ anthonypillotOS currently hosts two tools (Task Hold'em and GitHub History Clean
   - `app/components/it-facts/ItFactsHero.vue`
   - `app/components/it-facts/ItFactsGame.vue`
   - `app/components/it-facts/ItFactsResult.vue`
-  - `app/pages/tools/it-facts/index.vue`
+  - `app/pages/tools/it-facts/index.vue` (landing)
+  - `app/pages/tools/it-facts/application.vue` (full game)
   - `public/svg/it-facts/logo.svg` (illustration, optional)
   - `tests/e2e/pages/tools/it-facts/index.test.ts`
 - Modified files:
-  - `app/pages/tools/index.vue` (add a third tool card)
-  - `app/components/base/Header.vue` (add a third popover link)
+  - `app/pages/tools/index.vue` (add a third tool card, links to the landing)
+  - `app/components/base/Header.vue` (add a third popover link, links to the landing)
   - `nuxt.config.ts` (add `"/tools/it-facts": { swr: true }`)
-  - `tests/e2e/configuration.ts` (add `itFacts` to `application`)
+  - `tests/e2e/configuration.ts` (add `itFacts` pointing at `itFactsApplication.path` and `itFactsLanding` pointing at the landing)
 - Dependencies: none added. All new code uses libraries already in `package.json` (`@nuxt/ui`, Tailwind v4, Nuxt auto-imports).
 - Backend / database: none. No migrations.
 - Documentation: README does not list individual tools; no README change required.

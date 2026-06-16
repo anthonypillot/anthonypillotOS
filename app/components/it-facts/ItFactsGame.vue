@@ -1,6 +1,5 @@
 <template>
     <div
-        id="it-facts-game"
         class="flex flex-col gap-y-8 bg-white/5 px-6 py-10 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:p-12"
     >
         <div class="flex flex-col gap-y-2">
@@ -62,12 +61,19 @@
             <div
                 class="rounded-2xl bg-gray-900/60 px-6 py-8 ring-1 ring-white/10"
             >
-                <p
-                    class="text-xl leading-8 text-white"
+                <BaseDecryptedText
+                    :key="qIndex"
+                    class-name="text-white"
+                    parent-class-name="text-xl min-h-40"
+                    encrypted-class-name="text-gray-500"
+                    :text="currentFact ? currentFact.statement : ''"
+                    :speed="35"
+                    use-original-chars-only
+                    animate-on="view"
+                    sequential
+                    reveal-direction="start"
                     data-testid="it-facts-statement"
-                >
-                    {{ currentFact ? currentFact.statement : "" }}
-                </p>
+                />
             </div>
 
             <div
@@ -78,7 +84,7 @@
                 <UButton
                     label="True"
                     color="success"
-                    variant="solid"
+                    variant="outline"
                     icon="i-heroicons-check"
                     :disabled="status !== 'playing'"
                     data-testid="answer-true"
@@ -87,7 +93,7 @@
                 <UButton
                     label="False"
                     color="error"
-                    variant="solid"
+                    variant="outline"
                     icon="i-heroicons-x-mark"
                     :disabled="status !== 'playing'"
                     data-testid="answer-false"

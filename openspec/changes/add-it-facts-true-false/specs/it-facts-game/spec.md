@@ -1,19 +1,27 @@
 ## ADDED Requirements
 
-### Requirement: Display IT fact for evaluation
+### Requirement: Two-page split (landing + application)
 
-The page at `/tools/it-facts` SHALL display a single IT universe statement at a time, along with two answer choices: **True** and **False**. The page SHALL be reachable from the site's main navigation, the `/tools` index, and the BaseHeader "Tools" popover.
+The game SHALL be exposed through two distinct pages that mirror Task Hold'em's architecture: a landing page at `/tools/it-facts` that introduces the game with a hero and a "Launch IT Facts" control, and a full application page at `/tools/it-facts/application` that hosts the playable game. The launch control on the landing SHALL navigate the user to the application page.
 
-#### Scenario: Visitor opens the game page
+#### Scenario: Landing page introduces the game
 
 - **WHEN** a user navigates to `/tools/it-facts`
-- **THEN** the page renders the hero section with a heading identifying the game and a control to start a round
+- **THEN** the page renders the hero section with a heading identifying the game
+- **AND** the page exposes a control labelled "Launch IT Facts" (or equivalent) that links to `/tools/it-facts/application`
+- **AND** the game itself (statement, True/False controls, progress, etc.) is NOT rendered on the landing page
 - **AND** the game is listed on `/tools` with a link to `/tools/it-facts`
 - **AND** the BaseHeader "Tools" popover contains an entry linking to `/tools/it-facts`
 
+#### Scenario: Application page hosts the game
+
+- **WHEN** a user navigates to `/tools/it-facts/application`
+- **THEN** the page renders the game section with a heading, a progress indicator, and a control to start a round
+- **AND** the page is reachable from the landing page's Launch control
+
 #### Scenario: Visitor starts a round
 
-- **WHEN** the user activates the start control on the game page
+- **WHEN** the user activates the start control on the application page
 - **THEN** the game section displays the first IT fact statement
 - **AND** it displays True and False answer controls
 - **AND** it shows a progress indicator for the current round (for example "Question 1 of 10")
@@ -122,11 +130,11 @@ The game SHALL source its facts from a typed, in-repo dataset. Each fact MUST ha
 
 ### Requirement: SEO and caching
 
-The page at `/tools/it-facts` MUST set its own `title`, `description`, and (when an illustration exists) `favicon` through `useSeo()`. The route MUST be registered in `nuxt.config.ts → routeRules` with `swr: true` so that static rendering is cached, consistent with the other `/tools/*` pages.
+Both the landing page at `/tools/it-facts` and the application page at `/tools/it-facts/application` MUST set their own `title`, `description`, and (when an illustration exists) `favicon` through `useSeo()`. The landing route MUST be registered in `nuxt.config.ts → routeRules` with `swr: true` so that static rendering is cached, consistent with the other `/tools/*` pages.
 
 #### Scenario: SEO metadata
 
-- **WHEN** a user views `/tools/it-facts`
+- **WHEN** a user views `/tools/it-facts` or `/tools/it-facts/application`
 - **THEN** the document `<title>` is "IT Facts" (or a clearly equivalent custom title set via `useSeo`)
 - **AND** the meta description is set from `useSeo`
 - **AND** the page does not reuse the home page's default SEO

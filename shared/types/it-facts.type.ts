@@ -11,5 +11,5 @@ export const itFactsApplication = {
   name: "IT Facts",
   description:
     "IT Facts is a solo mini-game about the IT universe. Read a statement, decide whether it is true or false, and see how well you know the history of software, hardware, and the companies that shaped them.",
-  path: "/tools/it-facts",
+  path: "/tools/it-facts/application",
 };

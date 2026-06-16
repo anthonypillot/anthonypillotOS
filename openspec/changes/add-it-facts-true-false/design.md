@@ -48,14 +48,17 @@ The implementation is small enough to live in ~6 files plus a data module and on
 
 ## Decisions
 
-### D1. One Vue SFC per concern, mounted from one page
+### D1. One Vue SFC per concern, mounted from two pages (Task Hold'em pattern)
 
-- `ItFactsHero.vue` — copy + "Start a round" CTA, identical gradient/clip-path treatment to `HistoryCleanerHero.vue`.
+- `ItFactsHero.vue` — copy + "Launch IT Facts" CTA, identical gradient/clip-path treatment to `HistoryCleanerHero.vue`. The CTA is a `UButton as="a"` linking to `itFactsApplication.path`.
 - `ItFactsGame.vue` — owns the round state machine (`idle | playing | feedback | finished`).
 - `ItFactsResult.vue` — final score card with Restart.
-- Page `app/pages/tools/it-facts/index.vue` mounts `<ItFactsHero />` + `<ItFactsGame />`. The game itself embeds `<ItFactsResult />` when status is `finished`.
+- Landing page `app/pages/tools/it-facts/index.vue` mounts `<ItFactsHero />` only and sets the landing `useSeo()`.
+- Application page `app/pages/tools/it-facts/application.vue` mounts `<ItFactsGame />` and sets the application `useSeo()`. The game itself embeds `<ItFactsResult />` when status is `finished`.
 
-Alternatives considered: a single mega-component — rejected, the existing two-section convention is clearer for SEO and reuse; a Pinia store — rejected, state is small and local to one page.
+This mirrors Task Hold'em's two-page split (`/tools/task-holem` + `/tools/task-holem/application`) so the `/tools` section reads consistently and the hero can benefit from SWR caching without dragging the game state machine into the cached payload.
+
+Alternatives considered: a single page mounting both hero and game (the original plan) — rejected, the Task Hold'em two-page pattern is the established convention; a single mega-component — rejected, the existing two-section convention is clearer for SEO and reuse; a Pinia store — rejected, state is small and local to one page.
 
 ### D2. Facts as a typed data module, not a JSON file
 
@@ -87,8 +90,10 @@ Alternatives considered: time-based mode (60s) — rejected, AGENTS recommends k
 
 ### D5. Page structure and SEO
 
-- `useSeo({ title: "IT Facts", description: ..., favicon: { type: "image/svg", href: "/svg/it-facts/logo.svg" } })`.
-- Route rule `"/tools/it-facts": { swr: true }` in `nuxt.config.ts` so the static hero benefits from SWR caching like the other tool pages.
+- Landing page `app/pages/tools/it-facts/index.vue` calls `useSeo({ title: itFactsApplication.name, description: ..., favicon: { type: "image/svg", href: "/svg/it-facts/logo.svg" } })`.
+- Application page `app/pages/tools/it-facts/application.vue` calls the same `useSeo(...)` (same metadata, both pages advertise the same tool).
+- Route rule `"/tools/it-facts": { swr: true }` in `nuxt.config.ts` so the static landing page benefits from SWR caching like the other tool pages.
+- `itFactsApplication.path` is `/tools/it-facts/application` and is used by the landing's Launch button, the Header popover entry, and the `/tools` index card could all derive from it (header and `/tools` index currently link to the landing, not the application).
 
 ### D6. Discoverability
 
@@ -98,10 +103,11 @@ Alternatives considered: time-based mode (60s) — rejected, AGENTS recommends k
 
 ### D7. Testing
 
-- **E2E (Playwright)**: one file `tests/e2e/pages/tools/it-facts/index.test.ts` with three `test()` cases:
-  1. Hero + Start button visible.
-  2. Clicking Start reveals a fact statement and True/False buttons.
-  3. After answering 10 questions the result screen shows the final score and a "Play again" button that starts a new round.
+- **E2E (Playwright)**: one file `tests/e2e/pages/tools/it-facts/index.test.ts` with three `test()` cases, split across both pages:
+  1. **Landing**: heading "IT Facts" visible, "Launch IT Facts" control visible, game heading NOT visible (verifies the two pages are truly separate).
+  2. **Application**: game heading visible; clicking Start reveals a fact statement and True/False controls; progress shows "Question 1 of 10".
+  3. **Application**: after answering 10 questions the result screen shows the final score and a "Play again" button that starts a new round.
+- `tests/e2e/configuration.ts` exports two entries: `itFacts` pointing at `itFactsApplication.path` (used by tests 2 and 3) and `itFactsLanding` pointing at the landing path (used by test 1).
 - **Unit (Vitest)**: not added — the project scopes Vitest to `server/**` per AGENTS.md; `useItFactsScore` is straightforward localStorage glue and is covered transitively by the E2E test.
 - **Linting**: `npm run lint` must pass.
 

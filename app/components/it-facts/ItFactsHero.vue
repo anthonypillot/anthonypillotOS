@@ -23,13 +23,14 @@
             </ul>
             <div class="mt-10 flex">
               <UButton
-                label="Start a round"
-                variant="link"
+                as="a"
+                :href="itFactsApplication.path"
+                label="Launch IT Facts"
+                variant="solid"
+                color="primary"
                 trailing-icon="i-heroicons-arrow-right"
                 size="sm"
-                class="text-indigo-400"
-                data-testid="start-round-hero"
-                @click="startRound()"
+                data-testid="it-facts-launch"
               />
             </div>
           </div>
@@ -65,26 +66,10 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits<{ start: [] }>();
-
 const benefits = [
   "Ten hand-picked IT universe statements in every round.",
   "Immediate feedback with a short explanation for each answer.",
   "Best score saved locally on your device, no account required.",
   "A new randomized order on every round.",
 ];
-
-function startRound(): void {
-  emit("start");
-  if (typeof window === "undefined") {
-    return;
-  }
-  const element = document.getElementById("it-facts-game");
-  const offset = 150;
-  if (element) {
-    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-    const offsetPosition = elementPosition - offset;
-    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-  }
-}
 </script>

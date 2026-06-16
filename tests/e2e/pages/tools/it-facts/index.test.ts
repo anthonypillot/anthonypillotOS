@@ -1,17 +1,18 @@
 import { test, expect } from "@playwright/test";
 import { application } from "../../../configuration";
 
-test("should display the hero and a Start a round control", async ({ page }) => {
-  await page.goto(application.itFacts.url);
+test("should display the hero and a Launch IT Facts control", async ({ page }) => {
+  await page.goto(application.itFactsLanding.url);
 
   await expect(page.getByRole("heading", { name: "IT Facts" }).first()).toBeVisible();
-  await expect(page.getByTestId("start-round-button")).toBeVisible();
-  await expect(page.getByTestId("it-facts-game-heading")).toBeVisible();
+  await expect(page.getByTestId("it-facts-launch")).toBeVisible();
+  await expect(page.getByTestId("it-facts-game-heading")).toHaveCount(0);
 });
 
 test("should start a round and show the first fact", async ({ page }) => {
   await page.goto(application.itFacts.url);
 
+  await expect(page.getByTestId("it-facts-game-heading")).toBeVisible();
   await page.getByTestId("start-round-button").click();
 
   await expect(page.getByTestId("it-facts-statement")).toBeVisible();
