@@ -24,8 +24,6 @@
     "lint": "nuxt typecheck && eslint .",
     "build": "npm run clean && nuxt build",
     "dev": "nuxt dev",
-    "dev:detached": "node scripts/start-dev-detached.mjs",
-    "dev:stop-detached": "node scripts/stop-dev-detached.mjs",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "start": "npm run build && nuxt preview",

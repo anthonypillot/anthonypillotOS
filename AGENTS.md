@@ -26,9 +26,7 @@ Personal portfolio / "OS" built with **Nuxt 4** + **Vue 3** + **TypeScript** + *
 
 | Command | Description |
 | --- | --- |
-| `npm run dev:detached` | **Start dev server (background)** — use this, not `npm run dev` |
 | `npm run dev` | Start dev server in foreground (blocks the terminal) |
-| `npm run dev:stop-detached` | Stop the detached dev server |
 | `npm run build` | `npm run clean` + `nuxt build` |
 | `npm run generate` | Static generation (`nuxt generate`) |
 | `npm run preview` | Preview production build |
@@ -44,7 +42,7 @@ Personal portfolio / "OS" built with **Nuxt 4** + **Vue 3** + **TypeScript** + *
 
 > **`postinstall`** runs `prisma generate && nuxt prepare` automatically. After cloning, you also need to push the schema (`npx prisma db push`) and copy `.env.example` to `.env` with `POSTGRES_PRISMA_URL` set — see `.env.example` for a local Postgres `docker run`.
 
-> **Detached dev server**: `dev:detached` spawns `npx nuxt dev` as a detached process, writes logs to `logs/nuxt-dev.log`, PID to `logs/nuxt-dev.pid` (also gitignored). Manual cleanup: `kill $(cat logs/nuxt-dev.pid)`. The script is `scripts/start-dev-detached.mjs`.
+> **Dev server**: `npm run dev` blocks the terminal. Agents must **not** boot it themselves. If the application needs to be running (manual UI testing, E2E debugging, etc.), use the `question` tool to ask the user to start the dev server on their side.
 
 ## Environment Variables
 

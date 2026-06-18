@@ -74,13 +74,6 @@ Start the development server on `http://localhost:3000`:
 npm run dev
 ```
 
-Or run it in the background (logs in `logs/nuxt-dev.log`, PID in `logs/nuxt-dev.pid`):
-
-```bash
-npm run dev:detached
-npm run dev:stop-detached
-```
-
 > More context for contributors: see [AGENTS.md](AGENTS.md).
 
 ## 🧪 Tests
