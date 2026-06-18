@@ -25,4 +25,5 @@ export const application = {
   itFacts: createConfig(itFactsApplication.path),
   itFactsLanding: createConfig("/tools/it-facts"),
   taskHoldem: createConfig(taskHoldemApplication.path),
+  taskHoldemLanding: createConfig("/tools/task-holdem"),
 };

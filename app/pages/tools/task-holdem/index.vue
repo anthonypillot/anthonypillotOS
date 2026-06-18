@@ -16,11 +16,16 @@
               <UBadge color="primary" variant="subtle" label="Beta" />
               <h2 class="mt-6 text-lg leading-8 text-gray-300">{{ taskHoldemApplication.description }}</h2>
             </div>
-            <a
-              class="text-white border border-white rounded-md px-4 py-2 text-center hover:bg-white hover:text-black"
-              :href="taskHoldemApplication.path"
-              >Launch {{ taskHoldemApplication.name }}</a
-            >
+            <UButton
+            :to="taskHoldemApplication.path"
+            :label="`Launch ${taskHoldemApplication.name}`"
+            variant="outline"
+            color="neutral"
+            trailing-icon="i-heroicons-arrow-right"
+            size="sm"
+            class="ring-white hover:text-white hover:bg-neutral-900 dark:hover:text-neutral-900 dark:hover:bg-white"
+            data-testid="task-holdem-launch"
+            />
           </div>
         </div>
       </div>

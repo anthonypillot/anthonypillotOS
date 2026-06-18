@@ -10,29 +10,27 @@
             src="/svg/it-facts/logo.svg"
             :alt="itFactsApplication.name"
           >
-          <div class="w-full flex-auto">
+          <div class="flex flex-col gap-y-8">
             <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ itFactsApplication.name }}</h1>
-            <div class="mt-6 text-lg leading-8 text-gray-300">
-              <p class="mt-6 text-lg leading-8 text-gray-300">{{ itFactsApplication.description }}</p>
+            <div class="text-lg leading-8 text-gray-300">
+              <p class="text-lg leading-8 text-gray-300">{{ itFactsApplication.description }}</p>
             </div>
-            <ul role="list" class="mt-10 grid grid-cols-1 gap-x-8 gap-y-3 text-base leading-7 text-white sm:grid-cols-2">
+            <ul role="list" class="grid grid-cols-1 gap-x-8 gap-y-3 text-base leading-7 text-white sm:grid-cols-2">
               <li v-for="benefit in benefits" :key="benefit" class="flex gap-x-3">
                 <UIcon name="i-heroicons-check-circle" class="h-7 w-5 flex-none" />
                 {{ benefit }}
               </li>
             </ul>
-            <div class="mt-10 flex">
-              <UButton
-                as="a"
-                :href="itFactsApplication.path"
-                label="Launch IT Facts"
-                variant="solid"
-                color="primary"
-                trailing-icon="i-heroicons-arrow-right"
-                size="sm"
-                data-testid="it-facts-launch"
-              />
-            </div>
+            <UButton
+            :to="itFactsApplication.path"
+            label="Launch IT Facts"
+            variant="outline"
+            color="neutral"
+            trailing-icon="i-heroicons-arrow-right"
+            size="sm"
+            class="ring-white hover:text-white hover:bg-neutral-900 dark:hover:text-neutral-900 dark:hover:bg-white"
+            data-testid="it-facts-launch"
+            />
           </div>
         </div>
       </div>
