@@ -7,7 +7,7 @@
         >
           <NuxtImg
             class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
-            src="/svg/task-holdem/poker-hand.svg"
+            src="/svg/task-holdem/logo.svg"
             :alt="taskHoldemApplication.name"
           />
           <div class="flex flex-col gap-y-8">

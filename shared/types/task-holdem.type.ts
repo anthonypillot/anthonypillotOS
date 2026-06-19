@@ -7,7 +7,8 @@ export const taskHoldemApplication: Application = {
   description:
     "TaskHold’em is a collaborative poker planning tool designed for agile teams following the Scrum framework. It provides a simple and enjoyable way to conduct sprint planning sessions, allowing team members to estimate and prioritize tasks effectively.",
   path: "/tools/task-holdem/application",
-  favicon: "/svg/task-holdem/poker-hand.svg",
+  favicon: "/svg/task-holdem/logo-light.svg",
+  faviconDark: "/svg/task-holdem/logo.svg",
 };
 
 export const prefixLog = `[WEBSOCKET - ${taskHoldemApplication.name}]`;
