@@ -53,7 +53,7 @@
                 :score="score"
                 :round-length="roundLength"
                 :best="best"
-                @restart="restart"
+                @restart="start"
             />
         </div>
 
@@ -173,9 +173,8 @@
 
 <script setup lang="ts">
 import { itFacts } from "@@/shared/data/it-facts.data";
-import type { ItFact } from "@@/shared/types/it-facts.type";
 
-const ROUND_LENGTH = 10;
+const roundLength = Math.min(10, itFacts.length);
 
 type Status = "idle" | "playing" | "feedback" | "finished";
 
@@ -187,7 +186,6 @@ const score = ref<number>(0);
 const status = ref<Status>("idle");
 const lastAnswerCorrect = ref<boolean>(false);
 
-const roundLength = ROUND_LENGTH;
 const currentFact = computed<ItFact | null>(
     () => facts.value[qIndex.value] ?? null,
 );
@@ -224,10 +222,6 @@ function start(): void {
     status.value = "playing";
 }
 
-function restart(): void {
-    start();
-}
-
 function answer(choice: boolean): void {
     const fact = currentFact.value;
     if (!fact || status.value !== "playing") {
@@ -253,6 +247,4 @@ function next(): void {
     qIndex.value += 1;
     status.value = "playing";
 }
-
-defineExpose({ start, restart });
 </script>

@@ -5,16 +5,14 @@
         <div
           class="mx-auto flex max-w-2xl flex-col gap-16 bg-white/5 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:py-20 xl:gap-x-20 xl:px-20"
         >
-          <img
+          <NuxtImg
             class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
             src="/svg/it-facts/logo.svg"
             :alt="itFactsApplication.name"
-          >
+          />
           <div class="flex flex-col gap-y-8">
             <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ itFactsApplication.name }}</h1>
-            <div class="text-lg leading-8 text-gray-300">
-              <p class="text-lg leading-8 text-gray-300">{{ itFactsApplication.description }}</p>
-            </div>
+            <p class="text-lg leading-8 text-gray-300">{{ itFactsApplication.description }}</p>
             <ul role="list" class="grid grid-cols-1 gap-x-8 gap-y-3 text-base leading-7 text-white sm:grid-cols-2">
               <li v-for="benefit in benefits" :key="benefit" class="flex gap-x-3">
                 <UIcon name="i-heroicons-check-circle" class="h-7 w-5 flex-none" />

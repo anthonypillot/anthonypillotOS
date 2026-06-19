@@ -8,7 +8,7 @@
       <p class="text-sm text-gray-300" data-testid="it-facts-result-best">Best score: {{ best }}</p>
     </div>
     <div>
-      <UButton label="Play again" color="primary" data-testid="it-facts-play-again" @click="restart" />
+      <UButton label="Play again" color="primary" data-testid="it-facts-play-again" @click="emit('restart')" />
     </div>
   </div>
 </template>
@@ -21,8 +21,4 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{ restart: [] }>();
-
-function restart(): void {
-  emit("restart");
-}
 </script>
