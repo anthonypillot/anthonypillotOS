@@ -47,6 +47,7 @@ export default defineNuxtConfig({
   routeRules: {
     "/": { swr: true },
     "/tools/github/history-cleaner": { swr: true },
+    "/tools/it-facts": { swr: true },
     "/tools/task-holdem": { swr: true },
   },
 

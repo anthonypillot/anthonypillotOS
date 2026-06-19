@@ -1,7 +1,7 @@
 <template>
   <section class="mt-28 mx-auto flex flex-col gap-y-8 w-10/12">
     <div class="flex items-start flex-col bg-white/5 px-6 py-6 ring-1 ring-white/10 sm:rounded-3xl">
-      <NuxtImg class="h-16" src="svg/task-holdem/poker-hand.svg" :alt="taskHoldemApplication.name" />
+      <NuxtImg class="h-16" src="svg/task-holdem/logo.svg" :alt="taskHoldemApplication.name" />
       <h1 class="text-4xl text-white">{{ taskHoldemApplication.name }}</h1>
       <UBadge color="primary" variant="subtle" label="Beta" />
     </div>
@@ -78,16 +78,7 @@ import { io, type Socket } from "socket.io-client";
 
 //#region SEO
 
-const { name, description } = taskHoldemApplication;
-
-useSeo({
-  title: name,
-  description,
-  favicon: {
-    type: "image/svg",
-    href: "/svg/task-holdem/poker-hand.svg",
-  },
-});
+useApplicationSeo(taskHoldemApplication);
 
 //#endregion
 

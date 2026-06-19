@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-gray-900 py-24 sm:py-32">
+  <div class="bg-gray-900 py-24 sm:py-32">
     <div class="relative isolate">
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div
@@ -7,24 +7,27 @@
         >
           <NuxtImg
             class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
-            src="/svg/task-holdem/logo.svg"
-            :alt="taskHoldemApplication.name"
+            src="/svg/it-facts/logo.svg"
+            :alt="itFactsApplication.name"
           />
           <div class="flex flex-col gap-y-8">
-            <div class="w-full flex-auto">
-              <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ taskHoldemApplication.name }}</h1>
-              <UBadge color="primary" variant="subtle" label="Beta" />
-              <h2 class="mt-6 text-lg leading-8 text-gray-300">{{ taskHoldemApplication.description }}</h2>
-            </div>
+            <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ itFactsApplication.name }}</h1>
+            <p class="text-lg leading-8 text-gray-300">{{ itFactsApplication.description }}</p>
+            <ul role="list" class="grid grid-cols-1 gap-x-8 gap-y-3 text-base leading-7 text-white sm:grid-cols-2">
+              <li v-for="benefit in benefits" :key="benefit" class="flex gap-x-3">
+                <UIcon name="i-heroicons-check-circle" class="h-7 w-5 flex-none" />
+                {{ benefit }}
+              </li>
+            </ul>
             <UButton
-            :to="taskHoldemApplication.path"
-            :label="`Launch ${taskHoldemApplication.name}`"
+            :to="itFactsApplication.path"
+            label="Launch IT Facts"
             variant="outline"
             color="neutral"
             trailing-icon="i-heroicons-arrow-right"
             size="sm"
             class="ring-white hover:text-white hover:bg-neutral-900 dark:hover:text-neutral-900 dark:hover:bg-white"
-            data-testid="task-holdem-launch"
+            data-testid="it-facts-launch"
             />
           </div>
         </div>
@@ -55,9 +58,14 @@
         />
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">
-useApplicationSeo(taskHoldemApplication);
+const benefits = [
+  "Ten hand-picked IT universe statements in every round.",
+  "Immediate feedback with a short explanation for each answer.",
+  "Best score saved locally on your device, no account required.",
+  "A new randomized order on every round.",
+];
 </script>

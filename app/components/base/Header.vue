@@ -200,6 +200,12 @@ const popover = {
       icon: "i-heroicons-squares-plus",
     },
     {
+      name: itFactsApplication.name,
+      description: "True or false about the IT universe",
+      to: "/tools/it-facts",
+      icon: "i-heroicons-check-badge",
+    },
+    {
       name: "GitHub History Cleaner",
       description: "Delete all your GitHub project history",
       to: "/tools/github/history-cleaner",
