@@ -59,18 +59,5 @@
 </template>
 
 <script setup lang="ts">
-//#region SEO
-
-const { name, description } = taskHoldemApplication;
-
-useSeo({
-  title: name,
-  description,
-  favicon: {
-    type: "image/svg",
-    href: "/svg/task-holdem/poker-hand.svg",
-  },
-});
-
-//#endregion
+useApplicationSeo(taskHoldemApplication);
 </script>

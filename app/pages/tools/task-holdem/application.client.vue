@@ -78,16 +78,7 @@ import { io, type Socket } from "socket.io-client";
 
 //#region SEO
 
-const { name, description } = taskHoldemApplication;
-
-useSeo({
-  title: name,
-  description,
-  favicon: {
-    type: "image/svg",
-    href: "/svg/task-holdem/poker-hand.svg",
-  },
-});
+useApplicationSeo(taskHoldemApplication);
 
 //#endregion
 

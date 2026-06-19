@@ -1,12 +1,13 @@
 import type { Message } from "@/components/task-holdem/Chat.vue";
 import type { User } from "@/components/task-holdem/CreateUser.vue";
 
-export const taskHoldemApplication = {
+export const taskHoldemApplication: Application = {
   id: "task-holdem",
   name: "TaskHold’em",
   description:
     "TaskHold’em is a collaborative poker planning tool designed for agile teams following the Scrum framework. It provides a simple and enjoyable way to conduct sprint planning sessions, allowing team members to estimate and prioritize tasks effectively.",
   path: "/tools/task-holdem/application",
+  favicon: "/svg/task-holdem/poker-hand.svg",
 };
 
 export const prefixLog = `[WEBSOCKET - ${taskHoldemApplication.name}]`;

@@ -3,12 +3,5 @@
 </template>
 
 <script setup lang="ts">
-useSeo({
-  title: itFactsApplication.name,
-  description: itFactsApplication.description,
-  favicon: {
-    type: "image/svg",
-    href: "/svg/it-facts/logo.svg",
-  },
-});
+useApplicationSeo(itFactsApplication);
 </script>
