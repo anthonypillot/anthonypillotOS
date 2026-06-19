@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.4.0...v1.5.0) (2026-06-19)
+
+
+### Features
+
+* add IT Facts true/false mini-game ([#91](https://github.com/anthonypillot/anthonypillotOS/issues/91)) ([cc6c5ef](https://github.com/anthonypillot/anthonypillotOS/commit/cc6c5ef69cf0aa9ba7b8cb1ed5f59a3ab97b23f3))
+
 # [1.4.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.3.21...v1.4.0) (2026-06-13)
 
 
