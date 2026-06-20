@@ -26,7 +26,7 @@
             label="Tools"
             variant="ghost"
             trailing-icon="i-heroicons-chevron-down"
-            class="text-sm font-semibold text-white rounded-md px-2 py-1 hover:bg-white hover:text-black"
+            class="text-sm font-semibold text-white rounded-md px-2 py-1 hover:bg-white hover:text-black active:bg-white active:text-black"
           />
 
           <template #content="{ close }">
@@ -106,7 +106,7 @@
                   label="Tools"
                   variant="ghost"
                   trailing-icon="i-heroicons-chevron-down"
-                  class="-mx-3 text-base font-semibold text-default hover:bg-muted"
+                  class="-mx-3 text-base font-semibold text-default hover:bg-muted active:bg-muted"
                 />
 
                 <template #content="{ close }">
