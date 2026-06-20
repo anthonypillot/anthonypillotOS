@@ -23,7 +23,7 @@
             color="neutral"
             trailing-icon="i-heroicons-arrow-right"
             size="sm"
-            class="ring-white hover:text-white hover:bg-neutral-900 dark:hover:text-neutral-900 dark:hover:bg-white"
+            class="ring-white hover:text-white hover:bg-neutral-900 active:text-white active:bg-neutral-900 dark:hover:text-neutral-900 dark:hover:bg-white dark:active:text-neutral-900 dark:active:bg-white"
             data-testid="task-holdem-launch"
             />
           </div>
