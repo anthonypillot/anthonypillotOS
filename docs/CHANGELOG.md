@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.0...v1.5.1) (2026-06-20)
+
+
+### Bug Fixes
+
+* **ui:** keep button text readable during press-and-hold ([c094e39](https://github.com/anthonypillot/anthonypillotOS/commit/c094e392b7c94edfab04381a91c55dea7f18fa9a)), closes [#90](https://github.com/anthonypillot/anthonypillotOS/issues/90)
+
 # [1.5.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.4.0...v1.5.0) (2026-06-19)
 
 
