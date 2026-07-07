@@ -1,3 +1,11 @@
+## [1.5.2](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.1...v1.5.2) (2026-07-07)
+
+
+### Performance Improvements
+
+* **deps:** update dependencies ([edfc81e](https://github.com/anthonypillot/anthonypillotOS/commit/edfc81e07cb733f31d88cdcb0c20e08e11a8a602))
+* replace some icons ([04f1211](https://github.com/anthonypillot/anthonypillotOS/commit/04f12118b04fe7eb516d39b4efea9a03d85a1454))
+
 ## [1.5.1](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.0...v1.5.1) (2026-06-20)
 
 
