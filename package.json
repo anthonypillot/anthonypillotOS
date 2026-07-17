@@ -74,5 +74,18 @@
     "semantic-release": "^25.0.5",
     "vitest": "^4.1.6",
     "vue-tsc": "^3.3.5"
+  },
+  "allowScripts": {
+    "@parcel/watcher": true,
+    "@prisma/client": true,
+    "@prisma/engines": true,
+    "esbuild": true,
+    "fsevents": true,
+    "msw": true,
+    "prisma": true,
+    "protobufjs": true,
+    "sharp": true,
+    "unrs-resolver": true,
+    "vue-demi": true
   }
 }
