@@ -1,5 +1,5 @@
 <template>
-  <aside id="icon-physical-block"/>
+  <aside id="icon-physical-block" />
 </template>
 
 <script setup>
@@ -35,8 +35,8 @@ onMounted(() => {
     element: document.getElementById("icon-physical-block"),
     engine: engine,
     options: {
-      width: 600,
-      height: 600,
+      width: 620,
+      height: 700,
       background: "#1e293b",
       wireframes: false,
       hasBounds: false,
@@ -56,7 +56,7 @@ onMounted(() => {
             texture: icon.path,
           },
         },
-      })
+      }),
     );
   }
 
@@ -65,10 +65,10 @@ onMounted(() => {
     ...bodies,
     // walls
     // x, y, width, height
-    Matter.Bodies.rectangle(300, 0, 600, 1, { isStatic: true }), // top
-    Matter.Bodies.rectangle(600, 300, 1, 600, { isStatic: true }), // right
-    Matter.Bodies.rectangle(0, 300, 1, 600, { isStatic: true }), // left
-    Matter.Bodies.rectangle(300, 600, 600, 1, { isStatic: true }), // bottom
+    Matter.Bodies.rectangle(310, 0, 620, 1, { isStatic: true }), // top
+    Matter.Bodies.rectangle(620, 350, 1, 700, { isStatic: true }), // right
+    Matter.Bodies.rectangle(0, 350, 1, 700, { isStatic: true }), // left
+    Matter.Bodies.rectangle(310, 700, 620, 1, { isStatic: true }), // bottom
   ]);
 
   // add mouse control
