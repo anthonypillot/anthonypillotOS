@@ -44,6 +44,12 @@ export default defineNuxtConfig({
     },
   },
 
+  vite: {
+    optimizeDeps: {
+      include: ["@vue/devtools-core", "@vue/devtools-kit", "gsap", "matter-js", "vue-matomo"],
+    },
+  },
+
   routeRules: {
     "/": { swr: true },
     "/tools/github/history-cleaner": { swr: true },
