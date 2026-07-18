@@ -1,3 +1,19 @@
+## [1.5.3](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.2...v1.5.3) (2026-07-18)
+
+
+### Bug Fixes
+
+* pre-bundle Nuxt runtime dependencies ([aa1e661](https://github.com/anthonypillot/anthonypillotOS/commit/aa1e66108b2fe0646068d92d6d81a61204421bf5))
+
+
+### Performance Improvements
+
+* add GPT icon ([eca446b](https://github.com/anthonypillot/anthonypillotOS/commit/eca446bd49a7c40c30d436b10e99bed906f7d85d))
+* add navigation links for taskHoldem and itFacts applications ([5243b45](https://github.com/anthonypillot/anthonypillotOS/commit/5243b451d471444419625083976e32a566988e9d))
+* adjust dimensions IconPhysicalBlock component ([227ddd8](https://github.com/anthonypillot/anthonypillotOS/commit/227ddd834b6476403f1cb65746bbbbdfa48e79d7))
+* **deps:** update dependencies ([83d6bfb](https://github.com/anthonypillot/anthonypillotOS/commit/83d6bfbb9b24c757999a0b1bd778982affd6f5bc))
+* remove artificial intelligence icon ([05759b2](https://github.com/anthonypillot/anthonypillotOS/commit/05759b25c60ebd5d1edb62f9704bb41099d30ce0))
+
 ## [1.5.2](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.1...v1.5.2) (2026-07-07)
 
 
