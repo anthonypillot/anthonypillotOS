@@ -84,6 +84,8 @@ const logo = config.public.logo.os.raw;
 
 const navigation = {
   application: [
+    { name: taskHoldemApplication.name, href: "/tools/task-holdem", rel: "", target: "", internal: true },
+    { name: itFactsApplication.name, href: "/tools/it-facts", rel: "", target: "", internal: true },
     { name: "GitHub History Cleaner", href: "/tools/github/history-cleaner", rel: "", target: "", internal: true },
     { name: "Status", href: config.public.link.status, rel: "", target: "_blank" },
   ],
