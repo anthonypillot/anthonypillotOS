@@ -42,7 +42,7 @@ jobs:
       registry_url: ghcr.io
       registry_username: ${{ github.repository_owner }}
       environment: pre-production
-      namespace_name: os
+      namespace_name: os-prep
       deployment_name: os-prep
       image_name: os
       image_tag: ${{ needs.extract.outputs.result }}
