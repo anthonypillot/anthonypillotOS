@@ -1,3 +1,10 @@
+## [1.5.4](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.3...v1.5.4) (2026-07-27)
+
+
+### Performance Improvements
+
+* add Plausible analytics ([3e0652b](https://github.com/anthonypillot/anthonypillotOS/commit/3e0652b6eaaba1588d5879153dedfb26b09d96af))
+
 ## [1.5.3](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.2...v1.5.3) (2026-07-18)
 
 
