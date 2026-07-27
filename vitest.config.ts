@@ -7,6 +7,12 @@ import { defineVitestConfig } from "@nuxt/test-utils/config";
  * @see https://nuxt.com/docs/getting-started/testing
  */
 export default defineVitestConfig({
+  resolve: {
+    alias: {
+      // The tracker package exposes no main or exports entry for Vitest to resolve.
+      "@plausible-analytics/tracker": "@plausible-analytics/tracker/plausible.js",
+    },
+  },
   test: {
     environment: "nuxt",
     include: ["server/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
