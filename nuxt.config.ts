@@ -44,6 +44,12 @@ export default defineNuxtConfig({
     },
   },
 
+  plausible: {
+    apiHost: "https://plausible.monitoring.anthonypillot.com",
+    ignoredHostnames: ["localhost", "127.0.0.1"],
+    proxy: true,
+  },
+
   vite: {
     optimizeDeps: {
       include: ["@vue/devtools-core", "@vue/devtools-kit", "gsap", "matter-js", "vue-matomo"],
@@ -57,7 +63,7 @@ export default defineNuxtConfig({
     "/tools/task-holdem": { swr: true },
   },
 
-  modules: ["@nuxt/ui", "@nuxt/eslint", "@nuxt/image", "@nuxt/test-utils/module"],
+  modules: ["@nuxt/ui", "@nuxt/eslint", "@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/plausible"],
 
   devtools: { enabled: true },
 });

@@ -40,6 +40,7 @@
     "@nuxt/image": "^2.0.0",
     "@nuxt/test-utils": "^4.0.3",
     "@nuxt/ui": "^4.10.0",
+    "@nuxtjs/plausible": "^3.0.2",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/auto-instrumentations-node": "^0.76.0",
     "@prisma/client": "^6.19.3",
