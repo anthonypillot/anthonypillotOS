@@ -1,3 +1,10 @@
+## [1.5.5](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.4...v1.5.5) (2026-08-21)
+
+
+### Performance Improvements
+
+* redesign career history ([#97](https://github.com/anthonypillot/anthonypillotOS/issues/97)) ([0eceb15](https://github.com/anthonypillot/anthonypillotOS/commit/0eceb1515bfcafe5c3f5ada0282c3afae62b4e9e))
+
 ## [1.5.4](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.3...v1.5.4) (2026-07-27)
 
 
