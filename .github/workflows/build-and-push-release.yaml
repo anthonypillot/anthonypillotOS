@@ -35,6 +35,8 @@ jobs:
 
   deploy:
     name: 🚀 Deploy
+    # Temporarily pause Kubernetes deployments while retaining the workflow configuration.
+    if: ${{ false }}
     needs: [extract, push]
     strategy:
       matrix:
