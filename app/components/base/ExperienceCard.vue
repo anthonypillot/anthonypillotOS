@@ -1,30 +1,66 @@
 <template>
-  <section class="mx-auto sm:max-w-screen-xl text-white bg-white/5 p-8 md:rounded-lg">
-    <div class="flex flex-col gap-4 experience-card">
-      <div class="flex flex-col justify-center h-full bg-gray-50 rounded-2xl">
-        <NuxtImg :src="experience.company.logo.url" :alt="experience.company.logo.alt" class="p-4 object-contain" />
-      </div>
-      <div class="flex flex-col gap-4">
-        <p class="text-xs text-gray-300">{{ experience.period.from }} > {{ experience.period.to }}</p>
-        <div class="flex items-center gap-4">
-          <h2 class="text-2xl">{{ experience.company.name }}</h2>
-          <p class="text-xs text-gray-600 bg-gray-100 py-1 px-2 rounded-lg">{{ experience.role }}</p>
-        </div>
-        <div class="flex flex-col gap-8">
-          <div class="flex flex-col gap-2 text-sm text-justify">
-            <div class="bg-gray-800/40 p-4 rounded-lg border-l-4 border-indigo-400" v-html="experience.description" />
+  <article class="text-white">
+    <BaseBorderGlow animated>
+      <div class="p-4 sm:p-6 lg:p-8">
+        <p class="mb-3 flex flex-wrap items-center gap-x-2 text-[0.625rem] font-medium uppercase tracking-wider text-indigo-300 sm:hidden">
+          <span>{{ experience.period.from }}</span>
+          <span aria-hidden="true">/</span>
+          <span :class="experience.period.to === 'Now' ? 'text-emerald-300' : 'text-gray-400'">{{ experience.period.to }}</span>
+        </p>
+
+        <div class="flex items-center gap-3 sm:gap-5">
+          <div class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gray-50 p-2 shadow-inner sm:size-16 sm:p-3">
+            <NuxtImg :src="experience.company.logo.url" :alt="experience.company.logo.alt" class="size-full object-contain" />
           </div>
-          <UButton
-            label="Technologies and tools used"
-            color="neutral"
-            variant="outline"
-            trailing-icon="i-lucide-chevron-right"
-            @click="openDrawer"
-          />
+
+          <div class="min-w-0 flex-1">
+            <h2 class="truncate text-lg font-medium tracking-wide sm:text-2xl">{{ experience.company.name }}</h2>
+            <p class="mt-0.5 text-xs font-medium text-indigo-300 sm:mt-1 sm:text-base">{{ experience.role }}</p>
+          </div>
+
+          <a
+            :href="experience.company.website"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/15 text-indigo-300 transition-colors hover:border-indigo-300/60 hover:bg-indigo-400/10 hover:text-indigo-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 sm:size-12"
+            :aria-label="`Visit ${experience.company.name} website`"
+          >
+            <UIcon name="i-heroicons-arrow-up-right" class="size-5 sm:size-6" aria-hidden="true" />
+          </a>
         </div>
+
+        <div class="my-4 h-px bg-white/10 sm:my-6" />
+
+        <p class="text-sm leading-6 text-gray-200 sm:text-base sm:leading-7">{{ experience.description }}</p>
+
+        <ul class="mt-4 divide-y divide-white/10 sm:mt-6">
+          <li
+            v-for="highlight in experience.highlights"
+            :key="highlight.label"
+            class="flex items-center gap-3 py-3 first:pt-0 last:pb-0 sm:gap-4 sm:py-4"
+          >
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-800/70 sm:size-11">
+              <UIcon :name="highlight.icon" class="size-5 text-indigo-300 sm:size-6" aria-hidden="true" />
+            </span>
+            <span class="text-sm leading-5 text-gray-100 sm:text-base">{{ highlight.label }}</span>
+          </li>
+        </ul>
       </div>
-    </div>
-  </section>
+
+      <button
+        type="button"
+        class="group flex w-full items-center gap-3 border-t border-white/10 bg-slate-800/45 px-4 py-4 text-left text-sm font-medium text-emerald-300 transition-colors hover:bg-slate-800/70 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-indigo-400 sm:px-6 sm:py-5 sm:text-base lg:px-8"
+        :aria-label="`View ${technologyLabel} used at ${experience.company.name}`"
+        @click="openDrawer"
+      >
+        <span class="flex size-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-slate-900/50">
+          <UIcon name="i-heroicons-circle-stack" class="size-5" aria-hidden="true" />
+        </span>
+        <span>{{ technologyLabel }}</span>
+        <UIcon name="i-heroicons-arrow-right" class="ml-auto size-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+      </button>
+    </BaseBorderGlow>
+  </article>
 
   <UDrawer
     v-model:open="isDrawerOpen"
@@ -40,7 +76,14 @@
       <div class="flex flex-col gap-4 m-8 overflow-y-auto">
         <div class="flex justify-between">
           <h2 class="text-xl text-white">{{ experience.company.name }}</h2>
-          <UButton icon="i-heroicons-x-circle" variant="ghost" size="sm" class="text-white" @click="isDrawerOpen = false" />
+          <UButton
+            icon="i-heroicons-x-circle"
+            variant="ghost"
+            size="sm"
+            class="text-white"
+            :aria-label="`Close ${experience.company.name} technologies`"
+            @click="isDrawerOpen = false"
+          />
         </div>
         <div class="flex flex-col gap-6 text-white">
           <p class="text-sm text-gray-300 font-medium">Technologies and tools used:</p>
@@ -147,7 +190,7 @@
             </div>
           </div>
 
-          <div v-if="experience.technology" class="mt-2 bg-gray-800/60 p-3 rounded-lg">
+          <div v-if="experience.technology.architecture" class="mt-2 bg-gray-800/60 p-3 rounded-lg">
             <h3 class="text-sm font-semibold text-emerald-400 mb-2">Architecture</h3>
             <p class="flex flex-wrap gap-2">
               <span
@@ -167,6 +210,11 @@
 <script setup lang="ts">
 const isDrawerOpen = ref<boolean>(false);
 
+type ExperienceHighlight = {
+  label: string;
+  icon: `i-heroicons-${string}`;
+};
+
 function openDrawer() {
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
@@ -178,6 +226,7 @@ function openDrawer() {
 export type Experience = {
   company: {
     name: string;
+    website: string;
     logo: {
       url: string;
       alt: string;
@@ -189,6 +238,7 @@ export type Experience = {
   };
   role: string;
   description: string;
+  highlights: readonly [ExperienceHighlight, ExperienceHighlight, ExperienceHighlight];
   technology: {
     language?: string[];
     backend?: string[];
@@ -205,31 +255,12 @@ export type Experience = {
   };
 };
 
-defineProps<{
+const props = defineProps<{
   experience: Experience;
 }>();
+
+const technologyCount = computed(() =>
+  Object.values(props.experience.technology).reduce((count, technologies) => count + technologies.length, 0),
+);
+const technologyLabel = computed(() => `${technologyCount.value} technologies and tools`);
 </script>
-
-<style scoped>
-.experience-card {
-  @media screen and (min-width: 640px) {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 2rem;
-  }
-}
-
-.slide-fade-enter-active {
-  transition: all 0.3s ease-out;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateY(100px);
-  opacity: 0;
-}
-</style>

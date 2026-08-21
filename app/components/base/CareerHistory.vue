@@ -1,6 +1,34 @@
 <template>
-  <section class="flex flex-col gap-8">
-    <BaseExperienceCard v-for="experience in experiences" :key="experience.company.name" :experience="experience" />
+  <section class="mx-auto w-full max-w-7xl overflow-x-clip px-3 sm:px-6 lg:px-8" aria-label="Career history">
+    <header class="mb-10 sm:mb-12">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">Career history</h2>
+      <p class="mt-2 text-base leading-7 text-gray-200 sm:text-lg sm:leading-8">
+        The roles, missions, and projects that shaped my career.
+      </p>
+    </header>
+
+    <ol class="career-timeline relative flex flex-col gap-10 sm:gap-14">
+      <li
+        v-for="experience in experiences"
+        :key="experience.company.name"
+        class="grid grid-cols-1 items-start sm:grid-cols-[8rem_2.5rem_minmax(0,1fr)] lg:grid-cols-[10rem_3.5rem_minmax(0,1fr)]"
+      >
+        <p class="hidden pt-12 text-right text-sm font-medium uppercase tracking-wider text-indigo-300 sm:block">
+          <span class="block">{{ experience.period.from }}</span>
+          <span class="mt-1 block" :class="experience.period.to === 'Now' ? 'text-emerald-300' : 'text-gray-400'">
+            {{ experience.period.to }}
+          </span>
+        </p>
+
+        <div class="relative z-10 hidden justify-center pt-13 sm:flex">
+          <span class="timeline-node" aria-hidden="true" />
+        </div>
+
+        <div class="min-w-0 sm:ml-4">
+          <BaseExperienceCard :experience="experience" />
+        </div>
+      </li>
+    </ol>
   </section>
 </template>
 
@@ -11,9 +39,44 @@ const config = useRuntimeConfig();
 
 const logo = config.public.logo.os.raw;
 
+const claim: Experience = {
+  company: {
+    name: "Claim",
+    website: "https://claim.anthonypillot.com",
+    logo: {
+      url: "/svg/logos/claim.svg",
+      alt: "Claim logo",
+    },
+  },
+  period: {
+    from: "June 2026",
+    to: "Now",
+  },
+  role: "Full Stack Developer - Freelance",
+  description:
+    "An open-source platform that aggregates currently free game giveaways from Epic Games, Prime Gaming, GOG, and Steam through a public API and web application.",
+  highlights: [
+    { label: "Multi-store giveaway aggregation", icon: "i-heroicons-gift" },
+    { label: "Resilient read-through cache and public API", icon: "i-heroicons-circle-stack" },
+    { label: "Web application and Kubernetes delivery", icon: "i-heroicons-cloud-arrow-up" },
+  ],
+  technology: {
+    language: ["TypeScript", "Bun"],
+    backend: ["Elysia"],
+    frontend: ["SvelteKit", "Svelte 5", "Tailwind CSS", "shadcn-svelte"],
+    testing: ["Bun test", "Vitest", "Playwright"],
+    data: ["PostgreSQL 18", "Drizzle ORM", "PGlite"],
+    devops: ["Docker", "Kubernetes"],
+    cicd: ["GitHub Actions", "Semantic Release"],
+    analytics: ["Plausible"],
+    architecture: ["Feature-based", "Monorepo", "Read-through cache"],
+  },
+};
+
 const os: Experience = {
   company: {
     name: "anthonypillotOS",
+    website: "https://anthonypillot.com",
     logo: {
       url: logo,
       alt: "anthonypillotOS logo",
@@ -25,7 +88,12 @@ const os: Experience = {
   },
   role: "Full Stack Developer - Freelance",
   description:
-    "<p>Development of a personal project, anthonypillotOS, a website dedicated to my professional career and personal projects.</p><p>Design and development of the website, including the creation of a documentation section and some tools.</p><p>Implementation of a CI/CD pipeline for automatic deployment on my Kubernetes cluster.</p><p>Integration of various tools for monitoring and analytics.</p>",
+    "A personal website presenting my professional career and projects, with documentation and IT tools, automated Kubernetes deployment, monitoring, and analytics.",
+  highlights: [
+    { label: "Product and tool development", icon: "i-heroicons-code-bracket" },
+    { label: "Kubernetes CI/CD deployment", icon: "i-heroicons-cloud-arrow-up" },
+    { label: "Monitoring and analytics integration", icon: "i-heroicons-chart-bar" },
+  ],
   technology: {
     language: ["JavaScript", "TypeScript", "Node.js 18", "Node.js 20", "Node.js 22"],
     backend: ["Fastify", "Express.js", "NestJS"],
@@ -45,6 +113,7 @@ const os: Experience = {
 const adeo: Experience = {
   company: {
     name: "ADEO",
+    website: "https://www.adeo.com",
     logo: {
       url: "svg/logos/adeo.svg",
       alt: "ADEO logo",
@@ -56,7 +125,12 @@ const adeo: Experience = {
   },
   role: "IT Consultant - Freelance",
   description:
-    "<p>Design of the projects section for the creation and renovation of living spaces in a residence, using estimators and quantity calculation tools, development of qualification and store appointment scheduling pages and journeys on the Leroy Merlin website (France, Spain, Portugal, Italy, and Poland).</p><p>Functional animation, implementation, and support:</p>Development of an integrated solution enabling various Business Units to independently create scheduling and estimation journeys.<br/>Participation in the onboarding of various Business Units for the acquisition of new applications.<br/>Lead developer in the scope of implementation.<br/>Support in bringing various components up to the company's standards.<br/>Reduction of technical debt and construction of new components.<br/>Monitoring of quality, performance, deliveries, and production releases.<br/>Conduct workshops on architecture and design between teams.<br/>Facilitate the implementation and introduce the concept of innersourcing.<br/>",
+    "Designed and developed Leroy Merlin project, qualification, estimation, and store-appointment journeys for France, Spain, Portugal, Italy, and Poland.",
+  highlights: [
+    { label: "Scheduling and estimation journeys", icon: "i-heroicons-code-bracket" },
+    { label: "Business Unit onboarding and implementation leadership", icon: "i-heroicons-user-group" },
+    { label: "Quality, architecture, and innersourcing", icon: "i-heroicons-wrench-screwdriver" },
+  ],
   technology: {
     language: [
       "Node.js 16",
@@ -72,7 +146,16 @@ const adeo: Experience = {
     ],
     backend: ["NestJS", "Spring Webflux", "Fastify"],
     frontend: ["Nuxt", "Vue.js", "Freemarker"],
-    testing: ["Unit tests", "Integration testing", "End-to-end testing", "Vitest", "JUnit", "Cerberus", "Cypress", "Playwright"],
+    testing: [
+      "Unit tests",
+      "Integration testing",
+      "End-to-end testing",
+      "Vitest",
+      "JUnit",
+      "Cerberus",
+      "Cypress",
+      "Playwright",
+    ],
     data: ["PostgreSQL", "BigQuery"],
     devops: ["Terraform", "Kubernetes", "Docker"],
     cicd: ["GitHub Actions", "GitLab CI", "CircleCI"],
@@ -87,6 +170,7 @@ const adeo: Experience = {
 const auchan: Experience = {
   company: {
     name: "Auchan",
+    website: "https://www.auchan-retail.com",
     logo: {
       url: "svg/logos/auchan.svg",
       alt: "Auchan logo",
@@ -98,7 +182,12 @@ const auchan: Experience = {
   },
   role: "IT Consultant - Mission",
   description:
-    "<p>Dismantling of Auchan Retail France's Web Accounts Repository.</p><p>Replacing a legacy monolithic component by optimizing performance, adhering to GDPR standards, and enhancing the security level for accessing customer data.</p><p>Functional animation and support:</p>Facilitating workshops on technical and functional aspects.<br/>Communication, facilitation, and inter-team synchronization.<br/>Support in development and testing.<br/>Technical reference within the scope of implementation.<br/>Participation in workshops on functional and technical architecture for cross-functional projects.<br/><p>Implementation:</p>Development of a REST API in hexagonal architecture, reactive and asynchronous environment.<br/>Test-driven development (TDD), unit, integration and mutation testing.<br/>Ensure API security, implement the OIDC OAuth 2.0 authorization protocol, and configure access using Gravitee's API Manager/Gateway.<br/>Provision and development of comprehensive monitoring (Prometheus, Grafana, ELK Suite).<br/>Drafting technical and functional specifications.<br/>Challenging various project teams.<br/>Scale the database and implement other performance enhancements in the API.<br/>",
+    "Helped dismantle Auchan Retail France's Web Accounts Repository by replacing a legacy monolithic component with a more performant, GDPR-aligned, and secure customer-data solution.",
+  highlights: [
+    { label: "Cross-team functional and technical coordination", icon: "i-heroicons-user-group" },
+    { label: "Hexagonal REST API implementation and testing", icon: "i-heroicons-command-line" },
+    { label: "Security, performance, and observability", icon: "i-heroicons-shield-check" },
+  ],
   technology: {
     language: ["Java 11", "Java 17"],
     backend: ["Spring Webflux"],
@@ -117,6 +206,7 @@ const auchan: Experience = {
 const zenika: Experience = {
   company: {
     name: "Zenika",
+    website: "https://www.zenika.com",
     logo: {
       url: "svg/logos/zenika.svg",
       alt: "Zenika logo",
@@ -128,7 +218,12 @@ const zenika: Experience = {
   },
   role: "IT Consultant - CDI",
   description:
-    "<p>IT consulting firm specializing in helping companies with their digital transformation.</p><p>At Zenika, a commitment to excellence is matched by a passion for innovation. They leverage cutting-edge technologies and methodologies to deliver impactful results that drive business growth and efficiency. From developing custom applications to providing strategic consulting services, Zenika partners with clients across diverse industries to transform challenges into opportunities.</p><p>During my three-year tenure at Zenika, I experienced a profoundly enriching journey that left an indelible mark on both my professional and personal growth. Surrounded by some of the best minds in the industry, I was guided with exceptional well-being and support every step of the way. Each day brought new lessons and opportunities for learning, making every moment at Zenika both inspiring and transformative.</p>",
+    "A three-year tenure at a digital-transformation consultancy, shaped by an innovative, supportive environment and continuous professional and personal learning.",
+  highlights: [
+    { label: "Digital transformation consulting", icon: "i-heroicons-briefcase" },
+    { label: "Innovation and modern technologies", icon: "i-heroicons-light-bulb" },
+    { label: "Learning and professional growth", icon: "i-heroicons-academic-cap" },
+  ],
   technology: {
     language: ["JavaScript", "TypeScript", "Java 11", "Java 17"],
     backend: ["Spring Boot", "Spring Webflux", "NestJS", "Express.js"],
@@ -149,5 +244,53 @@ const zenika: Experience = {
   },
 };
 
-const experiences = ref<Experience[]>([os, adeo, auchan, zenika]);
+const experiences = ref<Experience[]>([claim, adeo, os, auchan, zenika]);
 </script>
+
+<style scoped>
+.career-timeline::before {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(0.75rem - 1px);
+  width: 2px;
+  content: "";
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(99 102 241 / 45%) 4rem,
+    rgb(71 85 105 / 55%) 95%,
+    transparent
+  );
+}
+
+.timeline-node {
+  width: 1rem;
+  height: 1rem;
+  border: 3px solid rgb(165 180 252 / 65%);
+  border-radius: 9999px;
+  background: white;
+  box-shadow:
+    0 0 0 0.5rem rgb(99 102 241 / 22%),
+    0 0 1.5rem 0.5rem rgb(99 102 241 / 45%);
+}
+
+@media (min-width: 640px) {
+  .career-timeline::before {
+    display: block;
+    left: calc(8rem + 1.25rem - 1px);
+  }
+
+  .timeline-node {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .career-timeline::before {
+    left: calc(10rem + 1.75rem - 1px);
+  }
+}
+</style>
