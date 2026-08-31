@@ -1,3 +1,10 @@
+## [1.5.6](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.5...v1.5.6) (2026-08-31)
+
+
+### Performance Improvements
+
+* remove Matomo analytics ([e74e280](https://github.com/anthonypillot/anthonypillotOS/commit/e74e280dce02554cf08f346c1253993a3442f51c))
+
 ## [1.5.5](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.4...v1.5.5) (2026-08-21)
 
 
