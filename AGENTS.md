@@ -74,7 +74,3 @@ Nuxt/Nitro auto-imports mean **`logger`, `prefixLog`, `convertConsoleLogToCustom
 - **Conventional Commits** (enforced by semantic-release, which drives versioning and `docs/CHANGELOG.md`). Do not hand-edit the version in `package.json` or the changelog.
 - TypeScript is strict, including `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns` — lint will fail on unused vars and unchecked array indexing.
 - UI is built on `@nuxt/ui` v4 + Tailwind v4; icons via `@iconify-json/heroicons`.
-
-## Spec-driven changes (OpenSpec)
-
-Non-trivial features are planned under `openspec/changes/<change-name>/` with `proposal.md` (what & why), `design.md` (how), `tasks.md` (steps), and `specs/`. The `.opencode/commands/opsx-*.md` files define the propose → apply → archive workflow via the `openspec` CLI. When adding a substantial feature, follow the existing changes as templates rather than inventing an ad-hoc structure.
