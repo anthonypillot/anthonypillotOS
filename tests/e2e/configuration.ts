@@ -2,7 +2,7 @@ import { itFactsApplication } from "../../shared/types/it-facts.type";
 import { taskHoldemApplication } from "../../shared/types/task-holdem.type";
 
 const baseUrls = {
-  local: "http://localhost:3000",
+  local: "http://127.0.0.1:3000",
   prep: "https://prep.anthonypillot.com",
   prod: "https://anthonypillot.com",
 };
