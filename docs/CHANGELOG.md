@@ -1,3 +1,10 @@
+## [1.5.7](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.6...v1.5.7) (2026-09-14)
+
+
+### Performance Improvements
+
+* redesign header with floating glass navigation ([#99](https://github.com/anthonypillot/anthonypillotOS/issues/99)) ([11f80cd](https://github.com/anthonypillot/anthonypillotOS/commit/11f80cd02c99f887297a0f8df8c39ccff8bc106f))
+
 ## [1.5.6](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.5...v1.5.6) (2026-08-31)
 
 
