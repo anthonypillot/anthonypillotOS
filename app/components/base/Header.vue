@@ -1,223 +1,304 @@
 <template>
-  <header class="absolute inset-x-0 top-0 z-50 lg:fixed lg:backdrop-blur-md">
-    <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
-      <div class="flex lg:flex-1">
-        <NuxtLink to="/" class="-m-1.5 p-1.5">
-          <span class="sr-only">{{ config.public.title }}</span>
-          <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.public.title" style="filter: invert(1)" />
-        </NuxtLink>
-      </div>
-      <div class="flex lg:hidden">
-        <UButton icon="i-heroicons-bars-3" variant="ghost" size="sm" aria-label="Open main menu" @click="mobileMenuOpen = true" />
-      </div>
-      <div class="hidden lg:flex lg:gap-x-12 lg:items-center">
+  <header class="floating-header">
+    <nav ref="navigationElement" class="header-glass header-pill" aria-label="Global">
+      <NuxtLink to="/" class="header-brand" :aria-label="`${config.public.title} home`" @click="closeMenus">
+        <NuxtImg quality="80" class="size-8 invert lg:size-10" :src="config.public.logo.os.raw" alt="" />
+        <span class="text-sm font-semibold tracking-tight lg:text-base">{{ config.public.title }}</span>
+      </NuxtLink>
+
+      <div class="hidden items-center gap-2 lg:flex">
         <a
           v-for="item in navigation"
           :key="item.name"
           :href="item.href"
-          :rel="item.rel"
-          :target="item.target"
-          class="text-sm font-semibold leading-6 text-white hover:bg-white hover:text-black rounded-md px-2 py-1"
-          >{{ item.name }}</a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="header-link"
         >
-        <UPopover :content="{ align: 'center', side: 'bottom', sideOffset: 8 }">
-          <UButton
+          <UIcon :name="item.icon" class="size-4.5 text-indigo-300" aria-hidden="true" />
+          {{ item.name }}
+        </a>
+        <UPopover
+          v-model:open="toolsMenuOpen"
+          :content="{ align: 'center', side: 'bottom', sideOffset: 20, collisionPadding: 16 }"
+          :ui="{ content: 'header-glass header-panel header-tools-panel' }"
+        >
+          <button
             id="popover-button-tools"
-            label="Tools"
-            variant="ghost"
-            trailing-icon="i-heroicons-chevron-down"
-            class="text-sm font-semibold text-white rounded-md px-2 py-1 hover:bg-white hover:text-black active:bg-white active:text-black"
-          />
-
-          <template #content="{ close }">
-            <div
-              class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5"
-            >
-              <div class="p-4">
-                <div v-for="item in popover.links" :key="item.name" class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
-                  <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                    <UIcon :name="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <NuxtLink :to="item.to" class="font-semibold text-gray-900" @click="close()">
-                      {{ item.name }}
-                      <span class="absolute inset-0" />
-                    </NuxtLink>
-                    <p class="mt-1 text-gray-600">{{ item.description }}</p>
-                  </div>
-                </div>
-              </div>
-              <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                <NuxtLink
-                  v-for="item in popover.callsToAction"
-                  :key="item.name"
-                  :to="item.to"
-                  class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
-                  @click="close()"
-                >
-                  <UIcon :name="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-                  {{ item.name }}
-                </NuxtLink>
-              </div>
-            </div>
+            type="button"
+            class="header-link"
+            :class="{ 'header-link-active': isToolsRoute }"
+          >
+            <UIcon name="i-heroicons-squares-2x2" class="size-4.5 text-indigo-300" aria-hidden="true" />
+            Tools
+            <UIcon
+              name="i-heroicons-chevron-down"
+              class="header-chevron size-3.5"
+              :class="{ 'rotate-180': toolsMenuOpen }"
+              aria-hidden="true"
+            />
+          </button>
+          <template #content>
+            <nav aria-label="Tools">
+              <BaseHeaderTools @navigate="closeMenus" />
+            </nav>
           </template>
         </UPopover>
       </div>
-      <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        <a :href="config.public.link.githubRepository" rel="noopener" target="_blank" class="text-sm font-semibold leading-6 text-white"
-          >GitHub repository <span aria-hidden="true">&rarr;</span></a
+
+      <a
+        :href="config.public.link.githubRepository"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub repository"
+        class="header-link header-repository header-desktop-repository"
+      >
+        <UIcon name="i-heroicons-code-bracket" class="size-4.5" aria-hidden="true" />
+        Repository
+        <UIcon name="i-heroicons-arrow-up-right" class="size-4 text-indigo-300" aria-hidden="true" />
+      </a>
+
+      <div class="lg:hidden">
+        <UPopover
+          v-model:open="mobileMenuOpen"
+          :reference="navigationElement ?? undefined"
+          :content="{ align: 'center', side: 'bottom', sideOffset: 12, collisionPadding: 12 }"
+          :ui="{ content: 'header-glass header-panel header-mobile-panel' }"
         >
+          <button
+            type="button"
+            class="header-link header-menu-toggle"
+            :aria-label="mobileMenuOpen ? 'Close main menu' : 'Open main menu'"
+          >
+            <UIcon :name="mobileMenuOpen ? 'i-heroicons-x-mark' : 'i-heroicons-bars-3'" class="size-5" aria-hidden="true" />
+          </button>
+          <template #content>
+            <nav aria-label="Mobile navigation">
+              <div class="grid grid-cols-2 gap-2 border-b border-white/10 p-3">
+                <a
+                  v-for="item in navigation"
+                  :key="item.name"
+                  :href="item.href"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="header-link justify-between bg-white/5"
+                  @click="closeMenus"
+                >
+                  <span class="flex items-center gap-2">
+                    <UIcon :name="item.icon" class="size-4.5 text-indigo-300" aria-hidden="true" />
+                    {{ item.name }}
+                  </span>
+                  <UIcon name="i-heroicons-arrow-up-right" class="size-3.5 text-slate-400" aria-hidden="true" />
+                </a>
+              </div>
+              <BaseHeaderTools @navigate="closeMenus" />
+              <div class="border-t border-white/10 p-3">
+                <a
+                  :href="config.public.link.githubRepository"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="header-link header-repository justify-center"
+                  @click="closeMenus"
+                >
+                  <UIcon name="i-heroicons-code-bracket" class="size-4" aria-hidden="true" />
+                  GitHub repository
+                  <UIcon name="i-heroicons-arrow-up-right" class="size-3.5 text-indigo-300" aria-hidden="true" />
+                </a>
+              </div>
+            </nav>
+          </template>
+        </UPopover>
       </div>
     </nav>
-    <UDrawer v-model:open="mobileMenuOpen" direction="right" :handle="false" :close="false" :ui="{ content: 'w-full sm:max-w-lg' }">
-      <template #header>
-        <div class="flex items-center justify-between">
-          <NuxtLink
-            to="/"
-            class="-m-1.5 p-1.5"
-            @click="
-              {
-                mobileMenuOpen = false;
-              }
-            "
-          >
-            <span class="sr-only">{{ config.public.title }}</span>
-            <NuxtImg quality="80" class="h-12 w-auto" :src="logo" :alt="config.public.title" />
-          </NuxtLink>
-          <UButton icon="i-heroicons-x-mark" variant="ghost" size="sm" aria-label="Close menu" @click="mobileMenuOpen = false" />
-        </div>
-      </template>
-      <template #body>
-        <div class="flow-root">
-          <div class="-my-6 divide-y divide-default">
-            <div class="space-y-2 py-6">
-              <a
-                v-for="item in navigation"
-                :key="item.name"
-                :href="item.href"
-                :rel="item.rel"
-                :target="item.target"
-                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-default hover:bg-muted"
-                >{{ item.name }}</a
-              >
-              <UPopover :content="{ align: 'center', side: 'bottom', sideOffset: 8 }">
-                <UButton
-                  id="popover-button-tools-mobile"
-                  label="Tools"
-                  variant="ghost"
-                  trailing-icon="i-heroicons-chevron-down"
-                  class="-mx-3 text-base font-semibold text-default hover:bg-muted active:bg-muted"
-                />
-
-                <template #content="{ close }">
-                  <div
-                    class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5"
-                  >
-                    <div class="p-4">
-                      <div
-                        v-for="item in popover.links"
-                        :key="item.name"
-                        class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50"
-                      >
-                        <div
-                          class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white"
-                        >
-                          <UIcon :name="item.icon" class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                        </div>
-                        <div>
-                          <NuxtLink
-                            :to="item.to"
-                            class="font-semibold text-gray-900"
-                            @click="
-                              {
-                                close();
-                                mobileMenuOpen = false;
-                              }
-                            "
-                          >
-                            {{ item.name }}
-                            <span class="absolute inset-0" />
-                          </NuxtLink>
-                          <p class="mt-1 text-gray-600">{{ item.description }}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="grid divide-x divide-gray-900/5 bg-gray-50">
-                      <NuxtLink
-                        v-for="item in popover.callsToAction"
-                        :key="item.name"
-                        :to="item.to"
-                        class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100"
-                        @click="
-                          {
-                            close();
-                            mobileMenuOpen = false;
-                          }
-                        "
-                      >
-                        <UIcon :name="item.icon" class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-                        {{ item.name }}
-                      </NuxtLink>
-                    </div>
-                  </div>
-                </template>
-              </UPopover>
-            </div>
-            <div class="py-6">
-              <a
-                :href="config.public.link.githubRepository"
-                rel="noopener"
-                target="_blank"
-                class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-default hover:bg-muted"
-                >GitHub repository &rarr;</a
-              >
-            </div>
-          </div>
-        </div>
-      </template>
-    </UDrawer>
   </header>
 </template>
 
 <script setup lang="ts">
-const mobileMenuOpen: Ref<boolean> = ref(false);
-
 const config = useRuntimeConfig();
-
-const logo = config.public.logo.os.raw;
+const route = useRoute();
+const navigationElement = useTemplateRef("navigationElement");
+const toolsMenuOpen = ref(false);
+const mobileMenuOpen = ref(false);
+const isToolsRoute = computed(() => route.path === "/tools" || route.path.startsWith("/tools/"));
 
 const navigation = [
-  { name: "My LinkedIn", href: config.public.link.linkedIn, rel: "noopener", target: "_blank" },
-  { name: "My GitHub", href: config.public.link.githubAccount, rel: "noopener", target: "_blank" },
+  { name: "LinkedIn", href: config.public.link.linkedIn, icon: "i-lucide-linkedin" },
+  { name: "GitHub", href: config.public.link.githubAccount, icon: "i-lucide-github" },
 ];
 
-const popover = {
-  links: [
-    {
-      name: taskHoldemApplication.name,
-      description: "Poker planning tool for agile teams",
-      to: "/tools/task-holdem",
-      icon: "i-heroicons-squares-plus",
-    },
-    {
-      name: itFactsApplication.name,
-      description: "True or false about the IT universe",
-      to: "/tools/it-facts",
-      icon: "i-heroicons-check-badge",
-    },
-    {
-      name: "GitHub History Cleaner",
-      description: "Delete all your GitHub project history",
-      to: "/tools/github/history-cleaner",
-      icon: "i-heroicons-arrow-path-rounded-square",
-    },
-  ],
-  callsToAction: [
-    {
-      name: "View all tools",
-      to: "/tools",
-      icon: "i-heroicons-squares-plus",
-    },
-  ],
-};
+function closeMenus(): void {
+  toolsMenuOpen.value = false;
+  mobileMenuOpen.value = false;
+}
+
+watch(() => route.fullPath, closeMenus);
+
+onMounted(() => {
+  const desktop = window.matchMedia("(min-width: 1024px)");
+  desktop.addEventListener("change", closeMenus);
+  onBeforeUnmount(() => desktop.removeEventListener("change", closeMenus));
+});
 </script>
+
+<style>
+.floating-header {
+  position: fixed;
+  inset: max(0.75rem, env(safe-area-inset-top)) 0 auto;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+  pointer-events: none;
+}
+
+.header-glass {
+  color: #f8fafc;
+  background: linear-gradient(135deg, rgb(255 255 255 / 8%), rgb(129 140 248 / 3%)), rgb(15 23 42 / 45%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  box-shadow: 0 8px 32px -12px rgb(0 0 0 / 35%), inset 0 1px 0 rgb(255 255 255 / 12%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+}
+
+.header-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  pointer-events: auto;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 2.75rem;
+  padding-inline: 0.625rem;
+  border-radius: 9999px;
+}
+
+.header-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 9999px;
+  color: #cbd5e1;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.header-link:hover,
+.header-brand:hover,
+.header-link[data-state="open"] {
+  color: #fff;
+  background-color: rgb(255 255 255 / 9%);
+}
+
+.header-link-active,
+.header-repository {
+  color: #e0e7ff;
+  background-color: rgb(129 140 248 / 12%);
+}
+
+.header-desktop-repository {
+  display: none;
+}
+
+.header-menu-toggle {
+  justify-content: center;
+  width: 2.75rem;
+  padding: 0;
+  background-color: rgb(255 255 255 / 6%);
+}
+
+.header-chevron {
+  transition: transform 160ms ease;
+}
+
+.header-panel {
+  z-index: 50;
+  max-height: var(--reka-popover-content-available-height);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 1.5rem;
+  outline: none;
+  --tw-ring-color: transparent;
+}
+
+.header-tools-panel {
+  width: min(23rem, calc(100vw - 2rem));
+}
+
+.header-mobile-panel {
+  width: min(23rem, calc(100vw - 1.5rem));
+}
+
+.header-brand:focus-visible,
+.header-link:focus-visible,
+.header-panel a:focus-visible {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 2px;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header-glass {
+    background: #172033;
+  }
+}
+
+@media (min-width: 640px) {
+  .floating-header {
+    padding-inline: max(1.5rem, env(safe-area-inset-left)) max(1.5rem, env(safe-area-inset-right));
+  }
+}
+
+@media (min-width: 1024px) {
+  .floating-header {
+    top: max(1rem, env(safe-area-inset-top));
+    padding-inline: max(2rem, env(safe-area-inset-left)) max(2rem, env(safe-area-inset-right));
+  }
+
+  .header-pill {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    padding: 0.375rem;
+  }
+
+  .header-brand {
+    justify-self: start;
+    gap: 0.75rem;
+  }
+
+  .header-pill .header-link {
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .header-desktop-repository {
+    display: flex;
+    justify-self: end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-link,
+  .header-chevron {
+    transition: none;
+  }
+
+  .header-panel {
+    animation: none !important;
+  }
+}
+</style>
