@@ -147,7 +147,9 @@ onMounted(() => {
   z-index: 50;
   display: flex;
   justify-content: center;
-  padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right));
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
   pointer-events: none;
 }
 
@@ -166,7 +168,6 @@ onMounted(() => {
   justify-content: space-between;
   gap: 0.5rem;
   width: 100%;
-  max-width: 75rem;
   padding: 0.25rem;
   border-radius: 9999px;
   pointer-events: auto;
@@ -254,10 +255,16 @@ onMounted(() => {
   }
 }
 
+@media (min-width: 640px) {
+  .floating-header {
+    padding-inline: max(1.5rem, env(safe-area-inset-left)) max(1.5rem, env(safe-area-inset-right));
+  }
+}
+
 @media (min-width: 1024px) {
   .floating-header {
     top: max(1rem, env(safe-area-inset-top));
-    padding-inline: max(1.5rem, env(safe-area-inset-left)) max(1.5rem, env(safe-area-inset-right));
+    padding-inline: max(2rem, env(safe-area-inset-left)) max(2rem, env(safe-area-inset-right));
   }
 
   .header-pill {

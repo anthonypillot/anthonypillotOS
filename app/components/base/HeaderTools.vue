@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2">
+  <div class="flex flex-col gap-2 p-2">
     <p class="px-3 pb-2 pt-3 text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-slate-300">Tools</p>
     <NuxtLink
       v-for="tool in tools"
@@ -17,11 +17,11 @@
       </span>
       <span class="min-w-0 flex-1">
         <span class="block text-sm font-semibold text-slate-100">{{ tool.name }}</span>
-        <span class="mt-1 block text-xs leading-5 text-slate-400">{{ tool.description }}</span>
+        <span class="mt-1 block text-xs leading-5 text-slate-300">{{ tool.description }}</span>
       </span>
       <UIcon
         name="i-heroicons-chevron-right"
-        class="size-3.5 shrink-0 text-slate-500 group-hover:text-indigo-300"
+        class="size-3.5 shrink-0 text-slate-400 group-hover:text-indigo-300"
         aria-hidden="true"
       />
     </NuxtLink>
