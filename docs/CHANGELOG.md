@@ -1,3 +1,12 @@
+## [1.5.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.7...v1.5.8) (2026-09-15)
+
+
+### Performance Improvements
+
+* /tools page revamp ([b31fe50](https://github.com/anthonypillot/anthonypillotOS/commit/b31fe503bcc1afa369bbad16a316ae263c19fec8))
+* **deps:** update dependencies ([337ebf7](https://github.com/anthonypillot/anthonypillotOS/commit/337ebf75bcdc9dbe61a3f3e0e34902e93945b82f))
+* update profile overview text ([bfcc1a2](https://github.com/anthonypillot/anthonypillotOS/commit/bfcc1a284ea5839ecce10e8a8bbbb2e47b3e9e99))
+
 ## [1.5.7](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.6...v1.5.7) (2026-09-14)
 
 
