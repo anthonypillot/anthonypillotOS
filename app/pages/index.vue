@@ -11,5 +11,8 @@
 
     <!-- Career history section -->
     <BaseCareerHistory />
+
+    <!-- AI-assisted engineering statement -->
+    <BaseAiStatement />
   </div>
 </template>
