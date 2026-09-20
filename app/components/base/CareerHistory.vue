@@ -1,5 +1,5 @@
 <template>
-  <section class="mx-auto w-full max-w-7xl overflow-x-clip px-3 sm:px-6 lg:px-8" aria-label="Career history">
+  <section class="mx-auto w-full max-w-7xl overflow-x-clip px-3 pt-16 sm:px-6 sm:pt-24 lg:px-8" aria-label="Career history">
     <header class="mb-10 sm:mb-12">
       <h2 class="text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">Career history</h2>
       <p class="mt-2 text-base leading-7 text-gray-200 sm:text-lg sm:leading-8">
