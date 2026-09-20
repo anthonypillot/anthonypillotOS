@@ -4,8 +4,6 @@ import { proceed } from "@@/server/services/history-cleaner.service";
 import { type HistoryCleanerJob, HistoryCleanerOptions } from "@@/server/types/history-cleaner.type";
 
 export default defineEventHandler(async (event): Promise<HistoryCleanerResultFiltered> => {
-  const body: Readonly<HistoryCleanerForm> = await Object.freeze(readBody(event));
-
   const validOptions: string[] = [HistoryCleanerOptions.WORKFLOW_RUNS, HistoryCleanerOptions.DEPLOYMENTS];
 
   const schema = z.object({
@@ -22,7 +20,7 @@ export default defineEventHandler(async (event): Promise<HistoryCleanerResultFil
     ),
   });
 
-  const parsedBody = schema.safeParse(body);
+  const parsedBody = schema.safeParse(await readBody(event));
   if (!parsedBody.success) {
     throw createError({
       statusCode: 400,
@@ -34,6 +32,8 @@ export default defineEventHandler(async (event): Promise<HistoryCleanerResultFil
         .join(", "),
     });
   }
+
+  const body = Object.freeze(parsedBody.data);
 
   logger.info(`Received history cleaner request for [${body.account}/${body.repository}]`);
 
