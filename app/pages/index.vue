@@ -3,13 +3,16 @@
     <!-- Hero section -->
     <BaseHero />
 
-    <!-- Technology showcase section -->
-    <BaseTechnologyShowcase />
-
     <!-- Profile overview section -->
     <BaseProfileOverview />
 
+    <!-- Technology showcase section -->
+    <BaseTechnologyShowcase />
+
     <!-- Career history section -->
     <BaseCareerHistory />
+
+    <!-- AI-assisted engineering statement -->
+    <BaseAiStatement />
   </div>
 </template>

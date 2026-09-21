@@ -1,4 +1,3 @@
-import type { Feedback } from "@/components/form/Feedback.vue";
 import { create } from "@@/server/services/feedback.service";
 import type { FeedbackData } from "@prisma/client";
 import { z } from "zod";
@@ -10,12 +9,12 @@ export default defineEventHandler(async (event): Promise<FeedbackData> => {
     message: z.string().nonempty({ message: "Message cannot be empty" }),
   });
 
-  const body: Feedback = await readBody<Feedback>(event);
+  const body = await readBody(event);
 
   try {
-    schema.parse(body);
+    const { name, email, message } = schema.parse(body);
     setResponseStatus(event, 201);
-    return await create(body);
+    return await create({ name, email, message });
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw createError({
