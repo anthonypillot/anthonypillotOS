@@ -41,3 +41,7 @@ coverage
 
 # OpenCode
 .opencode
+
+# Skills
+.agents
+skills-lock.json
