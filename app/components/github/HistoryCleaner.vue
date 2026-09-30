@@ -57,7 +57,10 @@
                     @update:model-value="handleOptionToggle(option.name, $event as boolean)"
                   >
                     <template #label>
-                      <span v-html="option.label" />
+                      <span>
+                        {{ option.label }}
+                        <span v-if="option.disabled" class="font-bold">(available soon)</span>
+                      </span>
                     </template>
                   </UCheckbox>
                 </div>
@@ -125,10 +128,9 @@
           <div v-for="(formOption, index) in form.options" :key="index" class="pt-2">
             <div class="flex">
               <UIcon name="i-heroicons-arrow-right-circle" class="h-5 w-5 mr-1" />
-              <p
-                class="text-sm text-muted"
-                v-html="`${options.find((option) => option.name === formOption)?.label} will be deleted.`"
-              />
+              <p class="text-sm text-muted">
+                {{ options.find((option) => option.name === formOption)?.label }} will be deleted.
+              </p>
             </div>
           </div>
           <div class="pt-2">
@@ -173,7 +175,7 @@ const options = ref([
   },
   {
     name: HistoryCleanerOptions.DEPLOYMENTS,
-    label: "All deployment history <span class='font-bold'>(available soon)</span>",
+    label: "All deployment history",
     description: "Delete all deployment history.",
     disabled: true,
     checked: false,
