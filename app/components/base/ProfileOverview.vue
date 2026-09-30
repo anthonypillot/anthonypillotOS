@@ -9,7 +9,7 @@
             class="rounded-xl lg:rounded-3xl"
             src="https://avatars.githubusercontent.com/u/51130139"
             :alt="config.public.author.name"
-          />
+          >
         </aside>
         <article class="w-full max-w-2xl xl:max-w-none xl:flex-auto xl:px-16 xl:py-24">
           <figure class="relative isolate pt-6 sm:pt-12">

@@ -1,3 +1,5 @@
+import type { Link } from "@unhead/vue";
+
 /**
  * Sets up SEO metadata for a tool page from an `Application` descriptor.
  *
@@ -18,7 +20,7 @@ export default function (app: Application): void {
     description: app.description,
   });
 
-  const links: Array<Record<string, string>> = [
+  const links = [
     {
       key: "favicon",
       rel: "icon",
@@ -26,7 +28,7 @@ export default function (app: Application): void {
       href: app.favicon,
       media: "(prefers-color-scheme: light)",
     },
-  ];
+  ] satisfies Link[];
 
   if (app.faviconDark) {
     links.push({

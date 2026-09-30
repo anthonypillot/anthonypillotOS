@@ -91,8 +91,8 @@ defineProps<{
   user: User;
 }>();
 
-const messages = defineModel<Message[] | null>("messages");
-const message = defineModel<string>("message");
+const messages = defineModel<Message[] | null>("messages", { default: null });
+const message = defineModel<string>("message", { default: "" });
 
 const emit = defineEmits<{
   submit: [user: User, message: string];
