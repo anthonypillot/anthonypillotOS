@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Architecture review — anthonypillotOS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "base", securityLevel: "strict", themeVariables: { fontFamily: "system-ui, sans-serif", fontSize: "13px", primaryColor: "#ffffff", primaryBorderColor: "#94a3b8", primaryTextColor: "#0f172a", lineColor: "#64748b", edgeLabelBackground: "#f8fafc", clusterBkg: "#f1f5f9", clusterBorder: "#cbd5e1" }, flowchart: { curve: "basis", htmlLabels: false, padding: 14 } });
+  </script>
+  <style>
+    :root { --ink: #172b29; --accent: #047857; --muted: #526360; --paper: #f7f6f2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: system-ui, sans-serif; line-height: 1.55; }
+    main { max-width: 1180px; margin: auto; padding: 54px 28px 72px; }
+    main h1, main h2, main h3, main p { margin-top: 0; }
+    main h1, main h2 { font-family: Georgia, serif; font-weight: 400; letter-spacing: -.035em; line-height: 1.15; }
+    main h1 { font-size: clamp(38px, 6vw, 64px); margin-bottom: 18px; }
+    main h2 { font-size: clamp(27px, 4vw, 37px); margin-bottom: 12px; }
+    main h3 { font-size: 16px; }
+    a { color: var(--accent); text-underline-offset: 3px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .13em; font-size: 11px; font-weight: 700; color: var(--muted); }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 22px 0; font-size: 12px; color: var(--muted); }
+    .legend span { display: inline-flex; align-items: center; gap: 8px; }
+    .sample { width: 20px; height: 14px; border: 1px solid #64748b; display: inline-block; }
+    .sample.seam { height: 0; border: 0; border-top: 2px dashed var(--accent); }
+    .sample.leak { height: 0; border: 0; border-top: 2px solid #dc2626; }
+    .sample.depth { background: var(--ink); border: 3px solid var(--ink); }
+    .scope { border-block: 1px solid #d8ded8; padding: 18px 0; color: var(--muted); font-size: 13px; }
+    .scope p { margin: 0 0 8px; }
+    .scope p:last-child { margin: 0; }
+    .nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0 40px; }
+    .nav a { display: block; border-bottom: 2px solid #b7c8bf; padding: 10px 0; text-decoration: none; font-size: 13px; }
+    .nav b { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    article { background: #fff; border: 1px solid #dce2dc; border-radius: 18px; padding: 30px; margin-bottom: 32px; scroll-margin-top: 20px; }
+    .card-head { display: flex; justify-content: space-between; align-items: start; gap: 20px; }
+    .number { font-family: Georgia, serif; color: #b3c3b9; font-size: 45px; line-height: 1; }
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 650; background: #f1f5f9; color: #475569; }
+    .strong { background: #d1fae5; color: #065f46; }
+    .explore { background: #fef3c7; color: #92400e; }
+    .caption { color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+    .diagrams { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+    .diagram { border: 1px solid #dce3df; border-radius: 12px; background: #f8faf9; padding: 16px; min-width: 0; }
+    .diagram.after { background: #f3faf6; border-color: #b5d6c5; }
+    .diagram-label { font-size: 10px; text-transform: uppercase; letter-spacing: .14em; font-weight: 700; color: var(--muted); margin-bottom: 12px; }
+    .drawing { min-height: 306px; display: flex; flex-direction: column; justify-content: center; gap: 9px; }
+    .mermaid { display: flex; align-items: center; justify-content: center; min-height: 306px; margin: 0; white-space: pre-wrap; font-size: 11px; }
+    .mermaid svg { max-width: 100%; max-height: 320px; height: auto; }
+    .box { border: 1px solid #a3b7ac; background: #fff; border-radius: 5px; padding: 10px 12px; text-align: center; font-size: 12px; }
+    .thin { padding: 6px 10px; }
+    .red { border-color: #f2b8b5; background: #fff7f6; color: #a12828; }
+    .arrow { text-align: center; font-size: 17px; color: #738b7e; line-height: 1; }
+    .deep { background: linear-gradient(140deg, #153a31, #182b2b); border: 3px solid #153a31; border-radius: 8px; color: #fff; overflow: hidden; }
+    .interface { padding: 9px 12px; border-bottom: 2px dashed #6ee7b7; text-align: center; color: #d1fae5; font-size: 11px; }
+    .implementation { padding: 19px 15px; text-align: center; font-size: 13px; }
+    .implementation small { display: block; margin-top: 10px; color: #b7d7c8; line-height: 1.8; font-size: 11px; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .triple { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+    .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 26px; font-size: 13px; margin-top: 22px; }
+    .facts p { margin: 0; }
+    .facts strong { display: block; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 5px; }
+    .wins { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; padding: 0; margin: 20px 0; font-size: 12px; color: #065f46; }
+    .wins li::before { content: "+ "; }
+    .note { border-left: 3px solid #b5d6c5; background: #f5f9f6; padding: 11px 14px; margin-top: 14px; font-size: 12px; }
+    .warning { border-color: #d4a654; background: #fffbeb; color: #775022; }
+    details { border-top: 1px solid #e2e8e2; margin-top: 20px; padding-top: 14px; font-size: 12px; }
+    summary { cursor: pointer; font-weight: 600; color: var(--muted); }
+    .files { list-style: none; padding-left: 0; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 11px; }
+    .files li { margin: 8px 0; overflow-wrap: anywhere; }
+    .files em { display: block; color: var(--muted); font-style: normal; font-family: system-ui, sans-serif; font-size: 12px; margin-top: 3px; }
+    .excluded { padding: 14px 4px 28px; font-size: 13px; color: var(--muted); }
+    .excluded li { margin-bottom: 9px; }
+    .top { background: var(--ink); color: white; border-radius: 18px; padding: 32px; }
+    .top .eyebrow { color: #9cceba; }
+    .top h2 { font-size: 33px; margin: 12px 0; }
+    .top p { max-width: 780px; font-size: 15px; color: #d6e6de; }
+    .top a { color: #a7f3d0; }
+    footer { margin-top: 26px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 740px) { main { padding: 28px 15px 48px; } article { padding: 21px 16px; } .diagrams, .facts { grid-template-columns: 1fr; } .nav { grid-template-columns: 1fr 1fr; } .drawing, .mermaid { min-height: 270px; } .number { font-size: 34px; } }
+    @media print { article { break-inside: avoid; } details { display: block; } .nav { display: none; } main { padding: 0; } }
+  </style>
+</head>
+<body class="antialiased">
+<main>
+  <header>
+    <p class="eyebrow">Architecture field notes · 22 September 2026 · HEAD 19cf134</p>
+    <h1>anthonypillotOS<br><span class="text-emerald-700">Fewer places to understand.</span></h1>
+    <div class="legend" aria-label="Diagram legend">
+      <span><i class="sample"></i> module</span><span><i class="sample seam"></i> seam</span><span><i class="sample leak"></i> leaked knowledge</span><span><i class="sample depth"></i> deep module</span>
+    </div>
+    <div class="scope">
+      <p><b>Scope:</b> latest 100 global commits, then focused implementation and test inspection. Current-path touches: header 9 · GitHub data access 6 · Task Hold’em play page 5 · tools catalog 4. Counts include migrations and cosmetic changes; they guide attention, not severity.</p>
+      <p><b>Domain records:</b> no <code>CONTEXT.md</code> or <code>docs/adr/</code> found. Names follow existing code and the IT Facts / favicon design records in <code>openspec/changes/</code>. Existing server call direction and PostgreSQL multi-instance constraints inform every candidate.</p>
+      <p><b>Evidence:</b> static inspection, including checked-in tests; concurrency and reconnect failures were not reproduced. Diagrams show ownership directions, not proposed interface designs.</p>
+    </div>
+    <nav class="nav" aria-label="Candidates">
+      <a href="#cleaner"><b>01 · STRONG</b>Cleaning-job completion</a>
+      <a href="#round"><b>02 · STRONG</b>Round-state ownership</a>
+      <a href="#membership"><b>03 · WORTH EXPLORING</b>Membership lifecycle</a>
+      <a href="#discovery"><b>04 · WORTH EXPLORING</b>Tool discovery</a>
+    </nav>
+  </header>
+
+  <section aria-label="Deepening candidates">
+    <article id="cleaner">
+      <div class="card-head"><div><h2>Give a cleaning job one meaning of “done”</h2><div class="badges"><span class="badge strong">Strong</span><span class="badge">mock · GitHub</span><span class="badge">existing persistence</span><span class="badge">first pick</span></div></div><span class="number">01</span></div>
+      <p class="caption">GitHub History Cleaner · workflow-run deletion · job result and persistence</p>
+      <div class="diagrams">
+        <div class="diagram"><div class="diagram-label">Before · completion knowledge escapes</div>
+          <pre class="mermaid">
+flowchart TB
+  H["HTTP module: validate + count"] --> J["Cleaning job: pending → delete"]
+  J --> G["GitHub adapter"]
+  J --> R["Return deletion buckets"]
+  J -. "unawaited final write" .-> P["Persistence adapter: count again"]
+  G -. "retrieval rejection" .-> X["Throw before final write"]
+  classDef leak fill:#fff7f6,stroke:#dc2626,color:#991b1b;
+  class P,X leak;
+  linkStyle 3,4 stroke:#dc2626,stroke-width:2px;
+          </pre>
+        </div>
+        <div class="diagram after"><div class="diagram-label">After · completion knowledge stays inside</div><div class="drawing">
+          <div class="box thin">HTTP adapter · request / response translation</div><div class="arrow">↓</div>
+          <div class="deep"><div class="interface">caller / test seam · cleaning-job interface</div><div class="implementation">Deep cleaning-job module<small>Supported work · deletion outcomes<br>Completion / failure meaning · shared report<br>Final persistence belongs to the lifecycle</small></div></div>
+          <div class="arrow">↓</div><div class="split"><div class="box">GitHub adapter</div><div class="box">Persistence adapter</div></div>
+        </div></div>
+      </div>
+      <div class="facts">
+        <p><strong>Problem</strong>The job module returns before its final write resolves, skips that write on retrieval failure, and exposes outcome buckets that two callers recount.</p>
+        <p><strong>Solution</strong>Deepen the existing cleaning-job module so accepted work, result meaning, and finalization belong together; transport and storage formatting stay in their adapters.</p>
+        <p><strong>Depth / deletion test</strong>Delete caller-owned result interpretation and supported-work knowledge: complexity should concentrate in the job implementation, rather than move into another helper.</p>
+        <p><strong>Tests through the interface</strong>Exercise delayed/rejected final writes, retrieval rejection, mixed deletion outcomes, and empty/unsupported work; replace completion spy assertions with observable lifecycle assertions.</p>
+        <p><strong>Adapter discipline</strong>GitHub’s real adapter and existing MSW test adapter justify the external seam; controlled persistence is a test substitute, not a new deployed database choice.</p>
+        <p><strong>Current evidence</strong>Five orchestration tests exercise real aggregation but use immediately resolved persistence mocks; the browser result test substitutes the whole HTTP response.</p>
+      </div>
+      <ul class="wins"><li>locality: completion and failures together</li><li>leverage: one report, two consumers</li><li>depth: callers stop interpreting buckets</li></ul>
+      <div class="note">Clarify “completed” during exploration: current tests allow it when every deletion is unauthorized. It may mean all attempts finished, rather than all runs deleted.</div>
+      <details open><summary>Files &amp; evidence</summary><ul class="files">
+        <li>server/services/history-cleaner.service.ts:16–34, 53–75, 95–125<em>Final write is unawaited; retrieval failure rethrows; outcome buckets are built here.</em></li>
+        <li>server/api/tools/github/history-cleaner.post.ts:7–21, 54–69 · server/dao/history-cleaner.dao.ts:56–101<em>Server accepts empty options and deployments; HTTP and persistence independently count buckets.</em></li>
+        <li>app/components/github/HistoryCleaner.vue:154–181 · server/types/history-cleaner.type.ts:13–17<em>Browser requires an option and disables deployments; a failed job status exists.</em></li>
+        <li>server/tests/services/history-cleaner.service.nuxt.test.ts:25–60 · server/tests/dao/github.dao.nuxt.test.ts:70–190<em>Existing orchestration mocks and MSW adapter tests provide a starting point.</em></li>
+        <li>tests/e2e/pages/tools/github/history-cleaner.test.ts:73–90, 114–133<em>Confirmation/result coverage uses a substituted response and is excluded in CI.</em></li>
+      </ul></details>
+    </article>
+
+    <article id="round">
+      <div class="card-head"><div><h2>Let the round module own round rules</h2><div class="badges"><span class="badge strong">Strong</span><span class="badge">in-process rules</span><span class="badge">existing transport + persistence</span></div></div><span class="number">02</span></div>
+      <p class="caption">Task Hold’em · votes · reveal progression · restart</p>
+      <div class="diagrams">
+        <div class="diagram"><div class="diagram-label">Before · broad interface, shallow update</div><div class="drawing">
+          <div class="triple"><div class="box red">Vote mutation</div><div class="box red">Reveal timer</div><div class="box red">Restart choice</div></div>
+          <div class="arrow">↓</div><div class="box red">Browser constructs the entire room snapshot</div><div class="arrow">↓</div>
+          <div class="box thin">Socket.IO forwarding → pass-through update module</div><div class="arrow">↓</div><div class="box thin">PostgreSQL replaces room JSON</div>
+          <div class="split"><div class="box red thin">Server clears votes</div><div class="box red thin">Browser clears highlighting</div></div>
+        </div></div>
+        <div class="diagram after"><div class="diagram-label">After · rules behind one seam</div><div class="drawing">
+          <div class="box thin">Browser interaction / presentation</div><div class="arrow">↓</div><div class="box thin">Socket.IO adapter</div>
+          <div class="deep"><div class="interface">caller / test seam · round interface</div><div class="implementation">Deep round-state module<small>Vote acceptance · valid progression<br>Reveal meaning · complete reset<br>Accepted state drives presentation</small></div></div>
+          <div class="box thin">Persistence adapter · multi-instance coordination</div>
+        </div></div>
+      </div>
+      <div class="facts">
+        <p><strong>Problem</strong>The update interface accepts caller-built room snapshots, so voting, reveal progression, and restart correctness require knowledge spread across browser and server modules.</p>
+        <p><strong>Solution</strong>Concentrate round rules behind the server round seam and derive presentation from accepted state, increasing depth without absorbing chat or membership lifecycle.</p>
+        <p><strong>Depth / deletion test</strong>Deleting the pass-through update alone only moves code; the gain comes when callers can delete full-room mutation and split reset choreography because the deeper module owns those invariants.</p>
+        <p><strong>Tests through the interface</strong>Verify vote/reveal/restart sequences, cleared votes and a clean second round; use real PostgreSQL/Socket.IO integration checks for conflicting updates.</p>
+        <p><strong>Adapter discipline</strong>Keep the existing transport and persistence adapters; controlled persistence/time would be test adapters where variation is needed, not an invented alternative production stack.</p>
+        <p><strong>Current evidence</strong>Commit <code>4ca1504</code> fixed restart across browser, shared declarations and server code; the current two-player test checks only reveal-control visibility after restart.</p>
+      </div>
+      <ul class="wins"><li>locality: one owner for round rules</li><li>leverage: all players share invariants</li><li>depth: state choreography becomes implementation</li></ul>
+      <div class="note warning">Constraint: PostgreSQL-backed message distribution does not serialize room mutations. Any deeper implementation must preserve multi-instance correctness. Overlapping-snapshot losses are a risk inferred from code, not a reproduced failure.</div>
+      <details open><summary>Files &amp; evidence</summary><ul class="files">
+        <li>app/pages/tools/task-holdem/application.client.vue:182–192, 273–303<em>Highlight reset, full-room vote mutation and restart event selection.</em></li>
+        <li>app/components/task-holdem/PokerTable.vue:62–96<em>Each browser observing the revealing state runs its own progression countdown.</em></li>
+        <li>server/plugins/task-holdem.server.ts:48–62 · server/services/task-holdem.service.ts:9–22 · server/dao/task-holdem.dao.ts:60–71<em>Transport forwarding, shallow update, server vote reset and JSON replacement.</em></li>
+        <li>shared/types/task-holdem.type.ts:1–23, 34–49 · app/components/task-holdem/Card.vue:15–19<em>Room declarations depend on Vue-owned declarations including presentation selection state.</em></li>
+        <li>tests/e2e/pages/tools/task-holdem/application.test.ts:13–56<em>Sequential votes with waits; no checked-in Task Hold’em server tests.</em></li>
+      </ul></details>
+    </article>
+
+    <article id="membership">
+      <div class="card-head"><div><h2>Own the lifetime of room membership</h2><div class="badges"><span class="badge explore">Worth exploring</span><span class="badge">ports &amp; adapters · owned transport</span></div></div><span class="number">03</span></div>
+      <p class="caption">Task Hold’em · stored identity · connection readiness · reconnect and disposal</p>
+      <div class="diagrams">
+        <div class="diagram"><div class="diagram-label">Before · implicit ordering in several places</div>
+          <pre class="mermaid">
+flowchart TB
+  V["Join view"] --> S["Browser storage"]
+  P["Play page"] --> S
+  S --> T["Restore after 1 second"]
+  T --> C["Socket membership"]
+  C --> D["Connect: diagnostics only"]
+  P --> U["Unmount: remove two listeners"]
+  C --> R["Server disconnect: remove member"]
+  classDef leak fill:#fff7f6,stroke:#dc2626,color:#991b1b;
+  class T,U leak;
+  linkStyle 2,3,5 stroke:#dc2626,stroke-width:2px;
+          </pre>
+        </div>
+        <div class="diagram after"><div class="diagram-label">After · one browser lifecycle owner</div><div class="drawing">
+          <div class="box thin">Join / leave presentation</div><div class="arrow">↓</div>
+          <div class="deep"><div class="interface">caller / test seam · membership lifecycle</div><div class="implementation">Deep browser membership module<small>Restore identity when ready<br>Own subscriptions and disposal<br>Coordinate reconnection</small></div></div>
+          <div class="split"><div class="box thin">Storage adapter</div><div class="box thin">Socket.IO adapter</div></div>
+          <div class="box thin">Server membership policy → persistence adapter</div>
+        </div></div>
+      </div>
+      <div class="facts">
+        <p><strong>Problem</strong>Identity is written twice, restoration relies on a one-second timeout, and page teardown removes only two listeners while leaving the socket open.</p>
+        <p><strong>Solution</strong>Give browser restoration, readiness, subscription lifetime and reconnect coordination one owner; keep server membership policy explicit across the existing transport seam.</p>
+        <p><strong>Depth / deletion test</strong>The caller must be able to delete the timeout, duplicate storage write and listener choreography; moving those fragments to a helper while retaining ordering obligations adds no depth.</p>
+        <p><strong>Tests through the interface</strong>Exercise delayed connection, restoration, navigation away/back and reconnection; verify the actual departing participant disappears rather than an unrelated name.</p>
+        <p><strong>Adapter discipline</strong>Socket.IO and browser storage are real dependencies; controlled connection events and storage are proposed test adapters. A generic swappable transport is not justified.</p>
+        <p><strong>Current evidence</strong>The restore timeout is explicitly marked temporary; reconnect only updates diagnostics, and existing departure coverage asserts that “Emmanuelle” is absent after closing “test-2”.</p>
+      </div>
+      <ul class="wins"><li>locality: readiness and cleanup together</li><li>leverage: one lifecycle, every entry path</li><li>depth: callers stop coordinating timers</li></ul>
+      <div class="note">Exploration gate: decide how to test the browser module—the current Vitest include is server-only. Stale membership and retained-resource incidents are plausible, not reproduced.</div>
+      <details open><summary>Files &amp; evidence</summary><ul class="files">
+        <li>app/components/task-holdem/CreateUser.vue:42–52 · app/pages/tools/task-holdem/application.client.vue:101–117, 194–207<em>Duplicate identity persistence and timeout-based restoration.</em></li>
+        <li>app/pages/tools/task-holdem/application.client.vue:128–162, 176–192, 322–324<em>Connection diagnostics, incomplete resource disposal and additional subscriptions.</em></li>
+        <li>server/plugins/task-holdem.server.ts:29–42, 65–75 · server/services/task-holdem.service.ts:28–36, 48–66<em>Reconnect lookup, disconnect removal and existing-participant session handling.</em></li>
+        <li>tests/e2e/pages/tools/task-holdem/application.test.ts:20–23, 58–61 · vitest.config.ts:18–20<em>Departure assertion names a different participant; browser-module tests need an explicit harness decision.</em></li>
+      </ul></details>
+    </article>
+
+    <article id="discovery">
+      <div class="card-head"><div><h2>Concentrate tool-discovery knowledge</h2><div class="badges"><span class="badge explore">Worth exploring</span><span class="badge">in-process</span><span class="badge">recently active</span></div></div><span class="number">04</span></div>
+      <p class="caption">Tools · menu · catalog · footer · landing versus play destinations</p>
+      <div class="diagrams">
+        <div class="diagram"><div class="diagram-label">Before · each presentation knows the rules</div><div class="drawing">
+          <div class="box">Application descriptors know play destinations</div><div class="arrow">↓</div>
+          <div class="triple"><div class="box red">Menu<br><small>Own list<br>Landing links<br>Route matching</small></div><div class="box red">Catalog<br><small>Own list<br>Landing links<br>Tool identity</small></div><div class="box red">Footer<br><small>Own list<br>Landing links<br>Tool identity</small></div></div>
+          <div class="box red thin">A discovery change requires several lookups</div>
+        </div></div>
+        <div class="diagram after"><div class="diagram-label">After · decisions shared, presentation local</div><div class="drawing">
+          <div class="deep"><div class="interface">caller / test seam · discovery interface</div><div class="implementation">Deepened tool-discovery module<small>Membership · identity · destination meaning<br>Landing / play distinction owned once</small></div></div>
+          <div class="arrow">↓</div><div class="triple"><div class="box">Menu</div><div class="box">Catalog</div><div class="box">Footer</div></div>
+          <div class="box thin">Each keeps its own copy, artwork and interaction</div>
+        </div></div>
+      </div>
+      <div class="facts">
+        <p><strong>Problem</strong>Three presentation modules independently assemble tool lists and destinations, while shared application descriptors identify play destinations; callers must remember the distinction.</p>
+        <p><strong>Solution</strong>Concentrate discovery decisions in a frontend module so callers can present tools without reconstructing landing/play meaning, while retaining editorial differences locally.</p>
+        <p><strong>Depth / deletion test</strong>Depth exists only if deleting the module would spread discovery rules back across callers; merely relocating an array while callers retain every decision is deduplication.</p>
+        <p><strong>Tests through the interface</strong>Keep current menu and catalog browser assertions; add footer and nested-route checks with independently authored expected destinations so shared incorrect data cannot validate itself.</p>
+        <p><strong>Adapter discipline</strong>No external adapter is needed for in-process discovery. The three real consumers justify leverage, but are not evidence of interchangeable adapters or a new pluggable seam.</p>
+        <p><strong>Current evidence</strong>Menu and catalog already have strong keyboard, routing and responsive tests; this is change-locality friction, not a demonstrated broken destination.</p>
+      </div>
+      <ul class="wins"><li>locality: discovery decisions live together</li><li>leverage: one change, three presentations</li><li>depth: callers forget route distinctions</li></ul>
+      <div class="note warning">Decision to revisit: IT Facts design D6 explicitly adds separate header and catalog entries. Central ownership changes that arrangement; preserve the recorded landing-first discovery behavior. This is an existing design record, not an ADR.</div>
+      <details open><summary>Files &amp; evidence</summary><ul class="files">
+        <li>app/components/base/HeaderTools.vue:44–67 · app/pages/tools/index.vue:31–56 · app/components/base/Footer.vue:85–91<em>Independent discovery lists, ordering and link destinations.</em></li>
+        <li>shared/types/it-facts.type.ts:9–16 · shared/types/task-holdem.type.ts<em>Existing application descriptors represent playable applications.</em></li>
+        <li>tests/e2e/header.test.ts:4–77 · tests/e2e/pages/tools/index.test.ts:4–94<em>Retain meaningful interaction and destination coverage.</em></li>
+        <li>openspec/changes/add-it-facts-true-false/design.md:98–102<em>Recorded discoverability arrangement; candidate preserves its user-facing intent.</em></li>
+      </ul></details>
+    </article>
+  </section>
+
+  <section class="excluded" aria-labelledby="filter-heading">
+    <h3 id="filter-heading">The deletion-test filter</h3>
+    <ul>
+      <li><b>IT Facts round extraction:</b> current rules already have reasonable locality; a new module pays off only with a deliberate deterministic-test strategy, reopening design D1/D7.</li>
+      <li><b>Universal animation / hero framework:</b> different lifetimes and visual treatments do not establish interchangeable adapters; local lifetime fixes offer more leverage today.</li>
+      <li><b>Generic cleaner-provider framework:</b> one implemented deletion category is not evidence of future variation.</li>
+    </ul>
+    <p><b>Review rule:</b> the interface is the test surface. One adapter means a hypothetical seam; two adapters mean a real one. Add depth by removing knowledge from callers, not by adding files.</p>
+  </section>
+
+  <section id="top-recommendation" class="top">
+    <p class="eyebrow">Top recommendation</p>
+    <h2>Start with cleaning-job completion.</h2>
+    <p>It combines concrete completion gaps, repeated recent edits, two consumers of the same result, and an existing server test harness—strong locality and leverage with fewer distributed-state decisions than the Task Hold’em round refactor.</p>
+    <a href="#cleaner">Explore candidate 01 ↑</a>
+  </section>
+  <footer>Prepared from repository history, two focused exploration passes, and primary-file verification. File references are relative to the repository root. Tailwind and Mermaid load from CDNs; the report’s layout also has embedded CSS.</footer>
+</main>
+</body>
+</html>
