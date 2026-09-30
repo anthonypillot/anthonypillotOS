@@ -1,3 +1,18 @@
+## [1.5.9](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.8...v1.5.9) (2026-09-30)
+
+
+### Bug Fixes
+
+* resolve typecheck errors and Vue lint warnings ([4d8bb5f](https://github.com/anthonypillot/anthonypillotOS/commit/4d8bb5f0fa5bdd802cde9639a1606b19828c87a1))
+
+
+### Performance Improvements
+
+* add AI statement ([3d5fd93](https://github.com/anthonypillot/anthonypillotOS/commit/3d5fd936aaf97b5e2fa87890cf3ac169e8c7ed9b))
+* adjust layout and spacing ([5af50d9](https://github.com/anthonypillot/anthonypillotOS/commit/5af50d99ea4dd4e45942c05b4dd5019598aad9f0))
+* **deps:** update dependencies ([edb5cf5](https://github.com/anthonypillot/anthonypillotOS/commit/edb5cf591d7c9602974e00803f9488c65db136d4))
+* **deps:** update dependencies ([9f3668f](https://github.com/anthonypillot/anthonypillotOS/commit/9f3668ffc150a4c39d088171d34ebbeb777290e4))
+
 ## [1.5.8](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.7...v1.5.8) (2026-09-15)
 
 
