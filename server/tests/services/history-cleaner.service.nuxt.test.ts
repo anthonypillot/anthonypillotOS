@@ -1,15 +1,16 @@
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-import { proceed } from "@@/server/services/history-cleaner.service";
-import { GitHubDeletionStatusType, type GitHubWorkflowRun } from "@@/server/types/github.type";
-import { HistoryCleanerJobStatus, HistoryCleanerOptions, type HistoryCleanerJob } from "@@/server/types/history-cleaner.type";
+import { proceed } from "#server/services/history-cleaner.service";
+import { GitHubDeletionStatusType, type GitHubWorkflowRun } from "#server/types/github.type";
+import { HistoryCleanerJobStatus, type HistoryCleanerJob } from "#server/types/history-cleaner.type";
+import { HistoryCleanerOptions } from "#shared/types/history-cleaner.type";
 
-import { logger } from "@@/server/utils/logger";
+import { logger } from "#server/utils/logger";
 
-import * as githubDao from "@@/server/dao/github.dao";
-import * as historyCleanerRepository from "@@/server/dao/history-cleaner.dao";
+import * as githubDao from "#server/dao/github.dao";
+import * as historyCleanerRepository from "#server/dao/history-cleaner.dao";
 
-import workflowRunsApiResponse from "@@/server/tests/data/workflowRunsApiResponse.github.json";
+import workflowRunsApiResponse from "#server/tests/data/workflowRunsApiResponse.github.json";
 
 afterEach(() => vi.clearAllMocks());
 

@@ -1,9 +1,4 @@
-import type { GitHubWorkflowRunDeletionResult } from "@@/server/types/github.type";
-
-export enum HistoryCleanerOptions {
-  WORKFLOW_RUNS = "workflow-runs",
-  DEPLOYMENTS = "deployments",
-}
+import type { GitHubWorkflowRunDeletionResult } from "#server/types/github.type";
 
 export interface HistoryCleanerJob {
   workflow: GitHubWorkflowRunDeletionResult | null;

@@ -1,5 +1,5 @@
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import * as service from "@@/server/services/task-holdem.service";
+import * as service from "#server/services/task-holdem.service";
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
