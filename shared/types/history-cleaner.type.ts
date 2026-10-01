@@ -1,3 +1,8 @@
+export enum HistoryCleanerOptions {
+  WORKFLOW_RUNS = "workflow-runs",
+  DEPLOYMENTS = "deployments",
+}
+
 export type HistoryCleanerForm = {
   account: string;
   repository: string;

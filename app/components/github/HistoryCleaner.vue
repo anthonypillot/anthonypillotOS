@@ -147,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { HistoryCleanerOptions } from "@@/server/types/history-cleaner.type";
+import { HistoryCleanerOptions } from "#shared/types/history-cleaner.type";
 import type { FormSubmitEvent } from "@nuxt/ui";
 import * as z from "zod";
 
