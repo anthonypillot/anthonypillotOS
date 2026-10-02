@@ -18,6 +18,20 @@ test("should have a hero section with job presentation", async ({ page }) => {
   expect(await page.getByText("Lille, France. Remote and on-site work.").innerText()).toBeTruthy();
 });
 
+test("should distinguish personal projects from freelance career roles", async ({ page }) => {
+  await page.goto(currentUrl);
+
+  const careerHistory = page.locator('section[aria-label="Career history"]');
+
+  for (const name of ["Claim", "anthonypillotOS"]) {
+    const experience = careerHistory.locator("article").filter({ has: page.getByRole("heading", { name, exact: true }) });
+    await expect(experience.getByText("Full Stack Developer - Personal project", { exact: true })).toBeVisible();
+  }
+
+  const adeo = careerHistory.locator("article").filter({ has: page.getByRole("heading", { name: "ADEO", exact: true }) });
+  await expect(adeo.getByText("IT Consultant - Freelance", { exact: true })).toBeVisible();
+});
+
 test("should display career highlights and open an experience technology drawer", async ({ page }) => {
   await page.goto(currentUrl, { waitUntil: "networkidle" });
 
