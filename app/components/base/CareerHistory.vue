@@ -52,7 +52,7 @@ const claim: Experience = {
     from: "June 2026",
     to: "Now",
   },
-  role: "Full Stack Developer - Freelance",
+  role: "Full Stack Developer - Personal project",
   description:
     "An open-source platform that aggregates currently free game giveaways from Epic Games, Prime Gaming, GOG, and Steam through a public API and web application.",
   highlights: [
@@ -86,7 +86,7 @@ const os: Experience = {
     from: "January 2020",
     to: "Now",
   },
-  role: "Full Stack Developer - Freelance",
+  role: "Full Stack Developer - Personal project",
   description:
     "A personal website presenting my professional career and projects, with documentation and IT tools, automated Kubernetes deployment, monitoring, and analytics.",
   highlights: [
