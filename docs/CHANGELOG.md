@@ -1,3 +1,10 @@
+## [1.5.10](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.9...v1.5.10) (2026-10-05)
+
+
+### Bug Fixes
+
+* label career personal projects correctly ([2d5efe6](https://github.com/anthonypillot/anthonypillotOS/commit/2d5efe600b2fdf071c2d525024b3755c336f3a01))
+
 ## [1.5.9](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.8...v1.5.9) (2026-09-30)
 
 
