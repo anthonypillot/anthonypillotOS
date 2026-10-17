@@ -123,7 +123,7 @@ const adeo: Experience = {
     from: "April 2022",
     to: "Now",
   },
-  role: "IT Consultant - Freelance",
+  role: "Lead Developer - Freelance",
   description:
     "Designed and developed Leroy Merlin project, qualification, estimation, and store-appointment journeys for France, Spain, Portugal, Italy, and Poland.",
   highlights: [
@@ -180,7 +180,7 @@ const auchan: Experience = {
     from: "April 2020",
     to: "April 2022",
   },
-  role: "IT Consultant - Mission",
+  role: "Back-end Developer - Mission",
   description:
     "Helped dismantle Auchan Retail France's Web Accounts Repository by replacing a legacy monolithic component with a more performant, GDPR-aligned, and secure customer-data solution.",
   highlights: [

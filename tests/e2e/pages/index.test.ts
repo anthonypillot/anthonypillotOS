@@ -29,7 +29,7 @@ test("should distinguish personal projects from freelance career roles", async (
   }
 
   const adeo = careerHistory.locator("article").filter({ has: page.getByRole("heading", { name: "ADEO", exact: true }) });
-  await expect(adeo.getByText("IT Consultant - Freelance", { exact: true })).toBeVisible();
+  await expect(adeo.getByText("Lead Developer - Freelance", { exact: true })).toBeVisible();
 });
 
 test("should display career highlights and open an experience technology drawer", async ({ page }) => {
