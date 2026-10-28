@@ -2,9 +2,9 @@
 
 ## Setup and verification
 
-- Use Node.js 24 and npm, matching CI and Docker. `npm ci` runs `prisma generate && nuxt prepare` via `postinstall`.
+- Use Node.js 24 and npm, matching CI and Docker. `npm ci` runs `nuxt prepare && prisma generate` via `postinstall`.
 - TypeScript and ESLint depend on generated `.nuxt/` config. If missing, run `npx nuxt prepare`; do not edit `.nuxt/` or `.output/`.
-- For DB-backed work and Task Hold'em E2E, run PostgreSQL in Docker (see `README.md` for the `postgres:16-alpine` command). Configure `.env` from `.env.example` without overwriting an existing file. `POSTGRES_PRISMA_URL` feeds both Prisma and Socket.IO's `pg.Pool`.
+- For DB-backed work and Task Hold'em E2E, run PostgreSQL 18 in Docker (see `README.md` for the `postgres:18-alpine` command). Mount its data volume at `/var/lib/postgresql`, using a fresh volume when upgrading from an older major version. Configure `.env` from `.env.example` without overwriting an existing file. `POSTGRES_PRISMA_URL` feeds both Prisma and Socket.IO's `pg.Pool`.
 - `npx prisma db push` initializes the local schema; there is no checked-in migration history. Regenerate the client with `npx prisma generate` after schema changes.
 
 ```sh
@@ -39,7 +39,7 @@ npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 ## Releases and deployment
 
 - Conventional Commits drive semantic-release (`.releaserc`); do not manually bump versions in `package.json`/`package-lock.json` or edit `docs/CHANGELOG.md`.
-- Build/push workflows still publish images, but Kubernetes deployment jobs are paused with `if: ${{ false }}` in `.github/workflows/build-and-push.yaml` and `.github/workflows/build-and-push-release.yaml`.
+- `.github/workflows/on-pr.yaml` publishes branch-tagged images for same-repository PRs. `.github/workflows/on-release.yaml` publishes release images, but its Kubernetes deployment jobs remain paused with `if: ${{ false }}`.
 
 ## Technology documentation (`llms.txt`)
 

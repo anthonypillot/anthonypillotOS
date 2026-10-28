@@ -1,8 +1,11 @@
+// @vitest-environment node
+// MSW 3's Node interceptor needs native fetch classes, not Happy DOM's Request.
+
 import * as dao from "#server/dao/github.dao";
 import workflowRunsApiResponse from "#server/tests/data/workflowRunsApiResponse.github.json";
 import type { GitHubWorkflowRun, GitHubWorkflowRunApiResponse } from "#server/types/github.type";
 import { logger } from "#server/utils/logger";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -23,7 +26,7 @@ beforeAll(() => {
     // This tells MSW to throw an error whenever it
     // encounters a request that doesn't have a
     // matching request handler.
-    onUnhandledRequest: "error",
+    onUnhandledFrame: "error",
   });
 });
 

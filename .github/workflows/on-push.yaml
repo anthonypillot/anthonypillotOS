@@ -1,22 +1,39 @@
-name: 🔖 Release
+name: 📤 On push
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  build:
+    name: 🏗️ Build
+    uses: anthonypillot/actions/.github/workflows/node-build-and-test.yaml@v1
+    with:
+      node_version: '["24"]'
+      run_test: true
+      run_test_command: "test -- --run"
+      run_lint: true
+
   release:
     name: 🔖 Release
-
+    needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          persist-credentials: false # needed for semantic-release (see: https://github.com/semantic-release/semantic-release/blob/8fda7fd423d24e7b425fbee83790f49dd0478e2d/docs/recipes/ci-configurations/github-actions.md#pushing-packagejson-changes-to-a-master-branch)
+          persist-credentials: false
 
       - name: 🌐 Setup Node.js
         uses: actions/setup-node@v6
@@ -29,5 +46,6 @@ jobs:
 
       - name: 🔖 Release
         env:
+          # Use a PAT so published releases can trigger on-release.yaml.
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: npx semantic-release

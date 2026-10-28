@@ -1,7 +1,8 @@
 import type { Feedback } from "@/components/form/Feedback.vue";
-import { type FeedbackData, PrismaClient } from "@prisma/client";
+import type { FeedbackData } from "#server/generated/prisma/client";
+import { createPrismaClient } from "#server/utils/prisma";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 export async function create(feedback: Feedback): Promise<FeedbackData> {
   try {

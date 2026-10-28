@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "#server/utils/prisma";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 interface ReadyResponse {
   statusCode: number;

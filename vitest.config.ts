@@ -18,6 +18,7 @@ export default defineVitestConfig({
     include: ["server/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
     coverage: {
       include: ["server/**/*.{js,ts}"],
+      exclude: ["server/generated/**"],
     },
   },
 });

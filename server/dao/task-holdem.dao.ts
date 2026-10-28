@@ -1,7 +1,7 @@
 import type { User } from "@/components/task-holdem/CreateUser.vue";
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "#server/utils/prisma";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 export async function getRoom(id: string): Promise<Room | null> {
   try {
