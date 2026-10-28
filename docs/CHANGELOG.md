@@ -1,3 +1,18 @@
+## [1.5.11](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.10...v1.5.11) (2026-10-28)
+
+
+### Bug Fixes
+
+* replace Matomo hero logo with Plausible ([cbd0eb6](https://github.com/anthonypillot/anthonypillotOS/commit/cbd0eb6629fc5751a88d37ef35a7c335d8b7e55f))
+
+
+### Performance Improvements
+
+* **career:** update ADEO and Auchan role titles ([da879b3](https://github.com/anthonypillot/anthonypillotOS/commit/da879b30bb80b7216978186283a190c3e0b505dc))
+* **deps:** update dependencies ([08a84d5](https://github.com/anthonypillot/anthonypillotOS/commit/08a84d5495ee4d489edf7b4fa0a19a06109771cc))
+* **deps:** update dependencies ([e1ca38a](https://github.com/anthonypillot/anthonypillotOS/commit/e1ca38a8c9f41686e2ec1681de6d8dfa87fab38f))
+* update SVG icons and use pixel dimensions ([14a1db1](https://github.com/anthonypillot/anthonypillotOS/commit/14a1db1944419c10a9205bf8ace71b099455ed8f))
+
 ## [1.5.10](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.9...v1.5.10) (2026-10-05)
 
 
