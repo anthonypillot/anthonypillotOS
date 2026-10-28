@@ -18,6 +18,21 @@ test("should have a hero section with job presentation", async ({ page }) => {
   expect(await page.getByText("Lille, France. Remote and on-site work.").innerText()).toBeTruthy();
 });
 
+test("should display the Plausible logo in the hero", async ({ page }) => {
+  await page.goto(currentUrl);
+
+  const hero = page.locator("main section").first();
+  const link = hero.getByRole("link", { name: "Plausible", exact: true });
+  const logo = link.getByRole("img", { name: "Plausible", exact: true });
+
+  await expect(link).toHaveAttribute("href", "https://plausible.io");
+  await expect(link).toHaveAttribute("target", "_blank");
+  await expect(logo).toBeVisible();
+  await expect(logo).toHaveAttribute("src", /\/svg\/icons\/plausible\.svg$/);
+  await expect.poll(() => logo.evaluate((image) => (image instanceof HTMLImageElement ? image.naturalWidth : 0))).toBeGreaterThan(0);
+  await expect(hero.getByRole("img", { name: "Matomo", exact: true })).toHaveCount(0);
+});
+
 test("should distinguish personal projects from freelance career roles", async ({ page }) => {
   await page.goto(currentUrl);
 
