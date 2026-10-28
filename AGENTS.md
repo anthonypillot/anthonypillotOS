@@ -1,76 +1,55 @@
 # AGENTS.md
 
-This file provides guidance to Code Agents when working with code in this repository.
+## Setup and verification
 
-## What this is
+- Use Node.js 24 and npm, matching CI and Docker. `npm ci` runs `prisma generate && nuxt prepare` via `postinstall`.
+- TypeScript and ESLint depend on generated `.nuxt/` config. If missing, run `npx nuxt prepare`; do not edit `.nuxt/` or `.output/`.
+- For DB-backed work and Task Hold'em E2E, run PostgreSQL in Docker (see `README.md` for the `postgres:16-alpine` command). Configure `.env` from `.env.example` without overwriting an existing file. `POSTGRES_PRISMA_URL` feeds both Prisma and Socket.IO's `pg.Pool`.
+- `npx prisma db push` initializes the local schema; there is no checked-in migration history. Regenerate the client with `npx prisma generate` after schema changes.
 
-`anthonypillotOS` is Anthony Pillot's personal website — a Nuxt 4 app themed as an "operating system" that introduces him and ships a few open-source IT tools. The interactive tools (under `/tools`) are the substantive code:
-
-- **Task Hold'em** — real-time collaborative planning-poker over Socket.IO (rooms, users, chat, voting).
-- **GitHub History Cleaner** — bulk-deletes a repo's workflow runs / deployments via the GitHub API, persisting job results.
-- **IT Facts** — a client-side true/false trivia mini-game.
-
-## Commands
-
-```bash
-npm run dev                     # dev server on http://localhost:3000
-npm run lint                    # nuxt typecheck && eslint .  (run before committing)
-npm run build                   # clean + nuxt build
-npm run start                   # build then preview (what Playwright boots against)
-
-npm run test                    # Vitest — SERVER-side unit tests only
-npm run test:coverage           # Vitest with v8 coverage
-npm run test:e2e                # Playwright e2e (auto-runs `npm run start` locally)
-npm run test:e2e:ui             # Playwright UI mode
-npm run test:e2e:update-snapshots
-
-npx vitest run server/tests/services/history-cleaner.service.nuxt.test.ts   # single unit test file
-npx playwright test tests/e2e/<file> --project="Desktop - Chromium"          # single e2e / one browser
+```sh
+npm run dev                       # http://localhost:3000
+npm run lint                      # nuxt typecheck, then eslint .
+npm run test -- --run              # all server tests once; npm run test watches
+npx vitest run server/tests/services/history-cleaner.service.nuxt.test.ts
+npm run test:coverage -- --run      # one-shot server coverage
+npm run start                      # clean production build, then preview
+npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 ```
 
-Database (PostgreSQL required — Task Hold'em rooms, history-cleaner jobs, feedback, and the Socket.IO postgres adapter all persist here):
+- Run `npm run lint` before committing. `tsconfig.json` enables `noUncheckedIndexedAccess`, `noImplicitReturns`, and unused-local/parameter checks.
+- `npm run build` (also called by `start`) deletes `.nuxt/`, `.output/`, `coverage/`, `playwright-report/`, and `test-results/`. Avoid concurrent builds/tests or losing reports you still need.
 
-```bash
-npx prisma db push              # first-time schema sync
-npx prisma migrate dev          # migrations for existing setups
-npx prisma generate             # regenerate client (also runs on postinstall)
-```
+## Testing gotchas
 
-Copy `.env.example` → `.env` and set `POSTGRES_PRISMA_URL`. See README for the `postgres:16-alpine` docker one-liner.
+- Vitest uses the Nuxt environment and only discovers tests under `server/`, currently `server/tests/**/*.nuxt.test.ts`; UI tests use Playwright. Keep `vitest.config.ts`'s `h3Version: 1` pin to match Nitro 2 despite transitive H3 v2 tooling.
+- Service tests mock DAOs; GitHub DAO tests use MSW with unhandled requests treated as errors. Keep DB/GitHub interactions mocked rather than using live credentials.
+- Local Playwright starts `npm run start` or reuses a server at `http://127.0.0.1:3000`. Keep `CI` **unset** for local E2E: when truthy, it disables server startup **and targets `https://prep.anthonypillot.com`** via `tests/e2e/configuration.ts`.
+- The default Playwright run covers six desktop/tablet/mobile projects; use the focused Chromium command above for a quick check. Install browsers with `npx playwright install --with-deps` when needed.
 
-## Architecture
+## Wiring and boundaries
 
-Standard Nuxt 4 layout with a `server/` Nitro backend and a `shared/` boundary.
+- Feature flow: HTTP handlers in `server/api/` or the Task Hold'em socket plugin → `server/services/` → `server/dao/`. Keep feature business logic in services and Prisma/GitHub access in DAOs.
+- Put cross-boundary contracts/data in `shared/`. Nuxt/Nitro auto-imports shared types and values (`Room`, socket events, `prefixLog`) and server utilities (`logger`, `convertConsoleLogToCustomLogger`). Check `.nuxt/types/*imports.d.ts` before adding imports for apparently undefined symbols.
+- Task Hold'em is wired in `server/plugins/task-holdem.server.ts`: Socket.IO + Engine.IO at `/api/websocket/task-holdem`, Nitro experimental WebSockets, and the Postgres adapter. The matching client lives in `app/pages/tools/task-holdem/application.client.vue`; event contracts are in `shared/types/task-holdem.type.ts`. Keep the endpoint/contracts synchronized.
+- Rooms are persisted as whole JSON payloads in `TaskHoldemRoom.data`, not relational users/votes. The `User` type is still exported by `app/components/task-holdem/CreateUser.vue` and imported as a type by shared/server code.
+- History Cleaner only executes workflow-run deletion in `server/services/history-cleaner.service.ts`; `DEPLOYMENTS` exists in the contracts/API but is not implemented in the job flow.
+- Site metadata/links live in `nuxt.config.ts` → `runtimeConfig.public`, with version/author/description from `package.json`.
 
-- **`app/`** — Vue 3 frontend. Components are grouped by feature (`components/task-holdem/`, `components/github/`, `components/it-facts/`, plus `components/base/` for the site chrome). Pages live under `app/pages/` with tools at `app/pages/tools/**`. `.client.vue` suffix = client-only rendering (used for the Socket.IO and canvas/physics-heavy views).
-- **`server/`** — Nitro backend, layered strictly **api → service → dao**:
-  - `api/**` — HTTP route handlers (e.g. `api/tools/github/history-cleaner.post.ts`, `api/health/{live,ready}.ts`, `api/form/feedback.post.ts`). Nitro file-based routing.
-  - `services/**` — business logic; the only layer `api/` and socket plugins call.
-  - `dao/**` — Prisma/GitHub data access; each DAO owns its `new PrismaClient()`. Only services call DAOs.
-- **`shared/`** — types and data imported by BOTH `app/` and `server/` (`shared/types/*.type.ts`, `shared/data/it-facts.data.ts`). Put anything cross-boundary here, not in one side.
-- **`prisma/schema.prisma`** — Postgres models. DB columns are snake_case via `@map`; Prisma fields stay camelCase.
+## Releases and deployment
 
-### Real-time (Task Hold'em)
+- Conventional Commits drive semantic-release (`.releaserc`); do not manually bump versions in `package.json`/`package-lock.json` or edit `docs/CHANGELOG.md`.
+- Build/push workflows still publish images, but Kubernetes deployment jobs are paused with `if: ${{ false }}` in `.github/workflows/build-and-push.yaml` and `.github/workflows/build-and-push-release.yaml`.
 
-Socket.IO is wired up manually in `server/plugins/task-holdem.server.ts` (a Nitro plugin), bound to engine.io and mounted at `/api/websocket/task-holdem` through Nitro's experimental websocket support (`nuxt.config.ts` → `nitro.experimental.websocket`). It uses the `@socket.io/postgres-adapter` so multiple server instances stay in sync (this app is deployed to Kubernetes). Socket event contracts (`ClientToServerEvents`/`ServerToClientEvents`, `Room`, `prefixLog`) live in `shared/types/task-holdem.type.ts`. The socket handler delegates all state changes to `services/task-holdem.service.ts`.
+## Technology documentation (`llms.txt`)
 
-### Auto-imports (important)
+Match examples to the versions in `package.json`/`package-lock.json`, especially Nitro 2, H3 v1, and Prisma 6; unversioned indexes can describe newer majors.
 
-Nuxt/Nitro auto-imports mean **`logger`, `prefixLog`, `convertConsoleLogToCustomLogger`, `useRuntimeConfig`, `Room`, socket event types, etc. are used WITHOUT import statements** in server code. `logger` comes from `server/utils/logger.ts` (a consola instance; JSON reporter in production). If a symbol appears undefined, check `server/utils/`, `shared/types/`, and `.nuxt/` generated types before adding an import.
+**Verified official `llms.txt` indexes**
 
-### Config & runtime
-
-- Public config (URLs, logos, links, version) is centralized in `nuxt.config.ts` → `runtimeConfig.public`, sourced from `package.json`. Access via `useRuntimeConfig().public`.
-- `server/plugins/bootstrap.server.ts` runs startup logging; `error-handler.server.ts` handles Nitro errors.
-- `GIT_SHA` build-arg surfaces the commit in `/api` and startup logs; `ENV` and `LOG_LEVEL=debug` control environment label and verbosity.
-
-### Testing specifics
-
-- Vitest is **server-only** (`vitest.config.ts` → `include: server/**`, environment `nuxt`). Test files use the `*.nuxt.test.ts` naming and live in `server/tests/`. There is no frontend unit-test setup — UI is covered by Playwright.
-- Playwright (`playwright.config.ts`) runs across Chromium/Firefox/Safari desktop + tablet + mobile projects; tests in `tests/e2e/`. Locally it boots `npm run start` itself; on CI (`process.env.CI`) it expects the server already running.
-
-## Conventions
-
-- **Conventional Commits** (enforced by semantic-release, which drives versioning and `docs/CHANGELOG.md`). Do not hand-edit the version in `package.json` or the changelog.
-- TypeScript is strict, including `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns` — lint will fail on unused vars and unchecked array indexing.
-- UI is built on `@nuxt/ui` v4 + Tailwind v4; icons via `@iconify-json/heroicons`.
+- Nuxt: [Nuxt 4 / test-utils](https://nuxt.com/llms.txt), [Nuxt UI](https://ui.nuxt.com/llms.txt), [Nuxt Image](https://image.nuxt.com/llms.txt).
+- Vue: [Vue 3](https://vuejs.org/llms.txt), [Vue Router](https://router.vuejs.org/llms.txt), [Unhead](https://unhead.unjs.io/llms.txt).
+- Server/data: [Nitro 2](https://v2.nitro.build/llms.txt), [H3 (latest)](https://h3.dev/llms.txt), [Prisma ORM / client](https://www.prisma.io/docs/llms.txt), [Zod](https://zod.dev/llms.txt).
+- Runtime/build/tests: [Node.js](https://nodejs.org/llms.txt), [Vite](https://vite.dev/llms.txt), [Vitest / coverage](https://vitest.dev/llms.txt).
+- Animation/icons: [GSAP](https://gsap.com/llms.txt), [Lucide](https://lucide.dev/llms.txt).
+- Operations: [Docker](https://docs.docker.com/llms.txt), [OpenTelemetry](https://opentelemetry.io/llms.txt), [GitHub REST API / Actions](https://docs.github.com/llms.txt), [semantic-release / plugins](https://semantic-release.gitbook.io/semantic-release/llms.txt).
