@@ -1,5 +1,5 @@
-import { currentUrl } from "../configuration";
-import { expect, test } from "@playwright/test";
+import { routes } from "../configuration";
+import { expect, test } from "../support/fixtures";
 
 const experienceWebsites = [
   { name: "Claim", url: "https://claim.anthonypillot.com" },
@@ -10,16 +10,14 @@ const experienceWebsites = [
 ] as const;
 
 test("should have a hero section with job presentation", async ({ page }) => {
-  await page.goto(currentUrl);
+  await page.goto(routes.home);
 
-  expect(
-    await page.getByText("Freelance Software Engineer, Real Full Stack Developer, and more.").innerText(),
-  ).toBeTruthy();
-  expect(await page.getByText("Lille, France. Remote and on-site work.").innerText()).toBeTruthy();
+  await expect(page.getByText("Freelance Software Engineer, Real Full Stack Developer, and more.")).toBeVisible();
+  await expect(page.getByText("Lille, France. Remote and on-site work.")).toBeVisible();
 });
 
 test("should display the Plausible logo in the hero", async ({ page }) => {
-  await page.goto(currentUrl);
+  await page.goto(routes.home);
 
   const hero = page.locator("main section").first();
   const link = hero.getByRole("link", { name: "Plausible", exact: true });
@@ -34,7 +32,7 @@ test("should display the Plausible logo in the hero", async ({ page }) => {
 });
 
 test("should distinguish personal projects from freelance career roles", async ({ page }) => {
-  await page.goto(currentUrl);
+  await page.goto(routes.home);
 
   const careerHistory = page.locator('section[aria-label="Career history"]');
 
@@ -48,7 +46,7 @@ test("should distinguish personal projects from freelance career roles", async (
 });
 
 test("should display career highlights and open an experience technology drawer", async ({ page }) => {
-  await page.goto(currentUrl, { waitUntil: "networkidle" });
+  await page.goto(routes.home);
 
   const careerHistory = page.locator('section[aria-label="Career history"]');
 

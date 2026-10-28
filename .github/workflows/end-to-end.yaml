@@ -5,12 +5,42 @@ on:
     - cron: "0 10 * * 6" # Every Saturday at 10:00 UTC
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   e2e:
-    name: 🎭 End-to-end tests
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    timeout-minutes: 10
+    name: 🎭 E2E (${{ matrix.browser }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chromium
+            projects: --project="Desktop - Chromium" --project="Mobile Chrome - Google Pixel 5"
+          - browser: firefox
+            projects: --project="Desktop - Firefox"
+          - browser: webkit
+            projects: --project="Desktop - Safari" --project="Tablet Safari - iPad" --project="Mobile Safari - iPhone 12"
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: e2e
+          POSTGRES_PASSWORD: e2e
+          POSTGRES_DB: anthonypillotos_e2e
+        ports:
+          - 55439:5432
+        options: >-
+          --health-cmd "pg_isready -U e2e -d anthonypillotos_e2e"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 15
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v6
@@ -24,16 +54,30 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
+      - name: 🔎 Typecheck and discover E2E tests
+        run: |
+          npm run test:e2e:typecheck
+          npm run test:e2e:list
+
       - name: 📦 Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: 🗄️ Initialize isolated test database
+        run: npm run test:e2e:db
+
+      - name: 🏗️ Build application
+        run: npm run build
 
       - name: 🎭 Run Playwright tests
-        run: npx playwright test
+        run: npx playwright test ${{ matrix.projects }}
 
       - name: 📤 Upload report
         uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: playwright-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+            logs/e2e-server.log
           retention-days: 7

@@ -1,0 +1,18 @@
+name: anthonypillotos-e2e
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: e2e
+      POSTGRES_PASSWORD: e2e
+      POSTGRES_DB: anthonypillotos_e2e
+    ports:
+      - "127.0.0.1:55439:5432"
+    tmpfs:
+      - /var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U e2e -d anthonypillotos_e2e"]
+      interval: 2s
+      timeout: 5s
+      retries: 15

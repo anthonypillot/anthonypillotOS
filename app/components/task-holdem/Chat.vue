@@ -2,6 +2,7 @@
   <section v-if="!isOpen" class="bg-gray-800 z-10 fixed right-8 bottom-12">
     <UButton
       icon="i-heroicons-chat-bubble-left-right"
+      aria-label="Open chat"
       variant="outline"
       size="xs"
       class="text-white shadow-indigo-800 shadow-md rounded-md"
@@ -16,6 +17,7 @@
       <div class="flex flex-col gap-y-8">
         <UButton
           icon="i-heroicons-x-mark"
+          aria-label="Close chat"
           variant="ghost"
           size="sm"
           class="text-white absolute right-1 top-1"
@@ -24,7 +26,7 @@
         <div>
           <p class="text-white text-xs pb-2">Messages:</p>
           <div v-if="messages && messages.length > 0">
-            <div id="messages" class="flex flex-col border rounded p-2 max-h-40 overflow-y-scroll">
+            <div id="messages" role="log" aria-label="Room messages" class="flex flex-col border rounded p-2 max-h-40 overflow-y-scroll">
               <section v-for="chatMessage in messages" :key="chatMessage.id">
                 <div id="message" class="flex gap-2">
                   <span class="text-sm text-gray-400">{{ chatMessage.user.name }}:</span>

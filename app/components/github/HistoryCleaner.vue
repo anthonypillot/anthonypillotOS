@@ -47,24 +47,27 @@
                 </template>
                 <UInput v-model="form.token" type="password" placeholder="ghp_1234567890abcdefghij" class="w-full" />
               </UFormField>
-              <div class="sm:col-span-6">
-                <label class="block text-sm font-medium leading-6 text-default">Deleting options</label>
-                <div v-for="(option, index) in options" :key="index" class="relative flex items-start pt-1.5">
-                  <UCheckbox
-                    :model-value="option.checked"
-                    :description="option.description"
-                    :disabled="option.disabled"
-                    @update:model-value="handleOptionToggle(option.name, $event as boolean)"
-                  >
-                    <template #label>
-                      <span>
-                        {{ option.label }}
-                        <span v-if="option.disabled" class="font-bold">(available soon)</span>
-                      </span>
-                    </template>
-                  </UCheckbox>
-                </div>
-              </div>
+              <UFormField name="options" class="sm:col-span-6">
+                <fieldset>
+                  <legend class="block text-sm font-medium leading-6 text-default">Deleting options</legend>
+                  <div v-for="option in options" :key="option.name" class="relative flex items-start pt-1.5">
+                    <UCheckbox
+                      :id="`history-cleaner-${option.name}`"
+                      :model-value="option.checked"
+                      :description="option.description"
+                      :disabled="option.disabled"
+                      @update:model-value="handleOptionToggle(option.name, $event as boolean)"
+                    >
+                      <template #label>
+                        <span>
+                          {{ option.label }}
+                          <span v-if="option.disabled" class="font-bold">(available soon)</span>
+                        </span>
+                      </template>
+                    </UCheckbox>
+                  </div>
+                </fieldset>
+              </UFormField>
             </div>
           </div>
           <div class="flex items-center justify-end gap-x-6 border-t border-muted p-4 sm:px-8 sm:py-6">

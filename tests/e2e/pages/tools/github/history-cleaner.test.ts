@@ -1,146 +1,137 @@
-import { application, currentUrl } from "../../../configuration";
-import { expect, test } from "@playwright/test";
+import { test as base, expect } from "../../../support/fixtures";
+import { cleanerEndpoint, cleanerInput, HistoryCleanerPage } from "../../../support/history-cleaner";
+import type { HistoryCleanerResultFiltered } from "../../../../../shared/types/history-cleaner.type";
 
-test("should have a right number of inputs and buttons", async ({ page }) => {
-  await page.goto(application.githubHistoryCleaner.url);
+type Fixtures = { cleaner: HistoryCleanerPage };
 
-  const inputs = await page.getByRole("textbox").all();
-  const checkboxes = await page.getByRole("checkbox").all();
-  const buttons = await page.getByRole("button").all();
-
-  expect(inputs).toHaveLength(3);
-  expect(checkboxes).toHaveLength(2);
-  expect(buttons).toHaveLength(4);
+const test = base.extend<Fixtures>({
+  cleaner: async ({ page }, use) => {
+    const cleaner = new HistoryCleanerPage(page);
+    await cleaner.goto();
+    await use(cleaner);
+  },
 });
 
-test("should have the form filled with the default values", async ({ page }) => {
-  await page.goto(application.githubHistoryCleaner.url);
-
-  const [account, repository, token] = await page.getByRole("textbox").all();
-  const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
-  const [__openMenu, __tool, clearButton, submitButton] = await page.getByRole("button").all();
-
-  expect(await account.inputValue()).toBe("");
-
-  expect(await account.inputValue()).toBe("");
-  expect(await repository.inputValue()).toBe("");
-  expect(await token.inputValue()).toBe("");
-
-  expect(await allWorkflowRuns.isChecked()).toBe(true);
-  expect(await allWorkflowRuns.isDisabled()).toBe(false);
-  expect(await allDeployments.isChecked()).toBe(false);
-  expect(await allDeployments.isDisabled()).toBe(true);
-
-  expect(await clearButton.textContent()).toBe("Clear");
-  expect(await clearButton.isDisabled()).toBe(false);
-  await expect(submitButton).toHaveText("Submit");
-  await expect(submitButton).toBeEnabled();
+test("form exposes labelled fields and safe defaults", async ({ cleaner }) => {
+  await expect(cleaner.account).toBeEmpty();
+  await expect(cleaner.repository).toBeEmpty();
+  await expect(cleaner.token).toBeEmpty();
+  await expect(cleaner.token).toHaveAttribute("type", "password");
+  await expect(cleaner.workflows).toBeChecked();
+  await expect(cleaner.workflows).toBeEnabled();
+  await expect(cleaner.deployments).not.toBeChecked();
+  await expect(cleaner.deployments).toBeDisabled();
+  await expect(cleaner.submit).toHaveText("Submit");
+  await expect(cleaner.submit).toBeEnabled();
 });
 
-test("should validate an empty form before showing the confirmation", async ({ page }) => {
-  await page.goto(application.githubHistoryCleaner.url);
-
-  await page.getByRole("button", { name: "Submit", exact: true }).click();
-
+test("invalid inputs show validation errors without opening confirmation", async ({ cleaner, page }) => {
+  await cleaner.submit.click();
   await expect(page.getByText("Account name is required", { exact: true })).toBeVisible();
   await expect(page.getByText("Repository name is required", { exact: true })).toBeVisible();
   await expect(page.getByText("GitHub PAT is required", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Confirm deletion", exact: true })).toHaveCount(0);
+  await expect(cleaner.confirmation).toBeHidden();
+
+  await cleaner.fill();
+  await cleaner.token.fill("invalid-token");
+  await cleaner.submit.click();
+  await expect(page.getByText("GitHub PAT should start with ghp_", { exact: true })).toBeVisible();
+  await expect(cleaner.confirmation).toBeHidden();
 });
 
-test("should have the form cleared after clicking on the clear button", async ({ page }) => {
-  await page.goto(application.githubHistoryCleaner.url);
+test("clearing resets fields and deletion options", async ({ cleaner, page }) => {
+  await cleaner.fill();
+  await page.getByRole("button", { name: "Clear", exact: true }).click();
+  await expect(cleaner.account).toBeEmpty();
+  await expect(cleaner.repository).toBeEmpty();
+  await expect(cleaner.token).toBeEmpty();
+  await expect(cleaner.workflows).not.toBeChecked();
+  await expect(cleaner.deployments).not.toBeChecked();
 
-  const [account, repository, token] = await page.getByRole("textbox").all();
-  const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
-  const [_openMenu, _tool, clearButton, _submitButton] = await page.getByRole("button").all();
-
-  await account.fill("my-account");
-  await repository.fill("my-repository");
-  await token.fill("ghp_abcd1234");
-
-  await allWorkflowRuns.check();
-  // await onlyWorkflowRunsInError.check(); // cannot be checked
-  // await allDeployments.check(); // cannot be checked
-
-  expect(await account.inputValue()).toBe("my-account");
-  expect(await repository.inputValue()).toBe("my-repository");
-  expect(await token.inputValue()).toBe("ghp_abcd1234");
-
-  expect(await allWorkflowRuns.isChecked()).toBe(true);
-  expect(await allDeployments.isChecked()).toBe(false);
-
-  expect(await clearButton.isDisabled()).toBe(false);
-  await clearButton.click();
-
-  expect(await account.inputValue()).toBe("");
-  expect(await repository.inputValue()).toBe("");
-  expect(await token.inputValue()).toBe("");
-
-  expect(await allWorkflowRuns.isChecked()).toBe(false);
-  expect(await allDeployments.isChecked()).toBe(false);
+  await cleaner.fill();
+  await cleaner.submit.click();
+  await expect(page.getByText("At least one option is required", { exact: true })).toBeVisible();
+  await expect(cleaner.confirmation).toBeHidden();
 });
 
-if (!process.env.CI) {
-  test("should have a result after confirmation", async ({ page }) => {
-    await page.route(`${currentUrl}/api${application.githubHistoryCleaner.path}`, async (route) => {
-      const json = {
-        workflow: {
-          success: 4,
-          notFound: 3,
-          unauthorized: 2,
-          unknown: 1,
-        },
-        deployment: {
-          success: 4,
-          notFound: 3,
-          unauthorized: 2,
-          unknown: 1,
-        },
-      };
-      await route.fulfill({ status: 200, json });
-    });
+test("cancelling confirmation never submits a deletion request", async ({ cleaner }) => {
+  await cleaner.openConfirmation();
+  await expect(cleaner.confirmation).toContainText(cleanerInput.account);
+  await expect(cleaner.confirmation).toContainText(cleanerInput.repository);
+  await expect(cleaner.confirmation).toContainText("All workflow runs history will be deleted.");
+  await cleaner.confirmation.getByRole("button", { name: "Cancel", exact: true }).click();
+  await expect(cleaner.confirmation).toBeHidden();
+  await expect(cleaner.account).toHaveValue(cleanerInput.account);
+});
 
-    await page.goto(application.githubHistoryCleaner.url);
+test("confirmation sends the selected options and renders all result counts", async ({ cleaner, page }) => {
+  const result = {
+    workflow: { success: 4, notFound: 3, unauthorized: 2, unknown: 1 },
+    deployment: null,
+  } satisfies HistoryCleanerResultFiltered;
+  await page.route(cleanerEndpoint, async route => {
+    expect(route.request().method()).toBe("POST");
+    expect(route.request().postDataJSON()).toEqual({ ...cleanerInput, options: ["workflow-runs"] });
+    await route.fulfill({ json: result });
+  });
+  await cleaner.openConfirmation();
+  await cleaner.confirmation.getByRole("button", { name: "Confirm", exact: true }).click();
 
-    const [account, repository, token] = await page.getByRole("textbox").all();
-    const [allWorkflowRuns, allDeployments] = await page.getByRole("checkbox").all();
-    const [_openMenu, _tool, _clearButton, submitButton] = await page.getByRole("button").all();
+  await expect(cleaner.confirmation).toBeHidden();
+  await expect(page.getByText("Cleaner history result", { exact: true })).toBeVisible();
+  await expect(page.getByText("Workflow deletion", { exact: true })).toBeVisible();
+  await expect(page.getByText("Number of workflow runs deleted with success:")).toHaveText(/success: 4\./);
+  await expect(page.getByText("Number workflow runs not found:")).toHaveText(/found: 3\./);
+  await expect(page.getByText("Number of workflow unauthorized to delete:")).toHaveText(/delete: 2\./);
+  await expect(page.getByText("Number of workflow runs not deleted for unknown reason:")).toHaveText(/reason: 1\./);
+});
 
-    await account.fill("my-account");
-    await repository.fill("my-repository");
-    await token.fill("ghp_abcd1234");
+test("pending deletion prevents duplicate confirmation and cancellation", async ({ cleaner, page }) => {
+  let releaseResponse: (() => void) | undefined;
+  const responseReady = new Promise<void>(resolve => { releaseResponse = resolve; });
+  let requests = 0;
+  await page.route(cleanerEndpoint, async route => {
+    requests++;
+    await responseReady;
+    await route.fulfill({ json: { workflow: null, deployment: null } satisfies HistoryCleanerResultFiltered });
+  });
 
-    // await allWorkflowRuns.check(); // this is the default value
-    // await onlyWorkflowRunsInError.check(); // cannot be checked
-    // await allDeployments.check(); // cannot be checked
+  try {
+    await cleaner.openConfirmation();
+    const confirm = cleaner.confirmation.getByRole("button", { name: "Confirm", exact: true });
+    await confirm.click();
+    await expect(confirm).toBeDisabled();
+    await expect(cleaner.confirmation.getByRole("button", { name: "Cancel", exact: true })).toBeDisabled();
+    await page.keyboard.press("Escape");
+    await expect(cleaner.confirmation).toBeVisible();
+    releaseResponse?.();
+    await expect(cleaner.confirmation).toBeHidden();
+    await expect(page.getByText("Everything went as expected, but nothing was found to delete.", { exact: true })).toBeVisible();
+    expect(requests).toBe(1);
+  } finally {
+    releaseResponse?.();
+  }
+});
 
-    expect(await account.inputValue()).toBe("my-account");
-    expect(await repository.inputValue()).toBe("my-repository");
-    expect(await token.inputValue()).toBe("ghp_abcd1234");
-
-    expect(await allWorkflowRuns.isChecked()).toBe(true);
-    expect(await allDeployments.isChecked()).toBe(false);
-
-    expect(await submitButton.isDisabled()).toBe(false);
-
-    await submitButton.click();
-
-    expect(await page.getByRole("heading", { name: "Confirm deletion" }).innerText()).toBeTruthy();
-    expect(await page.getByText("Are you sure you want to delete the history").innerText()).toContain(
-      "Are you sure you want to delete the history of your GitHub account my-account and repository my-repository ?"
-    );
-
-    const confirmButton = page.getByRole("button", { name: "Confirm" });
-    expect(await confirmButton.isDisabled()).toBe(false);
-    await confirmButton.click();
-
-    await expect(page.getByText("Cleaner history result")).toBeVisible();
-    await expect(page.getByText("Workflow deletion")).toBeVisible();
-
-    expect(await page.getByText("Number of workflow runs deleted with success:").innerText()).toContain("4");
-    expect(await page.getByText("Number workflow runs not found:").innerText()).toContain("3");
-    expect(await page.getByText("Number of workflow unauthorized to delete:").innerText()).toContain("2");
-    expect(await page.getByText("Number of workflow runs not deleted for unknown reason:").innerText()).toContain("1");
+for (const scenario of [
+  { status: 401, message: "The GitHub Personal Access Token (PAT) is not valid." },
+  { status: 403, message: "The GitHub Personal Access Token (PAT) is not valid." },
+  { status: 404, message: "The GitHub account or repository does not exist." },
+  { status: 500, message: "An error occurred, please try again later." },
+]) {
+  test(`deletion error ${scenario.status} is explained and allows retry`, async ({ cleaner, page }) => {
+    // ofetch retries POST only when explicitly configured; return the same error for every request.
+    await page.route(cleanerEndpoint, route => route.fulfill({ status: scenario.status, json: { message: "E2E deletion failed" } }));
+    await cleaner.openConfirmation();
+    const dialogOpened = page.waitForEvent("dialog");
+    await cleaner.confirmation.getByRole("button", { name: "Confirm", exact: true }).click();
+    const dialog = await dialogOpened;
+    expect(dialog.message()).toContain(scenario.message);
+    await dialog.accept();
+    await expect(cleaner.confirmation).toBeHidden();
+    await expect(cleaner.submit).toBeEnabled();
+    await expect(page.getByText("Cleaner history result", { exact: true })).toBeHidden();
+    await cleaner.submit.click();
+    await expect(cleaner.confirmation).toBeVisible();
   });
 }
