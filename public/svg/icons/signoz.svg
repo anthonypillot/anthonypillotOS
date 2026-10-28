@@ -1,5 +1,5 @@
 <svg width="90px" height="90px" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect y="0.5" width="21" height="21" rx="4.2" fill="url(#paint0_radial_2420_727)" />
+  <rect y="0.5" width="21px" height="21px" rx="4.2" fill="url(#paint0_radial_2420_727)" />
   <g id="Vector" filter="url(#filter0_di_2420_727)">
     <path
       fill-rule="evenodd"
@@ -26,8 +26,8 @@
       id="filter0_di_2420_727"
       x="1.04957"
       y="5.33"
-      width="18.8999"
-      height="13.02"
+      width="18.8999px"
+      height="13.02px"
       filterUnits="userSpaceOnUse"
       color-interpolation-filters="sRGB"
     >
