@@ -185,9 +185,9 @@ const logos = [
     link: "https://signoz.io",
   },
   {
-    src: "svg/icons/matomo.svg",
-    alt: "Matomo",
-    link: "https://matomo.org",
+    src: "svg/icons/plausible.svg",
+    alt: "Plausible",
+    link: "https://plausible.io",
   },
 ];
 
