@@ -1,3 +1,10 @@
+## [1.5.12](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.11...v1.5.12) (2026-10-29)
+
+
+### Performance Improvements
+
+* upgrade dependencies, migrate Prisma, and rework CI/CD ([#105](https://github.com/anthonypillot/anthonypillotOS/issues/105)) ([e0ba9ff](https://github.com/anthonypillot/anthonypillotOS/commit/e0ba9ffad9541ed301ec90b85ccc610002f4594d))
+
 ## [1.5.11](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.10...v1.5.11) (2026-10-28)
 
 
