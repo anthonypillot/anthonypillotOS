@@ -1,4 +1,4 @@
-import { currentUrl } from "@/tests/e2e/configuration";
+import { currentUrl } from "../configuration";
 import { expect, test } from "@playwright/test";
 
 const path = "/something-that-does-not-exist";

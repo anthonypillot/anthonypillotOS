@@ -1,4 +1,4 @@
-import { application, currentUrl } from "@/tests/e2e/configuration";
+import { application, currentUrl } from "../../../configuration";
 import { expect, test } from "@playwright/test";
 
 test("should have a right number of inputs and buttons", async ({ page }) => {
@@ -33,8 +33,19 @@ test("should have the form filled with the default values", async ({ page }) => 
 
   expect(await clearButton.textContent()).toBe("Clear");
   expect(await clearButton.isDisabled()).toBe(false);
-  expect(await submitButton.textContent()).toBe(" Submit ");
-  expect(await submitButton.isDisabled()).toBe(true);
+  await expect(submitButton).toHaveText("Submit");
+  await expect(submitButton).toBeEnabled();
+});
+
+test("should validate an empty form before showing the confirmation", async ({ page }) => {
+  await page.goto(application.githubHistoryCleaner.url);
+
+  await page.getByRole("button", { name: "Submit", exact: true }).click();
+
+  await expect(page.getByText("Account name is required", { exact: true })).toBeVisible();
+  await expect(page.getByText("Repository name is required", { exact: true })).toBeVisible();
+  await expect(page.getByText("GitHub PAT is required", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Confirm deletion", exact: true })).toHaveCount(0);
 });
 
 test("should have the form cleared after clicking on the clear button", async ({ page }) => {
@@ -124,8 +135,8 @@ if (!process.env.CI) {
     expect(await confirmButton.isDisabled()).toBe(false);
     await confirmButton.click();
 
-    expect(await page.getByText("Cleaner history result").isVisible()).toBe(true);
-    expect(await page.getByText("Workflow deletion").isVisible()).toBe(true);
+    await expect(page.getByText("Cleaner history result")).toBeVisible();
+    await expect(page.getByText("Workflow deletion")).toBeVisible();
 
     expect(await page.getByText("Number of workflow runs deleted with success:").innerText()).toContain("4");
     expect(await page.getByText("Number workflow runs not found:").innerText()).toContain("3");

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { application } from "@/tests/e2e/configuration";
+import { application } from "../../../configuration";
 
 test("should be able to create a player", async ({ page }) => {
   await page.goto(application.taskHoldem.url);

@@ -28,27 +28,30 @@ Build with ❤️ and [Nuxt](https://nuxt.com).
 
 ## ⚙️ Setup
 
-Make sure to install the dependencies:
+Use Node.js 24.15 or newer within the 24.x release line and npm:
 
 ```bash
 npm install
 ```
 
-> `postinstall` automatically runs `prisma generate && nuxt prepare`.
+> `postinstall` automatically runs `nuxt prepare && prisma generate`.
+> Prisma CLI loads `POSTGRES_PRISMA_URL` from `.env` through `prisma.config.ts`; client generation does not need a running database.
 
 ### Local PostgreSQL
 
-The project uses PostgreSQL (Task Hold'em stores rooms, history-cleaner jobs, feedback and Socket.IO attachments). Start a local container:
+The project uses PostgreSQL 18 for Task Hold'em rooms, history-cleaner jobs, feedback and Socket.IO attachments. Start a local container:
 
 ```bash
-docker run --name postgres \
+docker run --name os-postgres \
   -e POSTGRES_USER=anthonypillot \
   -e POSTGRES_PASSWORD=password \
   -e POSTGRES_DB=anthonypillotOS \
-  -v postgres-data:/var/lib/postgresql/data \
+  -v postgres-18-data:/var/lib/postgresql \
   -p 5432:5432 \
-  -d postgres:16-alpine
+  -d postgres:18-alpine
 ```
+
+> PostgreSQL 18 mounts its data volume at `/var/lib/postgresql`. Use a fresh volume; migrate older local databases with `pg_dump`/`pg_restore` or `pg_upgrade` rather than reusing their data directories directly.
 
 Then copy `.env.example` to `.env` and fill in `POSTGRES_PRISMA_URL`:
 

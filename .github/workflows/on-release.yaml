@@ -1,29 +1,36 @@
-name: 🏗️ Build, push and deploy
+name: 📦 On release
+
+on:
+  release:
+    types: [published]
 
 permissions:
   contents: read
-  packages: write
 
-on:
-  pull_request:
-    branches:
-      - main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
 
 jobs:
   extract:
-    name: 📄 Extract version
+    name: 📄 Extract
     uses: anthonypillot/actions/.github/workflows/extract-version.yaml@v1
 
   build:
     name: 🏗️ Build
     uses: anthonypillot/actions/.github/workflows/node-build-and-test.yaml@v1
     with:
+      node_version: '["24"]'
       run_test: true
+      run_test_command: "test -- --run"
       run_lint: true
 
   push:
     name: 🐳 Push
     needs: [extract, build]
+    permissions:
+      contents: read
+      packages: write
     uses: anthonypillot/actions/.github/workflows/node-build-image-and-push.yaml@v1
     with:
       registry_url: ghcr.io
@@ -39,13 +46,22 @@ jobs:
     # Temporarily pause Kubernetes deployments while retaining the workflow configuration.
     if: ${{ false }}
     needs: [extract, push]
+    strategy:
+      matrix:
+        include:
+          - environment: production
+            namespace: os-prod
+            shortcut: prod
+          - environment: pre-production
+            namespace: os-prep
+            shortcut: prep
     uses: anthonypillot/actions/.github/workflows/kubernetes-deployment.yaml@v1
     with:
       registry_url: ghcr.io
       registry_username: ${{ github.repository_owner }}
-      environment: pre-production
-      namespace_name: os-prep
-      deployment_name: os-prep
+      environment: ${{ matrix.environment }}
+      namespace_name: ${{ matrix.namespace }}
+      deployment_name: os-${{ matrix.shortcut }}
       image_name: os
       image_tag: ${{ needs.extract.outputs.result }}
     secrets:

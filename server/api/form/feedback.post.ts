@@ -1,5 +1,5 @@
 import { create } from "#server/services/feedback.service";
-import type { FeedbackData } from "@prisma/client";
+import type { FeedbackData } from "#server/generated/prisma/client";
 import { z } from "zod";
 
 export default defineEventHandler(async (event): Promise<FeedbackData> => {

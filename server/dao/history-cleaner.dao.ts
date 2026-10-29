@@ -1,9 +1,10 @@
-import { type HistoryCleanerJobResult, PrismaClient } from "@prisma/client";
+import type { HistoryCleanerJobResult } from "#server/generated/prisma/client";
 import type { HistoryCleanerJobStatus, HistoryCleanerJob } from "#server/types/history-cleaner.type";
 
 import { logger } from "#server/utils/logger";
+import { createPrismaClient } from "#server/utils/prisma";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 /**
  * Retrieves all history cleaner requests.
