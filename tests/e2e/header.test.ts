@@ -1,8 +1,8 @@
-import { expect, test } from "@playwright/test";
-import { currentUrl } from "./configuration";
+import { expect, test } from "./support/fixtures";
+import { routes } from "./configuration";
 
 test("floating navigation supports tool navigation and keyboard dismissal", async ({ page }) => {
-  await page.goto(`${currentUrl}/tools`, { waitUntil: "networkidle" });
+  await page.goto(routes.tools);
 
   const header = page.getByRole("navigation", { name: "Global", exact: true });
   const mobile = (page.viewportSize()?.width ?? 0) < 1024;
@@ -28,7 +28,7 @@ test("floating navigation supports tool navigation and keyboard dismissal", asyn
 
   await trigger.click();
   await menu.getByRole("link", { name: /IT Facts/ }).click();
-  await expect(page).toHaveURL(`${currentUrl}/tools/it-facts`);
+  await expect(page).toHaveURL(routes.itFactsLanding);
   await expect(menu).toBeHidden();
 
   await trigger.click();
@@ -44,9 +44,10 @@ test("floating navigation supports tool navigation and keyboard dismissal", asyn
   expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
 });
 
-test("mobile dropdown stays within a small viewport and closes outside or across breakpoints", async ({ page }) => {
+test("mobile dropdown stays within a small viewport and closes outside or across breakpoints", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Breakpoint resizing is covered once per desktop engine; mobile projects use their actual device viewport.");
   await page.setViewportSize({ width: 320, height: 568 });
-  await page.goto(`${currentUrl}/tools`, { waitUntil: "networkidle" });
+  await page.goto(routes.tools);
 
   const header = page.getByRole("navigation", { name: "Global", exact: true });
   const trigger = header.getByRole("button", { name: "Open main menu" });

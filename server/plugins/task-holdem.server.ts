@@ -22,48 +22,62 @@ export default defineNitroPlugin((nitro) => {
   io.bind(engine);
 
   io.on("connection", async (socket) => {
-    io.emit("data", {
-      socketNumber: (await io.fetchSockets()).length,
-    });
-
     const roomId = socket.handshake.query.id as string;
     const sessionId = socket.handshake.query.sessionId as string;
+    const roomReady = initializeRoom();
 
-    if (sessionId) {
-      const user: User | null = await service.getUserBySessionId(roomId, sessionId);
-      if (user && user.name) {
-        logger.debug(`${prefixLog} User reconnected: [${user.name}]`);
+    async function initializeRoom(): Promise<boolean> {
+      try {
+        if (roomId && sessionId) {
+          const user: User | null = await service.getUserBySessionId(roomId, sessionId);
+          if (user && user.name) {
+            logger.debug(`${prefixLog} User reconnected: [${user.name}]`);
+          }
+        }
+
+        if (roomId) {
+          await socket.join(roomId);
+          // Send the initial snapshot directly so adapter broadcasts cannot deliver it after a newer update.
+          socket.emit("room-update", await service.getOrCreateRoom(roomId));
+        }
+        return true;
+      } catch (error) {
+        logger.error(`${prefixLog} Room initialization failed: ${error instanceof Error ? error.message : String(error)}`);
+        socket.disconnect(true);
+        return false;
       }
     }
 
+    // Register handlers before yielding: clients may emit immediately after the connection handshake.
     if (roomId) {
-      socket.join(roomId);
-
-      io.to(roomId).emit("room-update", await service.getOrCreateRoom(roomId));
-
-      socket.on("message", (message) => {
+      socket.on("message", async (message) => {
+        if (!await roomReady) return;
         io.to(roomId).emit("message", message);
       });
 
       socket.on("room-update", async (room) => {
+        if (!await roomReady) return;
         io.to(roomId).emit("room-update", await service.updateRoom(roomId, room));
       });
 
       socket.on("user-create", async (userToCreate: User) => {
+        if (!await roomReady) return;
         io.to(roomId).emit("room-update", await service.createUser(roomId, sessionId, userToCreate));
       });
 
       socket.on("user-remove", async (userToRemove: User) => {
+        if (!await roomReady) return;
         io.to(roomId).emit("room-update", await service.removeUser(roomId, userToRemove));
       });
 
       socket.on("room-restart", async (room: Room) => {
+        if (!await roomReady) return;
         io.to(roomId).emit("room-restart", await service.restartRoom(roomId, room));
       });
     }
 
     socket.on("disconnect", async () => {
-      if (roomId && sessionId) {
+      if (await roomReady && roomId && sessionId) {
         const room: Room | null = await service.removeUserBySessionId(roomId, sessionId);
         if (room) {
           io.to(roomId).emit("room-update", room);
@@ -78,6 +92,12 @@ export default defineNitroPlugin((nitro) => {
     socket.on("error", (error) => {
       logger.error(`${prefixLog} Error: ${error}`);
     });
+
+    if (await roomReady) {
+      io.emit("data", {
+        socketNumber: (await io.fetchSockets()).length,
+      });
+    }
   });
 
   nitro.router.use(

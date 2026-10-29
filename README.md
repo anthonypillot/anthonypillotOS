@@ -84,11 +84,26 @@ npm run dev
 The project uses [Vitest](https://vitest.dev/) for server-side unit tests and [Playwright](https://playwright.dev/) for end-to-end tests.
 
 ```bash
-npm run test            # Vitest unit tests
-npm run test:coverage   # Vitest with v8 coverage
-npm run test:e2e        # Playwright (auto-starts npm run start locally)
-npm run test:e2e:ui     # Playwright UI mode
+npm run test             # Vitest unit tests
+npm run test:coverage    # Vitest with v8 coverage
+npm run test:e2e:db:up   # Start disposable Docker PostgreSQL and initialize its schema
+npm run test:e2e         # Build once, then run all six Playwright browser/device projects
+npm run test:e2e:ui      # Playwright UI mode
+npm run test:e2e:db:down # Stop and discard the E2E database
 ```
+
+E2E tests always launch the production build at `http://127.0.0.1:4173`, including in CI.
+Their dedicated database uses port `55439` and never reads database credentials from `.env`.
+Install browsers once with `npx playwright install --with-deps`.
+
+For a quick check, use `npm run test:e2e -- --project="Desktop - Chromium"`.
+After building, `npx playwright test ...` reruns selected specs without rebuilding.
+`npm run test:e2e:typecheck` and `npm run test:e2e:list` check types/discovery without starting the app or database.
+
+GitHub Actions runs E2E only on the weekly schedule or manual dispatch, grouped by browser engine.
+Failures fail the workflow; artifacts include HTML/JUnit reports, failure screenshots/traces, browser diagnostics, and `logs/e2e-server.log`.
+TaskHold'em exercises real WebSockets/PostgreSQL; History Cleaner submissions are mocked with fake tokens and blocked unless explicitly intercepted.
+Do not run builds and Playwright simultaneously: `npm run build` removes previous reports and test results.
 
 ## 🚀 Production
 

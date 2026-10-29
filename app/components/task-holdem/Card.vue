@@ -1,5 +1,8 @@
 <template>
-  <div
+  <button
+    type="button"
+    :aria-label="`Select ${value} card`"
+    :aria-pressed="isSelected"
     :class="
       'card flex flex-col justify-center items-center w-12 h-24 border border-indigo-400 rounded cursor-pointer transform hover:bg-indigo-400 hover:bg-opacity-10' +
       (isSelected ? ' bg-indigo-200 bg-opacity-10 border-indigo-600 border-4 -translate-y-1' : '')
@@ -8,7 +11,7 @@
   >
     <UIcon v-if="props.type === 'icon'" :name="valueToIconName[props.value]" class="text-white" />
     <span v-else class="text-white text-xl">{{ props.value }}</span>
-  </div>
+  </button>
 </template>
 
 <script setup lang="ts">

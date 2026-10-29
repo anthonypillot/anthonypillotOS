@@ -1,29 +1,14 @@
-import { itFactsApplication } from "../../shared/types/it-facts.type";
-import { taskHoldemApplication } from "../../shared/types/task-holdem.type";
+export const baseURL = "http://127.0.0.1:4173";
 
-const baseUrls = {
-  local: "http://127.0.0.1:3000",
-  prep: "https://prep.anthonypillot.com",
-  prod: "https://anthonypillot.com",
-};
+// Deliberately independent of .env and POSTGRES_PRISMA_URL: never use a developer or deployed database.
+export const databaseURL = "postgresql://e2e:e2e@127.0.0.1:55439/anthonypillotos_e2e";
 
-function getBaseUrl(): string {
-  return process.env.CI ? baseUrls.prep : baseUrls.local;
-}
-
-function createConfig(path: string): { url: string; path: string } {
-  return {
-    url: getBaseUrl() + path,
-    path,
-  };
-}
-
-export const currentUrl = getBaseUrl();
-
-export const application = {
-  githubHistoryCleaner: createConfig("/tools/github/history-cleaner"),
-  itFacts: createConfig(itFactsApplication.path),
-  itFactsLanding: createConfig("/tools/it-facts"),
-  taskHoldem: createConfig(taskHoldemApplication.path),
-  taskHoldemLanding: createConfig("/tools/task-holdem"),
+export const routes = {
+  home: "/",
+  tools: "/tools",
+  githubHistoryCleaner: "/tools/github/history-cleaner",
+  itFacts: "/tools/it-facts/application",
+  itFactsLanding: "/tools/it-facts",
+  taskHoldem: "/tools/task-holdem/application",
+  taskHoldemLanding: "/tools/task-holdem",
 };

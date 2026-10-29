@@ -1,51 +1,65 @@
-import { test, expect } from "@playwright/test";
-import { application } from "../../../configuration";
+import { expect, test } from "../../../support/fixtures";
+import { routes } from "../../../configuration";
 
-test("should display the hero and a Launch IT Facts control", async ({ page }) => {
-  await page.goto(application.itFactsLanding.url);
-
-  await expect(page.getByRole("heading", { name: "IT Facts" }).first()).toBeVisible();
-  await expect(page.getByTestId("it-facts-launch")).toBeVisible();
+test("landing page launches the game without starting a round", async ({ page }) => {
+  await page.goto(routes.itFactsLanding);
+  await expect(page.getByRole("heading", { name: "IT Facts", level: 1 })).toBeVisible();
   await expect(page.getByTestId("it-facts-game-heading")).toHaveCount(0);
-});
-
-test("should start a round and show the first fact", async ({ page }) => {
-  await page.goto(application.itFacts.url);
-
+  const launch = page.getByTestId("it-facts-launch");
+  await expect(launch).toHaveAttribute("href", routes.itFacts);
+  await launch.click();
+  await expect(page).toHaveURL(routes.itFacts);
   await expect(page.getByTestId("it-facts-game-heading")).toBeVisible();
-  await page.getByTestId("start-round-button").click();
-
-  await expect(page.getByTestId("it-facts-statement")).toBeVisible();
-  const statement = await page.getByTestId("it-facts-statement").textContent();
-  expect(statement && statement.length > 0).toBeTruthy();
-
-  await expect(page.getByTestId("answer-true")).toBeVisible();
-  await expect(page.getByTestId("answer-false")).toBeVisible();
-  await expect(page.getByTestId("it-facts-progress")).toContainText("Question 1 of 10");
+  await expect(page.getByTestId("it-facts-progress")).toHaveText("A round of 10 questions awaits");
 });
 
-test("should reach the result screen after 10 answers and allow a new round", async ({ page }) => {
-  await page.goto(application.itFacts.url);
+test("answers show feedback and cannot be changed before advancing", async ({ page }) => {
+  await page.goto(routes.itFacts);
+  await page.getByRole("button", { name: "Start a round", exact: true }).click();
+  await expect(page.getByTestId("it-facts-statement")).toBeVisible();
+  await expect(page.getByTestId("it-facts-progress")).toHaveText("Question 1 of 10");
+  await expect(page.getByRole("button", { name: "True", exact: true })).toBeEnabled();
+  await page.getByRole("button", { name: "False", exact: true }).click();
+  await expect(page.getByTestId("it-facts-feedback")).toBeVisible();
+  await expect(page.getByTestId("it-facts-explanation")).not.toBeEmpty();
+  await expect(page.getByRole("button", { name: "True", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "False", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Next question", exact: true }).click();
+  await expect(page.getByTestId("it-facts-progress")).toHaveText("Question 2 of 10");
+  await expect(page.getByTestId("it-facts-feedback")).toBeHidden();
+  await expect(page.getByRole("button", { name: "True", exact: true })).toBeEnabled();
+});
 
-  await page.getByTestId("start-round-button").click();
+test("a full round tracks scoring, persists the best score and supports replay", async ({ page }) => {
+  // Stable shuffling without importing or coupling tests to the fact dataset.
+  await page.addInitScript(() => { Math.random = () => 0.5; });
+  await page.goto(routes.itFacts);
+  await page.getByRole("button", { name: "Start a round", exact: true }).click();
+  let score = 0;
 
-  for (let i = 0; i < 10; i++) {
-    await expect(page.getByTestId("answer-true")).toBeEnabled();
-    await page.getByTestId("answer-true").click();
-
-    await expect(page.getByTestId("it-facts-feedback")).toBeVisible();
-
-    const next = page.getByTestId("it-facts-next");
-    await expect(next).toBeVisible();
-    await next.click();
+  for (let index = 0; index < 10; index++) {
+    await expect(page.getByTestId("it-facts-progress")).toHaveText(`Question ${index + 1} of 10`);
+    await page.getByRole("button", { name: "True", exact: true }).click();
+    const feedback = page.getByTestId("it-facts-feedback");
+    await expect(feedback).toBeVisible();
+    const isTrue = await feedback.getByText("It's true!", { exact: true }).isVisible();
+    await expect(page.getByTestId("it-facts-feedback-badge")).toHaveText(isTrue ? "Correct" : "Incorrect");
+    if (isTrue) score++;
+    await expect(page.getByTestId("it-facts-running-score")).toHaveText(`Score: ${score} / 10`);
+    await page.getByRole("button", { name: index === 9 ? "See result" : "Next question", exact: true }).click();
   }
 
-  await expect(page.getByTestId("it-facts-result")).toBeVisible();
-  await expect(page.getByTestId("it-facts-result-heading")).toContainText("Round complete");
-  await expect(page.getByTestId("it-facts-result-score")).toContainText("out of 10");
+  expect(score).toBeGreaterThan(0);
+  expect(score).toBeLessThan(10);
+  await expect(page.getByTestId("it-facts-result-heading")).toHaveText("Round complete");
+  await expect(page.getByTestId("it-facts-result-score")).toHaveText(`You scored ${score} out of 10.`);
+  await expect(page.getByTestId("it-facts-result-best")).toHaveText(`Best score: ${score}`);
 
-  await page.getByTestId("it-facts-play-again").click();
-
-  await expect(page.getByTestId("it-facts-statement")).toBeVisible();
-  await expect(page.getByTestId("it-facts-progress")).toContainText("Question 1 of 10");
+  await page.getByRole("button", { name: "Play again", exact: true }).click();
+  await expect(page.getByTestId("it-facts-progress")).toHaveText("Question 1 of 10");
+  await expect(page.getByTestId("it-facts-running-score")).toHaveText("Score: 0 / 10");
+  await expect(page.getByTestId("it-facts-result")).toBeHidden();
+  await page.reload();
+  expect(await page.evaluate(() => localStorage.getItem("it-facts:best"))).toBe(String(score));
+  await expect(page.getByRole("button", { name: "Start a round", exact: true })).toBeVisible();
 });
