@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Dialog, Page } from "@playwright/test";
 import { routes } from "../configuration";
 
 export const cleanerEndpoint = "/api/tools/github/history-cleaner";
@@ -32,5 +32,20 @@ export class HistoryCleanerPage {
   async openConfirmation(): Promise<void> {
     await this.fill();
     await this.submit.click();
+  }
+
+  async confirmAndAcceptAlert(): Promise<Dialog> {
+    const acceptAlert = async (): Promise<Dialog> => {
+      const dialog = await this.page.waitForEvent("dialog");
+      await dialog.accept();
+      return dialog;
+    };
+
+    // An alert can block click completion, so accept it concurrently with the click.
+    const [dialog] = await Promise.all([
+      acceptAlert(),
+      this.confirmation.getByRole("button", { name: "Confirm", exact: true }).click(),
+    ]);
+    return dialog;
   }
 }

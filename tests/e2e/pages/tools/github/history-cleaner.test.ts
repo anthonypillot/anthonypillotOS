@@ -120,18 +120,41 @@ for (const scenario of [
   { status: 500, message: "An error occurred, please try again later." },
 ]) {
   test(`deletion error ${scenario.status} is explained and allows retry`, async ({ cleaner, page }) => {
-    // ofetch retries POST only when explicitly configured; return the same error for every request.
-    await page.route(cleanerEndpoint, route => route.fulfill({ status: scenario.status, json: { message: "E2E deletion failed" } }));
+    const retryResult = {
+      workflow: { success: 1, notFound: 0, unauthorized: 0, unknown: 0 },
+      deployment: null,
+    } satisfies HistoryCleanerResultFiltered;
+    let submissions = 0;
+    await page.route(cleanerEndpoint, async route => {
+      submissions++;
+      expect(route.request().method()).toBe("POST");
+      expect(route.request().postDataJSON()).toEqual({ ...cleanerInput, options: ["workflow-runs"] });
+
+      if (submissions === 1) {
+        await route.fulfill({ status: scenario.status, json: { message: "E2E deletion failed" } });
+        return;
+      }
+      await route.fulfill({ json: retryResult });
+    });
     await cleaner.openConfirmation();
-    const dialogOpened = page.waitForEvent("dialog");
-    await cleaner.confirmation.getByRole("button", { name: "Confirm", exact: true }).click();
-    const dialog = await dialogOpened;
+    const dialog = await cleaner.confirmAndAcceptAlert();
+    expect(dialog.type()).toBe("alert");
     expect(dialog.message()).toContain(scenario.message);
-    await dialog.accept();
     await expect(cleaner.confirmation).toBeHidden();
     await expect(cleaner.submit).toBeEnabled();
     await expect(page.getByText("Cleaner history result", { exact: true })).toBeHidden();
+    await expect(cleaner.account).toHaveValue(cleanerInput.account);
+    await expect(cleaner.repository).toHaveValue(cleanerInput.repository);
+    await expect(cleaner.token).toHaveValue(cleanerInput.token);
+    expect(submissions, "Failed deletion must not automatically retry a destructive POST").toBe(1);
+
     await cleaner.submit.click();
     await expect(cleaner.confirmation).toBeVisible();
+    expect(submissions, "Retry must wait for explicit confirmation").toBe(1);
+    await cleaner.confirmation.getByRole("button", { name: "Confirm", exact: true }).click();
+    await expect(cleaner.confirmation).toBeHidden();
+    await expect(page.getByText("Cleaner history result", { exact: true })).toBeVisible();
+    await expect(page.getByText("Number of workflow runs deleted with success:")).toHaveText(/success: 1\./);
+    expect(submissions).toBe(2);
   });
 }
