@@ -25,7 +25,7 @@ test("form exposes labelled fields and safe defaults", async ({ cleaner }) => {
   await expect(cleaner.submit).toBeEnabled();
 });
 
-test("invalid inputs show validation errors without opening confirmation", async ({ cleaner, page }) => {
+test("invalid inputs block confirmation until corrected", async ({ cleaner, page }) => {
   await cleaner.submit.click();
   await expect(page.getByText("Account name is required", { exact: true })).toBeVisible();
   await expect(page.getByText("Repository name is required", { exact: true })).toBeVisible();
@@ -37,6 +37,10 @@ test("invalid inputs show validation errors without opening confirmation", async
   await cleaner.submit.click();
   await expect(page.getByText("GitHub PAT should start with ghp_", { exact: true })).toBeVisible();
   await expect(cleaner.confirmation).toBeHidden();
+
+  await cleaner.openConfirmation();
+  await expect(page.getByText("GitHub PAT should start with ghp_", { exact: true })).toBeHidden();
+  await expect(cleaner.confirmation).toBeVisible();
 });
 
 test("clearing resets fields and deletion options", async ({ cleaner, page }) => {

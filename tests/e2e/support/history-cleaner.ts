@@ -1,4 +1,4 @@
-import type { Dialog, Page } from "@playwright/test";
+import { expect, type Dialog, type Page } from "@playwright/test";
 import { routes } from "../configuration";
 
 export const cleanerEndpoint = "/api/tools/github/history-cleaner";
@@ -27,6 +27,10 @@ export class HistoryCleanerPage {
     await this.account.fill(cleanerInput.account);
     await this.repository.fill(cleanerInput.repository);
     await this.token.fill(cleanerInput.token);
+
+    // Blur validation can restore the PAT help text and move Submit during its click.
+    await this.token.blur();
+    await expect(this.token).toHaveAttribute("aria-invalid", "false");
   }
 
   async openConfirmation(): Promise<void> {

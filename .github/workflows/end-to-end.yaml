@@ -22,11 +22,11 @@ jobs:
       matrix:
         include:
           - browser: chromium
-            projects: --project="Desktop - Chromium" --project="Mobile Chrome - Google Pixel 5"
+            projects: --project="Desktop - Chromium" --project="Mobile Chrome - Samsung Galaxy S24"
           - browser: firefox
             projects: --project="Desktop - Firefox"
           - browser: webkit
-            projects: --project="Desktop - Safari" --project="Tablet Safari - iPad" --project="Mobile Safari - iPhone 12"
+            projects: --project="Desktop - Safari" --project="Tablet Safari - iPad" --project="Mobile Safari - iPhone 15"
     services:
       postgres:
         image: postgres:18-alpine

@@ -33,8 +33,8 @@ export default defineConfig({
     { name: "Desktop - Firefox", use: { ...devices["Desktop Firefox"] } },
     { name: "Desktop - Safari", use: { ...devices["Desktop Safari"] } },
     { name: "Tablet Safari - iPad", use: { ...devices["iPad (gen 7)"] } },
-    { name: "Mobile Chrome - Google Pixel 5", use: { ...devices["Pixel 5"] } },
-    { name: "Mobile Safari - iPhone 12", use: { ...devices["iPhone 12"] } },
+    { name: "Mobile Chrome - Samsung Galaxy S24", use: { ...devices["Galaxy S24"] } },
+    { name: "Mobile Safari - iPhone 15", use: { ...devices["iPhone 15"] } },
   ],
   webServer: {
     command: "node tests/e2e/start-server.ts",
