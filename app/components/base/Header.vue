@@ -154,21 +154,26 @@ onMounted(() => {
 }
 
 .header-glass {
+  --header-surface-opacity: 92%;
+  --header-backdrop-brightness: 1;
   color: var(--ui-text-highlighted);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--ui-text-highlighted) 5%, transparent), color-mix(in srgb, var(--ui-primary) 3%, transparent)), color-mix(in srgb, var(--ui-bg) 92%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--ui-text-highlighted) 5%, transparent), color-mix(in srgb, var(--ui-primary) 3%, transparent)), color-mix(in srgb, var(--ui-bg) var(--header-surface-opacity), transparent);
   border: 1px solid var(--ui-border-accented);
   box-shadow: 0 8px 32px -12px rgb(0 0 0 / 35%), inset 0 1px 0 rgb(255 255 255 / 12%);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
-  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%) brightness(var(--header-backdrop-brightness));
+  backdrop-filter: blur(28px) saturate(160%) brightness(var(--header-backdrop-brightness));
 }
 
 .header-pill {
+  --header-surface-opacity: 45%;
+  --header-backdrop-brightness: 0.4;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
   width: 100%;
   padding: 0.25rem;
+  border-color: color-mix(in srgb, var(--ui-text-highlighted) 18%, transparent);
   border-radius: 9999px;
   pointer-events: auto;
 }
@@ -200,7 +205,7 @@ onMounted(() => {
 .header-brand:hover,
 .header-link[data-state="open"] {
   color: var(--ui-text-highlighted);
-  background-color: var(--ui-bg-elevated);
+  background-color: color-mix(in srgb, var(--ui-text-highlighted) 9%, transparent);
 }
 
 .header-link-active,
@@ -217,7 +222,7 @@ onMounted(() => {
   justify-content: center;
   width: 2.75rem;
   padding: 0;
-  background-color: var(--ui-bg-elevated);
+  background-color: color-mix(in srgb, var(--ui-text-highlighted) 6%, transparent);
 }
 
 .header-chevron {
