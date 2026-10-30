@@ -210,6 +210,8 @@ export function useTaskHoldemRoom() {
   async function join(value: TaskHoldemProfile): Promise<void> {
     const parsed = taskHoldemProfileSchema.safeParse(value);
     if (!socket || !canJoin.value || !parsed.success) return;
+    // Request permission before the first await to preserve the join gesture.
+    void feedback.requestNotifications();
     const client = socket;
     const wasJoined = isJoined.value;
     isBusy.value = true;

@@ -7,6 +7,7 @@ import { readTaskHoldemFeedback, saveTaskHoldemFeedback } from "../../../app/uti
 import { createTaskHoldemState, toTaskHoldemRoom } from "../../../server/domain/room";
 
 const nativeNotification = vi.fn();
+const requestPermission = vi.fn<() => Promise<NotificationPermission>>();
 const cleanup: (() => void)[] = [];
 const serviceWorkerDescriptor = Object.getOwnPropertyDescriptor(navigator, "serviceWorker");
 const locksDescriptor = Object.getOwnPropertyDescriptor(navigator, "locks");
@@ -25,12 +26,15 @@ function room() {
 
 beforeEach(() => {
   nativeNotification.mockReset();
-  const preferences = readTaskHoldemFeedback();
-  preferences.notifications = true;
-  saveTaskHoldemFeedback(preferences);
+  requestPermission.mockReset().mockResolvedValue("granted");
   vi.stubGlobal("isSecureContext", true);
-  vi.stubGlobal("Notification", class {
-    static permission = "granted";
+  vi.stubGlobal("Notification", class TestNotification {
+    static permission: NotificationPermission = "granted";
+    static async requestPermission() {
+      const result = await requestPermission();
+      TestNotification.permission = result;
+      return result;
+    }
     constructor(title: string, options: NotificationOptions) { nativeNotification(title, options); }
     close() {}
   });
@@ -63,13 +67,76 @@ describe("Task Hold'em notification delivery", () => {
     expect(feedback.notificationError.value).toBeNull();
   });
 
-  test.each(["muted", "zero volume", "round sounds disabled"])("keeps browser alerts silent with %s", async (setting) => {
+  test("keeps browser alerts silent when sound effects are muted", async () => {
+    const preferences = readTaskHoldemFeedback();
+    preferences.muted = true;
+    saveTaskHoldemFeedback(preferences);
     const feedback = mountFeedback();
-    if (setting === "muted") feedback.preferences.muted = true;
-    else if (setting === "zero volume") feedback.preferences.volume = 0;
-    else feedback.preferences.categories.rounds = false;
     await feedback.notifyRound(room());
     expect(nativeNotification).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ silent: true }));
+  });
+
+  test("only requests permission when explicitly called and asks at most once per page", async () => {
+    Object.defineProperty(Notification, "permission", { configurable: true, writable: true, value: "default" });
+    const feedback = mountFeedback();
+    await flushPromises();
+    expect(requestPermission).not.toHaveBeenCalled();
+    await Promise.all([feedback.requestNotifications(), feedback.requestNotifications()]);
+    expect(requestPermission).toHaveBeenCalledOnce();
+    await feedback.notifyRound(room());
+    expect(nativeNotification).toHaveBeenCalledOnce();
+  });
+
+  test.each<NotificationPermission>(["granted", "denied"])("does not prompt again when permission is %s", async (permission) => {
+    Object.defineProperty(Notification, "permission", { configurable: true, writable: true, value: permission });
+    const feedback = mountFeedback();
+    await feedback.requestNotifications();
+    expect(requestPermission).not.toHaveBeenCalled();
+    await feedback.notifyRound(room());
+    expect(nativeNotification).toHaveBeenCalledTimes(permission === "granted" ? 1 : 0);
+  });
+
+  test("does not prompt again after the permission dialog is dismissed", async () => {
+    Object.defineProperty(Notification, "permission", { configurable: true, writable: true, value: "default" });
+    requestPermission.mockResolvedValue("default");
+    const feedback = mountFeedback();
+    await feedback.requestNotifications();
+    await feedback.requestNotifications();
+    await feedback.notifyRound(room());
+    expect(requestPermission).toHaveBeenCalledOnce();
+    expect(nativeNotification).not.toHaveBeenCalled();
+  });
+
+  test("ignores a permission result received after disposal", async () => {
+    Object.defineProperty(Notification, "permission", { configurable: true, writable: true, value: "default" });
+    let resolvePermission: ((permission: NotificationPermission) => void) | undefined;
+    requestPermission.mockImplementation(() => new Promise((resolve) => { resolvePermission = resolve; }));
+    const feedback = mountFeedback();
+    const pending = feedback.requestNotifications();
+    cleanup.pop()?.();
+    resolvePermission?.("granted");
+    await pending;
+    expect(navigator.serviceWorker.register).not.toHaveBeenCalled();
+  });
+
+  test("treats unsupported notifications as optional", async () => {
+    vi.stubGlobal("isSecureContext", false);
+    const feedback = mountFeedback();
+    await feedback.requestNotifications();
+    await feedback.notifyRound(room());
+    expect(requestPermission).not.toHaveBeenCalled();
+    expect(nativeNotification).not.toHaveBeenCalled();
+    expect(feedback.notificationError.value).toBeNull();
+  });
+
+  test("handles a browser rejecting the permission request without an unhandled failure", async () => {
+    Object.defineProperty(Notification, "permission", { configurable: true, writable: true, value: "default" });
+    requestPermission.mockRejectedValue(new DOMException("Permission requests are blocked", "NotAllowedError"));
+    const feedback = mountFeedback();
+    await feedback.requestNotifications();
+    expect(feedback.notificationError.value).toBe("Notifications couldn't be enabled in this browser.");
+    await feedback.requestNotifications();
+    expect(requestPermission).toHaveBeenCalledOnce();
   });
 
   test("waits for an installing notification worker instead of calling the mobile-unsupported constructor", async () => {
@@ -112,6 +179,25 @@ describe("Task Hold'em notification delivery", () => {
     expect(removed).toHaveBeenCalledWith("statechange", expect.any(Function));
     expect(nativeNotification).not.toHaveBeenCalled();
     expect(showNotification).not.toHaveBeenCalled();
+  });
+
+  test("cancels delivery when browser permission is revoked while the worker activates", async () => {
+    class Worker extends EventTarget { state: ServiceWorkerState = "installing"; }
+    const worker = new Worker();
+    const showNotification = vi.fn();
+    const registration = { active: null, installing: worker, waiting: null, showNotification };
+    Object.defineProperty(navigator, "serviceWorker", { configurable: true, value: {
+      register: vi.fn().mockResolvedValue(registration), getRegistration: vi.fn().mockResolvedValue(registration),
+    } });
+    const feedback = mountFeedback();
+    await flushPromises();
+    const delivery = feedback.notifyRound(room());
+    await flushPromises();
+    Object.defineProperty(Notification, "permission", { configurable: true, value: "denied" });
+    window.dispatchEvent(new Event("focus"));
+    await delivery;
+    expect(showNotification).not.toHaveBeenCalled();
+    expect(nativeNotification).not.toHaveBeenCalled();
   });
 
   test("bounds the wait for an installation that never activates", async () => {

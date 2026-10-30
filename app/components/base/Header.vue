@@ -15,7 +15,7 @@
           rel="noopener noreferrer"
           class="header-link"
         >
-          <UIcon :name="item.icon" class="size-4.5 text-indigo-300" aria-hidden="true" />
+          <UIcon :name="item.icon" class="size-4.5 text-primary" aria-hidden="true" />
           {{ item.name }}
         </a>
         <UPopover
@@ -29,7 +29,7 @@
             class="header-link"
             :class="{ 'header-link-active': isToolsRoute }"
           >
-            <UIcon name="i-heroicons-squares-2x2" class="size-4.5 text-indigo-300" aria-hidden="true" />
+            <UIcon name="i-heroicons-squares-2x2" class="size-4.5 text-primary" aria-hidden="true" />
             Tools
             <UIcon
               name="i-heroicons-chevron-down"
@@ -55,7 +55,7 @@
       >
         <UIcon name="i-heroicons-code-bracket" class="size-4.5" aria-hidden="true" />
         Repository
-        <UIcon name="i-heroicons-arrow-up-right" class="size-4 text-indigo-300" aria-hidden="true" />
+        <UIcon name="i-heroicons-arrow-up-right" class="size-4 text-primary" aria-hidden="true" />
       </a>
 
       <div class="lg:hidden">
@@ -74,25 +74,25 @@
           </button>
           <template #content>
             <nav aria-label="Mobile navigation">
-              <div class="grid grid-cols-2 gap-2 border-b border-white/10 p-3">
+              <div class="grid grid-cols-2 gap-2 border-b border-default p-3">
                 <a
                   v-for="item in navigation"
                   :key="item.name"
                   :href="item.href"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="header-link justify-between bg-white/5"
+                  class="header-link justify-between bg-elevated/60"
                   @click="closeMenus"
                 >
                   <span class="flex items-center gap-2">
-                    <UIcon :name="item.icon" class="size-4.5 text-indigo-300" aria-hidden="true" />
+                    <UIcon :name="item.icon" class="size-4.5 text-primary" aria-hidden="true" />
                     {{ item.name }}
                   </span>
-                  <UIcon name="i-heroicons-arrow-up-right" class="size-3.5 text-slate-400" aria-hidden="true" />
+                  <UIcon name="i-heroicons-arrow-up-right" class="size-3.5 text-muted" aria-hidden="true" />
                 </a>
               </div>
               <BaseHeaderTools @navigate="closeMenus" />
-              <div class="border-t border-white/10 p-3">
+              <div class="border-t border-default p-3">
                 <a
                   :href="config.public.link.githubRepository"
                   target="_blank"
@@ -102,7 +102,7 @@
                 >
                   <UIcon name="i-heroicons-code-bracket" class="size-4" aria-hidden="true" />
                   GitHub repository
-                  <UIcon name="i-heroicons-arrow-up-right" class="size-3.5 text-indigo-300" aria-hidden="true" />
+                  <UIcon name="i-heroicons-arrow-up-right" class="size-3.5 text-primary" aria-hidden="true" />
                 </a>
               </div>
             </nav>
@@ -154,9 +154,9 @@ onMounted(() => {
 }
 
 .header-glass {
-  color: #f8fafc;
-  background: linear-gradient(135deg, rgb(255 255 255 / 8%), rgb(129 140 248 / 3%)), rgb(15 23 42 / 45%);
-  border: 1px solid rgb(255 255 255 / 18%);
+  color: var(--ui-text-highlighted);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--ui-text-highlighted) 5%, transparent), color-mix(in srgb, var(--ui-primary) 3%, transparent)), color-mix(in srgb, var(--ui-bg) 92%, transparent);
+  border: 1px solid var(--ui-border-accented);
   box-shadow: 0 8px 32px -12px rgb(0 0 0 / 35%), inset 0 1px 0 rgb(255 255 255 / 12%);
   -webkit-backdrop-filter: blur(28px) saturate(160%);
   backdrop-filter: blur(28px) saturate(160%);
@@ -189,7 +189,7 @@ onMounted(() => {
   min-height: 2.75rem;
   padding: 0.625rem 0.875rem;
   border-radius: 9999px;
-  color: #cbd5e1;
+  color: var(--ui-text-toned);
   font-size: 0.8125rem;
   font-weight: 600;
   white-space: nowrap;
@@ -199,14 +199,14 @@ onMounted(() => {
 .header-link:hover,
 .header-brand:hover,
 .header-link[data-state="open"] {
-  color: #fff;
-  background-color: rgb(255 255 255 / 9%);
+  color: var(--ui-text-highlighted);
+  background-color: var(--ui-bg-elevated);
 }
 
 .header-link-active,
 .header-repository {
-  color: #e0e7ff;
-  background-color: rgb(129 140 248 / 12%);
+  color: var(--ui-primary);
+  background-color: color-mix(in srgb, var(--ui-primary) 12%, transparent);
 }
 
 .header-desktop-repository {
@@ -217,7 +217,7 @@ onMounted(() => {
   justify-content: center;
   width: 2.75rem;
   padding: 0;
-  background-color: rgb(255 255 255 / 6%);
+  background-color: var(--ui-bg-elevated);
 }
 
 .header-chevron {
@@ -245,13 +245,13 @@ onMounted(() => {
 .header-brand:focus-visible,
 .header-link:focus-visible,
 .header-panel a:focus-visible {
-  outline: 2px solid #a5b4fc;
+  outline: 2px solid var(--ui-primary);
   outline-offset: 2px;
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .header-glass {
-    background: #172033;
+    background: var(--ui-bg);
   }
 }
 

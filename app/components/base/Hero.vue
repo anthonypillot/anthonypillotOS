@@ -1,5 +1,5 @@
 <template>
-  <section class="relative isolate overflow-hidden bg-gray-900 pb-16 pt-14 sm:pb-20 gradient-background">
+  <section class="relative isolate overflow-hidden bg-default pb-16 pt-14 sm:pb-20 gradient-background">
     <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
       <div
         class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
@@ -28,10 +28,10 @@
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl py-12 lg:py-20">
         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
-          <div class="relative rounded-lg px-3 py-1 text-sm leading-6 bg-white/5 text-gray-400 ring-1 ring-white/10 hover:ring-white/20">
-            Discover my new <span class="font-semibold text-white">poker planning tool</span>: the
-            <span class="font-semibold text-white">{{ taskHoldemApplication.name }}</span> !
-            <NuxtLink to="/tools/task-holdem" class="font-semibold text-white"
+          <div class="relative rounded-lg px-3 py-1 text-sm leading-6 bg-elevated/60 text-muted ring-1 ring-default hover:ring-accented">
+            Discover my new <span class="font-semibold text-highlighted">poker planning tool</span>: the
+            <span class="font-semibold text-highlighted">{{ taskHoldemApplication.name }}</span> !
+            <NuxtLink to="/tools/task-holdem" class="font-semibold text-highlighted"
               ><span class="absolute inset-0" aria-hidden="true" />This is here <span aria-hidden="true">&rarr;</span></NuxtLink
             >
           </div>
@@ -41,15 +41,15 @@
           <div class="hidden sm:flex sm:flex-col items-center my-8">
             <div class="flex flex-col items-center">
               <div class="flex flex-row gap-2">
-                <span class="text-white text-4xl">OS</span>
-                <span class="text-indigo-400 text-4xl">stands for</span>
-                <span class="text-white text-4xl">:</span>
+                <span class="text-highlighted text-4xl">OS</span>
+                <span class="text-primary text-4xl">stands for</span>
+                <span class="text-highlighted text-4xl">:</span>
               </div>
               <!-- class="h-8" is here to avoid layout shift -->
               <div class="h-8">
                 <ClientOnly>
                   <BaseTextType
-                    class="text-white text-4xl"
+                    class="text-highlighted text-4xl"
                     :text="textTypeTexts"
                     :typing-speed="50"
                     :deleting-speed="30"
@@ -64,16 +64,16 @@
               </div>
             </div>
           </div>
-          <h1 class="hidden text-4xl font-bold tracking-tight text-white sm:text-6xl">
+          <h1 class="hidden text-4xl font-bold tracking-tight text-highlighted sm:text-6xl">
             {{ config.public.title }} | {{ config.public.description }}
           </h1>
-          <p class="mt-2 text-lg leading-8 text-gray-300">
-            <span class="text-indigo-400">Freelance</span> Software Engineer, <span class="text-indigo-400">Real</span> Full Stack
-            Developer, and <span class="text-indigo-400">more</span>.
+          <p class="mt-2 text-lg leading-8 text-toned">
+            <span class="text-primary">Freelance</span> Software Engineer, <span class="text-primary">Real</span> Full Stack
+            Developer, and <span class="text-primary">more</span>.
           </p>
-          <p class="mt-2 text-lg leading-8 text-gray-300">
-            <span class="text-indigo-400">Lille</span>, France. <span class="text-indigo-400">Remote</span> and
-            <span class="text-indigo-400">on-site</span> work.
+          <p class="mt-2 text-lg leading-8 text-toned">
+            <span class="text-primary">Lille</span>, France. <span class="text-primary">Remote</span> and
+            <span class="text-primary">on-site</span> work.
           </p>
           <!-- <div class="mt-10 flex items-center justify-center gap-x-6">
                 <a
@@ -88,13 +88,13 @@
     </div>
     <div class="xl:flex xl:justify-center">
       <div
-        class="grid grid-cols-2 justify-center sm:flex sm:flex-row sm:justify-between mx-4 gap-4 xl:gap-32 md:mx-24 p-2 sm:bg-white/10 sm:border border-white/30 backdrop-blur-sm rounded-lg sm:rounded-full"
+        class="grid grid-cols-2 justify-center sm:flex sm:flex-row sm:justify-between mx-4 gap-4 xl:gap-32 md:mx-24 p-2 sm:bg-accented/60 sm:border border-accented backdrop-blur-sm rounded-lg sm:rounded-full"
       >
         <div
           v-for="(logoItem, index) in logos"
           :key="index"
           :class="[
-            'flex flex-row text-center items-center justify-center min-w-14 p-2 bg-white/15 border border-white/15 rounded-full hover:scale-90 transition-transform',
+            'flex flex-row text-center items-center justify-center min-w-14 p-2 bg-elevated border border-default rounded-full hover:scale-90 transition-transform',
             isLastItem(index) && logos.length % 2 !== 0 ? 'col-span-2' : '',
           ]"
         >
@@ -201,7 +201,7 @@ function isLastItem(index: number): boolean {
 
 <style scoped>
 .gradient-background {
-  background: linear-gradient(300deg, var(--secondary-color), var(--primary-color), var(--secondary-color));
+  background: linear-gradient(300deg, color-mix(in srgb, var(--ui-primary) 12%, var(--ui-bg)), var(--ui-bg), color-mix(in srgb, var(--ui-primary) 12%, var(--ui-bg)));
   background-size: 180% 180%;
   animation: gradient-animation 10s ease infinite;
 }

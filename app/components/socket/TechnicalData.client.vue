@@ -1,20 +1,20 @@
 <template>
   <section>
-    <h1 class="text-3xl font-bold text-white sm:text-4xl">Technical</h1>
-    <p class="text-gray-400">
-      Connection status: <span class="text-white">{{ isConnected ? "🟢" : "🔴" }}</span>
+    <h1 class="text-3xl font-bold text-highlighted sm:text-4xl">Technical</h1>
+    <p class="text-muted">
+      Connection status: <span class="text-highlighted">{{ isConnected ? "🟢" : "🔴" }}</span>
     </p>
-    <p class="text-gray-400">
-      Transport: <span class="text-white">{{ transport }}</span>
+    <p class="text-muted">
+      Transport: <span class="text-highlighted">{{ transport }}</span>
     </p>
-    <p v-if="socket" class="text-gray-400">
-      Socket ID: <span class="text-white">{{ socket.id || "N/A" }}</span>
+    <p v-if="socket" class="text-muted">
+      Socket ID: <span class="text-highlighted">{{ socket.id || "N/A" }}</span>
     </p>
-    <p v-if="socket" class="text-gray-400">
-      Socket state: <span class="text-white">{{ socket.active ? "active" : "inactive" }}</span>
+    <p v-if="socket" class="text-muted">
+      Socket state: <span class="text-highlighted">{{ socket.active ? "active" : "inactive" }}</span>
     </p>
-    <p class="text-gray-400">
-      Socket number: <span class="text-white">{{ socketNumber || "N/A" }}</span>
+    <p class="text-muted">
+      Socket number: <span class="text-highlighted">{{ socketNumber || "N/A" }}</span>
     </p>
   </section>
 </template>

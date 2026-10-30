@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-gray-900 py-24 sm:py-32">
+  <div class="bg-default py-24 sm:py-32">
     <div class="relative isolate">
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div
-          class="mx-auto flex max-w-2xl flex-col gap-16 bg-white/5 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:py-20 xl:gap-x-20 xl:px-20"
+          class="mx-auto flex max-w-2xl flex-col gap-16 bg-elevated/60 px-6 py-16 ring-1 ring-default sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:py-20 xl:gap-x-20 xl:px-20"
         >
           <img
             class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
@@ -11,20 +11,20 @@
             alt="github history cleaner"
           >
           <div class="w-full flex-auto">
-            <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">GitHub History Cleaner</h1>
-            <div class="mt-6 text-lg leading-8 text-gray-300">
-              <p class="mt-6 text-lg leading-8 text-gray-300">A one click solution to clean up your GitHub project history.</p>
-              <span class="text-indigo-400">GitHub History Cleaner</span> is a tool that allows you to clean up your GitHub history. As
+            <h1 class="text-3xl font-bold tracking-tight text-highlighted sm:text-4xl">GitHub History Cleaner</h1>
+            <div class="mt-6 text-lg leading-8 text-toned">
+              <p class="mt-6 text-lg leading-8 text-toned">A one click solution to clean up your GitHub project history.</p>
+              <span class="text-primary">GitHub History Cleaner</span> is a tool that allows you to clean up your GitHub history. As
               executed workflows, deployments, releases, packages, and other artifacts accumulate.
             </div>
-            <ul role="list" class="mt-10 grid grid-cols-1 gap-x-8 gap-y-3 text-base leading-7 text-white sm:grid-cols-2">
+            <ul role="list" class="mt-10 grid grid-cols-1 gap-x-8 gap-y-3 text-base leading-7 text-highlighted sm:grid-cols-2">
               <li v-for="benefit in benefits" :key="benefit" class="flex gap-x-3">
                 <UIcon name="i-heroicons-check-circle" class="h-7 w-5 flex-none" />
                 {{ benefit }}
               </li>
             </ul>
             <div class="mt-10 flex">
-              <UButton label="Go to the GitHub History Cleaner tool" variant="link" trailing-icon="i-heroicons-arrow-right" size="sm" class="text-indigo-400" @click="scrollToTool()" />
+              <UButton label="Go to the GitHub History Cleaner tool" variant="link" trailing-icon="i-heroicons-arrow-right" size="sm" @click="scrollToTool()" />
             </div>
           </div>
         </div>

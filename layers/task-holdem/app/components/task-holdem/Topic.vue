@@ -1,26 +1,26 @@
 <template>
-  <section aria-labelledby="round-topic-heading" class="rounded-2xl border border-white/10 bg-slate-900/50 p-5 sm:p-6">
+  <section aria-labelledby="round-topic-heading" class="rounded-2xl border border-default bg-muted/50 p-5 sm:p-6">
     <div class="flex items-start justify-between gap-4">
       <div class="min-w-0">
-        <h2 id="round-topic-heading" class="text-xs font-medium uppercase tracking-wider text-indigo-300">Current topic</h2>
-        <p v-if="!editing" class="mt-2 break-words text-lg font-medium" :class="round.topic ? 'text-white' : 'text-slate-500'">{{ round.topic || 'What are we estimating?' }}</p>
+        <h2 id="round-topic-heading" class="text-xs font-medium uppercase tracking-wider text-primary">Current topic</h2>
+        <p v-if="!editing" class="mt-2 break-words text-lg font-medium" :class="round.topic ? 'text-highlighted' : 'text-muted'">{{ round.topic || 'What are we estimating?' }}</p>
       </div>
       <UButton v-if="!editing && round.phase === 'voting'" :label="round.topic ? 'Edit topic' : 'Add topic'" icon="i-heroicons-pencil-square" color="neutral" variant="ghost" size="xs" :disabled="disabled" @click="startEditing" />
-      <UIcon v-if="round.phase !== 'voting'" name="i-heroicons-lock-closed" class="size-4 shrink-0 text-slate-500" aria-label="Topic locked" />
+      <UIcon v-if="round.phase !== 'voting'" name="i-heroicons-lock-closed" class="size-4 shrink-0 text-muted" aria-label="Topic locked" />
     </div>
     <form v-if="editing && round.phase === 'voting'" class="mt-4 space-y-3" @submit.prevent="save">
       <label for="round-topic" class="sr-only">Round topic</label>
       <UInput id="round-topic" ref="input" v-model="draft" placeholder="e.g. PROJ-123 · Improve the sign-in flow" :maxlength="160" :disabled="saving || disabled" class="w-full" autofocus />
-      <p v-if="conflicted" role="status" class="text-xs leading-5 text-amber-300">A teammate updated the topic to “{{ round.topic || 'No topic' }}”. Your draft is kept. Cancel to use their version, or save again to replace it.</p>
+      <p v-if="conflicted" role="status" class="text-xs leading-5 text-warning">A teammate updated the topic to “{{ round.topic || 'No topic' }}”. Your draft is kept. Cancel to use their version, or save again to replace it.</p>
       <div class="flex items-center justify-between gap-3">
-        <p class="text-[11px] text-slate-500">Optional · Shared with everyone · {{ draft.length }}/160</p>
+        <p class="text-[11px] text-muted">Optional · Shared with everyone · {{ draft.length }}/160</p>
         <div class="flex gap-2">
           <UButton label="Cancel" color="neutral" variant="ghost" size="xs" :disabled="saving" @click="editing = false" />
           <UButton type="submit" label="Save topic" size="xs" :disabled="disabled" :loading="saving" />
         </div>
       </div>
     </form>
-    <p v-else class="mt-2 text-xs text-slate-500">{{ round.phase === 'voting' ? 'Add a ticket reference or a short title. It will be saved with this round.' : 'Saved with the round. The next round starts with a fresh topic.' }}</p>
+    <p v-else class="mt-2 text-xs text-muted">{{ round.phase === 'voting' ? 'Add a ticket reference or a short title. It will be saved with this round.' : 'Saved with the round. The next round starts with a fresh topic.' }}</p>
   </section>
 </template>
 

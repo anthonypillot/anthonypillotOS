@@ -2,12 +2,13 @@ import type { TaskHoldemRoom } from "../../shared/types/task-holdem.type";
 import { readTaskHoldemFeedback, saveTaskHoldemFeedback, taskHoldemSounds, type TaskHoldemCue } from "../utils/task-holdem-feedback";
 import { waitForTaskHoldemNotificationWorker } from "../utils/task-holdem-notifications";
 
+const soundVolume = 0.25;
+
 export function useTaskHoldemFeedback() {
   const preferences = reactive(readTaskHoldemFeedback());
   const audioStatus = ref<"locked" | "ready" | "unavailable">("locked");
   const permission = ref<NotificationPermission | "unsupported">("unsupported");
   const notificationError = ref<string | null>(null);
-  const enabling = ref(false);
   const lastPlayed = new Map<TaskHoldemCue, number>();
   const voices = new Set<OscillatorNode>();
   const notifications = new Map<Notification, string>();
@@ -18,9 +19,10 @@ export function useTaskHoldemFeedback() {
   let notificationGeneration = 0;
   let pendingNotification: AbortController | undefined;
   let disposed = false;
+  let permissionRequested = false;
 
   async function unlock(): Promise<void> {
-    if (disposed || preferences.muted || !preferences.volume) return;
+    if (disposed || preferences.muted) return;
     try {
       if (!("AudioContext" in window)) {
         audioStatus.value = "unavailable";
@@ -29,7 +31,7 @@ export function useTaskHoldemFeedback() {
       if (!context) {
         context = new AudioContext();
         master = context.createGain();
-        master.gain.value = preferences.volume;
+        master.gain.value = soundVolume;
         master.connect(context.destination);
       }
       if (context.state === "suspended") await context.resume();
@@ -39,12 +41,12 @@ export function useTaskHoldemFeedback() {
     }
   }
 
-  function play(cue: TaskHoldemCue, preview = false): void {
+  function play(cue: TaskHoldemCue): void {
     const sound = taskHoldemSounds[cue];
-    if (disposed || preferences.muted || !preferences.volume || (!preview && !preferences.categories[sound.category]) || context?.state !== "running" || !master) return;
+    if (disposed || preferences.muted || context?.state !== "running" || !master) return;
     const now = performance.now();
     const passive = cue === "vote-received" || cue === "joined" || cue === "left";
-    if ((!preview && passive && now - (lastPlayed.get(cue) ?? -Infinity) < 80) || voices.size > 12) return;
+    if ((passive && now - (lastPlayed.get(cue) ?? -Infinity) < 80) || voices.size > 12) return;
     lastPlayed.set(cue, now);
     try {
       for (const note of sound.notes) {
@@ -86,28 +88,26 @@ export function useTaskHoldemFeedback() {
     try { await preparing; } finally { preparing = undefined; }
   }
 
-  async function enableNotifications(): Promise<void> {
-    if (permission.value === "unsupported" || enabling.value) return;
-    enabling.value = true;
-    notificationError.value = null;
+  async function requestNotifications(): Promise<void> {
+    if (disposed) return;
+    refreshPermission();
+    if (permission.value === "unsupported" || permission.value === "denied" || permissionRequested) return;
+    permissionRequested = true;
     try {
-      const result = await Notification.requestPermission();
+      const result = permission.value === "granted" ? "granted" : await Notification.requestPermission();
       if (disposed) return;
       permission.value = result;
       if (result !== "granted") return;
-      preferences.notifications = true;
       await prepareNotifications();
     } catch {
       if (!disposed) notificationError.value = "Notifications couldn't be enabled in this browser.";
-    } finally {
-      if (!disposed) enabling.value = false;
     }
   }
 
   async function notifyRound(room: TaskHoldemRoom): Promise<void> {
     if (disposed) return;
     refreshPermission();
-    if (disposed || !preferences.notifications || permission.value !== "granted" || (document.visibilityState === "visible" && document.hasFocus())) return;
+    if (permission.value !== "granted" || (document.visibilityState === "visible" && document.hasFocus())) return;
     pendingNotification?.abort();
     const controller = new AbortController();
     pendingNotification = controller;
@@ -138,13 +138,14 @@ export function useTaskHoldemFeedback() {
 
   async function showRoundNotification(room: TaskHoldemRoom, generation: number, signal: AbortSignal): Promise<boolean> {
     const worker = await waitForTaskHoldemNotificationWorker(findNotificationRegistration(), signal);
-    if (disposed || signal.aborted || generation !== notificationGeneration || !preferences.notifications || (document.visibilityState === "visible" && document.hasFocus())) return false;
+    refreshPermission();
+    if (disposed || signal.aborted || generation !== notificationGeneration || permission.value !== "granted" || (document.visibilityState === "visible" && document.hasFocus())) return false;
     const url = new URL("/tools/task-holdem/application", window.location.origin);
     url.searchParams.set("id", room.id);
     const options: NotificationOptions = {
       body: room.round.topic || `Round ${room.round.number} is ready. Join your team and pick a card.`,
       icon: "/svg/task-holdem/logo.svg", tag: `task-holdem:${room.id}`, data: { url: url.href },
-      silent: context?.state === "running" || preferences.muted || !preferences.volume || !preferences.categories.rounds,
+      silent: context?.state === "running" || preferences.muted,
     };
     const title = `TaskHold’em · Round ${room.round.number}`;
     if (worker) {
@@ -174,9 +175,9 @@ export function useTaskHoldemFeedback() {
     }
   }
 
-  async function testSound(): Promise<void> {
-    await unlock();
-    play("round-start", true);
+  async function toggleSound(): Promise<void> {
+    preferences.muted = !preferences.muted;
+    if (!preferences.muted) await unlock();
   }
 
   function stopVoices(): void {
@@ -188,23 +189,23 @@ export function useTaskHoldemFeedback() {
 
   watch(preferences, () => {
     saveTaskHoldemFeedback(preferences);
-    if (master) master.gain.value = preferences.muted ? 0 : preferences.volume;
-    if (preferences.muted || !preferences.volume) stopVoices();
+    if (master) master.gain.value = preferences.muted ? 0 : soundVolume;
+    if (preferences.muted) stopVoices();
   }, { deep: true });
 
-  watch(() => preferences.notifications, (enabled) => {
+  watch(permission, (value) => {
+    if (value === "granted") {
+      void prepareNotifications();
+      return;
+    }
     notificationGeneration++;
     pendingNotification?.abort();
-    if (enabled && permission.value === "granted") void prepareNotifications();
-    if (!enabled) {
-      for (const notification of notifications.keys()) notification.close();
-      void dismissWorkerNotifications();
-    }
+    for (const notification of notifications.keys()) notification.close();
+    void dismissWorkerNotifications();
   });
 
   onMounted(() => {
     refreshPermission();
-    if (preferences.notifications && permission.value === "granted") void prepareNotifications();
     document.addEventListener("pointerdown", unlock, { passive: true });
     document.addEventListener("keydown", unlock);
     window.addEventListener("focus", refreshPermission);
@@ -233,5 +234,5 @@ export function useTaskHoldemFeedback() {
     }
   }
 
-  return { preferences, audioStatus, permission, notificationError, enabling, play, notifyRound, dismissNotifications, enableNotifications, testSound };
+  return { preferences, audioStatus, notificationError, play, notifyRound, dismissNotifications, requestNotifications, toggleSound };
 }

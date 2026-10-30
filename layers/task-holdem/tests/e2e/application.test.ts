@@ -4,6 +4,7 @@ import { PrismaClient } from "../../../../server/generated/prisma/client";
 import { databaseURL, routes } from "../../../../tests/e2e/configuration";
 import { expect, test } from "./support/task-holdem";
 import { taskHoldemRoomIdSchema } from "../../shared/schemas/task-holdem.schema";
+import { installTaskHoldemFeedbackMocks } from "./support/task-holdem-feedback";
 
 test("joining requires a real name and creates the chosen player avatar", async ({ page, roomId, createPlayer }) => {
   await page.goto(`${routes.taskHoldem}?id=${roomId}`);
@@ -24,10 +25,13 @@ test("creating a room produces a shareable invitation and joins its creator", as
   const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseURL }) });
   let roomId: string | undefined;
   try {
+    await installTaskHoldemFeedbackMocks(page);
     await page.goto(routes.taskHoldem);
+    expect(await page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(0);
     await page.getByPlaceholder("Your name", { exact: true }).fill("Creator");
     await page.getByRole("button", { name: "Create room", exact: true }).click();
     await expect(page.getByRole("group", { name: "Creator", exact: true })).toBeVisible();
+    expect(await page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(1);
     await expect(page).toHaveURL(/\?id=[a-f0-9-]+$/);
     roomId = taskHoldemRoomIdSchema.parse(new URL(page.url()).searchParams.get("id"));
     await expect(page.getByRole("button", { name: "Invite players", exact: true })).toBeEnabled();
@@ -66,7 +70,7 @@ test("players synchronize votes, results and a fresh round", async ({ roomId, cr
     await expect(player.reveal).toBeDisabled();
     await expect(player.player("Alice")).toHaveAttribute("data-voted", "false");
     await expect(player.player("Bob")).toHaveAttribute("data-voted", "false");
-    await expect(player.page.getByRole("button", { pressed: true })).toHaveCount(0);
+    await expect(player.page.getByRole("button", { name: /^Select .+ card$/, pressed: true })).toHaveCount(0);
     await expect(player.page.getByText("Result", { exact: true })).toBeHidden();
     await expect(player.page.getByRole("heading", { name: "Round 2", exact: true })).toBeVisible();
   }

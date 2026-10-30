@@ -2,15 +2,15 @@
   <div id="github-history-cleaner" class="flex justify-center space-y-10 divide-y divide-gray-900/10 md:px-8">
     <div class="lg:grid lg:grid-cols-3 lg:gap-x-4 max-w-7xl">
       <div class="pb-4 px-4 sm:px-0 lg:pb-0">
-        <h2 class="text-white font-semibold leading-7">GitHub History Cleaner</h2>
-        <p class="text-sm leading-6 text-gray-400">
+        <h2 class="text-highlighted font-semibold leading-7">GitHub History Cleaner</h2>
+        <p class="text-sm leading-6 text-muted">
           This tool will help you clean up your GitHub history by deleting all workflow runs, deployments, releases, packages, and other.<br >
           The application needs a GitHub Personal Access Token (PAT) to be able to delete your history. However,
-          <span class="text-gray-200">your GitHub Personal Access Token will never be stored</span>.
+          <span class="text-default">your GitHub Personal Access Token will never be stored</span>.
         </p>
-        <p class="text-sm leading-6 text-gray-400">
+        <p class="text-sm leading-6 text-muted">
           If you want to learn more about how we use your token, please see how we use your token in our
-          <NuxtLink :href="config.public.link.githubRepository" target="_blank" class="text-indigo-500 hover:text-indigo-400"
+          <NuxtLink :href="config.public.link.githubRepository" target="_blank" class="text-primary underline underline-offset-4 hover:text-highlighted"
             >GitHub repository</NuxtLink
           >.
         </p>
@@ -118,8 +118,8 @@
   <UModal v-model:open="confirmationModal" :dismissible="!loading" title="Confirm deletion" :ui="{ footer: 'justify-end' }">
     <template #body>
       <div class="sm:flex sm:items-start">
-        <div class="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-          <UIcon name="i-heroicons-exclamation-triangle" class="h-6 w-6 text-red-600" />
+        <div class="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-error/10 sm:mx-0 sm:h-10 sm:w-10">
+          <UIcon name="i-heroicons-exclamation-triangle" class="h-6 w-6 text-error" />
         </div>
         <div class="mt-3 sm:ml-4 sm:mt-0 sm:text-left">
           <p class="text-sm text-muted">

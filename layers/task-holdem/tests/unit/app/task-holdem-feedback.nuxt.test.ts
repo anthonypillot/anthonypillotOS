@@ -79,15 +79,24 @@ describe("Task Hold'em feedback", () => {
   test("persists preferences and safely defaults when storage is corrupt or unavailable", () => {
     const preferences = readTaskHoldemFeedback();
     preferences.muted = true;
-    preferences.categories.messages = false;
     saveTaskHoldemFeedback(preferences);
     expect(readTaskHoldemFeedback()).toEqual(preferences);
     localStorage.setItem("task-holdem:feedback:v1", "{broken");
-    expect(readTaskHoldemFeedback().volume).toBe(0.25);
+    expect(readTaskHoldemFeedback()).toEqual({ muted: false });
     vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => { throw new Error("Blocked"); });
     vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("Blocked"); });
     expect(readTaskHoldemFeedback().muted).toBe(false);
     expect(() => saveTaskHoldemFeedback(preferences)).not.toThrow();
+  });
+
+  test("preserves mute while discarding obsolete volume, category and notification settings", () => {
+    localStorage.setItem("task-holdem:feedback:v1", JSON.stringify({
+      muted: false, volume: 0, notifications: false,
+      categories: { actions: false, votes: false, messages: false, rounds: false, presence: false },
+    }));
+    expect(readTaskHoldemFeedback()).toEqual({ muted: false });
+    saveTaskHoldemFeedback({ muted: true });
+    expect(JSON.parse(localStorage.getItem("task-holdem:feedback:v1")!)).toEqual({ muted: true });
   });
 
   test("keeps every sound short with a valid envelope and audible frequency", () => {

@@ -1,11 +1,13 @@
 import type { WebSocketRoute } from "@playwright/test";
-import { expect, test } from "./support/task-holdem";
+import { expect, test, TaskHoldemPage } from "./support/task-holdem";
 import { installTaskHoldemFeedbackMocks } from "./support/task-holdem-feedback";
 import { routes } from "../../../../tests/e2e/configuration";
 
 test.skip(({ browserName, isMobile }) => browserName !== "chromium" || isMobile, "Browser API behavior is covered once; responsive controls are covered by the page suite.");
 
-test("confirmed votes and messages play once, while mute and category choices persist", async ({ roomId, createPlayer }) => {
+test.afterEach(async ({ page }) => { await page.close(); });
+
+test("confirmed sounds play once and the single sound toggle persists", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");
   const bob = await createPlayer(roomId, "Bob");
   let browserSocket: WebSocketRoute | undefined;
@@ -19,6 +21,10 @@ test("confirmed votes and messages play once, while mute and category choices pe
     });
   });
   await installTaskHoldemFeedbackMocks(alice.page);
+  await alice.page.evaluate(() => localStorage.setItem("task-holdem:feedback:v1", JSON.stringify({
+    muted: false, volume: 0, notifications: false,
+    categories: { actions: false, votes: false, messages: false, rounds: false, presence: false },
+  })));
   await alice.page.reload();
   await expect(alice.player("Alice")).toBeVisible();
   expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.audioContexts)).toBe(0);
@@ -38,33 +44,35 @@ test("confirmed votes and messages play once, while mute and category choices pe
   await alice.page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
   expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.frequencies)).toEqual([520, 780]);
 
-  await alice.page.getByRole("button", { name: "Sound and notification settings", exact: true }).click();
-  await alice.page.getByRole("checkbox", { name: "Chat messages", exact: true }).uncheck();
-  await alice.page.getByRole("checkbox", { name: "Sound effects", exact: true }).uncheck();
-  await alice.page.keyboard.press("Escape");
+  const sound = alice.page.getByRole("button", { name: "Sound effects", exact: true });
+  await expect(sound).toHaveAttribute("aria-pressed", "true");
+  await sound.click();
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
   await alice.page.evaluate(() => { window.taskHoldemFeedbackLog.frequencies = []; });
   await alice.vote(21);
   expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.frequencies)).toEqual([]);
   await alice.page.reload();
   await expect(alice.player("Alice")).toBeVisible();
-  await alice.page.getByRole("button", { name: "Sound and notification settings", exact: true }).click();
-  await expect(alice.page.getByRole("checkbox", { name: "Sound effects", exact: true })).not.toBeChecked();
-  await expect(alice.page.getByRole("checkbox", { name: "Chat messages", exact: true })).not.toBeChecked();
-  await expect(alice.page.getByRole("button", { name: "Test sound", exact: true })).toBeDisabled();
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  expect(await alice.page.evaluate(() => JSON.parse(localStorage.getItem("task-holdem:feedback:v1")!))).toEqual({ muted: true });
+  await sound.focus();
+  await alice.page.keyboard.press("Space");
+  await expect(sound).toHaveAttribute("aria-pressed", "true");
+  await alice.vote(34);
+  await expect.poll(() => alice.page.evaluate(() => window.taskHoldemFeedbackLog.frequencies)).toEqual([660, 880]);
 });
 
-test("round alerts require explicit consent and only notify in the background", async ({ roomId, createPlayer }) => {
-  const alice = await createPlayer(roomId, "Alice");
+test("joining requests native permission from the user gesture and only alerts in the background", async ({ page, roomId, createPlayer }) => {
   const bob = await createPlayer(roomId, "Bob");
-  await installTaskHoldemFeedbackMocks(alice.page);
-  await alice.page.reload();
+  const alice = new TaskHoldemPage(page);
+  await installTaskHoldemFeedbackMocks(page);
+  await page.goto(`${routes.taskHoldem}?id=${roomId}`);
+  expect(await page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(0);
+  await page.getByPlaceholder("Your name", { exact: true }).fill("Alice");
+  await page.getByRole("button", { name: "Join game", exact: true }).click();
   await expect(alice.player("Alice")).toBeVisible();
-  expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(0);
-  await alice.page.getByRole("button", { name: "Sound and notification settings", exact: true }).click();
-  await alice.page.getByRole("button", { name: "Enable round notifications", exact: true }).click();
-  await expect(alice.page.getByRole("checkbox", { name: "Notify about new rounds", exact: true })).toBeChecked();
   expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(1);
-  await alice.page.keyboard.press("Escape");
+  expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.requestHadActivation)).toBe(true);
   await bob.vote(8);
   await bob.reveal.click();
   await expect(alice.page.getByText("Average: 8", { exact: true })).toBeVisible();
@@ -92,22 +100,74 @@ test("round alerts require explicit consent and only notify in the background", 
   await alice.page.evaluate(() => { window.taskHoldemFeedbackLog.hidden = true; window.taskHoldemFeedbackLog.failNotification = true; });
   await bob.restart.click();
   await expect(alice.page.getByRole("heading", { name: "Round 4", exact: true })).toBeVisible();
-  await alice.page.getByRole("button", { name: "Sound and notification settings", exact: true }).click();
   await expect(alice.page.getByText("Notifications aren't available here. New rounds will still appear in the room.", { exact: true })).toBeVisible();
 });
 
-test("denied notification permission is explained without prompting again", async ({ roomId, createPlayer }) => {
-  const alice = await createPlayer(roomId, "Alice");
-  await installTaskHoldemFeedbackMocks(alice.page, "denied");
-  await alice.page.reload();
+test("denied notification permission does not prompt again or block joining", async ({ page, roomId, createPlayer }) => {
+  await createPlayer(roomId, "Bob");
+  await installTaskHoldemFeedbackMocks(page, "denied");
+  const alice = new TaskHoldemPage(page);
+  await alice.join(roomId, "Alice");
   await expect(alice.player("Alice")).toBeVisible();
-  await alice.page.getByRole("button", { name: "Sound and notification settings", exact: true }).click();
-  await expect(alice.page.getByText(/Notifications are blocked/)).toBeVisible();
   await expect(alice.page.getByRole("button", { name: "Enable round notifications", exact: true })).toBeHidden();
   expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(0);
-  await alice.page.keyboard.press("Escape");
   await alice.vote(3);
   await expect(alice.player("Alice")).toHaveAttribute("data-voted", "true");
+});
+
+test("dismissing permission still joins and automatic readmission never prompts", async ({ page, roomId, createPlayer }) => {
+  const bob = await createPlayer(roomId, "Bob");
+  await installTaskHoldemFeedbackMocks(page, "default", "default");
+  const alice = new TaskHoldemPage(page);
+  await alice.join(roomId, "Alice");
+  expect(await page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(1);
+  await page.evaluate(() => { window.taskHoldemFeedbackLog.hidden = true; });
+  await bob.vote(8);
+  await bob.reveal.click();
+  await expect(page.getByText("Average: 8", { exact: true })).toBeVisible();
+  await bob.restart.click();
+  await expect(page.getByRole("heading", { name: "Round 2", exact: true })).toBeVisible();
+  expect(await page.evaluate(() => window.taskHoldemFeedbackLog.notifications)).toEqual([]);
+  await page.reload();
+  await expect(alice.player("Alice")).toBeVisible();
+  expect(await page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(0);
+});
+
+test("an unanswered permission dialog never blocks room admission", async ({ page, roomId, createPlayer }) => {
+  await createPlayer(roomId, "Bob");
+  await installTaskHoldemFeedbackMocks(page);
+  await page.addInitScript(() => {
+    Notification.requestPermission = () => new Promise<NotificationPermission>(() => {});
+  });
+  const alice = new TaskHoldemPage(page);
+  await alice.join(roomId, "Alice");
+  await alice.vote(5);
+  await expect(alice.player("Alice")).toHaveAttribute("data-voted", "true");
+});
+
+test("existing browser permission enables alerts without another application preference", async ({ page, roomId, createPlayer }) => {
+  const bob = await createPlayer(roomId, "Bob");
+  await installTaskHoldemFeedbackMocks(page, "granted");
+  const alice = new TaskHoldemPage(page);
+  await alice.join(roomId, "Alice");
+  expect(await page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(0);
+  await page.getByRole("button", { name: "Sound effects", exact: true }).click();
+  await page.evaluate(() => { window.taskHoldemFeedbackLog.hidden = true; });
+  await bob.vote(8);
+  await bob.reveal.click();
+  await expect(page.getByText("Average: 8", { exact: true })).toBeVisible();
+  await bob.restart.click();
+  await expect.poll(() => page.evaluate(() => window.taskHoldemFeedbackLog.notifications.length)).toBe(1);
+  expect(await page.evaluate(() => window.taskHoldemFeedbackLog.notifications[0]?.options.silent)).toBe(true);
+  await page.getByRole("button", { name: "Leave room", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Join game", exact: true })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.taskHoldemFeedbackLog.closed)).toBe(1);
+  await bob.vote(5);
+  await bob.reveal.click();
+  await expect(bob.page.getByText("Average: 5", { exact: true })).toBeVisible();
+  await bob.restart.click();
+  await expect(bob.page.getByRole("heading", { name: "Round 3", exact: true })).toBeVisible();
+  expect(await page.evaluate(() => window.taskHoldemFeedbackLog.notifications.length)).toBe(1);
 });
 
 test.describe("native notification delivery", () => {
@@ -137,10 +197,7 @@ test.describe("native notification delivery", () => {
       await page.getByPlaceholder("Your name", { exact: true }).fill("Alice");
       await page.getByRole("button", { name: "Join game", exact: true }).click();
       await expect(page.getByRole("group", { name: "Alice", exact: true })).toBeVisible();
-      await page.getByRole("button", { name: "Sound and notification settings", exact: true }).click();
-      await page.getByRole("checkbox", { name: "Notify about new rounds", exact: true }).check();
       await expect.poll(() => page.evaluate(async () => (await navigator.serviceWorker.getRegistration("/tools/task-holdem/"))?.active?.state)).toBe("activated");
-      await page.keyboard.press("Escape");
       await bob.vote(8);
       await bob.reveal.click();
       await expect(bob.page.getByText("Average: 8", { exact: true })).toBeVisible();

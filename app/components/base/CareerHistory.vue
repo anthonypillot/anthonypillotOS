@@ -1,8 +1,8 @@
 <template>
   <section class="mx-auto w-full max-w-7xl overflow-x-clip px-3 pt-16 sm:px-6 sm:pt-24 lg:px-8" aria-label="Career history">
     <header class="mb-10 sm:mb-12">
-      <h2 class="text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">Career history</h2>
-      <p class="mt-2 text-base leading-7 text-gray-200 sm:text-lg sm:leading-8">
+      <h2 class="text-3xl font-bold tracking-tight text-highlighted sm:text-4xl">Career history</h2>
+      <p class="mt-2 text-base leading-7 text-default sm:text-lg sm:leading-8">
         The roles, missions, and projects that shaped my career.
       </p>
     </header>
@@ -13,9 +13,9 @@
         :key="experience.company.name"
         class="grid grid-cols-1 items-start sm:grid-cols-[8rem_2.5rem_minmax(0,1fr)] lg:grid-cols-[10rem_3.5rem_minmax(0,1fr)]"
       >
-        <p class="hidden pt-12 text-right text-sm font-medium uppercase tracking-wider text-indigo-300 sm:block">
+        <p class="hidden pt-12 text-right text-sm font-medium uppercase tracking-wider text-primary sm:block">
           <span class="block">{{ experience.period.from }}</span>
-          <span class="mt-1 block" :class="experience.period.to === 'Now' ? 'text-emerald-300' : 'text-gray-400'">
+          <span class="mt-1 block" :class="experience.period.to === 'Now' ? 'text-success' : 'text-muted'">
             {{ experience.period.to }}
           </span>
         </p>

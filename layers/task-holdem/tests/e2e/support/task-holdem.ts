@@ -54,7 +54,7 @@ export const test = base.extend<Fixtures>({
     diagnostics.push(`Room: ${id}`);
     await use(id);
   },
-  createPlayer: async ({ browser, baseURL, roomId, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor, diagnostics }, use, testInfo) => {
+  createPlayer: async ({ browser, baseURL, roomId, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor, colorScheme, diagnostics }, use, testInfo) => {
     const players: PlayerContext[] = [];
     const roomIds = new Set<string>();
     const adapter = new PrismaPg({ connectionString: databaseURL, connectionTimeoutMillis: 5_000 });
@@ -72,7 +72,7 @@ export const test = base.extend<Fixtures>({
         await ensureRoom(roomId);
         const context = await browser.newContext({
           baseURL, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor,
-          colorScheme: "dark", reducedMotion: "reduce", serviceWorkers: "block",
+          colorScheme, reducedMotion: "reduce", serviceWorkers: "block",
         });
         players.push({ context, name });
         const page = await context.newPage();

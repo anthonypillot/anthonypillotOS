@@ -38,6 +38,16 @@ export default defineNuxtConfig({
 
   css: ["@/assets/css/main.css"],
 
+  app: {
+    head: {
+      htmlAttrs: { class: "dark" },
+    },
+  },
+
+  ui: {
+    colorMode: false,
+  },
+
   plausible: {
     apiHost: "https://plausible.monitoring.anthonypillot.com",
     ignoredHostnames: ["localhost", "127.0.0.1"],

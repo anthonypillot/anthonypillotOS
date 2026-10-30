@@ -4,6 +4,7 @@ type FeedbackLog = {
   frequencies: number[];
   notifications: { title: string; options: NotificationOptions }[];
   requests: number;
+  requestHadActivation: boolean;
   closed: number;
   audioContexts: number;
   audioClosed: number;
@@ -15,9 +16,9 @@ declare global {
   interface Window { taskHoldemFeedbackLog: FeedbackLog }
 }
 
-export async function installTaskHoldemFeedbackMocks(page: Page, permission: NotificationPermission = "default"): Promise<void> {
-  await page.addInitScript((initialPermission) => {
-    const log: FeedbackLog = { frequencies: [], notifications: [], requests: 0, closed: 0, audioContexts: 0, audioClosed: 0, hidden: false, failNotification: false };
+export async function installTaskHoldemFeedbackMocks(page: Page, permission: NotificationPermission = "default", result: NotificationPermission = "granted"): Promise<void> {
+  await page.addInitScript(({ permission: initialPermission, result }) => {
+    const log: FeedbackLog = { frequencies: [], notifications: [], requests: 0, requestHadActivation: false, closed: 0, audioContexts: 0, audioClosed: 0, hidden: false, failNotification: false };
     window.taskHoldemFeedbackLog = log;
     class TestOscillator {
       frequency = { value: 0 };
@@ -42,7 +43,7 @@ export async function installTaskHoldemFeedbackMocks(page: Page, permission: Not
     }
     class TestNotification {
       static permission = initialPermission;
-      static async requestPermission() { log.requests++; this.permission = "granted"; return this.permission; }
+      static async requestPermission() { log.requests++; log.requestHadActivation = navigator.userActivation.isActive; this.permission = result; return this.permission; }
       onclick: (() => void) | null = null;
       onclose: (() => void) | null = null;
       onerror: (() => void) | null = null;
@@ -62,5 +63,5 @@ export async function installTaskHoldemFeedbackMocks(page: Page, permission: Not
     });
     Object.defineProperty(document, "visibilityState", { configurable: true, get: () => log.hidden ? "hidden" : "visible" });
     document.hasFocus = () => !log.hidden;
-  }, permission);
+  }, { permission, result });
 }

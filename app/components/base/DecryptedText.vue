@@ -1,12 +1,14 @@
 <template>
     <span
         ref="containerRef"
-        :class="`inline-block whitespace-pre-wrap ${parentClassName}`"
+        :class="`relative inline-block whitespace-pre-wrap ${parentClassName}`"
+        :aria-busy="isAnimating"
         v-bind="animateListeners"
     >
-        <span class="sr-only">{{ displayText }}</span>
+        <span class="sr-only">{{ text }}</span>
+        <span aria-hidden="true" class="invisible">{{ text }}</span>
 
-        <span aria-hidden="true">
+        <span aria-hidden="true" class="absolute inset-0 overflow-hidden">
             <span
                 v-for="(char, index) in displayText.split('')"
                 :key="index"
@@ -66,6 +68,7 @@ const revealedIndices = ref<Set<number>>(new Set());
 const hasAnimated = ref<boolean>(false);
 const isDecrypted = ref<boolean>(props.animateOn !== "click");
 const direction = ref<Direction>("forward");
+const reducedMotion = ref(false);
 
 const orderRef = ref<number[]>([]);
 const pointerRef = ref<number>(0);
@@ -144,6 +147,7 @@ function encryptInstantly() {
 }
 
 function triggerDecrypt() {
+    if (reducedMotion.value) return;
     if (props.sequential) {
         orderRef.value = computeOrder(props.text.length);
         pointerRef.value = 0;
@@ -327,6 +331,7 @@ function resetToPlainText() {
 }
 
 const animateListeners = computed(() => {
+    if (reducedMotion.value) return {};
     if (props.animateOn === "hover" || props.animateOn === "inViewHover") {
         return {
             onMouseenter: triggerHoverDecrypt,
@@ -347,8 +352,18 @@ function isRevealedOrDone(index: number): boolean {
 }
 
 let intersectionObserver: IntersectionObserver | null = null;
+let motionQuery: MediaQueryList | undefined;
+
+function updateReducedMotion(): void {
+    reducedMotion.value = motionQuery?.matches ?? false;
+    if (reducedMotion.value) resetToPlainText();
+}
 
 onMounted(() => {
+    motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    updateReducedMotion();
+    motionQuery.addEventListener("change", updateReducedMotion);
+
     if (props.animateOn === "view" || props.animateOn === "inViewHover") {
         intersectionObserver = new IntersectionObserver(
             (entries) => {
@@ -365,7 +380,7 @@ onMounted(() => {
             intersectionObserver.observe(containerRef.value);
     }
 
-    if (props.animateOn === "click") {
+    if (props.animateOn === "click" && !reducedMotion.value) {
         encryptInstantly();
     } else {
         displayText.value = props.text;
@@ -378,12 +393,13 @@ onMounted(() => {
 onUnmounted(() => {
     stopInterval();
     intersectionObserver?.disconnect();
+    motionQuery?.removeEventListener("change", updateReducedMotion);
 });
 
 watch(
     () => [props.animateOn, props.text] as const,
     ([animateOn, text]) => {
-        if (animateOn === "click") {
+        if (animateOn === "click" && !reducedMotion.value) {
             encryptInstantly();
         } else {
             displayText.value = text;
