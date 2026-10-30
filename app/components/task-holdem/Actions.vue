@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 const props = defineProps<{ disabled: boolean }>();
+const emit = defineEmits<{ copied: [] }>();
 const copied = ref(false);
 const copyFailed = ref(false);
 const isFeedbackOpen = ref(false);
@@ -20,6 +21,7 @@ async function copyInvitation(): Promise<void> {
   try {
     await navigator.clipboard.writeText(window.location.href);
     copied.value = true;
+    emit("copied");
     copyFailed.value = false;
     clearTimeout(timer);
     timer = setTimeout(() => { copied.value = false; }, 3000);

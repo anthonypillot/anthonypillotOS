@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 import {
   TaskHoldemError, createTaskHoldemState, reconcileTaskHoldemRoom, requireTaskHoldemMember,
-  revealTaskHoldemRound, restartTaskHoldemRound, selectTaskHoldemVote, toTaskHoldemRoom, toTaskHoldemSelf,
+  revealTaskHoldemRound, restartTaskHoldemRound, selectTaskHoldemVote, setTaskHoldemTopic, toTaskHoldemRoom, toTaskHoldemSelf,
   type TaskHoldemMutation, type TaskHoldemUpdate,
 } from "#server/domain/task-holdem/room";
 import { taskHoldemJoinSchema, taskHoldemSelectSchema } from "#shared/schemas/task-holdem.schema";
@@ -10,11 +10,12 @@ import { taskHoldemJoinSchema, taskHoldemSelectSchema } from "#shared/schemas/ta
 function createRoom(): TaskHoldemMutation {
   const state = createTaskHoldemState(randomUUID());
   state.participants.push(
-    { id: randomUUID(), profile: { name: "Alice", avatar: "girl" }, tokenHash: "a".repeat(64), connected: true },
-    { id: randomUUID(), profile: { name: "Bob", avatar: "boy" }, tokenHash: "b".repeat(64), connected: true },
+    { id: randomUUID(), profile: { name: "Alice", avatar: "spirit" }, tokenHash: "a".repeat(64), connected: true },
+    { id: randomUUID(), profile: { name: "Bob", avatar: "dragon" }, tokenHash: "b".repeat(64), connected: true },
   );
   return {
     state,
+    completedRounds: [],
     leases: state.participants.map(participant => ({ id: randomUUID(), participantId: participant.id, connected: true, expiresAt: 10_000 })),
   };
 }
@@ -186,11 +187,62 @@ describe("Task Hold'em command validation", () => {
   });
 
   test("trims names and rejects empty profiles, weak credentials, and caller-owned state", () => {
-    const valid = { roomId: randomUUID(), token: "a".repeat(64), profile: { name: "  Alice  ", avatar: "girl" } };
+    const valid = { roomId: randomUUID(), token: "a".repeat(64), profile: { name: "  Alice  ", avatar: "spirit" } };
     expect(taskHoldemJoinSchema.parse(valid).profile.name).toBe("Alice");
     expect(taskHoldemJoinSchema.safeParse({ ...valid, token: "guessable" }).success).toBe(false);
-    expect(taskHoldemJoinSchema.safeParse({ ...valid, profile: { name: "   ", avatar: "girl" } }).success).toBe(false);
+    expect(taskHoldemJoinSchema.safeParse({ ...valid, profile: { name: "   ", avatar: "spirit" } }).success).toBe(false);
     expect(taskHoldemJoinSchema.safeParse({ ...valid, users: [] }).success).toBe(false);
     expect(taskHoldemJoinSchema.safeParse({ ...valid, profile: { ...valid.profile, name: "a".repeat(41) } }).success).toBe(false);
+  });
+});
+
+describe("Task Hold'em topics and history", () => {
+  test("shares a trimmed optional topic and rejects conflicting edits", () => {
+    const { state } = createRoom();
+    const roundId = state.round.id;
+    setTaskHoldemTopic(state, { roundId, topic: "  PROJ-42 · Sign-in  ", previousTopic: null });
+    expect(state.round.topic).toBe("PROJ-42 · Sign-in");
+    expect(() => setTaskHoldemTopic(state, { roundId, topic: "Overwrite", previousTopic: null })).toThrowError("teammate updated");
+    setTaskHoldemTopic(state, { roundId, topic: "  ", previousTopic: state.round.topic });
+    expect(state.round.topic).toBeNull();
+  });
+
+  test("locks the topic as soon as the reveal begins", () => {
+    const { state } = createRoom();
+    selectTaskHoldemVote(state, state.participants[0]!, { roundId: state.round.id, value: 8 });
+    revealTaskHoldemRound({ state, roundId: state.round.id, now: 1000, duration: 2000 });
+    expect(() => setTaskHoldemTopic(state, { roundId: state.round.id, topic: "Too late", previousTopic: null })).toThrowError("topic is locked");
+  });
+
+  test("archives once at the reveal deadline with immutable topic and profile snapshots", () => {
+    const mutation = createRoom();
+    const { state } = mutation;
+    state.round.startedAt = 100;
+    setTaskHoldemTopic(state, { roundId: state.round.id, topic: "PROJ-42", previousTopic: null });
+    selectTaskHoldemVote(state, state.participants[0]!, { roundId: state.round.id, value: 13 });
+    revealTaskHoldemRound({ state, roundId: state.round.id, now: 1000, duration: 2000 });
+    reconcileTaskHoldemRoom(mutation, 2999);
+    expect(mutation.completedRounds).toEqual([]);
+    reconcileTaskHoldemRoom(mutation, 3500);
+    reconcileTaskHoldemRoom(mutation, 4000);
+    expect(mutation.completedRounds).toHaveLength(1);
+    expect(mutation.completedRounds[0]).toMatchObject({ number: 1, topic: "PROJ-42", startedAt: 100, revealedAt: 3000, average: 13 });
+    state.round.ballots[0]!.profile.name = "Changed";
+    expect(mutation.completedRounds[0]?.ballots[0]?.profile.name).toBe("Alice");
+    expect(JSON.stringify(mutation.completedRounds)).not.toContain("tokenHash");
+  });
+
+  test("keeps the archive when an overdue reveal and restart happen in the same mutation", () => {
+    const mutation = createRoom();
+    const { state } = mutation;
+    const roundId = state.round.id;
+    state.round.topic = "First topic";
+    selectTaskHoldemVote(state, state.participants[0]!, { roundId, value: "skip" });
+    revealTaskHoldemRound({ state, roundId, now: 1000, duration: 2000 });
+    reconcileTaskHoldemRoom(mutation, 3000);
+    restartTaskHoldemRound(state, roundId, 3000);
+    expect(state.round).toMatchObject({ topic: null, startedAt: 3000, revealedAt: null, ballots: [] });
+    expect(mutation.completedRounds[0]).toMatchObject({ id: roundId, topic: "First topic", average: null });
+    expect(toTaskHoldemRoom(update(mutation)).historyCount).toBe(1);
   });
 });

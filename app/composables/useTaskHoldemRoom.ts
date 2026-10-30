@@ -7,6 +7,7 @@ import {
   type TaskHoldemServerEvents, type TaskHoldemSnapshot, type TaskHoldemVote,
 } from "#shared/types/task-holdem.type";
 import { createTaskHoldemToken, readTaskHoldemToken, saveTaskHoldemToken } from "~/utils/task-holdem-storage";
+import { getTaskHoldemRoomCues } from "~/utils/task-holdem-feedback";
 
 type RoomSocket = Socket<TaskHoldemServerEvents, TaskHoldemClientEvents>;
 
@@ -14,6 +15,7 @@ export function useTaskHoldemRoom() {
   const route = useRoute();
   const router = useRouter();
   const { profile, save: saveProfile } = useTaskHoldemProfile();
+  const feedback = useTaskHoldemFeedback();
   const roomId = ref<string | null>(null);
   const room = shallowRef<TaskHoldemRoom | null>(null);
   const self = shallowRef<TaskHoldemSelf | null>(null);
@@ -53,6 +55,7 @@ export function useTaskHoldemRoom() {
   }
 
   function clearMembership(revision = room.value?.revision ?? -1): void {
+    if (room.value) void feedback.dismissNotifications(room.value.id);
     revokedThroughRevision = Math.max(revokedThroughRevision, revision);
     if (roomId.value) saveTaskHoldemToken(roomId.value, null);
     token = null;
@@ -63,14 +66,22 @@ export function useTaskHoldemRoom() {
 
   function applyRoom(value: TaskHoldemRoom): void {
     if (!acceptsRoom(value.id) || value.revision <= revokedThroughRevision || (room.value && value.revision < room.value.revision)) return;
+    const previous = room.value;
     room.value = value;
     clockOffset.value = value.serverTime - Date.now();
     preview.value = { id: value.id, participantCount: value.participants.length };
+    if (previous && self.value && !isLoading.value) {
+      const cues = getTaskHoldemRoomCues(previous, value, self.value.participantId);
+      for (const cue of cues) feedback.play(cue);
+      if (cues.includes("round-start")) void feedback.notifyRound(value);
+    }
   }
 
   function applySelf(value: TaskHoldemSelf): void {
     if (!acceptsRoom(value.roomId) || value.revision <= revokedThroughRevision || (self.value && value.revision < self.value.revision)) return;
+    const previous = self.value;
     self.value = value;
+    if (previous && previous.roundId === value.roundId && value.roundId === room.value?.round.id && previous.vote !== value.vote && !isLoading.value) feedback.play(value.vote === null ? "vote-clear" : "vote");
   }
 
   function applySnapshot(value: TaskHoldemSnapshot): void {
@@ -84,11 +95,14 @@ export function useTaskHoldemRoom() {
       const result = await operation();
       if (disposed || socket !== activeSocket) return undefined;
       if (result.ok) return result.data;
-      if (!quiet || result.error.code === "NOT_JOINED") error.value = result.error.message;
+      if (!quiet || result.error.code === "NOT_JOINED") { error.value = result.error.message; feedback.play("error"); }
       if (result.error.code === "NOT_JOINED") clearMembership();
-      if (result.error.code === "STALE_ROUND" || result.error.code === "ROUND_LOCKED") void sync();
+      if (["STALE_ROUND", "ROUND_LOCKED", "TOPIC_CHANGED"].includes(result.error.code)) void sync();
     } catch {
-      if (!disposed && socket === activeSocket && !quiet) error.value = "We couldn't confirm that action. Check your connection and try again.";
+      if (!disposed && socket === activeSocket && !quiet) {
+        error.value = "We couldn't confirm that action. Check your connection and try again.";
+        feedback.play("error");
+      }
     }
     return undefined;
   }
@@ -161,11 +175,14 @@ export function useTaskHoldemRoom() {
     client.on("room:left", (value) => {
       if (acceptsRoom(value.roomId)) clearMembership(value.revision);
     });
-    client.on("chat:message", (value) => {
-      if (!acceptsRoom(value.roomId) || messages.value.some(message => message.id === value.id)) return;
-      messages.value = [...messages.value, value].slice(-100);
-    });
+    client.on("chat:message", applyMessage);
     client.connect();
+  }
+
+  function applyMessage(value: TaskHoldemMessage): void {
+    if (!acceptsRoom(value.roomId) || !self.value || messages.value.some(message => message.id === value.id)) return;
+    messages.value = [...messages.value, value].slice(-100);
+    if (!isLoading.value) feedback.play(value.participantId === self.value.participantId ? "message-sent" : "message-received");
   }
 
   async function finishJoin(value: TaskHoldemSnapshot): Promise<void> {
@@ -182,6 +199,7 @@ export function useTaskHoldemRoom() {
     const parsed = taskHoldemProfileSchema.safeParse(value);
     if (!socket || !canJoin.value || !parsed.success) return;
     const client = socket;
+    const wasJoined = isJoined.value;
     isBusy.value = true;
     error.value = null;
     saveProfile(parsed.data);
@@ -196,7 +214,10 @@ export function useTaskHoldemRoom() {
         creation = command;
         result = await request(() => client.emitWithAck("room:create", command));
       }
-      if (result && client === socket) await finishJoin(result);
+      if (result && client === socket) {
+        await finishJoin(result);
+        if (!wasJoined) feedback.play("joined");
+      }
     } finally {
       if (client === socket) isBusy.value = false;
     }
@@ -214,8 +235,8 @@ export function useTaskHoldemRoom() {
     }
   }
 
-  async function act(operation: (client: RoomSocket, roundId: string) => Promise<TaskHoldemResult<TaskHoldemSnapshot>>): Promise<void> {
-    if (!socket || !room.value || !canAct.value) return;
+  async function act(operation: (client: RoomSocket, roundId: string) => Promise<TaskHoldemResult<TaskHoldemSnapshot>>): Promise<boolean> {
+    if (!socket || !room.value || !canAct.value) return false;
     const client = socket;
     const roundId = room.value.round.id;
     isBusy.value = true;
@@ -231,6 +252,7 @@ export function useTaskHoldemRoom() {
       if (client === socket) isBusy.value = false;
     }
     if (!accepted && client === socket) void sync();
+    return accepted;
   }
 
   async function vote(value: TaskHoldemVote): Promise<void> {
@@ -246,13 +268,23 @@ export function useTaskHoldemRoom() {
     await act((client, roundId) => client.emitWithAck("round:restart", { roundId }));
   }
 
+  async function setTopic(topic: string, previousTopic: string | null): Promise<boolean> {
+    return act((client, roundId) => client.emitWithAck("round:topic", { roundId, topic, previousTopic }));
+  }
+
+  async function loadHistory(before?: number) {
+    if (!socket || !isConnected.value || !isJoined.value) return undefined;
+    const client = socket;
+    return request(() => client.emitWithAck("room:history", before === undefined ? {} : { before }), true);
+  }
+
   async function leave(): Promise<void> {
     if (!socket || !canAct.value) return;
     const client = socket;
     isBusy.value = true;
     try {
       const value = await request(() => client.emitWithAck("room:leave", {}));
-      if (value !== undefined && client === socket) clearMembership();
+      if (value !== undefined && client === socket) { clearMembership(); feedback.play("left"); }
     } finally {
       if (client === socket) isBusy.value = false;
     }
@@ -263,7 +295,9 @@ export function useTaskHoldemRoom() {
     const client = socket;
     isSending.value = true;
     try {
-      return await request(() => client.emitWithAck("chat:send", { content })) !== undefined;
+      const message = await request(() => client.emitWithAck("chat:send", { content }));
+      if (message) applyMessage(message);
+      return message !== undefined;
     } finally {
       if (client === socket) isSending.value = false;
     }
@@ -276,13 +310,17 @@ export function useTaskHoldemRoom() {
   }
 
   function onVisibility(): void {
-    if (document.visibilityState === "visible") void sync();
+    if (document.visibilityState === "visible") {
+      void sync();
+      if (room.value) void feedback.dismissNotifications(room.value.id);
+    }
   }
 
   updateTarget();
   watch(() => route.query.id, () => {
     updateTarget();
     if (room.value?.id === roomId.value) return;
+    if (room.value) void feedback.dismissNotifications(room.value.id);
     room.value = null;
     self.value = null;
     preview.value = null;
@@ -306,6 +344,7 @@ export function useTaskHoldemRoom() {
     syncTimer = setInterval(() => { void sync(); }, 15_000);
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("online", retry);
+    window.addEventListener("focus", onVisibility);
   });
   onScopeDispose(() => {
     disposed = true;
@@ -313,13 +352,14 @@ export function useTaskHoldemRoom() {
     clearInterval(syncTimer);
     document.removeEventListener("visibilitychange", onVisibility);
     window.removeEventListener("online", retry);
+    window.removeEventListener("focus", onVisibility);
     socket?.removeAllListeners();
     socket?.disconnect();
   });
 
   return {
-    roomId, room, self, profile, preview, messages, error, invalidLink, connection, countdown,
+    roomId, room, self, profile, preview, messages, error, invalidLink, connection, countdown, feedback,
     isConnected, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
-    join, vote, reveal, restart, leave, sendMessage, retry,
+    join, vote, reveal, restart, setTopic, loadHistory, leave, sendMessage, retry,
   };
 }

@@ -15,6 +15,7 @@
         <span role="status" data-testid="connection-status" class="flex items-center gap-2 text-xs text-slate-400" aria-live="polite">
           <span class="size-1.5 rounded-full" :class="isConnected ? 'bg-emerald-400' : 'bg-amber-400'" />{{ connectionLabel }}
         </span>
+        <TaskHoldemFeedback :feedback="feedback" />
         <TaskHoldemUser v-if="currentParticipant" :participant="currentParticipant" :disabled="!canAct" @leave="leave" />
       </div>
     </header>
@@ -57,11 +58,15 @@
           <p class="text-xs font-medium uppercase tracking-[0.18em] text-indigo-300">Your team space</p>
           <p class="mt-1.5 hidden text-sm text-slate-400 sm:block">Same room. Fresh perspectives.</p>
         </div>
-        <TaskHoldemActions :disabled="!canAct" />
+        <div class="flex flex-wrap gap-2">
+          <TaskHoldemHistory :key="room.id" :count="room.historyCount" :load="loadHistory" />
+          <TaskHoldemActions :disabled="!canAct" @copied="feedback.play('success')" />
+        </div>
       </div>
 
       <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
         <div class="min-w-0 space-y-5">
+          <TaskHoldemTopic :round="room.round" :disabled="!canAct" :save-topic="setTopic" />
           <TaskHoldemPokerTable
             :room="room"
             :disabled="!canAct"
@@ -100,6 +105,7 @@
                 :key="participant.id"
                 :participant="participant"
                 :current="participant.id === self.participantId"
+                :celebrating="room.round.phase === 'revealed'"
                 :vote="room.round.ballots?.find(ballot => ballot.participantId === participant.id)?.value ?? null"
               />
             </div>
@@ -123,9 +129,9 @@
 useApplicationSeo(taskHoldemApplication);
 
 const {
-  roomId, room, self, profile, messages, error, invalidLink, connection, countdown,
+  roomId, room, self, profile, messages, error, invalidLink, connection, countdown, feedback,
   isConnected, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
-  join, vote, reveal, restart, leave, sendMessage, retry,
+  join, vote, reveal, restart, setTopic, loadHistory, leave, sendMessage, retry,
 } = useTaskHoldemRoom();
 const chatDraft = ref("");
 const connectionLabel = computed(() => isConnected.value && isLoading.value ? "Syncing room…" : ({ connecting: "Connecting…", connected: "Live", reconnecting: "Reconnecting…", offline: "Offline" })[connection.value]);

@@ -12,8 +12,9 @@ test("joining requires a real name and creates the chosen player avatar", async 
   await page.getByPlaceholder("Your name", { exact: true }).fill("   ");
   await expect(page.getByRole("button", { name: "Join game", exact: true })).toBeDisabled();
 
-  const player = await createPlayer(roomId, "Alice", "girl");
-  await expect(player.player("Alice").getByRole("img", { name: "poker player girl", exact: true })).toBeVisible();
+  await expect(page.getByRole("radio")).toHaveCount(6);
+  const player = await createPlayer(roomId, "Alice", "spirit");
+  await expect(player.player("Alice").getByRole("img", { name: "Violet Spirit", exact: true })).toBeVisible();
   await expect(player.reveal).toBeDisabled();
   await expect(player.page).toHaveURL(new RegExp(`id=${roomId}$`));
   expect(await player.page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
@@ -40,7 +41,7 @@ test("creating a room produces a shareable invitation and joins its creator", as
 });
 
 test("players synchronize votes, results and a fresh round", async ({ roomId, createPlayer }) => {
-  const alice = await createPlayer(roomId, "Alice", "girl");
+  const alice = await createPlayer(roomId, "Alice", "spirit");
   const bob = await createPlayer(roomId, "Bob");
   await expect(alice.player("Bob")).toBeVisible();
   await expect(bob.player("Alice")).toBeVisible();
@@ -164,10 +165,80 @@ test("invalid and nonexistent invitations cannot silently create rooms", async (
 
 test("corrupt remembered profiles do not prevent joining", async ({ page, roomId, createPlayer }) => {
   await createPlayer(roomId, "Observer");
-  await page.addInitScript(() => { localStorage.setItem("task-holdem:v2:profile", "{broken"); });
+  await page.addInitScript(() => { localStorage.setItem("task-holdem:v3:profile", "{broken"); });
   await page.goto(`${routes.taskHoldem}?id=${roomId}`);
   await page.getByPlaceholder("Your name", { exact: true }).fill("Alice");
   await page.getByRole("button", { name: "Join game", exact: true }).click();
   await expect(page.getByRole("group", { name: "Alice", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Leave room", exact: true }).click();
+});
+
+test("shared topics are locked at reveal and saved with timestamped results", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice", "phoenix");
+  const bob = await createPlayer(roomId, "Bob", "golem");
+  await alice.page.getByRole("button", { name: "Add topic", exact: true }).click();
+  await alice.page.getByRole("textbox", { name: "Round topic", exact: true }).fill("PROJ-42 · Improve sign-in");
+  await alice.page.getByRole("button", { name: "Save topic", exact: true }).click();
+  await expect(bob.page.getByText("PROJ-42 · Improve sign-in", { exact: true })).toBeVisible();
+  await alice.vote(8);
+  await bob.vote(13);
+  await alice.reveal.click();
+  await expect(alice.page.getByRole("button", { name: "Edit topic", exact: true })).toBeHidden();
+  await expect(bob.page.getByText("Average: 10.5", { exact: true })).toBeVisible();
+  await bob.page.getByRole("button", { name: /^History/ }).click();
+  const history = bob.page.getByRole("dialog", { name: "Session history", exact: true });
+  await expect(history.getByText("PROJ-42 · Improve sign-in", { exact: true })).toBeVisible();
+  await expect(history.locator("time")).toHaveCount(2);
+  for (const time of await history.locator("time").all()) expect(Date.parse((await time.getAttribute("datetime"))!)).toBeGreaterThan(0);
+  await history.getByText("2 votes · View details", { exact: true }).click();
+  await expect(history.getByRole("list", { name: "Round 1 votes" })).toContainText("Alice");
+  await expect(history.getByRole("list", { name: "Round 1 votes" })).toContainText("Bob");
+  await bob.page.keyboard.press("Escape");
+  await bob.restart.click();
+  await expect(alice.page.getByText("What are we estimating?", { exact: true })).toBeVisible();
+  await alice.page.reload();
+  await expect(alice.player("Alice")).toBeVisible();
+  await alice.page.getByRole("button", { name: /^History/ }).click();
+  await expect(alice.page.getByRole("dialog").getByText("PROJ-42 · Improve sign-in", { exact: true })).toBeVisible();
+});
+
+test("concurrent topic drafts are preserved instead of being silently replaced", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice");
+  const bob = await createPlayer(roomId, "Bob");
+  for (const player of [alice, bob]) await player.page.getByRole("button", { name: "Add topic", exact: true }).click();
+  await bob.page.getByRole("textbox", { name: "Round topic", exact: true }).fill("Bob's draft");
+  await alice.page.getByRole("textbox", { name: "Round topic", exact: true }).fill("Alice's topic");
+  await alice.page.getByRole("button", { name: "Save topic", exact: true }).click();
+  await expect(bob.page.getByText(/A teammate updated the topic/)).toBeVisible();
+  await expect(bob.page.getByRole("textbox", { name: "Round topic", exact: true })).toHaveValue("Bob's draft");
+  await alice.vote(8);
+  await expect(bob.page.getByRole("textbox", { name: "Round topic", exact: true })).toHaveValue("Bob's draft");
+  await bob.page.getByRole("button", { name: "Cancel", exact: true }).click();
+  await expect(bob.page.getByText("Alice's topic", { exact: true })).toBeVisible();
+});
+
+test("history handles empty sessions and rounds without a topic", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice", "mushroom");
+  await alice.page.getByRole("button", { name: /^History/ }).click();
+  await expect(alice.page.getByRole("dialog").getByText("Your session story starts here.", { exact: true })).toBeVisible();
+  await alice.page.keyboard.press("Escape");
+  await alice.vote("skip");
+  await alice.reveal.click();
+  await expect(alice.page.getByText("Average: N/A", { exact: true })).toBeVisible();
+  await alice.page.getByRole("button", { name: /^History/ }).click();
+  const history = alice.page.getByRole("dialog");
+  await expect(history.getByText("Untitled round", { exact: true })).toBeVisible();
+  await history.getByText("1 vote · View details", { exact: true }).click();
+  await expect(history.getByRole("list", { name: "Round 1 votes" })).toContainText("Pass");
+});
+
+test("pixel companions respect reduced motion and remember the chosen creature", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice", "slime");
+  const companion = alice.player("Alice").getByRole("img", { name: "Azure Slime", exact: true });
+  await expect(companion).toBeVisible();
+  expect(await companion.locator(".mascot-idle").evaluate(node => getComputedStyle(node).animationName)).toBe("none");
+  await alice.page.emulateMedia({ reducedMotion: "no-preference" });
+  expect(await companion.locator(".mascot-idle").evaluate(node => getComputedStyle(node).animationName)).not.toBe("none");
+  await alice.page.reload();
+  await expect(alice.player("Alice").getByRole("img", { name: "Azure Slime", exact: true })).toBeVisible();
 });

@@ -6,11 +6,11 @@ import { TaskHoldemError, type TaskHoldemMutation, type TaskHoldemState, type Ta
 import { taskHoldemConfig } from "#server/utils/task-holdem-config";
 
 vi.mock("#server/dao/task-holdem.dao", () => ({
-  createRoom: vi.fn(), mutateRoom: vi.fn(), inspectRoom: vi.fn(), findDueRooms: vi.fn(),
+  createRoom: vi.fn(), mutateRoom: vi.fn(), inspectRoom: vi.fn(), findDueRooms: vi.fn(), listRoomHistory: vi.fn(),
 }));
 
 const roomId = randomUUID();
-const command = { roomId, token: "a".repeat(64), profile: { name: "Alice", avatar: "girl" } } satisfies Parameters<typeof service.joinRoom>[0];
+const command = { roomId, token: "a".repeat(64), profile: { name: "Alice", avatar: "spirit" } } satisfies Parameters<typeof service.joinRoom>[0];
 let stored: TaskHoldemMutation;
 let revision: number;
 
@@ -20,10 +20,11 @@ beforeEach(() => {
   vi.clearAllMocks();
   revision = 0;
   vi.mocked(dao.createRoom).mockImplementation(async (state: TaskHoldemState) => {
-    stored = { state: structuredClone(state), leases: [] };
+    stored = { state: structuredClone(state), leases: [], completedRounds: [] };
   });
   vi.mocked(dao.mutateRoom).mockImplementation(async (_id, mutate) => {
     const copy = structuredClone(stored);
+    copy.completedRounds = [];
     const previous = JSON.stringify(copy.state);
     const participants = copy.state.participants.map(participant => participant.id);
     mutate(copy);
@@ -61,7 +62,7 @@ describe("Task Hold'em service", () => {
     await service.disconnect(actor);
     vi.advanceTimersByTime(1000);
     const connectionId = randomUUID();
-    const rejoined = await service.joinRoom({ ...command, profile: { name: "Forged profile", avatar: "boy" } }, connectionId);
+    const rejoined = await service.joinRoom({ ...command, profile: { name: "Forged profile", avatar: "dragon" } }, connectionId);
     expect(rejoined.state.participants).toHaveLength(1);
     expect(rejoined.state.participants[0]?.profile).toEqual(command.profile);
     expect(service.getJoinedParticipant(rejoined, command.token)).toBe(actor.participantId);
@@ -129,7 +130,7 @@ describe("Task Hold'em service", () => {
   test("attributes chat to the authenticated participant and generates its metadata", async () => {
     const actor = await createActor();
     const { message } = await service.createMessage(actor, "Ready?");
-    expect(message).toMatchObject({ roomId, author: command.profile, content: "Ready?", createdAt: Date.now() });
+    expect(message).toMatchObject({ roomId, participantId: actor.participantId, author: command.profile, content: "Ready?", createdAt: Date.now() });
     expect(message.id).toBeTruthy();
     await service.leaveRoom(actor);
     await expect(service.createMessage(actor, "Forged message")).rejects.toThrow(TaskHoldemError);
@@ -142,5 +143,27 @@ describe("Task Hold'em service", () => {
     vi.advanceTimersByTime(taskHoldemConfig.revealMs);
     const update = await service.syncRoom(actor);
     expect(update.state.round.phase).toBe("revealed");
+    expect(stored.completedRounds).toHaveLength(1);
+  });
+
+  test("authenticates history reads and scopes them to the actor's room", async () => {
+    const actor = await createActor();
+    vi.mocked(dao.listRoomHistory).mockResolvedValue({ items: [], nextBefore: null });
+    const { history } = await service.getHistory(actor, 12);
+    expect(history.items).toEqual([]);
+    expect(dao.listRoomHistory).toHaveBeenCalledWith(roomId, 12);
+    await service.leaveRoom(actor);
+    vi.mocked(dao.listRoomHistory).mockClear();
+    await expect(service.getHistory(actor)).rejects.toThrow(TaskHoldemError);
+    expect(dao.listRoomHistory).not.toHaveBeenCalled();
+  });
+
+  test("updates topics only for active members of the current round", async () => {
+    const actor = await createActor();
+    await service.setTopic(actor, { roundId: stored.state.round.id, topic: "Checkout", previousTopic: null });
+    expect(stored.state.round.topic).toBe("Checkout");
+    await expect(service.setTopic(actor, { roundId: randomUUID(), topic: "Stale", previousTopic: "Checkout" })).rejects.toThrowError("new round");
+    await service.leaveRoom(actor);
+    await expect(service.setTopic(actor, { roundId: stored.state.round.id, topic: "Forged", previousTopic: "Checkout" })).rejects.toThrow(TaskHoldemError);
   });
 });

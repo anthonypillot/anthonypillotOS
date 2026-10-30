@@ -1,8 +1,9 @@
 import { createPrismaClient } from "#server/utils/prisma";
 import {
-  TaskHoldemError, taskHoldemStateSchema,
+  TaskHoldemError, getTaskHoldemAverage, taskHoldemBallotSchema, taskHoldemStateSchema,
   type TaskHoldemMutation, type TaskHoldemState, type TaskHoldemUpdate,
 } from "#server/domain/task-holdem/room";
+import type { TaskHoldemHistoryPage } from "#shared/types/task-holdem.type";
 
 const prisma = createPrismaClient();
 
@@ -35,6 +36,7 @@ export async function mutateRoom(id: string, mutate: (mutation: TaskHoldemMutati
 
     const mutation: TaskHoldemMutation = {
       state: parsed.data,
+      completedRounds: [],
       leases: room.connections.map(connection => ({
         id: connection.id,
         participantId: connection.participantId,
@@ -48,6 +50,16 @@ export async function mutateRoom(id: string, mutate: (mutation: TaskHoldemMutati
     const state = taskHoldemStateSchema.parse(mutation.state);
     const changed = JSON.stringify(state) !== previous;
     const revision = room.revision + (changed ? 1 : 0);
+
+    if (mutation.completedRounds.length > 0) {
+      await transaction.taskHoldemRound.createMany({
+        data: mutation.completedRounds.map(round => ({
+          id: round.id, roomId: id, number: round.number, topic: round.topic,
+          startedAt: new Date(round.startedAt), revealedAt: new Date(round.revealedAt), ballots: round.ballots,
+        })),
+        skipDuplicates: true,
+      });
+    }
 
     if (changed) {
       await transaction.taskHoldemRoom.update({ where: { id }, data: { data: state, revision } });
@@ -68,6 +80,23 @@ export async function mutateRoom(id: string, mutate: (mutation: TaskHoldemMutati
     const removedParticipantIds = previousParticipantIds.filter(participantId => !state.participants.some(participant => participant.id === participantId));
     return { state, revision, changed, removedParticipantIds };
   }, { maxWait: 10_000, timeout: 10_000 });
+}
+
+export async function listRoomHistory(roomId: string, before?: number): Promise<TaskHoldemHistoryPage> {
+  const pageSize = 20;
+  const rounds = await prisma.taskHoldemRound.findMany({
+    where: { roomId, ...(before ? { number: { lt: before } } : {}) },
+    orderBy: { number: "desc" },
+    take: pageSize + 1,
+  });
+  const items = rounds.slice(0, pageSize).map((round) => {
+    const ballots = taskHoldemBallotSchema.array().parse(round.ballots);
+    return {
+      id: round.id, number: round.number, topic: round.topic, ballots,
+      startedAt: round.startedAt.getTime(), revealedAt: round.revealedAt.getTime(), average: getTaskHoldemAverage(ballots),
+    };
+  });
+  return { items, nextBefore: rounds.length > pageSize ? items.at(-1)?.number ?? null : null };
 }
 
 export async function findDueRooms(now: number): Promise<string[]> {

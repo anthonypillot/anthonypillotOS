@@ -9,7 +9,7 @@ import { logger } from "#server/utils/logger";
 import { taskHoldemConfig } from "#server/utils/task-holdem-config";
 import {
   taskHoldemEmptySchema, taskHoldemInspectSchema, taskHoldemJoinSchema,
-  taskHoldemMessageSchema, taskHoldemRoundSchema, taskHoldemSelectSchema,
+  taskHoldemMessageSchema, taskHoldemRoundSchema, taskHoldemSelectSchema, taskHoldemTopicSchema, taskHoldemHistorySchema,
 } from "#shared/schemas/task-holdem.schema";
 import {
   taskHoldemProtocolVersion,
@@ -201,6 +201,23 @@ export function registerTaskHoldemGateway(io: TaskHoldemServer): { close: () => 
         const update = await service.restartRound(actor, value.roundId);
         publish(update);
         return snapshot(update, actor);
+      },
+    }));
+    socket.on("round:topic", (command, ack) => handle({
+      schema: taskHoldemTopicSchema, command, ack,
+      operation: async (value) => {
+        const actor = requireActor();
+        const update = await service.setTopic(actor, value);
+        publish(update);
+        return snapshot(update, actor);
+      },
+    }));
+    socket.on("room:history", (command, ack) => handle({
+      schema: taskHoldemHistorySchema, command, ack,
+      operation: async (value) => {
+        const { update, history } = await service.getHistory(requireActor(), value.before);
+        publish(update);
+        return history;
       },
     }));
     socket.on("chat:send", (command, ack) => handle({

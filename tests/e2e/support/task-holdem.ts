@@ -5,8 +5,10 @@ import type { BrowserContext, Page } from "@playwright/test";
 import { databaseURL, routes } from "../configuration";
 import { capturePageDiagnostics, expect, test as base } from "./fixtures";
 import { createTaskHoldemTestRoom } from "./task-holdem-socket";
+import type { TaskHoldemProfile } from "../../../shared/types/task-holdem.type";
+import { taskHoldemMascots } from "../../../shared/data/task-holdem-mascots";
 
-type Avatar = "boy" | "girl";
+type Avatar = TaskHoldemProfile["avatar"];
 
 type CreatePlayer = (roomId: string, name: string, avatar?: Avatar) => Promise<TaskHoldemPage>;
 
@@ -27,10 +29,10 @@ export class TaskHoldemPage {
     return this.page.getByRole("group", { name, exact: true });
   }
 
-  async join(roomId: string, name: string, avatar: Avatar = "boy"): Promise<void> {
+  async join(roomId: string, name: string, avatar: Avatar = "dragon"): Promise<void> {
     await this.page.goto(`${routes.taskHoldem}?id=${roomId}`);
     await this.page.getByPlaceholder("Your name", { exact: true }).fill(name);
-    await this.page.getByRole("radio", { name: avatar === "boy" ? "Boy" : "Girl", exact: true }).check();
+    await this.page.getByRole("radio", { name: taskHoldemMascots[avatar].name, exact: true }).check();
     await this.page.getByRole("button", { name: "Join game", exact: true }).click();
     await expect(this.player(name)).toBeVisible();
   }
@@ -66,7 +68,7 @@ export const test = base.extend<Fixtures>({
 
     try {
       await ensureRoom(roomId);
-      await use(async (roomId, name, avatar = "boy") => {
+      await use(async (roomId, name, avatar = "dragon") => {
         await ensureRoom(roomId);
         const context = await browser.newContext({
           baseURL, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor,

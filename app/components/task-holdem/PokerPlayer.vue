@@ -9,7 +9,7 @@
     :class="current ? 'bg-indigo-400/[0.07] ring-1 ring-indigo-300/10' : ''"
   >
     <div class="relative shrink-0">
-      <NuxtImg class="size-10 rounded-full bg-white/5 p-1.5" :src="useAvatar(participant.profile.avatar)" :alt="`poker player ${participant.profile.avatar}`" />
+      <TaskHoldemMascot class="size-12 rounded-xl bg-white/[0.03] p-1" :avatar="participant.profile.avatar" :label="taskHoldemMascots[participant.profile.avatar].name" :voted="participant.hasVoted" :celebrating="celebrating" />
       <span class="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-slate-900" :class="participant.connected ? 'bg-emerald-400' : 'bg-amber-400'" />
     </div>
     <div class="min-w-0 flex-1">
@@ -30,6 +30,7 @@
 <script setup lang="ts">
 import type { TaskHoldemParticipant, TaskHoldemVote } from "#shared/types/task-holdem.type";
 import { formatTaskHoldemVote } from "~/utils/task-holdem";
+import { taskHoldemMascots } from "#shared/data/task-holdem-mascots";
 
-defineProps<{ participant: TaskHoldemParticipant; current: boolean; vote: TaskHoldemVote | null }>();
+defineProps<{ participant: TaskHoldemParticipant; current: boolean; vote: TaskHoldemVote | null; celebrating: boolean }>();
 </script>

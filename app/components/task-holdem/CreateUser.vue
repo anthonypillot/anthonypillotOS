@@ -10,12 +10,12 @@
       <UInput id="task-holdem-name" v-model="name" placeholder="Your name" autocomplete="nickname" :maxlength="40" size="lg" class="w-full" />
     </div>
     <fieldset>
-      <legend class="mb-3 text-sm font-medium text-slate-200">Pick an avatar</legend>
-      <div class="grid grid-cols-2 gap-3">
+      <legend class="mb-3 text-sm font-medium text-slate-200">Choose your companion</legend>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <label
           v-for="option in avatars"
           :key="option.value"
-          class="relative flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-colors focus-within:ring-2 focus-within:ring-indigo-400"
+          class="relative flex cursor-pointer flex-col items-center gap-2 rounded-xl border p-3 text-center transition-colors focus-within:ring-2 focus-within:ring-indigo-400"
           :class="avatar === option.value ? 'border-indigo-400/60 bg-indigo-400/10' : 'border-white/10 bg-white/[0.02] hover:bg-white/5'"
         >
           <input
@@ -23,15 +23,16 @@
             type="radio"
             name="avatar"
             :value="option.value"
-            :aria-label="option.label"
+            :aria-label="option.name"
             class="absolute inset-0 z-10 h-full w-full cursor-pointer appearance-none rounded-xl outline-none"
           >
-          <NuxtImg :src="useAvatar(option.value)" alt="" class="size-10" />
-          <span class="text-sm text-slate-200">{{ option.label }}</span>
-          <UIcon v-if="avatar === option.value" name="i-heroicons-check-circle-solid" class="ml-auto size-5 text-indigo-300" aria-hidden="true" />
+          <TaskHoldemMascot :avatar="option.value" class="size-14" />
+          <span class="text-xs font-medium text-slate-200">{{ option.name }}</span>
+          <UIcon v-if="avatar === option.value" name="i-heroicons-check-circle-solid" class="absolute right-2 top-2 size-4 text-indigo-300" aria-hidden="true" />
         </label>
       </div>
     </fieldset>
+    <p class="-mt-2 text-center text-xs text-slate-400" aria-live="polite">{{ taskHoldemMascots[avatar].description }}</p>
     <UButton
       type="submit"
       :label="creating ? 'Create room' : 'Join game'"
@@ -47,12 +48,14 @@
 
 <script setup lang="ts">
 import type { TaskHoldemProfile } from "#shared/types/task-holdem.type";
+import { taskHoldemAvatarSchema } from "#shared/schemas/task-holdem.schema";
+import { taskHoldemMascots } from "#shared/data/task-holdem-mascots";
 
 const props = defineProps<{ profile: TaskHoldemProfile; creating: boolean; disabled: boolean; busy: boolean }>();
 const emit = defineEmits<{ submit: [profile: TaskHoldemProfile] }>();
 const name = ref(props.profile.name);
 const avatar = ref<TaskHoldemProfile["avatar"]>(props.profile.avatar);
-const avatars = [{ label: "Boy", value: "boy" }, { label: "Girl", value: "girl" }] satisfies { label: string; value: TaskHoldemProfile["avatar"] }[];
+const avatars = taskHoldemAvatarSchema.options.map(value => ({ value, ...taskHoldemMascots[value] }));
 
 function submit(): void {
   if (!props.disabled && name.value.trim()) emit("submit", { name: name.value.trim(), avatar: avatar.value });

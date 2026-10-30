@@ -2,11 +2,11 @@ import { createHash, randomUUID } from "node:crypto";
 import * as dao from "#server/dao/task-holdem.dao";
 import {
   TaskHoldemError, createTaskHoldemState, reconcileTaskHoldemRoom, requireTaskHoldemMember,
-  revealTaskHoldemRound, restartTaskHoldemRound, selectTaskHoldemVote,
+  revealTaskHoldemRound, restartTaskHoldemRound, selectTaskHoldemVote, setTaskHoldemTopic,
   type TaskHoldemActor, type TaskHoldemMutation, type TaskHoldemUpdate,
 } from "#server/domain/task-holdem/room";
 import { taskHoldemConfig } from "#server/utils/task-holdem-config";
-import type { TaskHoldemJoin, TaskHoldemMessage, TaskHoldemSelection } from "#shared/types/task-holdem.type";
+import type { TaskHoldemJoin, TaskHoldemMessage, TaskHoldemSelection, TaskHoldemTopic } from "#shared/types/task-holdem.type";
 
 export const inspectRoom = dao.inspectRoom;
 export const findDueRooms = dao.findDueRooms;
@@ -78,6 +78,16 @@ export function restartRound(actor: TaskHoldemActor, roundId: string): Promise<T
   return mutateForActor(actor, mutation => restartTaskHoldemRound(mutation.state, roundId));
 }
 
+export function setTopic(actor: TaskHoldemActor, command: TaskHoldemTopic): Promise<TaskHoldemUpdate> {
+  return mutateForActor(actor, mutation => setTaskHoldemTopic(mutation.state, command));
+}
+
+export async function getHistory(actor: TaskHoldemActor, before?: number) {
+  const update = await syncRoom(actor);
+  const history = await dao.listRoomHistory(actor.roomId, before);
+  return { update, history };
+}
+
 export function leaveRoom(actor: TaskHoldemActor): Promise<TaskHoldemUpdate> {
   return mutateForActor(actor, (mutation) => {
     mutation.state.participants = mutation.state.participants.filter(participant => participant.id !== actor.participantId);
@@ -114,6 +124,6 @@ export async function createMessage(actor: TaskHoldemActor, content: string): Pr
   if (!member) throw new TaskHoldemError("NOT_JOINED", "Please join the room before sending a message.");
   return {
     update,
-    message: { id: randomUUID(), roomId: actor.roomId, author: { ...member.profile }, content, createdAt: Date.now() },
+    message: { id: randomUUID(), roomId: actor.roomId, participantId: actor.participantId, author: { ...member.profile }, content, createdAt: Date.now() },
   };
 }

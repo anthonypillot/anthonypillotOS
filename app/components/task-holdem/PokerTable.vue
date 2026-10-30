@@ -46,14 +46,14 @@
 
 <script setup lang="ts">
 import type { TaskHoldemRoom } from "#shared/types/task-holdem.type";
-import { formatTaskHoldemVote } from "~/utils/task-holdem";
+import { formatTaskHoldemAverage, formatTaskHoldemVote } from "~/utils/task-holdem";
 
 const props = defineProps<{ room: TaskHoldemRoom; disabled: boolean; countdown: number }>();
 const emit = defineEmits<{ reveal: []; restart: [] }>();
 const voteCount = computed(() => props.room.participants.filter(participant => participant.hasVoted).length);
 const everyoneReady = computed(() => props.room.participants.length > 0 && voteCount.value === props.room.participants.length);
 const phaseLabel = computed(() => ({ voting: "Voting open", revealing: "Revealing", revealed: "Cards revealed" })[props.room.round.phase]);
-const average = computed(() => props.room.round.average === null ? "N/A" : new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(props.room.round.average));
+const average = computed(() => formatTaskHoldemAverage(props.room.round.average));
 </script>
 
 <style scoped>

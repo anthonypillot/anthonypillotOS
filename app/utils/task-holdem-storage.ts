@@ -1,8 +1,8 @@
 import { taskHoldemProfileSchema, taskHoldemTokenSchema } from "#shared/schemas/task-holdem.schema";
 import type { TaskHoldemProfile } from "#shared/types/task-holdem.type";
 
-const profileKey = "task-holdem:v2:profile";
-const roomKey = (roomId: string) => `task-holdem:v2:room:${roomId}`;
+const profileKey = "task-holdem:v3:profile";
+const roomKey = (roomId: string) => `task-holdem:v3:room:${roomId}`;
 
 export function readTaskHoldemProfile(): TaskHoldemProfile {
   try {
@@ -12,7 +12,7 @@ export function readTaskHoldemProfile(): TaskHoldemProfile {
   } catch {
     // Storage can be unavailable in private or restricted browser contexts.
   }
-  return { name: "", avatar: "boy" };
+  return { name: "", avatar: "dragon" };
 }
 
 export function saveTaskHoldemProfile(profile: TaskHoldemProfile): void {

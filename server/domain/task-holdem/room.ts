@@ -3,7 +3,7 @@ import { z } from "zod";
 import { taskHoldemProfileSchema, taskHoldemVoteSchema } from "#shared/schemas/task-holdem.schema";
 import { taskHoldemDeck } from "#shared/types/task-holdem.type";
 import type {
-  TaskHoldemErrorCode, TaskHoldemRoom, TaskHoldemSelf, TaskHoldemSelection,
+  TaskHoldemBallot, TaskHoldemErrorCode, TaskHoldemHistoryEntry, TaskHoldemRoom, TaskHoldemSelf, TaskHoldemSelection, TaskHoldemTopic,
 } from "#shared/types/task-holdem.type";
 
 const participantSchema = z.object({
@@ -13,28 +13,33 @@ const participantSchema = z.object({
   connected: z.boolean(),
 });
 
+export const taskHoldemBallotSchema = z.object({
+  participantId: z.uuid(),
+  profile: taskHoldemProfileSchema,
+  value: taskHoldemVoteSchema,
+});
+
 export const taskHoldemStateSchema = z.object({
-  schemaVersion: z.literal(2),
+  schemaVersion: z.literal(3),
   id: z.uuid(),
   participants: z.array(participantSchema).max(30),
   round: z.object({
     id: z.uuid(),
     number: z.number().int().positive(),
     phase: z.enum(["voting", "revealing", "revealed"]),
+    topic: z.string().max(160).nullable(),
+    startedAt: z.number().int(),
+    revealedAt: z.number().int().nullable(),
     revealAt: z.number().nullable(),
     deck: z.array(taskHoldemVoteSchema),
-    ballots: z.array(z.object({
-      participantId: z.uuid(),
-      profile: taskHoldemProfileSchema,
-      value: taskHoldemVoteSchema,
-    })),
+    ballots: z.array(taskHoldemBallotSchema),
   }),
 });
 
 export type TaskHoldemState = z.infer<typeof taskHoldemStateSchema>;
 export type TaskHoldemMember = TaskHoldemState["participants"][number];
 export type TaskHoldemLease = { id: string; participantId: string; connected: boolean; expiresAt: number };
-export type TaskHoldemMutation = { state: TaskHoldemState; leases: TaskHoldemLease[] };
+export type TaskHoldemMutation = { state: TaskHoldemState; leases: TaskHoldemLease[]; completedRounds: TaskHoldemHistoryEntry[] };
 export type TaskHoldemUpdate = { state: TaskHoldemState; revision: number; changed: boolean; removedParticipantIds: string[] };
 export type TaskHoldemActor = { roomId: string; participantId: string; connectionId: string };
 
@@ -45,12 +50,12 @@ export class TaskHoldemError extends Error {
   }
 }
 
-export function createTaskHoldemState(id: string): TaskHoldemState {
+export function createTaskHoldemState(id: string, now = Date.now()): TaskHoldemState {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     id,
     participants: [],
-    round: { id: randomUUID(), number: 1, phase: "voting", revealAt: null, deck: [...taskHoldemDeck], ballots: [] },
+    round: { id: randomUUID(), number: 1, phase: "voting", topic: null, startedAt: now, revealedAt: null, revealAt: null, deck: [...taskHoldemDeck], ballots: [] },
   };
 }
 
@@ -75,7 +80,15 @@ export function reconcileTaskHoldemRoom(mutation: TaskHoldemMutation, now: numbe
     mutation.state.round.ballots = mutation.state.round.ballots.filter(ballot => members.has(ballot.participantId));
   }
   if (mutation.state.round.phase === "revealing" && mutation.state.round.revealAt !== null && mutation.state.round.revealAt <= now) {
-    mutation.state.round.phase = "revealed";
+    const round = mutation.state.round;
+    round.phase = "revealed";
+    round.revealedAt = round.revealAt;
+    mutation.completedRounds.push({
+      id: round.id, number: round.number, topic: round.topic, startedAt: round.startedAt,
+      revealedAt: mutation.state.round.revealAt,
+      ballots: round.ballots.map(ballot => ({ ...ballot, profile: { ...ballot.profile } })),
+      average: getTaskHoldemAverage(round.ballots),
+    });
   }
 }
 
@@ -83,6 +96,15 @@ export function requireTaskHoldemRound(state: TaskHoldemState, roundId: string):
   if (state.round.id !== roundId) {
     throw new TaskHoldemError("STALE_ROUND", "A new round has started. Your view has been refreshed; please try again.");
   }
+}
+
+export function setTaskHoldemTopic(state: TaskHoldemState, command: TaskHoldemTopic): void {
+  requireTaskHoldemRound(state, command.roundId);
+  if (state.round.phase !== "voting") throw new TaskHoldemError("ROUND_LOCKED", "The topic is locked once the reveal starts.");
+  if (state.round.topic !== command.previousTopic) {
+    throw new TaskHoldemError("TOPIC_CHANGED", "A teammate updated the topic. Review the latest version before saving again.");
+  }
+  state.round.topic = command.topic.trim() || null;
 }
 
 export function selectTaskHoldemVote(state: TaskHoldemState, member: TaskHoldemMember, selection: TaskHoldemSelection): void {
@@ -111,25 +133,31 @@ export function revealTaskHoldemRound({ state, roundId, now, duration }: RevealT
   state.round.revealAt = now + duration;
 }
 
-export function restartTaskHoldemRound(state: TaskHoldemState, roundId: string): void {
+export function restartTaskHoldemRound(state: TaskHoldemState, roundId: string, now = Date.now()): void {
   requireTaskHoldemRound(state, roundId);
   if (state.round.phase !== "revealed") {
     throw new TaskHoldemError("ROUND_LOCKED", "Reveal the cards before starting another round.");
   }
   state.round = {
     id: randomUUID(), number: state.round.number + 1, phase: "voting", revealAt: null,
+    topic: null, startedAt: now, revealedAt: null,
     deck: [...state.round.deck], ballots: [],
   };
+}
+
+export function getTaskHoldemAverage(ballots: TaskHoldemBallot[]): number | null {
+  const values = ballots.map(ballot => ballot.value).filter(value => typeof value === "number");
+  return values.length > 0 ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
 }
 
 export function toTaskHoldemRoom(update: TaskHoldemUpdate, now = Date.now()): TaskHoldemRoom {
   const { state, revision } = update;
   const revealed = state.round.phase === "revealed";
-  const values = state.round.ballots.map(ballot => ballot.value).filter(value => typeof value === "number");
   return {
     id: state.id,
     revision,
     serverTime: now,
+    historyCount: state.round.number - (revealed ? 0 : 1),
     participants: state.participants.map(participant => ({
       id: participant.id,
       profile: { ...participant.profile },
@@ -140,10 +168,13 @@ export function toTaskHoldemRoom(update: TaskHoldemUpdate, now = Date.now()): Ta
       id: state.round.id,
       number: state.round.number,
       phase: state.round.phase,
+      topic: state.round.topic,
+      startedAt: state.round.startedAt,
+      revealedAt: state.round.revealedAt,
       revealAt: state.round.revealAt,
       deck: [...state.round.deck],
       ballots: revealed ? state.round.ballots.map(ballot => ({ ...ballot, profile: { ...ballot.profile } })) : null,
-      average: revealed && values.length > 0 ? values.reduce((sum, value) => sum + value, 0) / values.length : null,
+      average: revealed ? getTaskHoldemAverage(state.round.ballots) : null,
     },
   };
 }

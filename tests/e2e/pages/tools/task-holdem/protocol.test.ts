@@ -9,7 +9,7 @@ import {
   connectTaskHoldemSocket, createTaskHoldemSocket, taskHoldemSuccess, type TaskHoldemTestSocket,
 } from "../../../support/task-holdem-socket";
 import {
-  taskHoldemSocketPath, type TaskHoldemRoom, type TaskHoldemSnapshot, type TaskHoldemVote,
+  taskHoldemProtocolVersion, taskHoldemSocketPath, type TaskHoldemRoom, type TaskHoldemSnapshot, type TaskHoldemVote,
 } from "../../../../../shared/types/task-holdem.type";
 
 type SocketPlayerOptions = { roomId: string; name: string; url?: string; token?: string };
@@ -17,7 +17,7 @@ type SocketPlayerOptions = { roomId: string; name: string; url?: string; token?:
 async function createSocketPlayer({ roomId, name, url = baseURL, token = randomBytes(32).toString("hex") }: SocketPlayerOptions) {
   const socket = await connectTaskHoldemSocket(url);
   try {
-    const snapshot = taskHoldemSuccess(await socket.emitWithAck("room:join", { roomId, token, profile: { name, avatar: "boy" } }));
+    const snapshot = taskHoldemSuccess(await socket.emitWithAck("room:join", { roomId, token, profile: { name, avatar: "dragon" } }));
     return { socket, snapshot, token };
   } catch (error) {
     socket.disconnect();
@@ -36,7 +36,7 @@ test("an immediate join on connection is acknowledged and broadcast", async ({ r
       socket.once("connect", async () => {
         try {
           resolve(taskHoldemSuccess(await socket.emitWithAck("room:join", {
-            roomId, token: randomBytes(32).toString("hex"), profile: { name: "Fast join", avatar: "girl" },
+            roomId, token: randomBytes(32).toString("hex"), profile: { name: "Fast join", avatar: "spirit" },
           })));
         } catch (error) {
           reject(error);
@@ -71,6 +71,7 @@ test("public broadcasts never contain unrevealed votes or credentials", async ({
     }
     const other = taskHoldemSuccess(await bob.socket.emitWithAck("room:sync", {}));
     expect(other.self.vote).toBeNull();
+    expect(taskHoldemSuccess(await bob.socket.emitWithAck("room:history", {})).items).toEqual([]);
   } finally {
     alice.socket.disconnect();
     bob.socket.disconnect();
@@ -87,6 +88,9 @@ test("malformed commands and forged authors cannot change room state", async ({ 
     expect(await unsafe.emitWithAck("round:vote", { roundId: alice.snapshot.room.round.id, value: 8, participantId: "Observer" })).toMatchObject({ ok: false, error: { code: "INVALID_INPUT" } });
     expect(await unsafe.emitWithAck("chat:send", { content: "Forged", author: { name: "Observer" } })).toMatchObject({ ok: false, error: { code: "INVALID_INPUT" } });
     expect(await outsider.emitWithAck("round:vote", { roundId: alice.snapshot.room.round.id, value: 8 })).toMatchObject({ ok: false, error: { code: "NOT_JOINED" } });
+    expect(await outsider.emitWithAck("room:history", {})).toMatchObject({ ok: false, error: { code: "NOT_JOINED" } });
+    expect(await unsafe.emitWithAck("room:history", { before: -1 })).toMatchObject({ ok: false, error: { code: "INVALID_INPUT" } });
+    expect(await unsafe.emitWithAck("round:topic", { roundId: alice.snapshot.room.round.id, topic: "x".repeat(161), previousTopic: null })).toMatchObject({ ok: false, error: { code: "INVALID_INPUT" } });
     unsafe.emit("room-update", { users: [], game: { status: "revealed" } });
     const snapshot = taskHoldemSuccess(await alice.socket.emitWithAck("room:sync", {}));
     expect(snapshot.room.participants).toHaveLength(2);
@@ -112,6 +116,7 @@ test("simultaneous votes and restarts converge across two server instances", asy
     const leader = players[0]!;
     for (let round = 0; round < 3; round++) {
       const { room } = taskHoldemSuccess(await leader.socket.emitWithAck("room:sync", {}));
+      taskHoldemSuccess(await leader.socket.emitWithAck("round:topic", { roundId: room.round.id, topic: `Task ${round + 1}`, previousTopic: null }));
       await Promise.all(players.map(async (player, index) => {
         taskHoldemSuccess(await player.socket.emitWithAck("round:vote", { roundId: room.round.id, value: values[index]! }));
       }));
@@ -122,6 +127,10 @@ test("simultaneous votes and restarts converge across two server instances", asy
       const revealed = taskHoldemSuccess(await players[1]!.socket.emitWithAck("room:sync", {}));
       expect(revealed.room.round.ballots).toHaveLength(values.length);
       expect(revealed.room.round.average).toBe(10.875);
+      const histories = await Promise.all(players.slice(0, 2).map(async player => taskHoldemSuccess(await player.socket.emitWithAck("room:history", {}))));
+      expect(histories[0]).toEqual(histories[1]);
+      expect(histories[0]?.items).toHaveLength(round + 1);
+      expect(histories[0]?.items[0]).toMatchObject({ number: round + 1, topic: `Task ${round + 1}`, average: 10.875 });
       const restarted = await Promise.all(players.slice(0, 2).map(player => player.socket.emitWithAck("round:restart", { roundId: room.round.id })));
       expect(restarted.filter(result => result.ok)).toHaveLength(1);
       expect(restarted.find(result => !result.ok)).toMatchObject({ error: { code: "STALE_ROUND" } });
@@ -169,6 +178,26 @@ test("the server completes reveal after the initiating client disconnects", asyn
   }
 });
 
+test("a reveal is archived even after every participant disconnects", async ({ roomId, createPlayer }) => {
+  const observer = await createPlayer(roomId, "Observer");
+  await observer.page.getByRole("button", { name: "Leave room", exact: true }).click();
+  const alice = await createSocketPlayer({ roomId, name: "Alice", url: secondaryBaseURL });
+  const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseURL }) });
+  try {
+    taskHoldemSuccess(await alice.socket.emitWithAck("round:topic", { roundId: alice.snapshot.room.round.id, topic: "Saved without a browser", previousTopic: null }));
+    taskHoldemSuccess(await alice.socket.emitWithAck("round:vote", { roundId: alice.snapshot.room.round.id, value: 8 }));
+    taskHoldemSuccess(await alice.socket.emitWithAck("round:reveal", { roundId: alice.snapshot.room.round.id }));
+    alice.socket.disconnect();
+    await expect.poll(() => prisma.taskHoldemRound.count({ where: { roomId } })).toBe(1);
+    const archived = await prisma.taskHoldemRound.findFirstOrThrow({ where: { roomId } });
+    expect(archived.topic).toBe("Saved without a browser");
+    expect(archived.ballots).toMatchObject([{ profile: { name: "Alice" }, value: 8 }]);
+  } finally {
+    alice.socket.disconnect();
+    await prisma.$disconnect();
+  }
+});
+
 test("the browser ignores delayed snapshots and cannot restore a revoked seat", async ({ page, roomId, createPlayer }) => {
   await createPlayer(roomId, "Observer");
   let browserSocket: WebSocketRoute | undefined;
@@ -193,7 +222,7 @@ test("the browser ignores delayed snapshots and cannot restore a revoked seat", 
     await expect(page.getByRole("button", { name: "Select 8 card", exact: true })).toHaveAttribute("aria-pressed", "true");
     const beforeLeave = { publicFrame: publicFrame!, privateFrame: privateFrame! };
     browserSocket!.send(beforeVote);
-    browserSocket!.send(`42${JSON.stringify(["chat:message", { id: randomUUID(), roomId, author: { name: "Checkpoint", avatar: "boy" }, content: "Replay processed", createdAt: Date.now() }])}`);
+    browserSocket!.send(`42${JSON.stringify(["chat:message", { id: randomUUID(), roomId, participantId: randomUUID(), author: { name: "Checkpoint", avatar: "dragon" }, content: "Replay processed", createdAt: Date.now() }])}`);
     await page.getByRole("button", { name: "Open chat", exact: true }).click();
     await expect(page.getByRole("log", { name: "Room messages" })).toContainText("Replay processed");
     await expect(page.getByRole("group", { name: "Client", exact: true })).toHaveAttribute("data-voted", "true");
@@ -212,7 +241,8 @@ test("the browser ignores delayed snapshots and cannot restore a revoked seat", 
 test("old protocol versions and cross-origin browser handshakes are rejected", async () => {
   for (const options of [
     { auth: { protocolVersion: 1 } },
-    { auth: { protocolVersion: 2 }, extraHeaders: { Origin: "https://unrelated.example" } },
+    { auth: { protocolVersion: 2 } },
+    { auth: { protocolVersion: taskHoldemProtocolVersion }, extraHeaders: { Origin: "https://unrelated.example" } },
   ]) {
     const socket = io(baseURL, { path: taskHoldemSocketPath, transports: ["websocket"], autoConnect: false, reconnection: false, ...options });
     try {
@@ -227,5 +257,58 @@ test("old protocol versions and cross-origin browser handshakes are rejected", a
     } finally {
       socket.disconnect();
     }
+  }
+});
+
+test("topic edits conflict atomically across instances and stale edits cannot change a fresh round", async ({ roomId, createPlayer }) => {
+  await createPlayer(roomId, "Observer");
+  const alice = await createSocketPlayer({ roomId, name: "Alice" });
+  const bob = await createSocketPlayer({ roomId, name: "Bob", url: secondaryBaseURL });
+  const roundId = alice.snapshot.room.round.id;
+  try {
+    const updates = await Promise.all([alice, bob].map(player => player.socket.emitWithAck("round:topic", { roundId, topic: player.snapshot.self.participantId, previousTopic: null })));
+    expect(updates.filter(result => result.ok)).toHaveLength(1);
+    expect(updates.find(result => !result.ok)).toMatchObject({ error: { code: "TOPIC_CHANGED" } });
+    taskHoldemSuccess(await alice.socket.emitWithAck("round:vote", { roundId, value: 5 }));
+    taskHoldemSuccess(await alice.socket.emitWithAck("round:reveal", { roundId }));
+    await expect.poll(async () => taskHoldemSuccess(await bob.socket.emitWithAck("room:sync", {})).room.round.phase).toBe("revealed");
+    taskHoldemSuccess(await bob.socket.emitWithAck("round:restart", { roundId }));
+    expect(await alice.socket.emitWithAck("round:topic", { roundId, topic: "Stale", previousTopic: null })).toMatchObject({ ok: false, error: { code: "STALE_ROUND" } });
+    expect(taskHoldemSuccess(await alice.socket.emitWithAck("room:sync", {})).room.round.topic).toBeNull();
+  } finally {
+    alice.socket.disconnect();
+    bob.socket.disconnect();
+  }
+});
+
+test("history pagination is ordered, bounded and isolated to the joined room", async ({ roomId, createPlayer }) => {
+  await createPlayer(roomId, "Observer");
+  const otherRoomId = randomUUID();
+  await createPlayer(otherRoomId, "Outsider");
+  const alice = await createSocketPlayer({ roomId, name: "Alice" });
+  const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: databaseURL }) });
+  try {
+    await prisma.taskHoldemRound.create({ data: {
+      id: randomUUID(), roomId: otherRoomId, number: 999, topic: "Another room's private history",
+      startedAt: new Date(1000), revealedAt: new Date(2000), ballots: [],
+    } });
+    await prisma.taskHoldemRound.createMany({
+      data: Array.from({ length: 23 }, (_, index) => ({
+        id: randomUUID(), roomId, number: index + 1, topic: `Archived task ${index + 1}`,
+        startedAt: new Date(1000 + index * 1000), revealedAt: new Date(1500 + index * 1000), ballots: [],
+      })),
+    });
+    const first = taskHoldemSuccess(await alice.socket.emitWithAck("room:history", {}));
+    expect(first.items).toHaveLength(20);
+    expect(first.items[0]?.number).toBe(23);
+    expect(JSON.stringify(first)).not.toContain("private history");
+    expect(first.nextBefore).toBe(4);
+    const second = taskHoldemSuccess(await alice.socket.emitWithAck("room:history", { before: first.nextBefore! }));
+    expect(second.items.map(entry => entry.number)).toEqual([3, 2, 1]);
+    expect(second.nextBefore).toBeNull();
+    expect(new Set([...first.items, ...second.items].map(entry => entry.id)).size).toBe(23);
+  } finally {
+    alice.socket.disconnect();
+    await prisma.$disconnect();
   }
 });

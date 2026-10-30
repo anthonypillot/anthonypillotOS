@@ -10,3 +10,7 @@ export function formatTaskHoldemVote(value: TaskHoldemVote): string {
   if (value === "break") return "Unsure";
   return value.toString();
 }
+
+export function formatTaskHoldemAverage(value: number | null): string {
+  return value === null ? "N/A" : new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(value);
+}
