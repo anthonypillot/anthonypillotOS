@@ -27,7 +27,7 @@ npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 
 ## Testing gotchas
 
-- Vitest uses the Nuxt environment and only discovers tests under `server/`, currently `server/tests/**/*.nuxt.test.ts`; UI tests use Playwright. Keep `vitest.config.ts`'s `h3Version: 1` pin to match Nitro 2 despite transitive H3 v2 tooling.
+- Vitest uses the Nuxt environment and discovers tests under `server/` and `layers/*/tests/unit/`; UI tests use Playwright. Keep `vitest.config.ts`'s `h3Version: 1` pin to match Nitro 2 despite transitive H3 v2 tooling.
 - Service tests mock DAOs; GitHub DAO tests use MSW with unhandled requests treated as errors. Keep DB/GitHub interactions mocked rather than using live credentials.
 - Playwright always starts the built Nitro server at `http://127.0.0.1:4173`, locally and in CI. Run `npm run build` before direct `npx playwright test` commands; `npm run test:e2e` builds first. CI runs on schedule/manual dispatch only.
 - E2E uses its dedicated Docker database on port `55439`, never `.env` credentials. Fixtures block unmocked History Cleaner requests; multiplayer fixtures close contexts and delete only their test-owned rooms.
@@ -35,9 +35,10 @@ npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 
 ## Wiring and boundaries
 
-- Feature flow: HTTP handlers in `server/api/` or the Task Hold'em socket plugin → `server/services/` → `server/dao/`. Keep feature business logic in services and Prisma/GitHub access in DAOs.
+- Feature flow: HTTP handlers or socket plugins → services → DAOs. Keep feature business logic in services and Prisma/GitHub access in DAOs.
 - Put cross-boundary contracts/data in `shared/`. Nuxt/Nitro auto-imports shared types and values and server utilities (`logger`, `convertConsoleLogToCustomLogger`). Check `.nuxt/types/*imports.d.ts` before adding imports for apparently undefined symbols.
-- Task Hold'em uses versioned commands at `/api/websocket/task-holdem`: the Nitro plugin bootstraps Socket.IO/Engine.IO and the Postgres adapter; `server/realtime/task-holdem.ts` validates commands and delegates to services/domain rules. Contracts and Zod schemas live in `shared/`, never in Vue components. The page consumes `useTaskHoldemRoom`, which owns socket cleanup and recovery.
+- Task Hold'em lives in the auto-registered Nuxt layer `layers/task-holdem/`, including `app/`, `server/`, `shared/`, `public/` and `tests/`. Prisma and reusable infrastructure remain at the project root. Run its tests with `npx vitest run layers/task-holdem/tests/unit` or, after building, `npx playwright test layers/task-holdem/tests/e2e --project="Desktop - Chromium"`.
+- Task Hold'em uses versioned commands at `/api/websocket/task-holdem`: the layer's Nitro plugin bootstraps Socket.IO/Engine.IO and the Postgres adapter; its `server/realtime/task-holdem.ts` validates commands and delegates to services/domain rules. Contracts and Zod schemas live in its `shared/`, never in Vue components. The page consumes `useTaskHoldemRoom`, which owns socket cleanup and recovery. Use relative imports within the layer; `#server` and `#shared` refer to project-root infrastructure.
 - Task Hold'em room JSON is mutated under a PostgreSQL row lock with a monotonic revision. `TaskHoldemConnection` stores expiring presence leases separately. Never write room state or renew leases outside the DAO's locked mutation path. Credentials never appear in public projections; other participants' votes appear only after reveal. The private view includes the participant's own vote. `TASK_HOLDEM_GRACE_MS` and `TASK_HOLDEM_REVEAL_MS` configure server timing.
 - Task Hold'em topics lock when reveal starts. Completed rounds are archived in `TaskHoldemRound` in the same locked transaction as reveal completion, including overdue reveals immediately followed by a restart. Read history through the authenticated, paginated `room:history` command; never include unrevealed votes or connection credentials. Chat stays ephemeral. Browser sound/notification preferences are device-local; the scoped notification service worker has no cache or push subscriptions.
 - History Cleaner only executes workflow-run deletion in `server/services/history-cleaner.service.ts`; `DEPLOYMENTS` exists in the contracts/API but is not implemented in the job flow.

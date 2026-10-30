@@ -77,6 +77,8 @@ Start the development server on `http://localhost:3000`:
 npm run dev
 ```
 
+Task Hold'em is grouped in `layers/task-holdem/`: app, server, shared contracts, public assets and tests. Nuxt registers this local layer automatically; Prisma and shared infrastructure stay at the project root.
+
 > More context for contributors: see [AGENTS.md](AGENTS.md).
 
 ## 🧪 Tests

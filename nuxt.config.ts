@@ -38,12 +38,6 @@ export default defineNuxtConfig({
 
   css: ["@/assets/css/main.css"],
 
-  nitro: {
-    experimental: {
-      websocket: true,
-    },
-  },
-
   plausible: {
     apiHost: "https://plausible.monitoring.anthonypillot.com",
     ignoredHostnames: ["localhost", "127.0.0.1"],
@@ -60,7 +54,6 @@ export default defineNuxtConfig({
     "/": { swr: true },
     "/tools/github/history-cleaner": { swr: true },
     "/tools/it-facts": { swr: true },
-    "/tools/task-holdem": { swr: true },
   },
 
   modules: ["@nuxt/ui", "@nuxt/eslint", "@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/plausible"],

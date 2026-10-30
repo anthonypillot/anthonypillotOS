@@ -2,8 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 import { baseURL, databaseURL, secondaryBaseURL } from "./tests/e2e/configuration";
 
 export default defineConfig({
-  testDir: "./tests/e2e",
-  testMatch: "**/*.test.ts",
+  testDir: ".",
+  testMatch: "**/tests/e2e/**/*.test.ts",
   tsconfig: "./tests/e2e/tsconfig.json",
   globalSetup: "./tests/e2e/global-setup.ts",
   fullyParallel: true,
@@ -36,7 +36,7 @@ export default defineConfig({
     { name: "Mobile Chrome - Samsung Galaxy S24", use: { ...devices["Galaxy S24"] } },
     { name: "Mobile Safari - iPhone 15", use: { ...devices["iPhone 15"] } },
   ],
-  webServer: [4173, 4174].map(port => ({
+  webServer: [4173, 4174].map((port) => ({
     command: "node tests/e2e/start-server.ts",
     url: `${port === 4173 ? baseURL : secondaryBaseURL}/api/health/live`,
     reuseExistingServer: false,
