@@ -70,11 +70,11 @@ export async function mutateRoom(id: string, mutate: (mutation: TaskHoldemMutati
     if (removed.length > 0) await transaction.taskHoldemConnection.deleteMany({ where: { id: { in: removed }, roomId: id } });
     for (const lease of mutation.leases) {
       const previousLease = room.connections.find(connection => connection.id === lease.id);
-      if (previousLease?.connected === lease.connected && previousLease.expiresAt.getTime() === lease.expiresAt) continue;
+      if (previousLease?.participantId === lease.participantId && previousLease.connected === lease.connected && previousLease.expiresAt.getTime() === lease.expiresAt) continue;
       await transaction.taskHoldemConnection.upsert({
         where: { id: lease.id },
         create: { ...lease, roomId: id, expiresAt: new Date(lease.expiresAt) },
-        update: { connected: lease.connected, expiresAt: new Date(lease.expiresAt) },
+        update: { participantId: lease.participantId, connected: lease.connected, expiresAt: new Date(lease.expiresAt) },
       });
     }
     const removedParticipantIds = previousParticipantIds.filter(participantId => !state.participants.some(participant => participant.id === participantId));

@@ -24,6 +24,7 @@ export function useTaskHoldemRoom() {
   const error = ref<string | null>(null);
   const invalidLink = ref(false);
   const isConnected = ref(false);
+  const isAdmitted = ref(false);
   const isLoading = ref(true);
   const isBusy = ref(false);
   const isSending = ref(false);
@@ -38,7 +39,7 @@ export function useTaskHoldemRoom() {
   let revokedThroughRevision = -1;
 
   const isJoined = computed(() => room.value !== null && self.value !== null);
-  const canAct = computed(() => isConnected.value && !isLoading.value && !isBusy.value && isJoined.value);
+  const canAct = computed(() => isConnected.value && isAdmitted.value && !isLoading.value && !isBusy.value && isJoined.value);
   const canJoin = computed(() => isConnected.value && !isLoading.value && !isBusy.value && !invalidLink.value && (!roomId.value || preview.value !== null));
   const selectedVote = computed(() => self.value?.roundId === room.value?.round.id ? self.value?.vote ?? null : null);
   const currentParticipant = computed(() => room.value?.participants.find(participant => participant.id === self.value?.participantId) ?? null);
@@ -59,6 +60,7 @@ export function useTaskHoldemRoom() {
     revokedThroughRevision = Math.max(revokedThroughRevision, revision);
     if (roomId.value) saveTaskHoldemToken(roomId.value, null);
     token = null;
+    isAdmitted.value = false;
     self.value = null;
     room.value = null;
     messages.value = [];
@@ -89,17 +91,25 @@ export function useTaskHoldemRoom() {
     applySelf(value.self);
   }
 
+  function applyMembership(value: TaskHoldemSnapshot): boolean {
+    if (!acceptsRoom(value.room.id) || value.room.revision <= revokedThroughRevision) return false;
+    applySnapshot(value);
+    isAdmitted.value = currentParticipant.value?.id === value.self.participantId;
+    return isAdmitted.value;
+  }
+
   async function request<T>(operation: () => Promise<TaskHoldemResult<T>>, quiet = false): Promise<T | undefined> {
     const activeSocket = socket;
+    const connectionId = activeSocket?.id;
     try {
       const result = await operation();
-      if (disposed || socket !== activeSocket) return undefined;
+      if (disposed || socket !== activeSocket || activeSocket?.id !== connectionId) return undefined;
       if (result.ok) return result.data;
       if (!quiet || result.error.code === "NOT_JOINED") { error.value = result.error.message; feedback.play("error"); }
       if (result.error.code === "NOT_JOINED") clearMembership();
       if (["STALE_ROUND", "ROUND_LOCKED", "TOPIC_CHANGED"].includes(result.error.code)) void sync();
     } catch {
-      if (!disposed && socket === activeSocket && !quiet) {
+      if (!disposed && socket === activeSocket && activeSocket?.id === connectionId && !quiet) {
         error.value = "We couldn't confirm that action. Check your connection and try again.";
         feedback.play("error");
       }
@@ -108,6 +118,7 @@ export function useTaskHoldemRoom() {
   }
 
   async function bootstrap(client: RoomSocket): Promise<void> {
+    isAdmitted.value = false;
     isLoading.value = true;
     error.value = null;
     try {
@@ -122,7 +133,7 @@ export function useTaskHoldemRoom() {
         if (token && parsed.success) {
           const command = { roomId: id, token, profile: parsed.data };
           const value = await request(() => client.emitWithAck("room:join", command));
-          if (value && client === socket) applySnapshot(value);
+          if (value && client === socket) applyMembership(value);
         } else {
           const value = await request(() => client.emitWithAck("room:inspect", { roomId: id }));
           if (value && client === socket) preview.value = value;
@@ -138,6 +149,7 @@ export function useTaskHoldemRoom() {
     socket?.disconnect();
     socket = null;
     isConnected.value = false;
+    isAdmitted.value = false;
     if (invalidLink.value) {
       error.value = "This invitation link is invalid. Check the link or create a new room.";
       isLoading.value = false;
@@ -162,6 +174,7 @@ export function useTaskHoldemRoom() {
     });
     client.on("disconnect", () => {
       isConnected.value = false;
+      isAdmitted.value = false;
       connection.value = client.active ? "reconnecting" : "offline";
     });
     client.on("connect_error", (value) => {
@@ -186,8 +199,7 @@ export function useTaskHoldemRoom() {
   }
 
   async function finishJoin(value: TaskHoldemSnapshot): Promise<void> {
-    if (!acceptsRoom(value.room.id) || value.room.revision <= revokedThroughRevision) return;
-    applySnapshot(value);
+    if (!applyMembership(value)) return;
     const id = value.room.id;
     if (token) saveTaskHoldemToken(id, token);
     roomId.value = id;
@@ -224,7 +236,7 @@ export function useTaskHoldemRoom() {
   }
 
   async function sync(): Promise<void> {
-    if (!socket || !isConnected.value || !isJoined.value || syncing || isBusy.value) return;
+    if (!socket || !isConnected.value || !isAdmitted.value || !isJoined.value || syncing || isBusy.value) return;
     const client = socket;
     syncing = true;
     try {
@@ -273,7 +285,7 @@ export function useTaskHoldemRoom() {
   }
 
   async function loadHistory(before?: number) {
-    if (!socket || !isConnected.value || !isJoined.value) return undefined;
+    if (!socket || !isConnected.value || !isAdmitted.value || !isJoined.value) return undefined;
     const client = socket;
     return request(() => client.emitWithAck("room:history", before === undefined ? {} : { before }), true);
   }
@@ -359,7 +371,7 @@ export function useTaskHoldemRoom() {
 
   return {
     roomId, room, self, profile, preview, messages, error, invalidLink, connection, countdown, feedback,
-    isConnected, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
+    isConnected, isAdmitted, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
     join, vote, reveal, restart, setTopic, loadHistory, leave, sendMessage, retry,
   };
 }

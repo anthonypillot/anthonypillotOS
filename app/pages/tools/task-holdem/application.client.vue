@@ -13,7 +13,7 @@
       </div>
       <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
         <span role="status" data-testid="connection-status" class="flex items-center gap-2 text-xs text-slate-400" aria-live="polite">
-          <span class="size-1.5 rounded-full" :class="isConnected ? 'bg-emerald-400' : 'bg-amber-400'" />{{ connectionLabel }}
+          <span class="size-1.5 rounded-full" :class="isConnected && (!isJoined || isAdmitted) ? 'bg-emerald-400' : 'bg-amber-400'" />{{ connectionLabel }}
         </span>
         <TaskHoldemFeedback :feedback="feedback" />
         <TaskHoldemUser v-if="currentParticipant" :participant="currentParticipant" :disabled="!canAct" @leave="leave" />
@@ -130,11 +130,15 @@ useApplicationSeo(taskHoldemApplication);
 
 const {
   roomId, room, self, profile, messages, error, invalidLink, connection, countdown, feedback,
-  isConnected, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
+  isConnected, isAdmitted, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
   join, vote, reveal, restart, setTopic, loadHistory, leave, sendMessage, retry,
 } = useTaskHoldemRoom();
 const chatDraft = ref("");
-const connectionLabel = computed(() => isConnected.value && isLoading.value ? "Syncing room…" : ({ connecting: "Connecting…", connected: "Live", reconnecting: "Reconnecting…", offline: "Offline" })[connection.value]);
+const connectionLabel = computed(() => {
+  if (isConnected.value && (isLoading.value || (isBusy.value && !isAdmitted.value))) return "Syncing room…";
+  if (isConnected.value && isJoined.value && !isAdmitted.value) return "Rejoin required";
+  return ({ connecting: "Connecting…", connected: "Live", reconnecting: "Reconnecting…", offline: "Offline" })[connection.value];
+});
 const selectionLabel = computed(() => selectedVote.value !== null ? "Your vote is in" : room.value?.round.phase === "voting" ? "Pick what feels right" : "Ready for the next round");
 
 async function submitChat(content: string): Promise<void> {

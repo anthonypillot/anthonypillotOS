@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Server } from "socket.io";
+import type { Server, Socket } from "socket.io";
 import * as service from "#server/services/task-holdem.service";
 import {
   TaskHoldemError, toTaskHoldemRoom, toTaskHoldemSelf,
@@ -18,6 +18,7 @@ import {
 
 type TaskHoldemSocketData = { actor: TaskHoldemActor | null };
 export type TaskHoldemServer = Server<TaskHoldemClientEvents, TaskHoldemServerEvents, Record<string, never>, TaskHoldemSocketData>;
+type TaskHoldemSocket = Socket<TaskHoldemClientEvents, TaskHoldemServerEvents, Record<string, never>, TaskHoldemSocketData>;
 
 type TaskHoldemCommand<Schema extends z.ZodType, Result> = {
   schema: Schema;
@@ -29,6 +30,14 @@ type TaskHoldemCommand<Schema extends z.ZodType, Result> = {
 const handshakeSchema = z.object({ protocolVersion: z.literal(taskHoldemProtocolVersion) });
 const roomChannel = (roomId: string) => `task-holdem:room:${roomId}`;
 const memberChannel = (actor: Pick<TaskHoldemActor, "roomId" | "participantId">) => `task-holdem:member:${actor.roomId}:${actor.participantId}`;
+
+async function releaseActor(socket: TaskHoldemSocket, actor: TaskHoldemActor): Promise<void> {
+  if (socket.data.actor !== actor) return;
+  await socket.leave(memberChannel(actor));
+  if (socket.data.actor !== actor) return;
+  await socket.leave(roomChannel(actor.roomId));
+  if (socket.data.actor === actor) socket.data.actor = null;
+}
 
 function snapshot(update: TaskHoldemUpdate, actor: TaskHoldemActor): TaskHoldemSnapshot {
   return { room: toTaskHoldemRoom(update), self: toTaskHoldemSelf(update, actor.participantId) };
@@ -122,6 +131,7 @@ export function registerTaskHoldemGateway(io: TaskHoldemServer): { close: () => 
         return;
       }
       enqueue(async () => {
+        const actor = socket.data.actor;
         try {
           const parsed = schema.safeParse(command);
           if (!parsed.success) throw new TaskHoldemError("INVALID_INPUT", "Please check the submitted fields and try again.");
@@ -129,6 +139,7 @@ export function registerTaskHoldemGateway(io: TaskHoldemServer): { close: () => 
           ack({ ok: true, data });
         } catch (error) {
           if (error instanceof TaskHoldemError) {
+            if (error.code === "NOT_JOINED" && actor) await releaseActor(socket, actor);
             ack({ ok: false, error: { code: error.code, message: error.message } });
           } else {
             logger.error(`[TaskHoldem] Command failed: ${error instanceof Error ? error.message : "Unexpected error"}`);
@@ -145,11 +156,22 @@ export function registerTaskHoldemGateway(io: TaskHoldemServer): { close: () => 
       const update = await (create ? service.createRoom(command, socket.id) : service.joinRoom(command, socket.id));
       const participantId = service.getJoinedParticipant(update, command.token);
       const actor = { roomId: command.roomId, participantId, connectionId: socket.id };
-      if (socket.data.actor) await socket.leave(memberChannel(socket.data.actor));
+      if (socket.data.actor) await releaseActor(socket, socket.data.actor);
       socket.data.actor = actor;
-      await socket.join([roomChannel(actor.roomId), memberChannel(actor)]);
-      publish(update);
-      return snapshot(update, actor);
+      try {
+        await socket.join([roomChannel(actor.roomId), memberChannel(actor)]);
+        const confirmed = await service.syncRoom(actor);
+        if (!socket.connected || socket.data.actor !== actor) throw new TaskHoldemError("NOT_JOINED", "Your room admission expired. Please join again.");
+        publish({
+          ...confirmed,
+          changed: update.changed || confirmed.changed,
+          removedParticipantIds: [...new Set([...update.removedParticipantIds, ...confirmed.removedParticipantIds])],
+        });
+        return snapshot(confirmed, actor);
+      } catch (error) {
+        await releaseActor(socket, actor);
+        throw error;
+      }
     }
 
     socket.on("room:inspect", (command, ack) => handle({
@@ -170,9 +192,10 @@ export function registerTaskHoldemGateway(io: TaskHoldemServer): { close: () => 
     socket.on("room:leave", (command, ack) => handle({
       schema: taskHoldemEmptySchema, command, ack,
       operation: async () => {
-        const update = await service.leaveRoom(requireActor());
+        const actor = requireActor();
+        const update = await service.leaveRoom(actor);
+        await releaseActor(socket, actor);
         publish(update);
-        socket.data.actor = null;
         return null;
       },
     }));
@@ -264,11 +287,12 @@ export function registerTaskHoldemGateway(io: TaskHoldemServer): { close: () => 
     heartbeating = true;
     try {
       for (const socket of io.sockets.sockets.values()) {
-        if (!socket.data.actor) continue;
+        const actor = socket.data.actor;
+        if (!actor) continue;
         try {
-          publish(await service.heartbeat(socket.data.actor));
+          publish(await service.heartbeat(actor));
         } catch (error) {
-          if (error instanceof TaskHoldemError && error.code === "NOT_JOINED") socket.data.actor = null;
+          if (error instanceof TaskHoldemError && ["NOT_JOINED", "ROOM_NOT_FOUND"].includes(error.code)) await releaseActor(socket, actor);
           reportBackgroundError(error instanceof Error ? error : new Error("Heartbeat failed"));
         }
       }

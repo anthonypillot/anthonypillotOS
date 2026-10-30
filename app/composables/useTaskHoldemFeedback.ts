@@ -1,5 +1,6 @@
 import type { TaskHoldemRoom } from "#shared/types/task-holdem.type";
 import { readTaskHoldemFeedback, saveTaskHoldemFeedback, taskHoldemSounds, type TaskHoldemCue } from "~/utils/task-holdem-feedback";
+import { waitForTaskHoldemNotificationWorker } from "~/utils/task-holdem-notifications";
 
 export function useTaskHoldemFeedback() {
   const preferences = reactive(readTaskHoldemFeedback());
@@ -15,6 +16,7 @@ export function useTaskHoldemFeedback() {
   let registration: ServiceWorkerRegistration | undefined;
   let preparing: Promise<void> | undefined;
   let notificationGeneration = 0;
+  let pendingNotification: AbortController | undefined;
   let disposed = false;
 
   async function unlock(): Promise<void> {
@@ -106,12 +108,15 @@ export function useTaskHoldemFeedback() {
     if (disposed) return;
     refreshPermission();
     if (disposed || !preferences.notifications || permission.value !== "granted" || (document.visibilityState === "visible" && document.hasFocus())) return;
+    pendingNotification?.abort();
+    const controller = new AbortController();
+    pendingNotification = controller;
     const generation = ++notificationGeneration;
     const deliver = async () => {
       if (disposed || generation !== notificationGeneration) return;
       const key = `task-holdem:notified:${room.id}`;
       try { if (localStorage.getItem(key) === room.round.id) return; } catch { /* Storage can be restricted. */ }
-      if (await showRoundNotification(room, generation)) {
+      if (await showRoundNotification(room, generation, controller.signal)) {
         try { localStorage.setItem(key, room.round.id); } catch { /* The notification still works without storage. */ }
       }
     };
@@ -120,21 +125,30 @@ export function useTaskHoldemFeedback() {
       else await deliver();
     } catch {
       if (!disposed) notificationError.value = "Notifications aren't available here. New rounds will still appear in the room.";
+    } finally {
+      if (pendingNotification === controller) pendingNotification = undefined;
     }
   }
 
-  async function showRoundNotification(room: TaskHoldemRoom, generation: number): Promise<boolean> {
+  async function findNotificationRegistration(): Promise<ServiceWorkerRegistration | undefined> {
+    if (preparing) await preparing;
+    registration ??= await navigator.serviceWorker?.getRegistration("/tools/task-holdem/");
+    return registration;
+  }
+
+  async function showRoundNotification(room: TaskHoldemRoom, generation: number, signal: AbortSignal): Promise<boolean> {
+    const worker = await waitForTaskHoldemNotificationWorker(findNotificationRegistration(), signal);
+    if (disposed || signal.aborted || generation !== notificationGeneration || !preferences.notifications || (document.visibilityState === "visible" && document.hasFocus())) return false;
     const url = new URL("/tools/task-holdem/application", window.location.origin);
     url.searchParams.set("id", room.id);
     const options: NotificationOptions = {
       body: room.round.topic || `Round ${room.round.number} is ready. Join your team and pick a card.`,
       icon: "/svg/task-holdem/logo.svg", tag: `task-holdem:${room.id}`, data: { url: url.href },
+      silent: context?.state === "running" || preferences.muted || !preferences.volume || !preferences.categories.rounds,
     };
     const title = `TaskHold’em · Round ${room.round.number}`;
-    registration ??= await navigator.serviceWorker?.getRegistration("/tools/task-holdem/");
-    if (disposed || generation !== notificationGeneration || !preferences.notifications || (document.visibilityState === "visible" && document.hasFocus())) return false;
-    if (registration?.active) {
-      await registration.showNotification(title, options);
+    if (worker) {
+      await worker.showNotification(title, options);
     } else {
       const notification = new Notification(title, options);
       notifications.set(notification, room.id);
@@ -147,6 +161,7 @@ export function useTaskHoldemFeedback() {
 
   async function dismissNotifications(roomId: string): Promise<void> {
     notificationGeneration++;
+    pendingNotification?.abort();
     for (const [notification, id] of notifications) {
       if (id === roomId) { notification.close(); notifications.delete(notification); }
     }
@@ -179,6 +194,7 @@ export function useTaskHoldemFeedback() {
 
   watch(() => preferences.notifications, (enabled) => {
     notificationGeneration++;
+    pendingNotification?.abort();
     if (enabled && permission.value === "granted") void prepareNotifications();
     if (!enabled) {
       for (const notification of notifications.keys()) notification.close();
@@ -195,6 +211,7 @@ export function useTaskHoldemFeedback() {
   });
   onScopeDispose(() => {
     disposed = true;
+    pendingNotification?.abort();
     document.removeEventListener("pointerdown", unlock);
     document.removeEventListener("keydown", unlock);
     window.removeEventListener("focus", refreshPermission);
