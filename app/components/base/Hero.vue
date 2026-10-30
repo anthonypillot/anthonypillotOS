@@ -201,7 +201,7 @@ function isLastItem(index: number): boolean {
 
 <style scoped>
 .gradient-background {
-  background: linear-gradient(300deg, color-mix(in srgb, var(--ui-primary) 12%, var(--ui-bg)), var(--ui-bg), color-mix(in srgb, var(--ui-primary) 12%, var(--ui-bg)));
+  background: linear-gradient(300deg, var(--color-indigo-600), var(--ui-bg), var(--color-indigo-600));
   background-size: 180% 180%;
   animation: gradient-animation 10s ease infinite;
 }

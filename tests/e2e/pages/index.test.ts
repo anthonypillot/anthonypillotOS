@@ -16,6 +16,34 @@ test("should have a hero section with job presentation", async ({ page }) => {
   await expect(page.getByText("Lille, France. Remote and on-site work.")).toBeVisible();
 });
 
+test("hero retains a vivid indigo gradient throughout its animation", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto(routes.home);
+  const hero = page.locator("main section").first();
+  const accent = await hero.evaluate((element) => {
+    const color = getComputedStyle(element).backgroundImage.match(/(?:oklch|rgba?|color)\([^)]+\)/)?.[0];
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!color || !context) throw new Error("The hero must expose a decorative gradient color");
+    context.fillStyle = color;
+    context.fillRect(0, 0, 1, 1);
+    return Array.from(context.getImageData(0, 0, 1, 1).data);
+  });
+  const [red = 0, green = 0, blue = 0] = accent;
+  expect(blue).toBeGreaterThan(180);
+  expect(blue - Math.max(red, green)).toBeGreaterThan(100);
+
+  for (const [time, position] of [[0, "0% 50%"], [5000, "100% 50%"]] as const) {
+    await hero.evaluate((element, time) => {
+      const animation = element.getAnimations().find(animation => animation instanceof CSSAnimation && animation.animationName.startsWith("gradient-animation"));
+      if (!animation) throw new Error("The hero gradient must stay animated");
+      animation.pause();
+      animation.currentTime = time;
+    }, time);
+    await expect(hero).toHaveCSS("background-position", position);
+  }
+});
+
 test("should display the Plausible logo in the hero", async ({ page }) => {
   await page.goto(routes.home);
 
