@@ -2,42 +2,35 @@
   <button
     type="button"
     :aria-label="`Select ${value} card`"
-    :aria-pressed="isSelected"
-    :class="
-      'card flex flex-col justify-center items-center w-12 h-24 border border-indigo-400 rounded cursor-pointer transform hover:bg-indigo-400 hover:bg-opacity-10' +
-      (isSelected ? ' bg-indigo-200 bg-opacity-10 border-indigo-600 border-4 -translate-y-1' : '')
-    "
-    @click="select()"
+    :aria-pressed="selected"
+    :disabled="disabled"
+    class="vote-card relative flex h-24 w-14 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border text-white outline-none transition-all focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed sm:w-full sm:max-w-16"
+    :class="selected ? 'selected border-indigo-300 bg-indigo-400/20 shadow-lg shadow-indigo-500/10' : 'border-white/10 bg-slate-900 hover:border-indigo-300/50 hover:bg-indigo-400/10 disabled:opacity-40'"
+    @click="emit('select', value)"
   >
-    <UIcon v-if="props.type === 'icon'" :name="valueToIconName[props.value]" class="text-white" />
-    <span v-else class="text-white text-xl">{{ props.value }}</span>
+    <span v-if="typeof value === 'number'" class="text-2xl font-semibold tracking-tight">{{ value }}</span>
+    <template v-else>
+      <UIcon :name="taskHoldemCardIcons[value]" class="size-6" aria-hidden="true" />
+      <span class="text-[10px] text-slate-400">{{ formatTaskHoldemVote(value) }}</span>
+    </template>
+    <span class="absolute left-2 top-1.5 text-[9px] text-indigo-300/60" aria-hidden="true">♠</span>
+    <UIcon v-if="selected" name="i-heroicons-check-circle-solid" class="absolute -right-1.5 -top-1.5 size-5 rounded-full bg-slate-950 text-indigo-300" aria-hidden="true" />
   </button>
 </template>
 
 <script setup lang="ts">
-export type Card = {
-  type: "number" | "icon";
-  value: number | "skip" | "break";
-  isSelected: boolean;
-};
+import type { TaskHoldemVote } from "#shared/types/task-holdem.type";
+import { formatTaskHoldemVote, taskHoldemCardIcons } from "~/utils/task-holdem";
 
-const props = defineProps<Card>();
-
-const emit = defineEmits<{
-  select: [card: Card];
-}>();
-
-function select(): void {
-  emit("select", props);
-}
+defineProps<{ value: TaskHoldemVote; selected: boolean; disabled: boolean }>();
+const emit = defineEmits<{ select: [value: TaskHoldemVote] }>();
 </script>
 
 <style scoped>
-.card {
-  transition: transform 0.15s;
-}
-
-.card:hover {
-  transform: translateY(-0.25rem);
+@media (prefers-reduced-motion: no-preference) {
+  .vote-card:not(:disabled):hover,
+  .vote-card.selected {
+    transform: translateY(-4px);
+  }
 }
 </style>

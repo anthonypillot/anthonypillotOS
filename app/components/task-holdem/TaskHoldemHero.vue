@@ -1,59 +1,57 @@
 <template>
-  <section class="bg-gray-900 py-24 sm:py-32">
-    <div class="relative isolate">
-      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div
-          class="mx-auto flex max-w-2xl flex-col gap-16 bg-white/5 px-6 py-16 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:py-20 xl:gap-x-20 xl:px-20"
-        >
-          <NuxtImg
-            class="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
-            src="/svg/task-holdem/logo.svg"
-            :alt="taskHoldemApplication.name"
-          />
-          <div class="flex flex-col gap-y-8">
-            <div class="w-full flex-auto">
-              <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ taskHoldemApplication.name }}</h1>
-              <UBadge color="primary" variant="subtle" label="Beta" />
-              <h2 class="mt-6 text-lg leading-8 text-gray-300">{{ taskHoldemApplication.description }}</h2>
-            </div>
-            <UButton
-              :to="taskHoldemApplication.path"
-              :label="`Launch ${taskHoldemApplication.name}`"
-              variant="outline"
-              color="neutral"
-              trailing-icon="i-heroicons-arrow-right"
-              size="sm"
-              class="ring-white hover:text-white hover:bg-neutral-900 active:text-white active:bg-neutral-900 dark:hover:text-neutral-900 dark:hover:bg-white dark:active:text-neutral-900 dark:active:bg-white"
-              data-testid="task-holdem-launch"
-            />
-          </div>
-        </div>
+  <section class="holdem-hero relative isolate overflow-hidden px-5 pb-20 pt-36 sm:px-8 sm:pb-28 sm:pt-44">
+    <div class="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
+      <div>
+        <p class="inline-flex items-center gap-2 rounded-full border border-indigo-300/15 bg-indigo-400/10 px-3.5 py-1.5 text-xs font-medium text-indigo-200"><span class="size-1.5 rounded-full bg-indigo-300" /> A shared perspective on what's next</p>
+        <div class="mt-7 flex items-center gap-3"><NuxtImg :src="taskHoldemApplication.faviconDark" alt="" class="size-11" /><h1 class="text-lg font-medium tracking-tight text-slate-200">{{ taskHoldemApplication.name }}</h1></div>
+        <h2 class="mt-5 text-5xl font-semibold leading-[1.08] tracking-tight text-white sm:text-6xl">Less guesswork.<br><span class="text-indigo-300">More alignment.</span></h2>
+        <p class="mt-6 max-w-lg text-base leading-8 text-slate-400">Good estimates aren't a solo act. Bring your team together for planning poker that makes space for every perspective.</p>
+        <UButton :to="taskHoldemApplication.path" label="Start a planning session" trailing-icon="i-heroicons-arrow-right" size="xl" class="mt-8" data-testid="task-holdem-launch" />
+        <p class="mt-4 text-xs text-slate-500">Free to use. No accounts. Just your team.</p>
       </div>
-      <div class="absolute inset-x-0 -top-16 -z-10 flex transform-gpu justify-center overflow-hidden blur-3xl" aria-hidden="true">
-        <div
-          class="aspect-[1318/752] w-[82.375rem] flex-none bg-gradient-to-r from-[#80caff] to-[#4f46e5] opacity-25"
-          style="
-            clip-path: polygon(
-              73.6% 51.7%,
-              91.7% 11.8%,
-              100% 46.4%,
-              97.4% 82.2%,
-              92.5% 84.9%,
-              75.7% 64%,
-              55.3% 47.5%,
-              46.5% 49.4%,
-              45% 62.9%,
-              50.3% 87.2%,
-              21.3% 64.1%,
-              0.1% 100%,
-              5.4% 51.1%,
-              21.4% 63.9%,
-              58.9% 0.2%,
-              73.6% 51.7%
-            );
-          "
-        />
+
+      <div aria-hidden="true" class="relative mx-auto w-full max-w-lg rounded-3xl border border-white/10 bg-slate-900/80 p-5 shadow-2xl shadow-indigo-950/20 sm:p-7">
+        <div class="mb-8 flex items-center justify-between"><span class="text-xs font-medium text-slate-300">The next great conversation</span><span class="flex items-center gap-1.5 text-[10px] text-emerald-300"><span class="size-1.5 rounded-full bg-emerald-400" /> Live</span></div>
+        <div class="rounded-2xl border border-indigo-300/10 bg-indigo-400/5 px-5 py-10 text-center">
+          <p class="text-[10px] uppercase tracking-[0.2em] text-indigo-300">Independent votes. Shared understanding.</p>
+          <div class="my-8 flex justify-center gap-3">
+            <div v-for="(card, index) in previewCards" :key="card.name" class="flex flex-col items-center gap-3">
+              <div class="flex h-24 w-16 items-center justify-center rounded-xl border text-3xl font-semibold" :class="index === 1 ? '-translate-y-2 border-indigo-300/40 bg-indigo-400/15 text-white shadow-xl shadow-indigo-500/10' : 'border-white/10 bg-slate-900 text-indigo-200'">{{ card.value }}</div>
+              <span class="text-[11px] text-slate-400">{{ card.name }}</span>
+            </div>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Everyone has a seat at the table.</p>
+        </div>
+        <div class="mt-5 flex items-center justify-between text-[10px] text-slate-500"><span>One link. Your whole team.</span><UIcon name="i-heroicons-lock-closed" class="size-3.5" /></div>
+      </div>
+    </div>
+
+    <div class="mx-auto mt-20 grid max-w-6xl gap-8 border-t border-white/10 pt-10 sm:mt-24 sm:grid-cols-3">
+      <div v-for="feature in features" :key="feature.title">
+        <UIcon :name="feature.icon" class="mb-4 size-5 text-indigo-300" aria-hidden="true" />
+        <h3 class="text-sm font-medium text-white">{{ feature.title }}</h3>
+        <p class="mt-2 text-sm leading-7 text-slate-400">{{ feature.description }}</p>
       </div>
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+const previewCards = [{ name: "Alex", value: 5 }, { name: "Sam", value: 8 }, { name: "Jordan", value: 5 }];
+const features = [
+  { title: "A room in seconds", description: "Create a session and share a single invitation link. Your team is one click away.", icon: "i-heroicons-user-group" },
+  { title: "Think independently", description: "Keep votes private until the reveal. Give every opinion the space it deserves.", icon: "i-heroicons-lock-closed" },
+  { title: "Find your alignment", description: "Reveal together, discuss the differences, and move into the next round with clarity.", icon: "i-heroicons-sparkles" },
+];
+</script>
+
+<style scoped>
+.holdem-hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 30%, rgb(99 102 241 / 10%), transparent 55%);
+  pointer-events: none;
+  content: "";
+}
+</style>

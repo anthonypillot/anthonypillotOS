@@ -1,4 +1,5 @@
 export const baseURL = "http://127.0.0.1:4173";
+export const secondaryBaseURL = "http://127.0.0.1:4174";
 
 // Deliberately independent of .env and POSTGRES_PRISMA_URL: never use a developer or deployed database.
 export const databaseURL = "postgresql://e2e:e2e@127.0.0.1:55439/anthonypillotos_e2e";

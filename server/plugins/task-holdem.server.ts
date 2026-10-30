@@ -1,121 +1,55 @@
-import type { User } from "@/components/task-holdem/CreateUser.vue";
-import * as service from "#server/services/task-holdem.service";
 import { createAdapter } from "@socket.io/postgres-adapter";
 import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
 import pg from "pg";
 import { Server } from "socket.io";
+import { closeTaskHoldemDatabase } from "#server/dao/task-holdem.dao";
+import { registerTaskHoldemGateway, type TaskHoldemServer } from "#server/realtime/task-holdem";
+import { logger } from "#server/utils/logger";
+import { taskHoldemSocketPath } from "#shared/types/task-holdem.type";
 
 export default defineNitroPlugin((nitro) => {
-  const connectionString = process.env.POSTGRES_PRISMA_URL;
-  const pool = new pg.Pool({ connectionString });
+  const pool = new pg.Pool({ connectionString: process.env.POSTGRES_PRISMA_URL });
+  pool.on("error", error => logger.error(`[TaskHoldem] PostgreSQL adapter error: ${error.message}`));
 
-  pool.on("error", (error) => {
-    logger.error(`${prefixLog} Error while connecting to Postgres: ${error}`);
-  });
-
-  const engine = new Engine();
-  const io = new Server<ClientToServerEvents, ServerToClientEvents>({
-    adapter: createAdapter(pool),
-  });
-
-  io.bind(engine);
-
-  io.on("connection", async (socket) => {
-    const roomId = socket.handshake.query.id as string;
-    const sessionId = socket.handshake.query.sessionId as string;
-    const roomReady = initializeRoom();
-
-    async function initializeRoom(): Promise<boolean> {
+  const engine = new Engine({
+    maxHttpBufferSize: 16_384,
+    allowRequest(request, accept) {
+      const origin = request.headers.origin;
+      if (!origin) {
+        accept(null, true);
+        return;
+      }
       try {
-        if (roomId && sessionId) {
-          const user: User | null = await service.getUserBySessionId(roomId, sessionId);
-          if (user && user.name) {
-            logger.debug(`${prefixLog} User reconnected: [${user.name}]`);
-          }
-        }
-
-        if (roomId) {
-          await socket.join(roomId);
-          // Send the initial snapshot directly so adapter broadcasts cannot deliver it after a newer update.
-          socket.emit("room-update", await service.getOrCreateRoom(roomId));
-        }
-        return true;
-      } catch (error) {
-        logger.error(`${prefixLog} Room initialization failed: ${error instanceof Error ? error.message : String(error)}`);
-        socket.disconnect(true);
-        return false;
+        accept(null, new URL(origin).host === request.headers.host);
+      } catch {
+        accept("Invalid origin", false);
       }
-    }
+    },
+  });
+  const io: TaskHoldemServer = new Server({ adapter: createAdapter(pool) });
+  io.bind(engine);
+  const gateway = registerTaskHoldemGateway(io);
 
-    // Register handlers before yielding: clients may emit immediately after the connection handshake.
-    if (roomId) {
-      socket.on("message", async (message) => {
-        if (!await roomReady) return;
-        io.to(roomId).emit("message", message);
-      });
-
-      socket.on("room-update", async (room) => {
-        if (!await roomReady) return;
-        io.to(roomId).emit("room-update", await service.updateRoom(roomId, room));
-      });
-
-      socket.on("user-create", async (userToCreate: User) => {
-        if (!await roomReady) return;
-        io.to(roomId).emit("room-update", await service.createUser(roomId, sessionId, userToCreate));
-      });
-
-      socket.on("user-remove", async (userToRemove: User) => {
-        if (!await roomReady) return;
-        io.to(roomId).emit("room-update", await service.removeUser(roomId, userToRemove));
-      });
-
-      socket.on("room-restart", async (room: Room) => {
-        if (!await roomReady) return;
-        io.to(roomId).emit("room-restart", await service.restartRoom(roomId, room));
-      });
-    }
-
-    socket.on("disconnect", async () => {
-      if (await roomReady && roomId && sessionId) {
-        const room: Room | null = await service.removeUserBySessionId(roomId, sessionId);
-        if (room) {
-          io.to(roomId).emit("room-update", room);
-        }
-      }
-
-      io.emit("data", {
-        socketNumber: (await io.fetchSockets()).length,
-      });
-    });
-
-    socket.on("error", (error) => {
-      logger.error(`${prefixLog} Error: ${error}`);
-    });
-
-    if (await roomReady) {
-      io.emit("data", {
-        socketNumber: (await io.fetchSockets()).length,
-      });
-    }
+  nitro.hooks.hook("close", async () => {
+    await gateway.close();
+    await closeTaskHoldemDatabase();
+    await pool.end();
   });
 
-  nitro.router.use(
-    "/api/websocket/task-holdem",
-    defineEventHandler({
-      handler(event) {
-        // @ts-expect-error private method and property
-        engine.handleRequest(event.node.req, event.node.res);
-        event._handled = true;
+  nitro.router.use(taskHoldemSocketPath, defineEventHandler({
+    handler(event) {
+      // @ts-expect-error Engine.IO requires the Node request behind Nitro's WebSocket bridge.
+      engine.handleRequest(event.node.req, event.node.res);
+      event._handled = true;
+    },
+    websocket: {
+      open(peer) {
+        // @ts-expect-error Nitro does not expose this Node request in its public peer type.
+        engine.prepare(peer._internal.nodeReq);
+        // @ts-expect-error Engine.IO and Nitro's WebSocket bridge use private request fields.
+        engine.onWebSocket(peer._internal.nodeReq, peer._internal.nodeReq.socket, peer.websocket);
       },
-      websocket: {
-        open(peer) {
-          // @ts-expect-error private method and property
-          engine.prepare(peer._internal.nodeReq);
-          // @ts-expect-error private method and property
-          engine.onWebSocket(peer._internal.nodeReq, peer._internal.nodeReq.socket, peer.websocket);
-        },
-      },
-    })
-  );
+    },
+  }));
 });

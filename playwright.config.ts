@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { baseURL, databaseURL } from "./tests/e2e/configuration";
+import { baseURL, databaseURL, secondaryBaseURL } from "./tests/e2e/configuration";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -36,18 +36,21 @@ export default defineConfig({
     { name: "Mobile Chrome - Samsung Galaxy S24", use: { ...devices["Galaxy S24"] } },
     { name: "Mobile Safari - iPhone 15", use: { ...devices["iPhone 15"] } },
   ],
-  webServer: {
+  webServer: [4173, 4174].map(port => ({
     command: "node tests/e2e/start-server.ts",
-    url: `${baseURL}/api/health/live`,
+    url: `${port === 4173 ? baseURL : secondaryBaseURL}/api/health/live`,
     reuseExistingServer: false,
     timeout: 60_000,
-    gracefulShutdown: { signal: "SIGTERM", timeout: 5_000 },
+    gracefulShutdown: { signal: "SIGTERM", timeout: 10_000 },
     env: {
       HOST: "127.0.0.1",
-      PORT: "4173",
+      PORT: port.toString(),
+      E2E_SERVER_NAME: port === 4173 ? "server" : "secondary-server",
       POSTGRES_PRISMA_URL: databaseURL,
+      TASK_HOLDEM_GRACE_MS: "4000",
+      TASK_HOLDEM_REVEAL_MS: "750",
       ENV: "e2e",
       LOG_LEVEL: "info",
     },
-  },
+  })),
 });

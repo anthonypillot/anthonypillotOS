@@ -1,116 +1,79 @@
 <template>
-  <section class="flex flex-col gap-y-6 w-full">
-    <div class="flex justify-between">
-      <div v-for="(user, index) in topHalfUsers" :key="index" class="flex flex-col flex-wrap">
-        <TaskHoldemPokerPlayer :user :status="props.game.status" />
-      </div>
+  <section aria-label="Current round" class="round-panel relative flex min-h-80 flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 p-5 sm:p-6">
+    <div class="relative flex items-center justify-between gap-3">
+      <h2 class="text-sm font-medium text-slate-300">Round {{ room.round.number }}</h2>
+      <span class="rounded-full border px-2.5 py-1 text-[11px] font-medium" :class="room.round.phase === 'revealed' ? 'border-emerald-300/15 bg-emerald-400/10 text-emerald-300' : 'border-indigo-300/15 bg-indigo-400/10 text-indigo-200'">{{ phaseLabel }}</span>
     </div>
-    <div
-      class="flex flex-col gap-y-2 justify-center items-center h-56 w-full p-4 border-gray-400 rounded bg-gray-700 bg-opacity-10 sm:rounded-2xl border"
-    >
-      <div v-if="props.game.status === 'playing' || props.game.status === 'revealing'">
-        <UButton
-          :label="revealButtonLabel"
-          variant="solid"
-          class="justify-center text-white"
-          :class="isEveryoneReady ? 'shadow-lg shadow-indigo-400' : ''"
-          :disabled="!isAnyUserWithSelectedCard"
-          data-testid="reveal-button"
-          @click="reveal()"
-        />
+
+    <div v-if="room.round.phase === 'voting'" class="relative flex flex-1 flex-col items-center justify-center py-6 text-center">
+      <div class="mb-5 hidden h-14 items-center justify-center sm:flex" aria-hidden="true">
+        <div class="preview-card -rotate-12 -translate-x-6 bg-slate-900">♣</div>
+        <div class="preview-card z-10 border-indigo-300/40 bg-slate-800 text-3xl font-semibold text-white">?</div>
+        <div class="preview-card translate-x-6 rotate-12 bg-slate-900">♠</div>
       </div>
-      <div v-else-if="game.status === 'revealed'" class="flex flex-col gap-4 text-center">
-        <div>
-          <p class="text-white text-lg">Result</p>
-          <p class="text-white"><span class="text-gray-200">Average</span>: {{ getAverage() }}</p>
-        </div>
-        <UButton
-          label="Restart"
-          variant="outline"
-          class="justify-center text-white"
-          data-testid="restart-button"
-          @click="emit('restart')"
-        />
+      <h3 class="text-xl font-semibold tracking-tight text-white sm:text-2xl">Every perspective counts.</h3>
+      <p class="mt-2 max-w-sm text-sm leading-6 text-slate-400">Pick a card below. Reveal together when the team is ready.</p>
+      <div class="mt-5 flex items-center gap-2" aria-live="polite">
+        <span class="size-1.5 rounded-full" :class="everyoneReady ? 'bg-emerald-400' : 'bg-indigo-400'" />
+        <p class="text-sm text-slate-300">{{ voteCount }} of {{ room.participants.length }} voted<span v-if="everyoneReady"> · Everyone is ready</span></p>
       </div>
+      <UButton label="Reveal cards" icon="i-heroicons-eye" size="lg" class="mt-4 justify-center" :disabled="disabled || voteCount === 0" data-testid="reveal-button" @click="emit('reveal')" />
+      <p class="mt-3 text-xs text-slate-500">Any player can reveal when you're ready.</p>
     </div>
-    <div v-if="bottomHalfUsers" class="flex flex-wrap justify-between">
-      <TaskHoldemPokerPlayer v-for="(user, index) in bottomHalfUsers" :key="index" :user :status="props.game.status" />
+
+    <div v-else-if="room.round.phase === 'revealing'" class="relative flex flex-1 flex-col items-center justify-center py-12 text-center" aria-live="polite">
+      <p class="text-sm font-medium uppercase tracking-[0.2em] text-indigo-300">All cards on the table</p>
+      <p class="my-5 text-8xl font-semibold tracking-tighter text-white tabular-nums">{{ countdown || '…' }}</p>
+      <h3 class="text-xl font-medium text-slate-200">A little suspense. A shared perspective.</h3>
+      <p class="mt-3 text-sm text-slate-500">Votes are locked for this round.</p>
+    </div>
+
+    <div v-else class="relative flex flex-1 flex-col items-center justify-center py-8 text-center" aria-live="polite">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">Result</p>
+      <h3 class="mt-4 text-2xl font-semibold tracking-tight text-white">Here's where the team landed.</h3>
+      <p class="mt-4 text-lg text-slate-300">Average: <span class="font-semibold text-white">{{ average }}</span></p>
+      <p class="mt-1 text-xs text-slate-500">Numeric votes only · {{ room.round.ballots?.length ?? 0 }} votes cast</p>
+      <ul aria-label="Revealed votes" class="mt-7 flex max-w-full flex-wrap justify-center gap-3">
+        <li v-for="ballot in room.round.ballots" :key="ballot.participantId" class="w-20">
+          <span class="mx-auto flex h-16 w-12 items-center justify-center rounded-xl border border-indigo-300/25 bg-indigo-400/10 text-lg font-semibold text-indigo-100">{{ formatTaskHoldemVote(ballot.value) }}</span>
+          <span class="mt-2 block truncate text-xs text-slate-400">{{ ballot.profile.name }}</span>
+        </li>
+      </ul>
+      <UButton label="Next round" trailing-icon="i-heroicons-arrow-right" size="lg" class="mt-8" :disabled="disabled" data-testid="restart-button" @click="emit('restart')" />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-// @ts-expect-error canvas-confetti lacks proper TypeScript declarations
-import confetti from "canvas-confetti";
+import type { TaskHoldemRoom } from "#shared/types/task-holdem.type";
+import { formatTaskHoldemVote } from "~/utils/task-holdem";
 
-import type { Room } from "@@/shared/types/task-holdem.type";
-
-const props = defineProps<Room>();
-
-const topHalfUsers = computed(() => props.users.slice(0, Math.ceil(props.users.length / 2)));
-const bottomHalfUsers = computed(() => props.users.slice(Math.ceil(props.users.length / 2)));
-
-const emit = defineEmits<{
-  revealing: [];
-  revealed: [];
-  restart: [];
-}>();
-
-const countdownDuration = 2;
-const countdown = ref<number>(countdownDuration);
-
-function reveal(): void {
-  emit("revealing");
-}
-
-const scalar = 2;
-
-watch(
-  () => props.game.status,
-  (status) => {
-    if (status === "revealing") {
-      const interval = setInterval(() => {
-        countdown.value--;
-        if (countdown.value === 0) {
-          clearInterval(interval);
-          countdown.value = countdownDuration;
-
-          emit("revealed");
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-            shapes: [
-              confetti.shapeFromText({ text: "♣️", scalar }),
-              confetti.shapeFromText({ text: "♠️", scalar }),
-              confetti.shapeFromText({ text: "♦️", scalar }),
-              confetti.shapeFromText({ text: "♥️", scalar }),
-              confetti.shapeFromText({ text: "🤍", scalar }),
-            ],
-            scalar,
-          });
-        }
-      }, 1000);
-    }
-  }
-);
-
-const isAnyUserWithSelectedCard = computed(() => props.users.some((user) => user.selectedCard !== null));
-const isEveryoneReady = computed(() => props.users.every((user) => user.selectedCard !== null));
-
-const revealButtonLabel = computed(() => {
-  if (!isAnyUserWithSelectedCard.value) return "Waiting at least one user to select a card";
-  if (props.game.status === "revealing") return countdown.value.toString();
-  return "Reveal cards!";
-});
-
-function getAverage(): number | string {
-  const onlyNumberValues: number[] = props.users.map((user) => user.selectedCard?.value).filter((value) => typeof value === "number");
-
-  if (onlyNumberValues.length > 0) {
-    return onlyNumberValues.reduce((acc, value) => acc + value, 0) / onlyNumberValues.length;
-  } else {
-    return "N/A";
-  }
-}
+const props = defineProps<{ room: TaskHoldemRoom; disabled: boolean; countdown: number }>();
+const emit = defineEmits<{ reveal: []; restart: [] }>();
+const voteCount = computed(() => props.room.participants.filter(participant => participant.hasVoted).length);
+const everyoneReady = computed(() => props.room.participants.length > 0 && voteCount.value === props.room.participants.length);
+const phaseLabel = computed(() => ({ voting: "Voting open", revealing: "Revealing", revealed: "Cards revealed" })[props.room.round.phase]);
+const average = computed(() => props.room.round.average === null ? "N/A" : new Intl.NumberFormat("en", { maximumFractionDigits: 2 }).format(props.room.round.average));
 </script>
+
+<style scoped>
+.round-panel::before {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 35%, rgb(99 102 241 / 8%), transparent 65%);
+  pointer-events: none;
+  content: "";
+}
+
+.preview-card {
+  position: absolute;
+  display: flex;
+  width: 3.25rem;
+  height: 4.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(165 180 252 / 15%);
+  border-radius: 0.65rem;
+  color: rgb(165 180 252 / 60%);
+}
+</style>

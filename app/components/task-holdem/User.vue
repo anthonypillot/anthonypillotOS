@@ -1,36 +1,14 @@
 <template>
-  <section>
-    <div class="flex flex-col gap-y-8">
-      <div class="flex flex-col gap-y-4 items-start">
-        <div>
-          <p class="text-white text-lg">User informations</p>
-          <DevOnly>
-            <p class="text-gray-400">
-              ID: <span class="text-white">{{ user.id }}</span>
-            </p>
-          </DevOnly>
-          <p class="text-gray-400">
-            Name: <span class="text-white">{{ user.name }}</span>
-          </p>
-          <UButton label="Remove" variant="outline" size="sm" class="text-white mt-2" @click="remove(user)" />
-        </div>
-      </div>
-    </div>
-  </section>
+  <div class="flex min-w-0 items-center gap-3">
+    <NuxtImg :src="useAvatar(participant.profile.avatar)" alt="" class="size-9 shrink-0 rounded-full bg-white/5 p-1" />
+    <p class="max-w-32 truncate text-sm text-slate-300">{{ participant.profile.name }}</p>
+    <UButton label="Leave room" aria-label="Leave room" icon="i-heroicons-arrow-right-start-on-rectangle" color="neutral" variant="ghost" size="sm" :disabled="disabled" @click="emit('leave')" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { User } from "@/components/task-holdem/CreateUser.vue";
+import type { TaskHoldemParticipant } from "#shared/types/task-holdem.type";
 
-defineProps<{
-  user: User;
-}>();
-
-const emit = defineEmits<{
-  remove: [User];
-}>();
-
-function remove(user: User): void {
-  emit("remove", user);
-}
+defineProps<{ participant: TaskHoldemParticipant; disabled: boolean }>();
+const emit = defineEmits<{ leave: [] }>();
 </script>

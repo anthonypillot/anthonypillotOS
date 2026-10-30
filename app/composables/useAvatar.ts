@@ -1,4 +1,6 @@
-export type Avatar = "boy" | "girl";
+import type { TaskHoldemProfile } from "#shared/types/task-holdem.type";
+
+export type Avatar = TaskHoldemProfile["avatar"];
 
 const path = {
   boy: "svg/task-holdem/person-boy.svg",

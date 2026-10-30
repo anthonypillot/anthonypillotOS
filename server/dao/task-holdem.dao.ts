@@ -1,86 +1,93 @@
-import type { User } from "@/components/task-holdem/CreateUser.vue";
 import { createPrismaClient } from "#server/utils/prisma";
+import {
+  TaskHoldemError, taskHoldemStateSchema,
+  type TaskHoldemMutation, type TaskHoldemState, type TaskHoldemUpdate,
+} from "#server/domain/task-holdem/room";
 
 const prisma = createPrismaClient();
 
-export async function getRoom(id: string): Promise<Room | null> {
-  try {
-    const room = await prisma.taskHoldemRoom.findUnique({
-      where: {
-        id,
-      },
-    });
+export async function createRoom(state: TaskHoldemState): Promise<void> {
+  await prisma.taskHoldemRoom.upsert({
+    where: { id: state.id },
+    create: { id: state.id, data: state },
+    update: {},
+  });
+}
 
-    if (room && room.data) {
-      return room.data as Room;
-    } else {
-      return null;
+export async function inspectRoom(id: string): Promise<{ id: string; participantCount: number }> {
+  const room = await prisma.taskHoldemRoom.findUnique({ where: { id } });
+  const parsed = taskHoldemStateSchema.safeParse(room?.data);
+  if (!room || !parsed.success) {
+    throw new TaskHoldemError("ROOM_NOT_FOUND", "This room is unavailable. Ask for a new invitation or create your own room.");
+  }
+  return { id, participantCount: parsed.data.participants.length };
+}
+
+export async function mutateRoom(id: string, mutate: (mutation: TaskHoldemMutation) => void): Promise<TaskHoldemUpdate> {
+  return prisma.$transaction(async (transaction) => {
+    // The lock must be shared by every instance, including presence and timer updates.
+    const rows = await transaction.$queryRaw<{ id: string }[]>`SELECT id FROM task_holdem_room WHERE id = ${id} FOR UPDATE`;
+    if (rows.length === 0) throw new TaskHoldemError("ROOM_NOT_FOUND", "This room no longer exists.");
+
+    const room = await transaction.taskHoldemRoom.findUniqueOrThrow({ where: { id }, include: { connections: true } });
+    const parsed = taskHoldemStateSchema.safeParse(room.data);
+    if (!parsed.success) throw new TaskHoldemError("ROOM_NOT_FOUND", "This room uses an older version. Please create a new room.");
+
+    const mutation: TaskHoldemMutation = {
+      state: parsed.data,
+      leases: room.connections.map(connection => ({
+        id: connection.id,
+        participantId: connection.participantId,
+        connected: connection.connected,
+        expiresAt: connection.expiresAt.getTime(),
+      })),
+    };
+    const previous = JSON.stringify(mutation.state);
+    const previousParticipantIds = mutation.state.participants.map(participant => participant.id);
+    mutate(mutation);
+    const state = taskHoldemStateSchema.parse(mutation.state);
+    const changed = JSON.stringify(state) !== previous;
+    const revision = room.revision + (changed ? 1 : 0);
+
+    if (changed) {
+      await transaction.taskHoldemRoom.update({ where: { id }, data: { data: state, revision } });
     }
-  } catch (error: unknown) {
-    logger.error(`Error while getting room: ${error instanceof Error ? error.message : String(error)}`);
-    throw error;
-  }
+
+    const retained = new Set(mutation.leases.map(lease => lease.id));
+    const removed = room.connections.filter(connection => !retained.has(connection.id)).map(connection => connection.id);
+    if (removed.length > 0) await transaction.taskHoldemConnection.deleteMany({ where: { id: { in: removed }, roomId: id } });
+    for (const lease of mutation.leases) {
+      const previousLease = room.connections.find(connection => connection.id === lease.id);
+      if (previousLease?.connected === lease.connected && previousLease.expiresAt.getTime() === lease.expiresAt) continue;
+      await transaction.taskHoldemConnection.upsert({
+        where: { id: lease.id },
+        create: { ...lease, roomId: id, expiresAt: new Date(lease.expiresAt) },
+        update: { connected: lease.connected, expiresAt: new Date(lease.expiresAt) },
+      });
+    }
+    const removedParticipantIds = previousParticipantIds.filter(participantId => !state.participants.some(participant => participant.id === participantId));
+    return { state, revision, changed, removedParticipantIds };
+  }, { maxWait: 10_000, timeout: 10_000 });
 }
 
-function createEmptyRoom(): Room {
-  return {
-    users: [],
-    game: {
-      status: "playing",
+export async function findDueRooms(now: number): Promise<string[]> {
+  const rooms = await prisma.taskHoldemRoom.findMany({
+    where: {
+      OR: [
+        { connections: { some: { expiresAt: { lte: new Date(now) } } } },
+        { AND: [
+          { data: { path: ["round", "phase"], equals: "revealing" } },
+          { data: { path: ["round", "revealAt"], lte: now } },
+        ] },
+      ],
     },
-  };
+    select: { id: true },
+    orderBy: { updatedAt: "asc" },
+    take: 100,
+  });
+  return rooms.map(room => room.id);
 }
 
-export async function createRoom(id: string): Promise<Room> {
-  try {
-    const room = await prisma.taskHoldemRoom.create({
-      data: {
-        id,
-        data: createEmptyRoom(),
-      },
-    });
-
-    return room.data as Room;
-  } catch (error: unknown) {
-    logger.error(`Error while creating room: ${error instanceof Error ? error.message : String(error)}`);
-    throw error;
-  }
-}
-
-export async function getOrCreateRoom(id: string): Promise<Room> {
-  const room = await getRoom(id);
-
-  if (room) {
-    return room;
-  } else {
-    return await createRoom(id);
-  }
-}
-
-export async function updateRoom(id: string, updatedRoom: Room): Promise<Room> {
-  try {
-    const room = await prisma.taskHoldemRoom.update({
-      where: {
-        id,
-      },
-      data: {
-        data: updatedRoom,
-      },
-    });
-
-    return room.data as Room;
-  } catch (error: unknown) {
-    logger.error(`Error while updating room: ${error instanceof Error ? error.message : String(error)}`);
-    throw error;
-  }
-}
-
-export async function getUserBySessionId(roomId: string, sessionId: string): Promise<User | null> {
-  const room: Room | null = await getRoom(roomId);
-  if (room) {
-    const user = room.users.find((user) => user.sessionId === sessionId);
-    return user || null;
-  } else {
-    return null;
-  }
+export async function closeTaskHoldemDatabase(): Promise<void> {
+  await prisma.$disconnect();
 }

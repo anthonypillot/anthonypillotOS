@@ -4,6 +4,7 @@ import { PrismaClient } from "../../../server/generated/prisma/client";
 import type { BrowserContext, Page } from "@playwright/test";
 import { databaseURL, routes } from "../configuration";
 import { capturePageDiagnostics, expect, test as base } from "./fixtures";
+import { createTaskHoldemTestRoom } from "./task-holdem-socket";
 
 type Avatar = "boy" | "girl";
 
@@ -14,17 +15,13 @@ type Fixtures = {
   createPlayer: CreatePlayer;
 };
 
-type PlayerContext = {
-  context: BrowserContext;
-  roomId: string;
-  name: string;
-};
+type PlayerContext = { context: BrowserContext; name: string };
 
 export class TaskHoldemPage {
   constructor(readonly page: Page) {}
 
   get reveal() { return this.page.getByTestId("reveal-button"); }
-  get restart() { return this.page.getByRole("button", { name: "Restart", exact: true }); }
+  get restart() { return this.page.getByTestId("restart-button"); }
 
   player(name: string) {
     return this.page.getByRole("group", { name, exact: true });
@@ -55,20 +52,27 @@ export const test = base.extend<Fixtures>({
     diagnostics.push(`Room: ${id}`);
     await use(id);
   },
-  createPlayer: async ({ browser, baseURL, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor, diagnostics }, use, testInfo) => {
+  createPlayer: async ({ browser, baseURL, roomId, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor, diagnostics }, use, testInfo) => {
     const players: PlayerContext[] = [];
     const roomIds = new Set<string>();
     const adapter = new PrismaPg({ connectionString: databaseURL, connectionTimeoutMillis: 5_000 });
     const prisma = new PrismaClient({ adapter });
 
+    async function ensureRoom(id: string): Promise<void> {
+      if (roomIds.has(id)) return;
+      roomIds.add(id);
+      await createTaskHoldemTestRoom(baseURL!, id);
+    }
+
     try {
+      await ensureRoom(roomId);
       await use(async (roomId, name, avatar = "boy") => {
-        roomIds.add(roomId);
+        await ensureRoom(roomId);
         const context = await browser.newContext({
           baseURL, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor,
           colorScheme: "dark", reducedMotion: "reduce", serviceWorkers: "block",
         });
-        players.push({ context, roomId, name });
+        players.push({ context, name });
         const page = await context.newPage();
         capturePageDiagnostics(page, diagnostics);
         const player = new TaskHoldemPage(page);
@@ -77,7 +81,7 @@ export const test = base.extend<Fixtures>({
       });
     } finally {
       try {
-        for (const { context, roomId, name } of players) {
+        for (const { context, name } of players) {
           try {
             if (testInfo.status !== testInfo.expectedStatus) {
               for (const page of context.pages()) {
@@ -85,19 +89,13 @@ export const test = base.extend<Fixtures>({
               }
             }
           } finally {
-            // Playwright automatically records and retains traces for these contexts too.
             await context.close();
           }
-          // Serialize disconnections: room persistence is a whole-JSON read/modify/write.
-          await expect.poll(() => prisma.taskHoldemRoom.count({
-            where: { id: roomId, data: { path: ["users"], array_contains: [{ name }] } },
-          })).toBe(0);
         }
 
         for (const id of roomIds) {
-          // Let asynchronous disconnect handlers finish before deleting test-owned rooms.
-          await expect.poll(() => prisma.taskHoldemRoom.count({
-            where: { id, NOT: { data: { path: ["users"], equals: [] } } },
+          await expect.poll(() => prisma.taskHoldemConnection.count({
+            where: { roomId: id, connected: true },
           })).toBe(0);
           await prisma.taskHoldemRoom.deleteMany({ where: { id } });
         }

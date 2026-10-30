@@ -79,5 +79,5 @@ jobs:
           path: |
             playwright-report/
             test-results/
-            logs/e2e-server.log
+            logs/e2e-*.log
           retention-days: 7

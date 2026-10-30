@@ -67,12 +67,27 @@ model SocketIoAttachment {
 model TaskHoldemRoom {
   id String @id @default(uuid()) @map("id")
 
-  data Json
+  data        Json
+  revision    Int                    @default(0)
+  connections TaskHoldemConnection[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@map("task_holdem_room")
+}
+
+model TaskHoldemConnection {
+  id            String         @id
+  roomId        String         @map("room_id")
+  participantId String         @map("participant_id")
+  connected     Boolean        @default(true)
+  expiresAt     DateTime       @map("expires_at")
+  room          TaskHoldemRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, participantId])
+  @@index([expiresAt])
+  @@map("task_holdem_connection")
 }
 
 model FeedbackData {

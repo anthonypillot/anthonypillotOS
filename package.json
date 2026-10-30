@@ -54,7 +54,6 @@
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "@socket.io/postgres-adapter": "^0.5.0",
-    "canvas-confetti": "^1.9.4",
     "eslint": "^10.13.0",
     "gsap": "^3.15.0",
     "h3": "^1.15.11",

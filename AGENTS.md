@@ -36,9 +36,9 @@ npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 ## Wiring and boundaries
 
 - Feature flow: HTTP handlers in `server/api/` or the Task Hold'em socket plugin → `server/services/` → `server/dao/`. Keep feature business logic in services and Prisma/GitHub access in DAOs.
-- Put cross-boundary contracts/data in `shared/`. Nuxt/Nitro auto-imports shared types and values (`Room`, socket events, `prefixLog`) and server utilities (`logger`, `convertConsoleLogToCustomLogger`). Check `.nuxt/types/*imports.d.ts` before adding imports for apparently undefined symbols.
-- Task Hold'em is wired in `server/plugins/task-holdem.server.ts`: Socket.IO + Engine.IO at `/api/websocket/task-holdem`, Nitro experimental WebSockets, and the Postgres adapter. The matching client lives in `app/pages/tools/task-holdem/application.client.vue`; event contracts are in `shared/types/task-holdem.type.ts`. Keep the endpoint/contracts synchronized.
-- Rooms are persisted as whole JSON payloads in `TaskHoldemRoom.data`, not relational users/votes. The `User` type is still exported by `app/components/task-holdem/CreateUser.vue` and imported as a type by shared/server code.
+- Put cross-boundary contracts/data in `shared/`. Nuxt/Nitro auto-imports shared types and values and server utilities (`logger`, `convertConsoleLogToCustomLogger`). Check `.nuxt/types/*imports.d.ts` before adding imports for apparently undefined symbols.
+- Task Hold'em uses versioned commands at `/api/websocket/task-holdem`: the Nitro plugin bootstraps Socket.IO/Engine.IO and the Postgres adapter; `server/realtime/task-holdem.ts` validates commands and delegates to services/domain rules. Contracts and Zod schemas live in `shared/`, never in Vue components. The page consumes `useTaskHoldemRoom`, which owns socket cleanup and recovery.
+- Task Hold'em room JSON is mutated under a PostgreSQL row lock with a monotonic revision. `TaskHoldemConnection` stores expiring presence leases separately. Never write room state or renew leases outside the DAO's locked mutation path. Credentials never appear in public projections; other participants' votes appear only after reveal. The private view includes the participant's own vote. `TASK_HOLDEM_GRACE_MS` and `TASK_HOLDEM_REVEAL_MS` configure server timing.
 - History Cleaner only executes workflow-run deletion in `server/services/history-cleaner.service.ts`; `DEPLOYMENTS` exists in the contracts/API but is not implemented in the job flow.
 - Site metadata/links live in `nuxt.config.ts` → `runtimeConfig.public`, with version/author/description from `package.json`.
 
@@ -49,7 +49,7 @@ npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 
 ## Technology documentation (`llms.txt`)
 
-Match examples to the versions in `package.json`/`package-lock.json`, especially Nitro 2, H3 v1, and Prisma 6; unversioned indexes can describe newer majors.
+Match examples to the versions in `package.json`/`package-lock.json`, especially Nitro 2, H3 v1, and Prisma 7; unversioned indexes can describe newer majors.
 
 **Verified official `llms.txt` indexes**
 

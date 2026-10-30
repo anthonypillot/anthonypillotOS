@@ -1,47 +1,32 @@
 <template>
-  <section class="flex flex-col gap-2 text-white md:items-end">
-    <UButton
-      :label="isInvitationButtonClicked ? 'Invitation link copied!' : 'Invite players'"
-      icon="i-heroicons-user-plus"
-      variant="solid"
-      class="text-white"
-      @click="copyInvitationToClipboard()"
-    />
-    <UButton
-      label="Feedback (bug, suggestion, etc.)"
-      icon="i-heroicons-paper-airplane"
-      variant="soft"
-      class="text-white"
-      @click="isFeedbackOpen = true"
-    />
-  </section>
-  <FormFeedback :is-open="isFeedbackOpen" @close="isFeedbackOpen = false" />
+  <div class="flex flex-wrap items-center gap-2">
+    <UButton :label="copied ? 'Link copied!' : 'Invite players'" :icon="copied ? 'i-heroicons-check' : 'i-heroicons-user-plus'" :disabled="disabled" variant="soft" @click="copyInvitation" />
+    <UButton aria-label="Send feedback" title="Send feedback" icon="i-heroicons-chat-bubble-bottom-center-text" color="neutral" variant="ghost" @click="isFeedbackOpen = true" />
+    <span v-if="copyFailed" role="status" class="text-xs text-amber-300">Copy the room URL from your address bar.</span>
+    <span class="sr-only" role="status">{{ copied ? 'Invitation link copied to clipboard' : '' }}</span>
+  </div>
+  <FormFeedback v-if="isFeedbackOpen" :is-open="isFeedbackOpen" @close="isFeedbackOpen = false" />
 </template>
 
 <script setup lang="ts">
-const isInvitationButtonClicked = ref<boolean>(false);
+const props = defineProps<{ disabled: boolean }>();
+const copied = ref(false);
+const copyFailed = ref(false);
+const isFeedbackOpen = ref(false);
+let timer: ReturnType<typeof setTimeout>;
 
-async function copyInvitationToClipboard() {
+async function copyInvitation(): Promise<void> {
+  if (props.disabled) return;
   try {
     await navigator.clipboard.writeText(window.location.href);
-    isInvitationButtonClicked.value = true;
-    setTimeout(() => {
-      isInvitationButtonClicked.value = false;
-    }, 3000);
+    copied.value = true;
+    copyFailed.value = false;
+    clearTimeout(timer);
+    timer = setTimeout(() => { copied.value = false; }, 3000);
   } catch {
-    const textArea = document.createElement("textarea");
-    textArea.value = window.location.href;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textArea);
-
-    isInvitationButtonClicked.value = true;
-    setTimeout(() => {
-      isInvitationButtonClicked.value = false;
-    }, 3000);
+    copyFailed.value = true;
   }
 }
 
-const isFeedbackOpen = ref<boolean>(false);
+onScopeDispose(() => clearTimeout(timer));
 </script>
