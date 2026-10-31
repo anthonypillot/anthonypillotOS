@@ -1,11 +1,5 @@
 import { defineVitestConfig } from "@nuxt/test-utils/config";
 
-/**
- * Represents the configuration for Vitest.
- * It only cover the server side.
- *
- * @see https://nuxt.com/docs/getting-started/testing
- */
 export default defineVitestConfig({
   test: {
     environment: "nuxt",
@@ -15,9 +9,9 @@ export default defineVitestConfig({
         h3Version: 1,
       },
     },
-    include: ["server/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+    include: ["server/**/*.{test,spec}.?(c|m)[jt]s?(x)", "layers/*/tests/unit/**/*.nuxt.test.ts"],
     coverage: {
-      include: ["server/**/*.{js,ts}"],
+      include: ["server/**/*.{js,ts}", "layers/*/server/**/*.{js,ts}"],
       exclude: ["server/generated/**"],
     },
   },

@@ -1,5 +1,6 @@
 import { expect, test } from "../../../support/fixtures";
 import { routes } from "../../../configuration";
+import { expectReadableContrast } from "../../../support/contrast";
 
 test("landing page launches the game without starting a round", async ({ page }) => {
   await page.goto(routes.itFactsLanding);
@@ -17,6 +18,7 @@ test("answers show feedback and cannot be changed before advancing", async ({ pa
   await page.goto(routes.itFacts);
   await page.getByRole("button", { name: "Start a round", exact: true }).click();
   await expect(page.getByTestId("it-facts-statement")).toBeVisible();
+  await expect(page.getByTestId("it-facts-statement")).toHaveAttribute("aria-busy", "false");
   await expect(page.getByTestId("it-facts-progress")).toHaveText("Question 1 of 10");
   await expect(page.getByRole("button", { name: "True", exact: true })).toBeEnabled();
   await page.getByRole("button", { name: "False", exact: true }).click();
@@ -62,4 +64,31 @@ test("a full round tracks scoring, persists the best score and supports replay",
   await page.reload();
   expect(await page.evaluate(() => localStorage.getItem("it-facts:best"))).toBe(String(score));
   await expect(page.getByRole("button", { name: "Start a round", exact: true })).toBeVisible();
+});
+
+test("animated statements keep answer buttons stable and respect a motion preference change", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.addInitScript(() => { Math.random = () => 0.5; });
+  await page.goto(routes.itFacts);
+  await page.evaluate(() => document.fonts.ready);
+  await page.getByRole("button", { name: "Start a round", exact: true }).click();
+  const statement = page.getByTestId("it-facts-statement");
+  await expect(statement).toHaveAttribute("aria-busy", "true");
+  const positions = await page.getByRole("group", { name: "Answer", exact: true }).evaluate(async (element) => {
+    const positions: number[] = [];
+    while (document.querySelector('[data-testid="it-facts-statement"][aria-busy="true"]')) {
+      positions.push(element.getBoundingClientRect().top);
+      await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+    positions.push(element.getBoundingClientRect().top);
+    return positions;
+  });
+  expect(Math.max(...positions) - Math.min(...positions)).toBeLessThan(1);
+  await page.getByRole("button", { name: "True", exact: true }).click();
+  await page.getByRole("button", { name: "Next question", exact: true }).click();
+  await statement.scrollIntoViewIfNeeded();
+  await expect(statement).toHaveAttribute("aria-busy", "true");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(statement).toHaveAttribute("aria-busy", "false");
+  await expectReadableContrast(page);
 });

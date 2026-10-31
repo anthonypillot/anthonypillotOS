@@ -66,7 +66,7 @@ const getRandomSpeed = () => {
 };
 
 const getCurrentTextColor = () => {
-  if (!props.textColors.length) return '#ffffff';
+  if (!props.textColors.length) return 'inherit';
   return props.textColors[currentTextIndex.value % props.textColors.length];
 };
 

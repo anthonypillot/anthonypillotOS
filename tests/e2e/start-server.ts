@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { mkdirSync, openSync, closeSync } from "node:fs";
 
 mkdirSync("logs", { recursive: true });
-const log = openSync("logs/e2e-server.log", "w");
+const log = openSync(`logs/e2e-${process.env.E2E_SERVER_NAME ?? "server"}.log`, "w");
 const server = spawn(process.execPath, [".output/server/index.mjs"], {
   stdio: ["ignore", log, log],
 });

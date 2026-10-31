@@ -1,51 +1,45 @@
 <template>
-  <section v-if="isOpen" class="fixed inset-0 z-20 flex items-center bg-gray-400/50 text-black">
-    <div class="w-full p-4 mx-auto md:max-w-lg">
-      <div class="rounded-lg bg-white p-8 shadow-lg">
-        <UForm v-if="!isFeedbackSubmitted" :state="state" :validate="validate" class="flex flex-col gap-4" @submit="onSubmit">
-          <div>
-            <p class="text-2xl">{{ title }}</p>
-            <p class="text-sm">{{ description }}</p>
-          </div>
-          <UFormField name="name" label="Name" hint="Optional">
-            <UInput v-model="state.name" type="text" class="w-full" />
-          </UFormField>
-          <UFormField name="email" label="Email" hint="Optional">
-            <UInput v-model="state.email" type="email" class="w-full" />
-          </UFormField>
-          <UFormField name="message" label="Feedback" required>
-            <UTextarea v-model="state.message" class="w-full" />
-          </UFormField>
-
-          <div class="flex justify-end gap-4">
-            <UButton label="Cancel" variant="outline" @click="$emit('close')" />
-            <UButton label="Submit" type="submit" :loading="isLoading" />
-          </div>
-        </UForm>
-        <div v-else class="flex flex-col gap-2">
-          <UIcon name="i-heroicons-check-circle-20-solid" class="h-10 w-10" />
-          <p class="text-2xl">Thank you!</p>
-          <p class="text-sm">Your feedback has been submitted.</p>
+  <UModal
+    v-model:open="open"
+    :title="isFeedbackSubmitted ? 'Thank you!' : title"
+    :description="isFeedbackSubmitted ? 'Your feedback has been submitted.' : description"
+    :close="!isLoading"
+    :dismissible="!isLoading"
+    @after:leave="resetFeedback"
+  >
+    <slot />
+    <template #body>
+      <UForm v-if="!isFeedbackSubmitted" :state="state" :validate="validate" class="flex flex-col gap-4" @submit="onSubmit">
+        <p v-if="submissionError" role="alert" class="text-sm text-error">{{ submissionError }}</p>
+        <UFormField name="name" label="Name" hint="Optional">
+          <UInput v-model="state.name" type="text" class="w-full" autofocus />
+        </UFormField>
+        <UFormField name="email" label="Email" hint="Optional">
+          <UInput v-model="state.email" type="email" class="w-full" />
+        </UFormField>
+        <UFormField name="message" label="Feedback" required>
+          <UTextarea v-model="state.message" class="w-full" />
+        </UFormField>
+        <div class="flex justify-end gap-4">
+          <UButton label="Cancel" variant="outline" :disabled="isLoading" @click="open = false" />
+          <UButton label="Submit" type="submit" :loading="isLoading" />
         </div>
-      </div>
-    </div>
-  </section>
+      </UForm>
+      <UIcon v-else name="i-heroicons-check-circle-20-solid" class="size-10 text-success" />
+    </template>
+  </UModal>
 </template>
 
 <script setup lang="ts">
 import type { FormError } from "@nuxt/ui";
 
 type Props = {
-  isOpen: boolean;
   title?: string;
   description?: string;
 };
 
-const { isOpen, title = "Feedback", description = "Please provide your feedback" } = defineProps<Props>();
-
-const emit = defineEmits<{
-  close: [];
-}>();
+const { title = "Feedback", description = "Please provide your feedback" } = defineProps<Props>();
+const open = ref(false);
 
 export type Feedback = {
   name: string | undefined;
@@ -66,17 +60,23 @@ function validate(state: Partial<Feedback>): FormError[] {
 }
 
 const isLoading = ref<boolean>(false);
+const submissionError = ref<string | null>(null);
+let submitTimer: ReturnType<typeof setTimeout> | undefined;
+let closeTimer: ReturnType<typeof setTimeout> | undefined;
 
 async function onSubmit(): Promise<void> {
+  if (isLoading.value) return;
+  submissionError.value = null;
   try {
     isLoading.value = true;
 
     await $fetch("/api/form/feedback", {
       method: "POST",
       body: JSON.stringify(state),
+      timeout: 10_000,
     });
 
-    setTimeout(() => {
+    submitTimer = setTimeout(() => {
       state.name = undefined;
       state.email = undefined;
       state.message = "";
@@ -84,8 +84,9 @@ async function onSubmit(): Promise<void> {
       isLoading.value = false;
       setIsFeedbackSubmitted();
     }, 2000);
-  } catch (error) {
-    console.error(error);
+  } catch {
+    isLoading.value = false;
+    submissionError.value = "Your feedback couldn't be sent. Please try again.";
   }
 }
 
@@ -94,9 +95,24 @@ const isFeedbackSubmitted = ref<boolean>(false);
 function setIsFeedbackSubmitted(): void {
   isFeedbackSubmitted.value = true;
 
-  setTimeout(() => {
+  closeTimer = setTimeout(() => {
     isFeedbackSubmitted.value = false;
-    emit("close");
+    open.value = false;
   }, 3000);
 }
+
+function resetFeedback(): void {
+  clearTimeout(submitTimer);
+  clearTimeout(closeTimer);
+  state.name = undefined;
+  state.email = undefined;
+  state.message = "";
+  isFeedbackSubmitted.value = false;
+  submissionError.value = null;
+}
+
+onScopeDispose(() => {
+  clearTimeout(submitTimer);
+  clearTimeout(closeTimer);
+});
 </script>

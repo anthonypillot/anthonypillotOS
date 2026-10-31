@@ -1,13 +1,13 @@
 <template>
-  <section class="tools-showcase relative isolate overflow-hidden bg-gray-900 px-5 pb-20 pt-32 sm:px-8 sm:pb-28 sm:pt-40">
+  <section class="tools-showcase relative isolate overflow-hidden bg-default px-5 pb-20 pt-32 sm:px-8 sm:pb-28 sm:pt-40">
     <div class="mx-auto max-w-6xl">
       <div class="mx-auto max-w-2xl text-center">
-        <p class="inline-flex items-center gap-2 rounded-full border border-indigo-300/15 bg-indigo-400/10 px-3.5 py-1.5 text-xs font-medium text-indigo-200">
+        <p class="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/10 px-3.5 py-1.5 text-xs font-medium text-primary">
           <UIcon name="i-heroicons-code-bracket" class="size-4" aria-hidden="true" />
           Free &amp; open source
         </p>
-        <h1 class="mt-6 text-5xl font-semibold tracking-tight text-white sm:text-6xl">Tools</h1>
-        <p class="mx-auto mt-5 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">{{ description }}</p>
+        <h1 class="mt-6 text-5xl font-semibold tracking-tight text-highlighted sm:text-6xl">Tools</h1>
+        <p class="mx-auto mt-5 max-w-xl text-base leading-8 text-toned sm:text-lg">{{ description }}</p>
       </div>
       <ul aria-label="Available tools" class="mx-auto mt-12 grid max-w-lg grid-cols-1 gap-6 sm:mt-16 lg:max-w-none lg:grid-cols-3">
         <li v-for="tool in tools" :key="tool.id" class="min-w-0">

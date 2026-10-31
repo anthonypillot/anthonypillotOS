@@ -1,6 +1,6 @@
 <template>
   <section class="mx-auto w-full max-w-7xl px-6 py-16 text-center sm:py-24 lg:px-8" aria-labelledby="ai-statement-title">
-    <h2 id="ai-statement-title" class="ai-statement-title text-gray-100">
+    <h2 id="ai-statement-title" class="ai-statement-title text-highlighted">
       <span class="sr-only">This website is smart coded, not vibe coded.</span>
       <span aria-hidden="true">
         <span class="flex flex-wrap justify-center gap-x-[0.25em]">
@@ -9,17 +9,17 @@
           <BaseStrokeText text="is" :delay="0.16" />
         </span>
         <span class="flex flex-wrap justify-center gap-x-[0.25em]">
-          <s class="vibe-text text-gray-400">
+          <s class="vibe-text text-muted">
             <BaseStrokeText text="vibe" :delay="0.24" />
           </s>
-          <BaseStrokeText text="smart" class="text-indigo-400" :delay="0.32" />
+          <BaseStrokeText text="smart" class="text-primary" :delay="0.32" />
           <BaseStrokeText text="coded" :delay="0.4" />
         </span>
       </span>
     </h2>
-    <p class="mx-auto mt-8 max-w-2xl text-base leading-8 text-gray-300 sm:mt-10 sm:text-lg">
+    <p class="mx-auto mt-8 max-w-2xl text-base leading-8 text-toned sm:mt-10 sm:text-lg">
       AI and LLMs are powerful tools for exploring ideas, accelerating development, and solving problems.
-      <span class="font-semibold text-gray-100">But they must remain tools.</span>
+      <span class="font-semibold text-highlighted">But they must remain tools.</span>
       Engineering judgment, understanding the code, and taking responsibility for what ships stay with the developer.
     </p>
   </section>

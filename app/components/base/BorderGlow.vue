@@ -6,7 +6,7 @@
   <div
     ref="cardRef"
     data-border-glow
-    class="relative isolate grid border border-white/15"
+    class="relative isolate grid border border-default"
     :style="cardStyle"
     @focusin="isHovered = true"
     @focusout="isHovered = false"
@@ -56,7 +56,7 @@ type AnimationOptions = {
 
 const props = withDefaults(defineProps<BorderGlowProps>(), {
   animated: false,
-  backgroundColor: "#182131",
+  backgroundColor: "var(--ui-bg-elevated)",
   borderRadius: 16,
   edgeSensitivity: 30,
   glowRadius: 32,

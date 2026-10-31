@@ -1,15 +1,15 @@
 <template>
     <div
-        class="flex flex-col gap-y-8 bg-white/5 px-6 py-10 ring-1 ring-white/10 sm:rounded-3xl sm:p-8 lg:p-12"
+        class="flex flex-col gap-y-8 bg-elevated/60 px-6 py-10 ring-1 ring-default sm:rounded-3xl sm:p-8 lg:p-12"
     >
         <div class="flex flex-col gap-y-2">
             <h2
-                class="text-2xl font-bold text-white"
+                class="text-2xl font-bold text-highlighted"
                 data-testid="it-facts-game-heading"
             >
                 {{ itFactsApplication.name }}
             </h2>
-            <p class="text-sm text-gray-300" data-testid="it-facts-progress">
+            <p class="text-sm text-toned" data-testid="it-facts-progress">
                 <template v-if="status === 'idle'"
                     >A round of {{ roundLength }} questions awaits</template
                 >
@@ -29,7 +29,7 @@
         </div>
 
         <div v-if="status === 'idle'" class="flex flex-col gap-y-4">
-            <p class="text-gray-300">
+            <p class="text-toned">
                 Press Start to draw a fresh round of
                 {{ roundLength }} questions. Your best score is saved on this
                 device.
@@ -59,13 +59,13 @@
 
         <div v-else class="flex flex-col gap-y-6">
             <div
-                class="rounded-2xl bg-gray-900/60 px-6 py-8 ring-1 ring-white/10"
+                class="rounded-2xl bg-default/60 px-6 py-8 ring-1 ring-default"
             >
                 <BaseDecryptedText
                     :key="qIndex"
-                    class-name="text-white"
+                    class-name="text-highlighted"
                     parent-class-name="text-xl min-h-40"
-                    encrypted-class-name="text-gray-500"
+                    encrypted-class-name="text-muted"
                     :text="currentFact ? currentFact.statement : ''"
                     :speed="35"
                     use-original-chars-only
@@ -109,7 +109,7 @@
                 data-testid="it-facts-feedback"
             >
                 <div
-                    class="flex flex-col gap-y-2 rounded-2xl bg-gray-900/60 px-6 py-4 ring-1 ring-white/10"
+                    class="flex flex-col gap-y-2 rounded-2xl bg-default/60 px-6 py-4 ring-1 ring-default"
                 >
                     <div class="flex flex-col gap-y-4">
                         <UBadge
@@ -118,7 +118,7 @@
                             variant="subtle"
                             data-testid="it-facts-feedback-badge"
                         />
-                        <p class="text-sm text-white">
+                        <p class="text-sm text-highlighted">
                             {{
                                 currentFact.isTrue
                                     ? "It's true!"
@@ -126,7 +126,7 @@
                             }}
                         </p>
                         <p
-                            class="text-sm leading-6 text-gray-200"
+                            class="text-sm leading-6 text-default"
                             data-testid="it-facts-explanation"
                         >
                             {{ currentFact.explanation }}
@@ -136,7 +136,7 @@
                                 :href="currentFact.source"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex items-center gap-x-1 text-xs text-indigo-400 hover:text-indigo-300"
+                                class="inline-flex items-center gap-x-1 text-xs text-primary underline underline-offset-4 hover:text-highlighted"
                                 data-testid="it-facts-source"
                             >
                                 Learn more
@@ -162,7 +162,7 @@
                 />
             </div>
             <p
-                class="text-sm text-gray-300"
+                class="text-sm text-toned"
                 data-testid="it-facts-running-score"
             >
                 Score: {{ score }} / {{ roundLength }}

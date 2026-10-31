@@ -33,11 +33,11 @@ jobs:
         env:
           POSTGRES_USER: e2e
           POSTGRES_PASSWORD: e2e
-          POSTGRES_DB: anthonypillotos_e2e
+          POSTGRES_DB: os_e2e_postgres
         ports:
           - 55439:5432
         options: >-
-          --health-cmd "pg_isready -U e2e -d anthonypillotos_e2e"
+          --health-cmd "pg_isready -U e2e -d os_e2e_postgres"
           --health-interval 2s
           --health-timeout 5s
           --health-retries 15
@@ -79,5 +79,5 @@ jobs:
           path: |
             playwright-report/
             test-results/
-            logs/e2e-server.log
+            logs/e2e-*.log
           retention-days: 7
