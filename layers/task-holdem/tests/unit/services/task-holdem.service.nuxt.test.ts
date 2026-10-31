@@ -10,7 +10,7 @@ vi.mock("../../../server/dao/task-holdem.dao", () => ({
 }));
 
 const roomId = randomUUID();
-const command = { roomId, token: "a".repeat(64), profile: { name: "Alice", avatar: "spirit" } } satisfies Parameters<typeof service.joinRoom>[0];
+const command = { roomId, token: "a".repeat(64), profile: { name: "Alice", avatar: "princess" } } satisfies Parameters<typeof service.joinRoom>[0];
 let stored: TaskHoldemMutation;
 let revision: number;
 
@@ -62,7 +62,7 @@ describe("Task Hold'em service", () => {
     await service.disconnect(actor);
     vi.advanceTimersByTime(1000);
     const connectionId = randomUUID();
-    const rejoined = await service.joinRoom({ ...command, profile: { name: "Forged profile", avatar: "dragon" } }, connectionId);
+    const rejoined = await service.joinRoom({ ...command, profile: { name: "Forged profile", avatar: "cowboy" } }, connectionId);
     expect(rejoined.state.participants).toHaveLength(1);
     expect(rejoined.state.participants[0]?.profile).toEqual(command.profile);
     expect(service.getJoinedParticipant(rejoined, command.token)).toBe(actor.participantId);

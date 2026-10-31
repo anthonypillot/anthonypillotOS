@@ -44,7 +44,7 @@ export async function createTaskHoldemTestRoom(url: string, roomId: string): Pro
   const socket = await connectTaskHoldemSocket(url);
   try {
     taskHoldemSuccess(await socket.emitWithAck("room:create", {
-      roomId, token: randomBytes(32).toString("hex"), profile: { name: "Room setup", avatar: "dragon" },
+      roomId, token: randomBytes(32).toString("hex"), profile: { name: "Room setup", avatar: "cowboy" },
     }));
     taskHoldemSuccess(await socket.emitWithAck("room:leave", {}));
   } finally {

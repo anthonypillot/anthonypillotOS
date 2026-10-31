@@ -93,7 +93,7 @@ async function openClient(): Promise<Client> {
 }
 
 async function join(client: Client, token = firstToken) {
-  return success(await client.emitWithAck("room:join", { roomId: state.id, token, profile: { name: token === firstToken ? "Alice" : "Bob", avatar: "dragon" } }));
+  return success(await client.emitWithAck("room:join", { roomId: state.id, token, profile: { name: token === firstToken ? "Alice" : "Bob", avatar: "cowboy" } }));
 }
 
 beforeEach(async () => {
@@ -183,7 +183,7 @@ describe("Task Hold'em membership subscriptions", () => {
     await join(first);
     const pending = await openClient();
     adapter.pauseJoinId = pending.id;
-    const admission = pending.emitWithAck("room:join", { roomId: state.id, token: firstToken, profile: { name: "Alice", avatar: "dragon" } });
+    const admission = pending.emitWithAck("room:join", { roomId: state.id, token: firstToken, profile: { name: "Alice", avatar: "cowboy" } });
     await adapter.joinEntered.promise;
     success(await first.emitWithAck("room:leave", {}));
     adapter.resumeJoin.resolve(undefined);

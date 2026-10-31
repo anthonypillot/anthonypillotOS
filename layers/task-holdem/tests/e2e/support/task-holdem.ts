@@ -29,7 +29,7 @@ export class TaskHoldemPage {
     return this.page.getByRole("group", { name, exact: true });
   }
 
-  async join(roomId: string, name: string, avatar: Avatar = "dragon"): Promise<void> {
+  async join(roomId: string, name: string, avatar: Avatar = "cowboy"): Promise<void> {
     await this.page.goto(`${routes.taskHoldem}?id=${roomId}`);
     await this.page.getByPlaceholder("Your name", { exact: true }).fill(name);
     await this.page.getByRole("radio", { name: taskHoldemMascots[avatar].name, exact: true }).check();
@@ -68,7 +68,7 @@ export const test = base.extend<Fixtures>({
 
     try {
       await ensureRoom(roomId);
-      await use(async (roomId, name, avatar = "dragon") => {
+      await use(async (roomId, name, avatar = "cowboy") => {
         await ensureRoom(roomId);
         const context = await browser.newContext({
           baseURL, viewport, userAgent, isMobile, hasTouch, deviceScaleFactor,

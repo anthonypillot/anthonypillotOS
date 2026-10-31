@@ -10,8 +10,8 @@ import { taskHoldemJoinSchema, taskHoldemSelectSchema } from "../../../shared/sc
 function createRoom(): TaskHoldemMutation {
   const state = createTaskHoldemState(randomUUID());
   state.participants.push(
-    { id: randomUUID(), profile: { name: "Alice", avatar: "spirit" }, tokenHash: "a".repeat(64), connected: true },
-    { id: randomUUID(), profile: { name: "Bob", avatar: "dragon" }, tokenHash: "b".repeat(64), connected: true },
+    { id: randomUUID(), profile: { name: "Alice", avatar: "princess" }, tokenHash: "a".repeat(64), connected: true },
+    { id: randomUUID(), profile: { name: "Bob", avatar: "cowboy" }, tokenHash: "b".repeat(64), connected: true },
   );
   return {
     state,
@@ -187,10 +187,10 @@ describe("Task Hold'em command validation", () => {
   });
 
   test("trims names and rejects empty profiles, weak credentials, and caller-owned state", () => {
-    const valid = { roomId: randomUUID(), token: "a".repeat(64), profile: { name: "  Alice  ", avatar: "spirit" } };
+    const valid = { roomId: randomUUID(), token: "a".repeat(64), profile: { name: "  Alice  ", avatar: "princess" } };
     expect(taskHoldemJoinSchema.parse(valid).profile.name).toBe("Alice");
     expect(taskHoldemJoinSchema.safeParse({ ...valid, token: "guessable" }).success).toBe(false);
-    expect(taskHoldemJoinSchema.safeParse({ ...valid, profile: { name: "   ", avatar: "spirit" } }).success).toBe(false);
+    expect(taskHoldemJoinSchema.safeParse({ ...valid, profile: { name: "   ", avatar: "princess" } }).success).toBe(false);
     expect(taskHoldemJoinSchema.safeParse({ ...valid, users: [] }).success).toBe(false);
     expect(taskHoldemJoinSchema.safeParse({ ...valid, profile: { ...valid.profile, name: "a".repeat(41) } }).success).toBe(false);
   });

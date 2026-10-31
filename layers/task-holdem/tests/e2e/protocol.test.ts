@@ -17,7 +17,7 @@ type SocketPlayerOptions = { roomId: string; name: string; url?: string; token?:
 async function createSocketPlayer({ roomId, name, url = baseURL, token = randomBytes(32).toString("hex") }: SocketPlayerOptions) {
   const socket = await connectTaskHoldemSocket(url);
   try {
-    const snapshot = taskHoldemSuccess(await socket.emitWithAck("room:join", { roomId, token, profile: { name, avatar: "dragon" } }));
+    const snapshot = taskHoldemSuccess(await socket.emitWithAck("room:join", { roomId, token, profile: { name, avatar: "cowboy" } }));
     return { socket, snapshot, token };
   } catch (error) {
     socket.disconnect();
@@ -36,7 +36,7 @@ test("an immediate join on connection is acknowledged and broadcast", async ({ r
       socket.once("connect", async () => {
         try {
           resolve(taskHoldemSuccess(await socket.emitWithAck("room:join", {
-            roomId, token: randomBytes(32).toString("hex"), profile: { name: "Fast join", avatar: "spirit" },
+            roomId, token: randomBytes(32).toString("hex"), profile: { name: "Fast join", avatar: "princess" },
           })));
         } catch (error) {
           reject(error);
@@ -222,7 +222,7 @@ test("the browser ignores delayed snapshots and cannot restore a revoked seat", 
     await expect(page.getByRole("button", { name: "Select 8 card", exact: true })).toHaveAttribute("aria-pressed", "true");
     const beforeLeave = { publicFrame: publicFrame!, privateFrame: privateFrame! };
     browserSocket!.send(beforeVote);
-    browserSocket!.send(`42${JSON.stringify(["chat:message", { id: randomUUID(), roomId, participantId: randomUUID(), author: { name: "Checkpoint", avatar: "dragon" }, content: "Replay processed", createdAt: Date.now() }])}`);
+    browserSocket!.send(`42${JSON.stringify(["chat:message", { id: randomUUID(), roomId, participantId: randomUUID(), author: { name: "Checkpoint", avatar: "cowboy" }, content: "Replay processed", createdAt: Date.now() }])}`);
     await page.getByRole("button", { name: "Open chat", exact: true }).click();
     await expect(page.getByRole("log", { name: "Room messages" })).toContainText("Replay processed");
     await expect(page.getByRole("group", { name: "Client", exact: true })).toHaveAttribute("data-voted", "true");

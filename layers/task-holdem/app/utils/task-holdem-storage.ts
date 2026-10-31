@@ -12,7 +12,7 @@ export function readTaskHoldemProfile(): TaskHoldemProfile {
   } catch {
     // Storage can be unavailable in private or restricted browser contexts.
   }
-  return { name: "", avatar: "dragon" };
+  return { name: "", avatar: "cowboy" };
 }
 
 export function saveTaskHoldemProfile(profile: TaskHoldemProfile): void {

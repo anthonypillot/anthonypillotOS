@@ -8,8 +8,8 @@ import { createTaskHoldemState, toTaskHoldemRoom } from "../../../server/domain/
 function room() {
   const state = createTaskHoldemState(randomUUID(), 1000);
   state.participants.push(
-    { id: randomUUID(), profile: { name: "Alice", avatar: "dragon" }, connected: true, tokenHash: "a".repeat(64) },
-    { id: randomUUID(), profile: { name: "Bob", avatar: "slime" }, connected: true, tokenHash: "b".repeat(64) },
+    { id: randomUUID(), profile: { name: "Alice", avatar: "cowboy" }, connected: true, tokenHash: "a".repeat(64) },
+    { id: randomUUID(), profile: { name: "Bob", avatar: "robot" }, connected: true, tokenHash: "b".repeat(64) },
   );
   return toTaskHoldemRoom({ state, revision: 1, changed: true, removedParticipantIds: [] }, 1000);
 }

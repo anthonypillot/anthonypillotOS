@@ -10,7 +10,7 @@
       <UInput id="task-holdem-name" v-model="name" placeholder="Your name" autocomplete="nickname" :maxlength="40" size="lg" class="w-full" />
     </div>
     <fieldset>
-      <legend class="mb-3 text-sm font-medium text-default">Choose your companion</legend>
+      <legend class="mb-3 text-sm font-medium text-default">Choose your character</legend>
       <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <label
           v-for="option in avatars"

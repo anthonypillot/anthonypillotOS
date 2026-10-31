@@ -13,7 +13,7 @@ test("rejoining on the same transport replaces an expired connection's participa
   const pool = new pg.Pool({ connectionString: databaseURL });
   const lock = await pool.connect();
   try {
-    const command = { roomId, token: randomBytes(32).toString("hex"), profile: { name: "Alice", avatar: "dragon" } } satisfies TaskHoldemJoin;
+    const command = { roomId, token: randomBytes(32).toString("hex"), profile: { name: "Alice", avatar: "cowboy" } } satisfies TaskHoldemJoin;
     const initial = taskHoldemSuccess(await socket.emitWithAck("room:join", command));
     await lock.query("BEGIN");
     await lock.query("SELECT id FROM task_holdem_room WHERE id = $1 FOR UPDATE", [roomId]);

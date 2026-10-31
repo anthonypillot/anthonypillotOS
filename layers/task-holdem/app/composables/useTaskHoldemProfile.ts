@@ -2,7 +2,7 @@ import { readTaskHoldemProfile, saveTaskHoldemProfile } from "../utils/task-hold
 import type { TaskHoldemProfile } from "../../shared/types/task-holdem.type";
 
 export function useTaskHoldemProfile() {
-  const profile = ref<TaskHoldemProfile>(import.meta.client ? readTaskHoldemProfile() : { name: "", avatar: "dragon" });
+  const profile = ref<TaskHoldemProfile>(import.meta.client ? readTaskHoldemProfile() : { name: "", avatar: "cowboy" });
 
   function save(value: TaskHoldemProfile): void {
     profile.value = value;
