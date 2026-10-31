@@ -11,6 +11,7 @@ test("landing page links to the multiplayer application", async ({ page }) => {
   await expect(logo).toHaveCSS("width", (page.viewportSize()?.width ?? 0) < 640 ? "64px" : "80px");
   await expect(page.getByRole("heading", { name: "TaskHold’em", level: 1 })).toHaveCSS("font-size", (page.viewportSize()?.width ?? 0) < 640 ? "30px" : "36px");
   await expect(page.getByText("A shared perspective on what's next", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Free to use. No accounts. Just your team.", { exact: true })).toHaveCount(0);
   await expect(page.getByTestId("task-holdem-launch")).toHaveAttribute("data-auto-animate", "true");
 });
 

@@ -8,7 +8,6 @@
         <BaseSpecularButton :to="taskHoldemApplication.path" :auto-animate="true" class="mt-8" data-testid="task-holdem-launch">
           Start a planning session <UIcon name="i-heroicons-arrow-right" class="size-5 shrink-0" aria-hidden="true" />
         </BaseSpecularButton>
-        <p class="mt-4 text-xs text-muted">Free to use. No accounts. Just your team.</p>
       </div>
 
       <div aria-hidden="true" class="relative mx-auto w-full max-w-lg rounded-3xl border border-default bg-muted/80 p-5 shadow-2xl shadow-indigo-950/20 sm:p-7">
