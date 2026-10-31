@@ -28,12 +28,15 @@
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl py-12 lg:py-20">
         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
-          <div class="relative rounded-lg px-3 py-1 text-sm leading-6 bg-elevated/60 text-muted ring-1 ring-default hover:ring-accented">
-            Discover my new <span class="font-semibold text-highlighted">poker planning tool</span>: the
-            <span class="font-semibold text-highlighted">{{ taskHoldemApplication.name }}</span> !
-            <NuxtLink to="/tools/task-holdem" class="font-semibold text-highlighted"
-              ><span class="absolute inset-0" aria-hidden="true" />This is here <span aria-hidden="true">&rarr;</span></NuxtLink
-            >
+          <div class="relative flex items-start gap-2 rounded-lg px-3 py-1 text-sm leading-6 bg-elevated/60 text-muted ring-1 ring-default hover:ring-accented">
+            <NuxtImg :src="taskHoldemApplication.faviconDark" alt="" width="20" height="20" class="mt-0.5 size-5 shrink-0" />
+            <span>
+              Discover my new <span class="font-semibold text-highlighted">poker planning tool</span>: the
+              <span class="font-semibold text-highlighted">{{ taskHoldemApplication.name }}</span> !
+              <NuxtLink to="/tools/task-holdem" class="font-semibold text-highlighted"
+                ><span class="absolute inset-0" aria-hidden="true" />This is here <span aria-hidden="true">&rarr;</span></NuxtLink
+              >
+            </span>
           </div>
         </div>
         <div class="flex flex-col text-center">
@@ -90,18 +93,19 @@
       <div
         class="grid grid-cols-2 justify-center sm:flex sm:flex-row sm:justify-between mx-4 gap-4 xl:gap-32 md:mx-24 p-2 sm:bg-accented/60 sm:border border-accented backdrop-blur-sm rounded-lg sm:rounded-full"
       >
-        <div
+        <NuxtLink
           v-for="(logoItem, index) in logos"
           :key="index"
+          :to="logoItem.link"
+          target="_blank"
+          rel="noopener noreferrer"
           :class="[
             'flex flex-row text-center items-center justify-center min-w-14 p-2 bg-elevated border border-default rounded-full hover:scale-90 transition-transform',
             isLastItem(index) && logos.length % 2 !== 0 ? 'col-span-2' : '',
           ]"
         >
-          <NuxtLink :to="logoItem.link" target="_blank">
-            <NuxtImg :key="index" class="h-10 w-full object-contain" style="padding: 0.1rem" :src="logoItem.src" :alt="logoItem.alt" />
-          </NuxtLink>
-        </div>
+          <NuxtImg :key="index" class="size-10 object-contain" style="padding: 0.1rem" :src="logoItem.src" :alt="logoItem.alt" />
+        </NuxtLink>
       </div>
     </div>
     <div

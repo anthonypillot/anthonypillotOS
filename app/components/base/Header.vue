@@ -210,8 +210,15 @@ onMounted(() => {
 
 .header-link-active,
 .header-repository {
-  color: var(--ui-primary);
   background-color: color-mix(in srgb, var(--ui-primary) 12%, transparent);
+}
+
+.header-link-active {
+  color: var(--ui-primary);
+}
+
+.header-repository {
+  color: var(--ui-text-highlighted);
 }
 
 .header-desktop-repository {

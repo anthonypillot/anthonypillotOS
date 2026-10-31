@@ -9,11 +9,83 @@ const experienceWebsites = [
   { name: "Zenika", url: "https://www.zenika.com" },
 ] as const;
 
+const technologyWebsites = [
+  { name: "Vue.js", url: "https://vuejs.org" },
+  { name: "Nuxt", url: "https://nuxt.com" },
+  { name: "TypeScript", url: "https://www.typescriptlang.org" },
+  { name: "Node.js", url: "https://nodejs.org" },
+  { name: "Kubernetes", url: "https://kubernetes.io" },
+  { name: "SigNoz", url: "https://signoz.io" },
+  { name: "Plausible", url: "https://plausible.io" },
+] as const;
+
 test("should have a hero section with job presentation", async ({ page }) => {
   await page.goto(routes.home);
 
   await expect(page.getByText("Freelance Software Engineer, Real Full Stack Developer, and more.")).toBeVisible();
   await expect(page.getByText("Lille, France. Remote and on-site work.")).toBeVisible();
+});
+
+test("Task Hold'em announcement shows its logo before the message", async ({ page }) => {
+  await page.goto(routes.home);
+  const message = page.locator("main section").first().getByText("Discover my new", { exact: false });
+  const announcement = message.locator("..");
+  const logo = announcement.locator("img");
+  await expect(logo).toHaveAttribute("src", /\/svg\/task-holdem\/logo\.svg$/);
+  await expect(logo).toHaveAttribute("alt", "");
+  await expect(announcement.locator("a")).toHaveAttribute("href", routes.taskHoldemLanding);
+
+  if ((page.viewportSize()?.width ?? 0) < 640) {
+    await expect(announcement).toBeHidden();
+    return;
+  }
+
+  await expect(logo).toBeVisible();
+  await expect.poll(() => logo.evaluate(image => image instanceof HTMLImageElement ? image.naturalWidth : 0)).toBeGreaterThan(0);
+  const logoBounds = await logo.boundingBox();
+  const messageBounds = await message.boundingBox();
+  expect(logoBounds).not.toBeNull();
+  expect(messageBounds).not.toBeNull();
+  expect(logoBounds!.x + logoBounds!.width).toBeLessThanOrEqual(messageBounds!.x);
+});
+
+test("each technology circle is clickable beyond its image and supports keyboard activation", async ({ page }) => {
+  await page.goto(routes.home);
+  const hero = page.locator("main section").first();
+
+  for (const { name, url } of technologyWebsites) {
+    const link = hero.getByRole("link", { name, exact: true });
+    await expect(link).toHaveAttribute("href", url);
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    await link.scrollIntoViewIfNeeded();
+    const hitAreas = await link.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      const points = [
+        [bounds.left + bounds.width / 2, bounds.top + 4],
+        [bounds.left + bounds.width / 2, bounds.bottom - 4],
+        [bounds.left + 4, bounds.top + bounds.height / 2],
+        [bounds.right - 4, bounds.top + bounds.height / 2],
+      ];
+      return { padding: parseFloat(getComputedStyle(element).paddingTop), clickable: points.every(([x = 0, y = 0]) => element.contains(document.elementFromPoint(x, y))) };
+    });
+    expect(hitAreas.padding).toBeGreaterThan(4);
+    expect(hitAreas.clickable).toBe(true);
+
+    // Verify native activation without opening the external websites.
+    await link.evaluate(element => element.addEventListener("click", (event) => {
+      event.preventDefault();
+      element.setAttribute("data-test-activations", String(Number(element.getAttribute("data-test-activations") ?? 0) + 1));
+    }));
+    const bounds = await link.boundingBox();
+    expect(bounds).not.toBeNull();
+    await link.click({ position: { x: bounds!.width / 2, y: 4 } });
+    await expect(link).toHaveAttribute("data-test-activations", "1");
+    await link.focus();
+    await expect(link).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(link).toHaveAttribute("data-test-activations", "2");
+  }
 });
 
 test("hero retains a vivid indigo gradient throughout its animation", async ({ page }) => {

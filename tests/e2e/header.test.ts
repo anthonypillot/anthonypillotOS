@@ -10,6 +10,20 @@ function readBackgroundOpacity(element: Element): number {
   return context.getImageData(0, 0, 1, 1).data[3]! / 255;
 }
 
+test("repository text stays white on desktop and in the mobile menu", async ({ page }) => {
+  await page.goto(routes.home);
+  const header = page.getByRole("navigation", { name: "Global", exact: true });
+  if ((page.viewportSize()?.width ?? 0) < 1024) {
+    await header.getByRole("button", { name: "Open main menu", exact: true }).click();
+  }
+  const repository = page.getByRole("link", { name: "GitHub repository", exact: true });
+  await expect(repository).toBeVisible();
+  await expect(repository).toHaveCSS("color", "rgb(255, 255, 255)");
+  await repository.focus();
+  await expect(repository).toBeFocused();
+  await expect(repository).toHaveCSS("color", "rgb(255, 255, 255)");
+});
+
 test("navigation keeps a translucent glass bar and denser dropdown surfaces", async ({ page }) => {
   await page.goto(routes.home);
   const header = page.getByRole("navigation", { name: "Global", exact: true });
