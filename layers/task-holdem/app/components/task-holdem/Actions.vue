@@ -1,10 +1,12 @@
 <template>
-  <div class="flex flex-wrap items-center gap-2">
-    <UButton :label="copied ? 'Link copied!' : 'Invite players'" :icon="copied ? 'i-heroicons-check' : 'i-heroicons-user-plus'" :disabled="disabled" variant="soft" @click="copyInvitation" />
+  <div class="flex min-w-0 max-w-full flex-wrap items-center gap-2">
+    <div class="flex min-w-0 items-center gap-2">
+      <UButton :label="copied ? 'Link copied!' : 'Invite players'" :icon="copied ? 'i-heroicons-check' : 'i-heroicons-user-plus'" :disabled="disabled" variant="soft" class="shrink-0" @click="copyInvitation" />
+      <span v-if="copyFailed" role="status" class="min-w-0 max-w-52 text-xs text-warning">Copy the room URL from your address bar.</span>
+    </div>
     <FormFeedback>
       <UButton aria-label="Send feedback" title="Send feedback" icon="i-heroicons-chat-bubble-bottom-center-text" color="neutral" variant="ghost" />
     </FormFeedback>
-    <span v-if="copyFailed" role="status" class="text-xs text-warning">Copy the room URL from your address bar.</span>
     <span class="sr-only" role="status">{{ copied ? 'Invitation link copied to clipboard' : '' }}</span>
   </div>
 </template>

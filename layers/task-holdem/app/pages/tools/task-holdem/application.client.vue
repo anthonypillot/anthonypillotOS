@@ -31,16 +31,15 @@
     <div v-if="!isJoined" class="grid overflow-hidden rounded-3xl border border-default bg-muted/40 lg:grid-cols-2">
       <div class="join-intro relative hidden flex-col justify-between overflow-hidden border-r border-default p-10 lg:flex">
         <div>
-          <span class="inline-flex items-center gap-2 rounded-full border border-default bg-elevated/30 px-3 py-1 text-xs text-toned"><span class="size-1.5 rounded-full bg-success" /> Made for your next planning session</span>
-          <p class="mt-8 max-w-sm text-4xl font-semibold leading-tight tracking-tight text-highlighted">Great estimates start with<br><span class="text-primary">a conversation.</span></p>
+          <p class="max-w-sm text-4xl font-semibold leading-tight tracking-tight text-highlighted">Great estimates start with<br><span class="text-primary">a conversation.</span></p>
           <p class="mt-5 max-w-sm text-sm leading-7 text-muted">Give every perspective a seat. Vote independently, reveal together, and spend more time on what matters.</p>
         </div>
         <div class="my-10 flex items-center justify-center gap-4" aria-hidden="true">
-          <div class="intro-card -rotate-12">3<span>♣</span></div>
-          <div class="intro-card -translate-y-5 border-primary/40 bg-primary/10">5<span>♠</span></div>
-          <div class="intro-card rotate-12">8<span>♦</span></div>
+          <div class="intro-card -rotate-12">3<TaskHoldemSuit suit="clubs" class="text-sm" /></div>
+          <div class="intro-card -translate-y-5 border-primary/40 bg-primary/10">5<TaskHoldemSuit suit="spades" class="text-sm" /></div>
+          <div class="intro-card rotate-12">8<TaskHoldemSuit suit="diamonds" class="text-sm" /></div>
         </div>
-        <div class="flex gap-6 text-xs text-muted"><span class="flex items-center gap-2"><UIcon name="i-heroicons-lock-closed" class="size-4" />Private votes</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-bolt" class="size-4" />Real-time teamwork</span></div>
+        <div class="flex flex-wrap gap-4 text-xs text-muted"><span class="flex items-center gap-2"><UIcon name="i-heroicons-lock-closed" class="size-4" />Private votes</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-bolt" class="size-4" />Real-time teamwork</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-user-circle" class="size-4" />No account needed</span></div>
       </div>
       <div class="flex min-h-[32rem] flex-col justify-center p-6 sm:p-10 lg:p-12">
         <div v-if="isLoading" class="mb-5 flex items-center gap-2 text-xs text-muted" role="status"><UIcon name="i-heroicons-arrow-path" class="size-4 motion-safe:animate-spin" /> Preparing your room…</div>
@@ -178,8 +177,4 @@ async function submitChat(content: string): Promise<void> {
   font-weight: 600;
 }
 
-.intro-card span {
-  color: var(--ui-primary);
-  font-size: 0.875rem;
-}
 </style>

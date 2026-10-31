@@ -13,14 +13,16 @@
       <UIcon :name="taskHoldemCardIcons[value]" class="size-6" aria-hidden="true" />
       <span class="text-[10px] text-muted">{{ formatTaskHoldemVote(value) }}</span>
     </template>
-    <span class="absolute left-2 top-1.5 text-[9px] text-primary/60" aria-hidden="true">♠</span>
-    <UIcon v-if="selected" name="i-heroicons-check-circle-solid" class="absolute -right-1.5 -top-1.5 size-5 rounded-full bg-default text-primary" aria-hidden="true" />
+    <TaskHoldemSuit :suit="getTaskHoldemCardSuit(value)" class="absolute left-2 top-1.5 text-[9px]" />
+    <span v-if="selected" class="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-default" aria-hidden="true">
+      <UIcon name="i-heroicons-check-circle-solid" class="size-5 text-highlighted" data-testid="selected-card-marker" />
+    </span>
   </button>
 </template>
 
 <script setup lang="ts">
 import type { TaskHoldemVote } from "../../../shared/types/task-holdem.type";
-import { formatTaskHoldemVote, taskHoldemCardIcons } from "../../utils/task-holdem";
+import { formatTaskHoldemVote, getTaskHoldemCardSuit, taskHoldemCardIcons } from "../../utils/task-holdem";
 
 defineProps<{ value: TaskHoldemVote; selected: boolean; disabled: boolean }>();
 const emit = defineEmits<{ select: [value: TaskHoldemVote] }>();

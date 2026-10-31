@@ -7,9 +7,9 @@
 
     <div v-if="room.round.phase === 'voting'" class="relative flex flex-1 flex-col items-center justify-center py-6 text-center">
       <div class="mb-5 hidden h-14 items-center justify-center sm:flex" aria-hidden="true">
-        <div class="preview-card -rotate-12 -translate-x-6 bg-default">♣</div>
+        <div class="preview-card -rotate-12 -translate-x-6 bg-default"><TaskHoldemSuit suit="clubs" class="text-xl" /></div>
         <div class="preview-card z-10 border-primary/40 bg-muted text-3xl font-semibold text-highlighted">?</div>
-        <div class="preview-card translate-x-6 rotate-12 bg-default">♠</div>
+        <div class="preview-card translate-x-6 rotate-12 bg-default"><TaskHoldemSuit suit="spades" class="text-xl" /></div>
       </div>
       <h3 class="text-xl font-semibold tracking-tight text-highlighted sm:text-2xl">Every perspective counts.</h3>
       <p class="mt-2 max-w-sm text-sm leading-6 text-muted">Pick a card below. Reveal together when the team is ready.</p>
@@ -74,6 +74,5 @@ const average = computed(() => formatTaskHoldemAverage(props.room.round.average)
   justify-content: center;
   border: 1px solid var(--ui-border);
   border-radius: 0.65rem;
-  color: var(--ui-primary);
 }
 </style>

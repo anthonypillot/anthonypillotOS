@@ -1,4 +1,12 @@
-import type { TaskHoldemVote } from "../../shared/types/task-holdem.type";
+import { taskHoldemDeck, type TaskHoldemVote } from "../../shared/types/task-holdem.type";
+
+export type TaskHoldemSuit = "clubs" | "diamonds" | "spades" | "hearts";
+
+const cardSuits: readonly TaskHoldemSuit[] = ["clubs", "diamonds", "spades", "hearts"];
+
+export function getTaskHoldemCardSuit(value: TaskHoldemVote): TaskHoldemSuit {
+  return cardSuits[taskHoldemDeck.indexOf(value) % cardSuits.length] ?? "spades";
+}
 
 export const taskHoldemCardIcons = {
   skip: "i-heroicons-moon",

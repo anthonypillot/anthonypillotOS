@@ -8,7 +8,7 @@
       aria-controls="task-holdem-chat"
       @click="open = !open"
     >
-      <span class="flex items-center gap-2 text-sm font-medium text-default"><UIcon name="i-heroicons-chat-bubble-left-right" class="size-4 text-primary" aria-hidden="true" /> Team chat <span v-if="messages.length" class="text-xs text-muted">{{ messages.length }}</span></span>
+      <span class="flex items-center gap-2 text-sm font-medium text-default"><UIcon name="i-heroicons-chat-bubble-left-right" class="size-4 text-primary" aria-hidden="true" /> Team chat <span v-if="messages.length" class="inline-flex min-w-5 items-center justify-center rounded-full bg-inverted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-inverted" data-testid="chat-message-count">{{ messages.length }}</span></span>
       <UIcon name="i-heroicons-chevron-down" class="size-4 text-muted transition-transform" :class="open ? 'rotate-180' : ''" aria-hidden="true" />
     </button>
     <div v-if="open" id="task-holdem-chat" class="border-t border-default">
