@@ -30,7 +30,7 @@ npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 - Vitest uses the Nuxt environment and discovers tests under `server/` and `layers/*/tests/unit/`; UI tests use Playwright. Keep `vitest.config.ts`'s `h3Version: 1` pin to match Nitro 2 despite transitive H3 v2 tooling.
 - Service tests mock DAOs; GitHub DAO tests use MSW with unhandled requests treated as errors. Keep DB/GitHub interactions mocked rather than using live credentials.
 - Playwright always starts the built Nitro server at `http://127.0.0.1:4173`, locally and in CI. Run `npm run build` before direct `npx playwright test` commands; `npm run test:e2e` builds first. CI runs on schedule/manual dispatch only.
-- E2E uses its dedicated Docker database on port `55439`, never `.env` credentials. Fixtures block unmocked History Cleaner requests; multiplayer fixtures close contexts and delete only their test-owned rooms.
+- E2E uses the dedicated `os-e2e-postgres` Docker container (`os_e2e_postgres` database) on port `55439`, never `.env` credentials. Fixtures block unmocked History Cleaner requests; multiplayer fixtures close contexts and delete only their test-owned rooms.
 - The default Playwright run covers six desktop/tablet/mobile projects; use the focused Chromium command above for a quick check. Install browsers with `npx playwright install --with-deps` when needed.
 
 ## Wiring and boundaries

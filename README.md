@@ -95,7 +95,7 @@ npm run test:e2e:db:down # Stop and discard the E2E database
 ```
 
 E2E tests always launch the production build at `http://127.0.0.1:4173`, including in CI.
-Their dedicated database uses port `55439` and never reads database credentials from `.env`.
+The disposable `os-e2e-postgres` container runs the `os_e2e_postgres` database on port `55439` and never reads database credentials from `.env`.
 Install browsers once with `npx playwright install --with-deps`.
 
 For a quick check, use `npm run test:e2e -- --project="Desktop - Chromium"`.
