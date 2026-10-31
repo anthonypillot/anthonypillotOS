@@ -1,5 +1,5 @@
 <template>
-  <section class="task-workspace relative isolate mx-auto w-full max-w-7xl px-4 pb-12 pt-32 sm:px-6 sm:pt-36 lg:px-8">
+  <section class="task-workspace relative isolate mx-auto w-full max-w-7xl px-4 pb-12 pt-24 sm:px-6 sm:pt-28 lg:px-8">
     <header class="mb-8 flex flex-col justify-between gap-5 border-b border-default pb-6 sm:flex-row sm:items-center">
       <div class="flex min-w-0 items-center gap-3">
         <NuxtImg class="size-11 shrink-0" :src="taskHoldemApplication.faviconDark" alt="" />
@@ -35,11 +35,11 @@
           <p class="mt-5 max-w-sm text-sm leading-7 text-muted">Give every perspective a seat. Vote independently, reveal together, and spend more time on what matters.</p>
         </div>
         <div class="my-10 flex items-center justify-center gap-4" aria-hidden="true">
-          <div class="intro-card -rotate-12">3<TaskHoldemSuit suit="clubs" class="text-sm" /></div>
-          <div class="intro-card -translate-y-5 border-primary/40 bg-primary/10">5<TaskHoldemSuit suit="spades" class="text-sm" /></div>
-          <div class="intro-card rotate-12">8<TaskHoldemSuit suit="diamonds" class="text-sm" /></div>
+          <div class="intro-card -rotate-12">3<TaskHoldemSuit suit="clubs" class="text-base" /></div>
+          <div class="intro-card -translate-y-5 border-primary/40 bg-primary/10">5<TaskHoldemSuit suit="spades" class="text-base" /></div>
+          <div class="intro-card rotate-12">8<TaskHoldemSuit suit="diamonds" class="text-base" /></div>
         </div>
-        <div class="flex flex-wrap gap-4 text-xs text-muted"><span class="flex items-center gap-2"><UIcon name="i-heroicons-lock-closed" class="size-4" />Private votes</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-bolt" class="size-4" />Real-time teamwork</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-user-circle" class="size-4" />No account needed</span></div>
+        <div class="flex flex-wrap gap-4 text-xs text-muted"><span class="flex items-center gap-2"><UIcon name="i-heroicons-user-circle" class="size-4" />No account needed</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-bolt" class="size-4" />Real-time collaboration</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-lock-closed" class="size-4" />Private votes</span></div>
       </div>
       <div class="flex min-h-[32rem] flex-col justify-center p-6 sm:p-10 lg:p-12">
         <div v-if="isLoading" class="mb-5 flex items-center gap-2 text-xs text-muted" role="status"><UIcon name="i-heroicons-arrow-path" class="size-4 motion-safe:animate-spin" /> Preparing your room…</div>
@@ -80,7 +80,7 @@
               <h2 class="text-sm font-medium text-default">Your estimate</h2>
               <p class="text-xs" :class="selectedVote !== null ? 'text-success' : 'text-muted'" role="status">{{ selectionLabel }}</p>
             </div>
-            <div class="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 pt-2 sm:grid sm:grid-cols-6 sm:justify-items-center sm:overflow-visible xl:grid-cols-12">
+            <div class="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 pt-2 sm:grid sm:grid-cols-6 sm:justify-items-center sm:gap-4 sm:overflow-visible xl:grid-cols-12 xl:gap-2" data-testid="vote-card-grid">
               <TaskHoldemCard
                 v-for="card in room.round.deck"
                 :key="card"

@@ -195,7 +195,6 @@ test("corrupt remembered profiles do not prevent joining", async ({ page, roomId
 test("shared topics are locked at reveal and saved with timestamped results", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice", "firefighter");
   const bob = await createPlayer(roomId, "Bob", "officer");
-  await alice.page.getByRole("button", { name: "Add topic", exact: true }).click();
   await alice.page.getByRole("textbox", { name: "Round topic", exact: true }).fill("PROJ-42 · Improve sign-in");
   await alice.page.getByRole("button", { name: "Save topic", exact: true }).click();
   await expect(bob.page.getByText("PROJ-42 · Improve sign-in", { exact: true })).toBeVisible();
@@ -214,7 +213,8 @@ test("shared topics are locked at reveal and saved with timestamped results", as
   await expect(history.getByRole("list", { name: "Round 1 votes" })).toContainText("Bob");
   await bob.page.keyboard.press("Escape");
   await bob.restart.click();
-  await expect(alice.page.getByText("What are we estimating?", { exact: true })).toBeVisible();
+  await expect(alice.page.getByRole("textbox", { name: "Round topic", exact: true })).toBeEmpty();
+  await expect(alice.page.getByRole("button", { name: "Edit topic", exact: true })).toBeDisabled();
   await alice.page.reload();
   await expect(alice.player("Alice")).toBeVisible();
   await alice.page.getByRole("button", { name: /^History/ }).click();
@@ -224,7 +224,6 @@ test("shared topics are locked at reveal and saved with timestamped results", as
 test("concurrent topic drafts are preserved instead of being silently replaced", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");
   const bob = await createPlayer(roomId, "Bob");
-  for (const player of [alice, bob]) await player.page.getByRole("button", { name: "Add topic", exact: true }).click();
   await bob.page.getByRole("textbox", { name: "Round topic", exact: true }).fill("Bob's draft");
   await alice.page.getByRole("textbox", { name: "Round topic", exact: true }).fill("Alice's topic");
   await alice.page.getByRole("button", { name: "Save topic", exact: true }).click();
@@ -234,6 +233,47 @@ test("concurrent topic drafts are preserved instead of being silently replaced",
   await expect(bob.page.getByRole("textbox", { name: "Round topic", exact: true })).toHaveValue("Bob's draft");
   await bob.page.getByRole("button", { name: "Cancel", exact: true }).click();
   await expect(bob.page.getByText("Alice's topic", { exact: true })).toBeVisible();
+});
+
+test("empty topics can be entered directly and only saved topics enable editing", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice");
+  const topic = alice.page.getByRole("textbox", { name: "Round topic", exact: true });
+  const edit = alice.page.getByRole("button", { name: "Edit topic", exact: true });
+  const save = alice.page.getByRole("button", { name: "Save topic", exact: true });
+  await expect(topic).toBeVisible();
+  await expect(topic).toBeEmpty();
+  await expect(topic).not.toBeFocused();
+  await expect(edit).toBeDisabled();
+  await expect(save).toBeDisabled();
+  await expect(alice.page.getByRole("button", { name: "Add topic", exact: true })).toHaveCount(0);
+  await topic.fill("Draft topic");
+  await alice.page.getByRole("button", { name: "Clear", exact: true }).click();
+  await expect(topic).toBeEmpty();
+  await topic.fill("PROJ-84 · Direct topic entry");
+  await save.click();
+  await expect(topic).toBeHidden();
+  await expect(edit).toBeEnabled();
+  await edit.click();
+  await expect(topic).toHaveValue("PROJ-84 · Direct topic entry");
+  await expect(topic).toBeFocused();
+  await topic.fill("");
+  await save.click();
+  await expect(topic).toBeVisible();
+  await expect(topic).toBeEmpty();
+  await expect(edit).toBeDisabled();
+});
+
+test("a teammate's first topic replaces an untouched empty editor without stealing focus", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice");
+  const bob = await createPlayer(roomId, "Bob");
+  const card = bob.page.getByRole("button", { name: "Select 8 card", exact: true });
+  await card.focus();
+  await alice.page.getByRole("textbox", { name: "Round topic", exact: true }).fill("A shared topic");
+  await alice.page.getByRole("button", { name: "Save topic", exact: true }).click();
+  await expect(bob.page.getByText("A shared topic", { exact: true })).toBeVisible();
+  await expect(bob.page.getByRole("textbox", { name: "Round topic", exact: true })).toBeHidden();
+  await expect(bob.page.getByRole("button", { name: "Edit topic", exact: true })).toBeEnabled();
+  await expect(card).toBeFocused();
 });
 
 test("history handles empty sessions and rounds without a topic", async ({ roomId, createPlayer }) => {

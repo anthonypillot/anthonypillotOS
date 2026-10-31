@@ -13,7 +13,7 @@
       <UIcon :name="taskHoldemCardIcons[value]" class="size-6" aria-hidden="true" />
       <span class="text-[10px] text-muted">{{ formatTaskHoldemVote(value) }}</span>
     </template>
-    <TaskHoldemSuit :suit="getTaskHoldemCardSuit(value)" class="absolute left-2 top-1.5 text-[9px]" />
+    <TaskHoldemSuit :suit="getTaskHoldemCardSuit(value)" class="absolute left-2 top-1.5 text-base" />
     <span v-if="selected" class="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-default" aria-hidden="true">
       <UIcon name="i-heroicons-check-circle-solid" class="size-5 text-highlighted" data-testid="selected-card-marker" />
     </span>

@@ -18,7 +18,7 @@
           <div class="my-8 flex justify-center gap-3">
             <div v-for="(card, index) in previewCards" :key="card.name" class="flex flex-col items-center gap-3">
               <div class="relative flex h-24 w-16 items-center justify-center rounded-xl border text-3xl font-semibold" :class="index === 1 ? '-translate-y-2 border-primary/40 bg-primary/15 text-highlighted shadow-xl shadow-primary/10' : 'border-default bg-default text-primary'">
-                <TaskHoldemSuit :suit="card.suit" class="absolute left-2 top-2 text-[10px]" />{{ card.value }}
+                <TaskHoldemSuit :suit="card.suit" class="absolute left-2 top-2 text-xs" />{{ card.value }}
               </div>
               <span class="text-[11px] text-muted">{{ card.name }}</span>
             </div>
