@@ -35,8 +35,8 @@ test("landing illustration brings three application characters together without 
   const players = preview.getByTestId("preview-player");
   await expect(players).toHaveCount(3);
   expect(await players.locator("[data-mascot]").evaluateAll(avatars => avatars.map(avatar => avatar.getAttribute("data-mascot")))).toEqual(["cowboy", "princess", "robot"]);
-  await expect(players.locator(".scene-name")).toHaveText(["Alex", "Sam", "Jordan"]);
-  await expect(preview.getByTestId("preview-speech")).toHaveText(["A 5 for me.", "Hmm… maybe 8?", "Let's compare!"]);
+  await expect(players.locator(".scene-name")).toHaveText(["Anthony", "Élise", "Raphaël"]);
+  await expect(preview.getByTestId("preview-speech")).toHaveText(["A 5 for me.", "Hmm… maybe 8?", "Dude... I don't know!"]);
   for (const bubble of await preview.getByTestId("preview-speech").all()) await expect(bubble).toHaveCSS("border-radius", "16px");
   const cards = preview.getByTestId("preview-card");
   await expect(cards).toHaveCount(3);

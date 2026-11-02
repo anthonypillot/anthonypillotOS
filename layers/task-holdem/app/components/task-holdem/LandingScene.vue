@@ -26,9 +26,9 @@ import type { TaskHoldemSuit } from "../../utils/cards";
 type PreviewPlayer = { name: string; avatar: TaskHoldemProfile["avatar"]; value: number; suit: TaskHoldemSuit; speech: string };
 
 const players = [
-  { name: "Alex", avatar: "cowboy", value: 5, suit: "clubs", speech: "A 5 for me." },
-  { name: "Sam", avatar: "princess", value: 8, suit: "hearts", speech: "Hmm… maybe 8?" },
-  { name: "Jordan", avatar: "robot", value: 5, suit: "diamonds", speech: "Let's compare!" },
+  { name: "Anthony", avatar: "cowboy", value: 5, suit: "clubs", speech: "A 5 for me." },
+  { name: "Élise", avatar: "princess", value: 8, suit: "hearts", speech: "Hmm… maybe 8?" },
+  { name: "Raphaël", avatar: "robot", value: 5, suit: "diamonds", speech: "Dude... I don't know!" },
 ] satisfies PreviewPlayer[];
 const root = useTemplateRef<HTMLDivElement>("root");
 const visible = ref(false);

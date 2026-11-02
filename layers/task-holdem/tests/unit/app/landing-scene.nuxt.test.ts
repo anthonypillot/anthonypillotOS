@@ -36,8 +36,8 @@ describe("Task Hold'em landing scene", () => {
   test("reuses exactly three application characters with their speech bubbles and revealed cards", async () => {
     const wrapper = await mountScene();
     expect(wrapper.findAll("[data-mascot]").map(avatar => avatar.attributes("data-mascot"))).toEqual(["cowboy", "princess", "robot"]);
-    expect(wrapper.findAll("[data-testid='preview-speech']").map(bubble => bubble.text())).toEqual(["A 5 for me.", "Hmm… maybe 8?", "Let's compare!"]);
-    expect(wrapper.findAll(".scene-name").map(name => name.text())).toEqual(["Alex", "Sam", "Jordan"]);
+    expect(wrapper.findAll("[data-testid='preview-speech']").map(bubble => bubble.text())).toEqual(["A 5 for me.", "Hmm… maybe 8?", "Dude... I don't know!"]);
+    expect(wrapper.findAll(".scene-name").map(name => name.text())).toEqual(["Anthony", "Élise", "Raphaël"]);
     expect(wrapper.findAll("[data-testid='preview-card'] > span:nth-child(2)").map(card => card.text())).toEqual(["5", "8", "5"]);
     expect(wrapper.text()).toContain("Everyone has a seat at the table.");
   });
