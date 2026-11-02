@@ -94,7 +94,7 @@
           </section>
         </div>
 
-        <aside class="min-w-0 space-y-5" aria-label="Room sidebar">
+        <aside class="min-w-0 space-y-5 lg:sticky lg:top-28 lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto" aria-label="Room sidebar">
           <section aria-labelledby="participants-heading" class="rounded-2xl border border-default bg-muted/50 p-3">
             <div class="flex items-center justify-between px-2 pb-4 pt-2">
               <h2 id="participants-heading" class="text-sm font-medium text-default">At the table</h2>

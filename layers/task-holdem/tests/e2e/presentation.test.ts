@@ -10,6 +10,8 @@ test("connection indicator reads Connected before and after joining a room", asy
 
 test("admission lists its benefits in the requested order", async ({ page, roomId }) => {
   await page.goto(`${routes.taskHoldem}?id=${roomId}`);
+  await expect(page.getByText("Take a seat", { exact: true })).toBeVisible();
+  await expect(page.getByText("Your seat at the table", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Made for your next planning session", { exact: true })).toHaveCount(0);
   const teamwork = page.getByText("Real-time collaboration", { exact: true });
   const account = page.getByText("No account needed", { exact: true });
@@ -81,13 +83,84 @@ test("all card suits use the original indigo styling and the selected marker sta
     }
   }
   const voteSymbol = alice.page.getByRole("region", { name: "Your cards", exact: true }).locator("[data-suit]").first();
-  await expect(voteSymbol).toHaveCSS("font-size", "9px");
+  await expect(voteSymbol).toHaveCSS("font-size", "12px");
   await expect(voteSymbol).toHaveCSS("opacity", "0.6");
   await expect(alice.page.getByRole("region", { name: "Current round", exact: true }).locator("[data-suit]").first()).toHaveCSS("font-size", "16px");
   await alice.vote(8);
   const marker = alice.page.getByTestId("selected-card-marker");
   await expect(marker).toHaveCSS("color", "rgb(255, 255, 255)");
   await expect(marker).toHaveCSS("background-color", "rgb(255, 255, 255)");
+});
+
+test("the current participant uses a fine border without a ring", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice");
+  await createPlayer(roomId, "Bob");
+  const borderColor = await alice.page.getByRole("region", { name: "At the table", exact: true }).evaluate(element => getComputedStyle(element).borderTopColor);
+  await expect(alice.player("Alice")).toHaveCSS("border-top-width", "1px");
+  await expect(alice.player("Alice")).toHaveCSS("border-top-color", borderColor);
+  await expect(alice.player("Alice")).toHaveCSS("box-shadow", "none");
+  await expect(alice.player("Bob")).toHaveCSS("border-top-color", "rgba(0, 0, 0, 0)");
+});
+
+test("round preview cards use fine visible borders and keep the center tint", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice");
+  const cards = alice.page.getByRole("region", { name: "Current round", exact: true }).locator(".preview-card");
+  await expect(cards).toHaveCount(3);
+  for (const card of await cards.all()) {
+    await expect(card).toHaveCSS("border-top-width", "1px");
+    await expect(card).toHaveCSS("border-top-style", "solid");
+  }
+  const accented = await alice.page.getByRole("button", { name: "Select 1 card", exact: true }).evaluate(element => getComputedStyle(element).borderTopColor);
+  for (const index of [0, 2]) await expect(cards.nth(index)).toHaveCSS("border-top-color", accented);
+  const centerAlpha = await cards.nth(1).evaluate((element) => {
+    const context = document.createElement("canvas").getContext("2d");
+    if (!context) throw new Error("Canvas is required to resolve semantic colors");
+    context.fillStyle = getComputedStyle(element).borderTopColor;
+    context.fillRect(0, 0, 1, 1);
+    return context.getImageData(0, 0, 1, 1).data[3];
+  });
+  expect(centerAlpha).toBe(102);
+});
+
+test("the sidebar sticks below navigation on desktop and scrolls normally on smaller screens", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice");
+  await alice.page.evaluate(() => document.fonts.ready);
+  await alice.page.evaluate(() => window.scrollTo(0, 0));
+  const sidebar = alice.page.getByRole("complementary", { name: "Room sidebar", exact: true });
+  const initial = await sidebar.boundingBox();
+  if ((alice.page.viewportSize()?.width ?? 0) >= 1024) {
+    await expect(sidebar).toHaveCSS("position", "sticky");
+    await expect(sidebar).toHaveCSS("top", "112px");
+    for (const offset of [80, 160]) {
+      await alice.page.evaluate(y => window.scrollTo(0, y), initial!.y - 112 + offset);
+      await expect.poll(async () => (await sidebar.boundingBox())!.y).toBeCloseTo(112, 0);
+    }
+    const navigation = await alice.page.getByRole("navigation", { name: "Global", exact: true }).boundingBox();
+    expect((await sidebar.boundingBox())!.y).toBeGreaterThan(navigation!.y + navigation!.height);
+  } else {
+    await expect(sidebar).toHaveCSS("position", "static");
+    await alice.page.evaluate(() => window.scrollTo(0, 200));
+    await expect.poll(async () => (await sidebar.boundingBox())!.y).toBeCloseTo(initial!.y - 200, 0);
+  }
+});
+
+test("the sticky sidebar keeps chat controls reachable in short desktop windows", async ({ roomId, createPlayer, isMobile }) => {
+  test.skip(isMobile, "The height cap applies only to desktop layouts.");
+  const alice = await createPlayer(roomId, "Alice");
+  await alice.page.setViewportSize({ width: 1104, height: 600 });
+  await alice.page.evaluate(() => document.fonts.ready);
+  await alice.page.evaluate(() => window.scrollTo(0, 0));
+  const sidebar = alice.page.getByRole("complementary", { name: "Room sidebar", exact: true });
+  const initial = await sidebar.boundingBox();
+  await alice.page.evaluate(y => window.scrollTo(0, y), initial!.y - 112 + 80);
+  await alice.openChat();
+  await expect(sidebar).toHaveCSS("max-height", "472px");
+  await expect(sidebar).toHaveCSS("overflow-y", "auto");
+  expect((await sidebar.boundingBox())!.height).toBeLessThanOrEqual(472);
+  await alice.page.getByRole("textbox", { name: "Your message", exact: true }).fill("The chat is still reachable");
+  await alice.page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(alice.page.getByRole("log", { name: "Room messages", exact: true })).toContainText("The chat is still reachable");
+  await expect.poll(async () => (await sidebar.boundingBox())!.y).toBeCloseTo(112, 0);
 });
 
 test("message counts use a white badge with dark text", async ({ roomId, createPlayer }) => {

@@ -214,7 +214,7 @@ test("shared topics are locked at reveal and saved with timestamped results", as
   await bob.page.keyboard.press("Escape");
   await bob.restart.click();
   await expect(alice.page.getByRole("textbox", { name: "Round topic", exact: true })).toBeEmpty();
-  await expect(alice.page.getByRole("button", { name: "Edit topic", exact: true })).toBeDisabled();
+  await expect(alice.page.getByRole("button", { name: "Save topic", exact: true })).toBeDisabled();
   await alice.page.reload();
   await expect(alice.player("Alice")).toBeVisible();
   await alice.page.getByRole("button", { name: /^History/ }).click();
@@ -231,36 +231,50 @@ test("concurrent topic drafts are preserved instead of being silently replaced",
   await expect(bob.page.getByRole("textbox", { name: "Round topic", exact: true })).toHaveValue("Bob's draft");
   await alice.vote(8);
   await expect(bob.page.getByRole("textbox", { name: "Round topic", exact: true })).toHaveValue("Bob's draft");
-  await bob.page.getByRole("button", { name: "Cancel", exact: true }).click();
+  await bob.page.getByRole("textbox", { name: "Round topic", exact: true }).press("Escape");
   await expect(bob.page.getByText("Alice's topic", { exact: true })).toBeVisible();
 });
 
-test("empty topics can be entered directly and only saved topics enable editing", async ({ roomId, createPlayer }) => {
+test("topics use a single header action with keyboard save and cancellation", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");
+  const region = alice.page.getByRole("region", { name: "Current topic", exact: true });
   const topic = alice.page.getByRole("textbox", { name: "Round topic", exact: true });
   const edit = alice.page.getByRole("button", { name: "Edit topic", exact: true });
   const save = alice.page.getByRole("button", { name: "Save topic", exact: true });
   await expect(topic).toBeVisible();
   await expect(topic).toBeEmpty();
   await expect(topic).not.toBeFocused();
-  await expect(edit).toBeDisabled();
+  await expect(edit).toHaveCount(0);
   await expect(save).toBeDisabled();
+  await expect(region.getByRole("button")).toHaveCount(1);
+  await expect(region.locator("form").getByRole("button")).toHaveCount(0);
+  await expect(save).toHaveAttribute("form", "round-topic-editor");
   await expect(alice.page.getByRole("button", { name: "Add topic", exact: true })).toHaveCount(0);
   await topic.fill("Draft topic");
-  await alice.page.getByRole("button", { name: "Clear", exact: true }).click();
+  await topic.press("Escape");
   await expect(topic).toBeEmpty();
   await topic.fill("PROJ-84 · Direct topic entry");
-  await save.click();
+  await topic.press("Enter");
   await expect(topic).toBeHidden();
   await expect(edit).toBeEnabled();
+  await expect(edit).toBeFocused();
+  await expect(region.getByRole("button")).toHaveCount(1);
   await edit.click();
   await expect(topic).toHaveValue("PROJ-84 · Direct topic entry");
   await expect(topic).toBeFocused();
+  await topic.fill("An unsaved replacement");
+  await topic.blur();
+  await expect(region.getByText("PROJ-84 · Direct topic entry", { exact: true })).toBeHidden();
+  await topic.press("Escape");
+  await expect(region.getByText("PROJ-84 · Direct topic entry", { exact: true })).toBeVisible();
+  await expect(edit).toBeFocused();
+  await edit.click();
   await topic.fill("");
   await save.click();
   await expect(topic).toBeVisible();
   await expect(topic).toBeEmpty();
-  await expect(edit).toBeDisabled();
+  await expect(save).toBeDisabled();
+  await expect(topic).toBeFocused();
 });
 
 test("a teammate's first topic replaces an untouched empty editor without stealing focus", async ({ roomId, createPlayer }) => {

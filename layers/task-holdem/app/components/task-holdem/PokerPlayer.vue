@@ -5,8 +5,8 @@
     :data-participant-id="participant.id"
     :data-voted="participant.hasVoted"
     :data-connected="participant.connected"
-    class="flex min-w-0 items-center gap-3 rounded-xl px-3 py-3"
-    :class="current ? 'bg-primary/7 ring-1 ring-primary/20' : ''"
+    class="flex min-w-0 items-center gap-3 rounded-xl border px-3 py-3"
+    :class="current ? 'border-default bg-primary/7' : 'border-transparent'"
   >
     <div class="relative shrink-0">
       <TaskHoldemMascot class="size-12 rounded-xl bg-elevated/60 p-1" :avatar="participant.profile.avatar" :label="taskHoldemMascots[participant.profile.avatar].name" :voted="participant.hasVoted" :celebrating="celebrating" />

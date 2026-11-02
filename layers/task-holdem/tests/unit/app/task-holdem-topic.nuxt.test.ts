@@ -40,7 +40,7 @@ describe("Task Hold'em topic editor", () => {
     const input = wrapper.get("input");
     expect(input.element.value).toBe("");
     expect(document.activeElement).not.toBe(input.element);
-    expect(button(wrapper, "Edit topic").attributes("disabled")).toBeDefined();
+    expect(wrapper.findAll("button").map(node => node.text())).toEqual(["Save topic"]);
     expect(button(wrapper, "Save topic").attributes("disabled")).toBeDefined();
     expect(wrapper.findAll("button").some(node => node.text() === "Add topic")).toBe(false);
   });
@@ -76,9 +76,11 @@ describe("Task Hold'em topic editor", () => {
     await wrapper.setProps({ round: { ...round, topic: "A teammate's topic" } });
     expect(wrapper.get("input").element.value).toBe("My draft");
     expect(wrapper.text()).toContain("A teammate updated the topic");
-    await button(wrapper, "Cancel").trigger("click");
+    await wrapper.get("input").trigger("keydown", { key: "Escape" });
+    await flushPromises();
     expect(wrapper.find("input").exists()).toBe(false);
     expect(wrapper.text()).toContain("A teammate's topic");
+    expect(document.activeElement).toBe(button(wrapper, "Edit topic").element);
   });
 
   test("keeps a focused empty field open when a teammate saves the first topic", async () => {
@@ -105,7 +107,7 @@ describe("Task Hold'em topic editor", () => {
     await flushPromises();
     expect(save).toHaveBeenCalledWith("", "Saved topic");
     expect(wrapper.get("input").element.value).toBe("");
-    expect(button(wrapper, "Edit topic").attributes("disabled")).toBeDefined();
+    expect(wrapper.findAll("button").map(node => node.text())).toEqual(["Save topic"]);
     expect(button(wrapper, "Save topic").attributes("disabled")).toBeDefined();
   });
 
@@ -120,7 +122,7 @@ describe("Task Hold'em topic editor", () => {
     await flushPromises();
     expect(wrapper.get("input").element.value).toBe("");
     expect(wrapper.get("input").attributes("disabled")).toBeUndefined();
-    expect(button(wrapper, "Edit topic").attributes("disabled")).toBeDefined();
+    expect(button(wrapper, "Save topic").attributes("disabled")).toBeDefined();
   });
 
   test("locks draft entry during reveal and starts the next round with an empty field", async () => {
@@ -132,5 +134,39 @@ describe("Task Hold'em topic editor", () => {
     expect(wrapper.findAll("button").some(node => node.text() === "Edit topic")).toBe(false);
     await wrapper.setProps({ round: { ...createRound(), number: 2 } });
     expect(wrapper.get("input").element.value).toBe("");
+  });
+
+  test("uses one header action and never saves a draft on blur", async () => {
+    const save = vi.fn<SaveTopic>().mockResolvedValue(false);
+    const wrapper = await mountTopic(createRound("Saved topic"), save);
+    expect(wrapper.findAll("button").map(node => node.text())).toEqual(["Edit topic"]);
+    await button(wrapper, "Edit topic").trigger("click");
+    expect(wrapper.findAll("button").map(node => node.text())).toEqual(["Save topic"]);
+    expect(button(wrapper, "Save topic").attributes("form")).toBe("round-topic-editor");
+    expect(wrapper.get("form").findAll("button")).toHaveLength(0);
+    await wrapper.get("input").setValue("A local draft");
+    await wrapper.get("input").trigger("blur");
+    expect(save).not.toHaveBeenCalled();
+    await wrapper.get("input").trigger("keydown", { key: "Escape" });
+    await flushPromises();
+    expect(wrapper.find("input").exists()).toBe(false);
+    expect(wrapper.text()).toContain("Saved topic");
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  test("does not cancel or submit a second time while a save is pending", async () => {
+    let finish: ((saved: boolean) => void) | undefined;
+    const save = vi.fn<SaveTopic>(() => new Promise(resolve => { finish = resolve; }));
+    const wrapper = await mountTopic(createRound(), save);
+    await wrapper.get("input").setValue("A pending topic");
+    await wrapper.get("form").trigger("submit");
+    await wrapper.get("input").trigger("keydown", { key: "Escape" });
+    await wrapper.get("form").trigger("submit");
+    expect(button(wrapper, "Save topic").attributes("disabled")).toBeDefined();
+    expect(wrapper.get("input").element.value).toBe("A pending topic");
+    expect(save).toHaveBeenCalledTimes(1);
+    finish?.(false);
+    await flushPromises();
+    expect(button(wrapper, "Save topic").attributes("disabled")).toBeUndefined();
   });
 });

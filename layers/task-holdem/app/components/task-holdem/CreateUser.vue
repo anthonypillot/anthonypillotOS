@@ -1,7 +1,7 @@
 <template>
   <form class="space-y-6" @submit.prevent="submit">
     <div>
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Your seat at the table</p>
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Take a seat</p>
       <h2 class="mt-3 text-2xl font-semibold tracking-tight text-highlighted">{{ creating ? 'Bring your team together.' : 'Ready when you are.' }}</h2>
       <p class="mt-3 text-sm leading-6 text-muted">{{ creating ? 'Create a room, share the link, and find your next estimate together.' : 'Choose how your teammates will see you. No account needed.' }}</p>
     </div>
