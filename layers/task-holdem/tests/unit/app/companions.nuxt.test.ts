@@ -18,7 +18,7 @@ class MotionPreference extends EventTarget { matches = false; }
 let preference: MotionPreference;
 
 function mountCards(props: Partial<InstanceType<typeof CardCompanion>["$props"]> = {}) {
-  const wrapper = mount(CardCompanion, { props: { avatar: "robot", vote: null, roundId: "round-1", phase: "voting", active: true, ...props }, global });
+  const wrapper = mount(CardCompanion, { props: { avatar: "robot", participantId: "alice", vote: null, phase: "voting", active: true, ...props }, global });
   cleanup.push(() => wrapper.unmount());
   return wrapper;
 }
@@ -47,32 +47,27 @@ afterEach(() => {
 });
 
 describe("Task Hold'em personal card companion", () => {
-  test("only reacts to changed, confirmed choices and uses private context for special cards", async () => {
+  test("uses private context for special-card speech without issuing room actions", async () => {
     const wrapper = mountCards({ vote: 8 });
     expect(play).not.toHaveBeenCalled();
-    await wrapper.setProps({ vote: 13 });
-    expect(play).toHaveBeenLastCalledWith("vote");
     await wrapper.setProps({ vote: "break" });
-    expect(play).toHaveBeenLastCalledWith("think");
     expect(wrapper.text()).toContain("Dude... I don't know!");
     await wrapper.setProps({ vote: "skip" });
-    expect(play).toHaveBeenLastCalledWith("break");
     expect(wrapper.text()).toContain("A tiny coffee break.");
-    play.mockClear();
     await wrapper.setProps({ vote: null });
     expect(play).not.toHaveBeenCalled();
     expect(wrapper.find("[data-testid='companion-speech']").exists()).toBe(false);
   });
 
-  test("celebrates every revealed round equally and greets the next round without replaying a cleared vote", async () => {
-    const wrapper = mountCards({ vote: 89 });
+  test("hides private speech while votes are locked and clears it for the next round", async () => {
+    const wrapper = mountCards({ vote: "break" });
+    expect(wrapper.text()).toContain("Dude... I don't know!");
     await wrapper.setProps({ phase: "revealing" });
-    expect(play).not.toHaveBeenCalled();
+    expect(wrapper.find("[data-testid='companion-speech']").exists()).toBe(false);
     await wrapper.setProps({ phase: "revealed" });
-    expect(play).toHaveBeenCalledExactlyOnceWith("reveal");
-    await wrapper.setProps({ roundId: "round-2", phase: "voting", vote: null });
-    expect(play).toHaveBeenLastCalledWith("signature");
-    expect(play).toHaveBeenCalledTimes(2);
+    expect(wrapper.find("[data-testid='companion-speech']").exists()).toBe(false);
+    await wrapper.setProps({ phase: "voting", vote: null });
+    expect(wrapper.find("[data-testid='companion-speech']").exists()).toBe(false);
   });
 
   test("does not replay snapshots received during reconnection or automatic readmission", async () => {
@@ -84,30 +79,24 @@ describe("Task Hold'em personal card companion", () => {
     expect(wrapper.text()).toContain("Dude... I don't know!");
   });
 
-  test("exposes a keyboard-compatible secret with a cooldown, without emitting room actions", async () => {
+  test("exposes a keyboard-compatible greeting without emitting room actions", async () => {
     const wrapper = mountCards();
     const button = wrapper.get("button");
     expect(button.attributes("type")).toBe("button");
     expect(button.attributes("aria-label")).toBe("Say hello to your Robot");
     await button.trigger("click");
-    expect(play).toHaveBeenCalledExactlyOnceWith("moonwalk");
-    await button.trigger("click");
-    expect(play).toHaveBeenCalledTimes(1);
-    await vi.advanceTimersByTimeAsync(8000);
-    await button.trigger("click");
-    expect(play).toHaveBeenCalledTimes(2);
     expect(wrapper.emitted("select")).toBeUndefined();
     expect(wrapper.emitted("vote")).toBeUndefined();
   });
 
-  test("uses each character's own secret and never activates while disconnected", async () => {
+  test("names the chosen character and disables greetings while disconnected", async () => {
     const wrapper = mountCards({ avatar: "princess", active: false });
     expect(wrapper.get("button").attributes("disabled")).toBeDefined();
+    expect(wrapper.get("button").attributes("aria-label")).toBe("Say hello to your Princess");
     await wrapper.get("button").trigger("click");
     expect(play).not.toHaveBeenCalled();
     await wrapper.setProps({ active: true });
-    await wrapper.get("button").trigger("click");
-    expect(play).toHaveBeenLastCalledWith("mischief");
+    expect(wrapper.get("button").attributes("disabled")).toBeUndefined();
   });
 });
 

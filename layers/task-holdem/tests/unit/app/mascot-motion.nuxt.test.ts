@@ -79,15 +79,30 @@ describe("Task Hold'em pixel poses", () => {
 });
 
 describe("Task Hold'em shared mascot stage", () => {
-  test("lets a new explicit action supersede an earlier gesture", () => {
+  test("allows matching interaction reactions without one visible avatar cancelling another", () => {
     const stage = createTaskHoldemMascotStage();
     const stop = vi.fn();
     expect(stage.claim(Symbol("old selection"), stop, "reaction")).toBe(true);
     expect(stage.claim(Symbol("new selection"), vi.fn(), "reaction")).toBe(true);
-    expect(stop).toHaveBeenCalledOnce();
+    expect(stop).not.toHaveBeenCalled();
   });
 
-  test("allows one performance, prioritizes actions and bounds surprise frequency", () => {
+  test("keeps ambient performances out until every interaction has finished", () => {
+    const stage = createTaskHoldemMascotStage();
+    const alice = Symbol("alice");
+    const bob = Symbol("bob");
+    const ambient = Symbol("ambient");
+    expect(stage.claim(alice, vi.fn(), "passive")).toBe(true);
+    expect(stage.claim(bob, vi.fn(), "passive")).toBe(true);
+    expect(stage.claim(ambient, vi.fn(), "ambient")).toBe(false);
+    stage.release(alice);
+    expect(stage.claim(ambient, vi.fn(), "secret")).toBe(false);
+    stage.release(bob);
+    vi.advanceTimersByTime(2000);
+    expect(stage.claim(ambient, vi.fn(), "ambient")).toBe(true);
+  });
+
+  test("keeps ambient performances exclusive, prioritizes interactions and bounds surprises", () => {
     const stage = createTaskHoldemMascotStage();
     const alice = Symbol("alice");
     const bob = Symbol("bob");

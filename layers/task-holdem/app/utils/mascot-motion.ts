@@ -24,14 +24,24 @@ export function pickTaskHoldemMascotMotion(previous?: TaskHoldemMascotMotion, ra
 
 export function createTaskHoldemMascotStage() {
   let current: Performance | undefined;
+  const interactions = new Map<symbol, () => void>();
   let quietUntil = 0;
   let secretAfter = 0;
 
   function claim(owner: symbol, stop: () => void, kind: TaskHoldemMascotMotionKind): boolean {
+    if (kind === "reaction" || kind === "passive") {
+      const previous = current;
+      current = undefined;
+      previous?.stop();
+      interactions.get(owner)?.();
+      interactions.set(owner, stop);
+      return true;
+    }
     const now = Date.now();
-    const priority = { ambient: 1, passive: 2, secret: 2, reaction: 3 }[kind];
+    const priority = { ambient: 1, secret: 2 }[kind];
+    if (interactions.size) return false;
     if ((kind === "ambient" && now < quietUntil) || (kind === "secret" && now < secretAfter)) return false;
-    if (current && current.owner !== owner && (current.priority > priority || (current.priority === priority && kind !== "reaction"))) return false;
+    if (current && current.owner !== owner && current.priority >= priority) return false;
     current?.stop();
     current = { owner, priority, stop };
     if (kind === "secret") secretAfter = now + 60_000;
@@ -39,9 +49,11 @@ export function createTaskHoldemMascotStage() {
   }
 
   function release(owner: symbol): void {
-    if (current?.owner !== owner) return;
-    current = undefined;
-    quietUntil = Date.now() + 2000;
+    const interaction = interactions.delete(owner);
+    if (current?.owner === owner) {
+      current = undefined;
+      quietUntil = Date.now() + 2000;
+    } else if (interaction) quietUntil = Date.now() + 2000;
   }
 
   return { claim, release };

@@ -28,7 +28,7 @@ async function mountLoader() {
 async function mountPlayer(hasVoted = false, phase: TaskHoldemPhase = "voting", connected = true) {
   const participant = { id: "alice", profile: { name: "Alice", avatar: "cowboy" }, hasVoted, connected } satisfies TaskHoldemParticipant;
   const wrapper = await mountSuspended(PokerPlayer, {
-    props: { participant, phase, current: true, vote: null, celebrating: phase === "revealed" }, attachTo: createHost(),
+    props: { participant, phase, current: true, vote: null }, attachTo: createHost(),
   });
   cleanup.push(() => { if (wrapper.exists()) wrapper.unmount(); });
   return wrapper;

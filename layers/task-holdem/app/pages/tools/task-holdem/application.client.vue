@@ -16,7 +16,7 @@
           <span class="size-1.5 rounded-full" :class="isConnected && (!isJoined || isAdmitted) ? 'bg-success' : 'bg-warning'" />{{ connectionLabel }}
         </span>
         <TaskHoldemFeedback :feedback="feedback" />
-        <TaskHoldemUser v-if="currentParticipant" :participant="currentParticipant" :disabled="!canAct" @leave="leave" />
+        <TaskHoldemUser v-if="currentParticipant" :participant="currentParticipant" :disabled="!canAct" :active="isConnected && isAdmitted && !isLoading" @leave="leave" />
       </div>
     </header>
 
@@ -84,8 +84,8 @@
               </div>
               <TaskHoldemCardCompanion
                 :avatar="currentParticipant?.profile.avatar ?? profile.avatar"
+                :participant-id="self.participantId"
                 :vote="selectedVote"
-                :round-id="room.round.id"
                 :phase="room.round.phase"
                 :active="isConnected && isAdmitted && !isLoading"
               />
@@ -117,7 +117,7 @@
                 :participant="participant"
                 :phase="room.round.phase"
                 :current="participant.id === self.participantId"
-                :celebrating="room.round.phase === 'revealed'"
+                :active="isConnected && isAdmitted && !isLoading"
                 :vote="room.round.ballots?.find(ballot => ballot.participantId === participant.id)?.value ?? null"
               />
             </div>
@@ -146,6 +146,7 @@ const {
   isConnected, isAdmitted, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
   join, vote, reveal, restart, setTopic, loadHistory, leave, sendMessage, retry,
 } = useTaskHoldemRoom();
+provideTaskHoldemMascotReactions(room, self, () => isConnected.value && isAdmitted.value && !isLoading.value);
 const chatDraft = ref("");
 const connectionLabel = computed(() => {
   if (isConnected.value && (isLoading.value || (isBusy.value && !isAdmitted.value))) return "Syncing room…";

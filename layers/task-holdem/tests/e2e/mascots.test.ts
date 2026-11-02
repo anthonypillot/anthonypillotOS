@@ -4,20 +4,23 @@ import { expect, test } from "./support/fixtures";
 
 test("hidden table companions stay in the bottom-right corner clear of round content", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");
+  await alice.page.evaluate(() => document.fonts.ready);
   const panel = alice.page.getByRole("region", { name: "Current round", exact: true });
-  const companion = panel.getByTestId("table-companion");
 
   async function expectCorner(): Promise<void> {
-    const bounds = (await panel.boundingBox())!;
-    const mascot = (await companion.boundingBox())!;
-    expect(bounds.y + bounds.height - (mascot.y + mascot.height)).toBeCloseTo(8, 0);
-    expect(bounds.x + bounds.width - (mascot.x + mascot.width)).toBeCloseTo((alice.page.viewportSize()?.width ?? 0) < 640 ? 12 : 20, 0);
-    const content = panel.locator("h2, h3, p, button, ul");
-    for (const element of await content.all()) {
-      const box = (await element.boundingBox())!;
-      const overlaps = box.x < mascot.x + mascot.width && box.x + box.width > mascot.x && box.y < mascot.y + mascot.height && box.y + box.height > mascot.y;
-      expect(overlaps, `Mascot overlaps round content: ${await element.textContent()}`).toBe(false);
-    }
+    const layout = await panel.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      const mascot = element.querySelector("[data-testid='table-companion']")?.getBoundingClientRect();
+      if (!mascot) throw new Error("The table companion is missing");
+      const overlaps = [...element.querySelectorAll("h2, h3, p, button, ul")].filter((content) => {
+        const box = content.getBoundingClientRect();
+        return box.left < mascot.right && box.right > mascot.left && box.top < mascot.bottom && box.bottom > mascot.top;
+      }).map(content => content.textContent);
+      return { bottom: bounds.bottom - mascot.bottom, right: bounds.right - mascot.right, overlaps };
+    });
+    expect(layout.bottom).toBeCloseTo(8, 0);
+    expect(layout.right).toBeCloseTo((alice.page.viewportSize()?.width ?? 0) < 640 ? 12 : 20, 0);
+    expect(layout.overlaps).toEqual([]);
   }
 
   await expectCorner();

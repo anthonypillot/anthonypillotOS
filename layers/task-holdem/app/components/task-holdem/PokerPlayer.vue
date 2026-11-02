@@ -9,7 +9,9 @@
     :class="current ? 'border-default bg-primary/7' : 'border-transparent'"
   >
     <div class="relative shrink-0">
-      <TaskHoldemMascot class="size-12 rounded-xl bg-elevated/60 p-1" :avatar="participant.profile.avatar" :label="taskHoldemMascots[participant.profile.avatar].name" :active="participant.connected" :voted="participant.hasVoted" :celebrating="celebrating" />
+      <button type="button" :aria-label="`Say hello to ${participant.profile.name}`" :title="`Say hello to ${participant.profile.name}`" :disabled="!active || !participant.connected" class="block size-12 cursor-pointer rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-default" @click="greet">
+        <TaskHoldemMascot class="size-12 rounded-xl bg-elevated/60 p-1" :avatar="participant.profile.avatar" :label="taskHoldemMascots[participant.profile.avatar].name" :active="active && participant.connected" :reaction="reaction" />
+      </button>
       <span class="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-default" :class="participant.connected ? 'bg-success' : 'bg-warning'" />
     </div>
     <div class="min-w-0 flex-1">
@@ -26,5 +28,6 @@ import type { TaskHoldemParticipant, TaskHoldemPhase, TaskHoldemVote } from "../
 import { formatTaskHoldemVote } from "../../utils/cards";
 import { taskHoldemMascots } from "../../../shared/data/mascots";
 
-defineProps<{ participant: TaskHoldemParticipant; phase: TaskHoldemPhase; current: boolean; vote: TaskHoldemVote | null; celebrating: boolean }>();
+const props = withDefaults(defineProps<{ participant: TaskHoldemParticipant; phase: TaskHoldemPhase; current: boolean; vote: TaskHoldemVote | null; active?: boolean }>(), { active: true });
+const { reaction, greet } = useTaskHoldemMascotReaction(() => props.participant.id);
 </script>

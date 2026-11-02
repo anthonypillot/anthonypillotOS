@@ -4,6 +4,26 @@ import { expect, test } from "./support/fixtures";
 
 test.skip(({ hasTouch }) => !hasTouch, "These scenarios exercise touch devices, not desktop pointer interactions.");
 
+test("a player-list avatar responds to touch while its card companion is offscreen", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice", "robot");
+  await alice.page.emulateMedia({ reducedMotion: "no-preference" });
+  await alice.vote(8);
+  const sidebar = alice.page.getByRole("complementary", { name: "Room sidebar", exact: true });
+  await sidebar.evaluate((element) => { element.scrollIntoView({ block: "start" }); window.scrollBy(0, -112); });
+  const companion = alice.page.getByTestId("card-companion");
+  await expect(companion).not.toBeInViewport();
+  const hello = alice.player("Alice").getByRole("button", { name: "Say hello to Alice", exact: true });
+  const bounds = (await hello.boundingBox())!;
+  expect(bounds.width).toBeGreaterThanOrEqual(44);
+  expect(bounds.height).toBeGreaterThanOrEqual(44);
+  await expect(hello.locator("[data-mascot]")).toHaveAttribute("data-running", "true");
+  await hello.tap();
+  await expect(hello.locator("[data-mascot]")).toHaveAttribute("data-motion", "moonwalk");
+  await expect(companion.locator("[data-mascot]")).toHaveAttribute("data-running", "false");
+  await expect(companion.locator("[data-mascot]")).toHaveAttribute("data-motion", "rest");
+  await expect(alice.page.getByRole("button", { name: "Select 8 card", exact: true })).toHaveAttribute("aria-pressed", "true");
+});
+
 test("the companion's touch target triggers its secret without changing the selected vote", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice", "robot");
   await alice.page.emulateMedia({ reducedMotion: "no-preference" });
