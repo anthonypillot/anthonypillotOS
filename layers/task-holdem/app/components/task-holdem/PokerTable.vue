@@ -1,7 +1,7 @@
 <template>
   <BaseBorderGlow animated background-color="var(--ui-bg)" :fill-opacity="0" class="min-w-0" data-testid="round-border-glow">
-    <section aria-label="Current round" class="round-panel relative flex min-h-80 flex-col overflow-hidden rounded-2xl bg-muted/50 p-5 sm:p-6">
-      <div class="relative flex items-center justify-between gap-3 pr-14 sm:pr-16">
+    <section aria-label="Current round" class="round-panel relative flex min-h-80 flex-col overflow-hidden rounded-2xl bg-muted/50 px-5 pb-12 pt-5 sm:px-6 sm:pt-6">
+      <div class="relative flex items-center justify-between gap-3">
         <h2 class="text-sm font-medium text-toned">Round {{ room.round.number }}</h2>
         <span class="rounded-full border px-2.5 py-1 text-[11px] font-medium" :class="room.round.phase === 'revealed' ? 'border-success/20 bg-success/10 text-success' : 'border-primary/20 bg-primary/10 text-primary'">{{ phaseLabel }}</span>
       </div>

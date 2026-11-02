@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" aria-hidden="true" class="table-companion pointer-events-none absolute right-3 top-2 h-14 w-14 sm:right-5" :data-appearance="show ? appearance : 'none'" :data-running="running" data-testid="table-companion">
+  <div ref="root" aria-hidden="true" class="table-companion pointer-events-none absolute bottom-2 right-3 h-14 w-14 sm:right-5" :data-appearance="show ? appearance : 'none'" :data-running="running" data-testid="table-companion">
     <div class="relative h-full overflow-hidden">
       <div class="cameo absolute inset-0" :class="show ? 'opacity-100' : 'opacity-0'">
         <TaskHoldemMascot ref="mascot" :avatar="avatar" :active="show && active" :ambient="false" class="cameo-sprite absolute left-0 top-2 size-14" @motion-end="finish" />
