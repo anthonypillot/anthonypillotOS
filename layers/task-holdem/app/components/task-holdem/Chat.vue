@@ -42,8 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemMessage } from "../../../shared/types/task-holdem.type";
-import { getTaskHoldemChatParts } from "../../utils/task-holdem-chat";
+import type { TaskHoldemMessage } from "../../../shared/types/room.type";
+import { getTaskHoldemChatParts } from "../../utils/chat";
 
 const props = defineProps<{ messages: TaskHoldemMessage[]; disabled: boolean; sending: boolean }>();
 const draft = defineModel<string>({ default: "" });

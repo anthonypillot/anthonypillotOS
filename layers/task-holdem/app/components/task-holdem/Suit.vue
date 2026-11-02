@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemSuit } from "../../utils/task-holdem";
+import type { TaskHoldemSuit } from "../../utils/cards";
 
 defineProps<{ suit: TaskHoldemSuit }>();
 const symbols = { clubs: "♣\uFE0E", diamonds: "♦\uFE0E", spades: "♠\uFE0E", hearts: "♥\uFE0E" };

@@ -20,9 +20,9 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemProfile } from "../../../shared/types/task-holdem.type";
-import { taskHoldemMascots } from "../../../shared/data/task-holdem-mascots";
-import { getTaskHoldemMascotPaths } from "../../utils/task-holdem-mascots";
+import type { TaskHoldemProfile } from "../../../shared/types/room.type";
+import { taskHoldemMascots } from "../../../shared/data/mascots";
+import { getTaskHoldemMascotPaths } from "../../utils/mascots";
 
 const props = withDefaults(defineProps<{ avatar: TaskHoldemProfile["avatar"]; label?: string; voted?: boolean; celebrating?: boolean }>(), {
   label: "", voted: false, celebrating: false,

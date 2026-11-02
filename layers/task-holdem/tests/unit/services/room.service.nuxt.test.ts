@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import * as dao from "../../../server/dao/task-holdem.dao";
-import * as service from "../../../server/services/task-holdem.service";
+import * as dao from "../../../server/dao/room.dao";
+import * as service from "../../../server/services/room.service";
 import { TaskHoldemError, type TaskHoldemMutation, type TaskHoldemState, type TaskHoldemActor } from "../../../server/domain/room";
-import { taskHoldemConfig } from "../../../server/utils/task-holdem-config";
+import { taskHoldemConfig } from "../../../server/utils/config";
 
-vi.mock("../../../server/dao/task-holdem.dao", () => ({
+vi.mock("../../../server/dao/room.dao", () => ({
   createRoom: vi.fn(), mutateRoom: vi.fn(), inspectRoom: vi.fn(), findDueRooms: vi.fn(), listRoomHistory: vi.fn(),
 }));
 

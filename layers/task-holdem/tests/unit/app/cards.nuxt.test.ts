@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { taskHoldemDeck } from "../../../shared/types/task-holdem.type";
-import { getTaskHoldemCardSuit } from "../../../app/utils/task-holdem";
+import { taskHoldemDeck } from "../../../shared/types/room.type";
+import { getTaskHoldemCardSuit } from "../../../app/utils/cards";
 
 describe("Task Hold'em decorative suits", () => {
   test("covers all four traditional suits without changing the estimation deck", () => {

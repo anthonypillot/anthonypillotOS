@@ -6,7 +6,7 @@ import type {
   taskHoldemSelectSchema,
   taskHoldemTopicSchema,
   taskHoldemVoteSchema,
-} from "../schemas/task-holdem.schema";
+} from "../schemas/room.schema";
 
 export const taskHoldemApplication: Application = {
   id: "task-holdem",

@@ -5,7 +5,7 @@ import {
   revealTaskHoldemRound, restartTaskHoldemRound, selectTaskHoldemVote, setTaskHoldemTopic, toTaskHoldemRoom, toTaskHoldemSelf,
   type TaskHoldemMutation, type TaskHoldemUpdate,
 } from "../../../server/domain/room";
-import { taskHoldemJoinSchema, taskHoldemSelectSchema } from "../../../shared/schemas/task-holdem.schema";
+import { taskHoldemJoinSchema, taskHoldemSelectSchema } from "../../../shared/schemas/room.schema";
 
 function createRoom(): TaskHoldemMutation {
   const state = createTaskHoldemState(randomUUID());

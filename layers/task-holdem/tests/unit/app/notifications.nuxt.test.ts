@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { mount, flushPromises } from "@vue/test-utils";
 import { defineComponent } from "vue";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { useTaskHoldemFeedback } from "../../../app/composables/useTaskHoldemFeedback";
-import { readTaskHoldemFeedback, saveTaskHoldemFeedback } from "../../../app/utils/task-holdem-feedback";
+import { useTaskHoldemFeedback } from "../../../app/composables/useFeedback";
+import { readTaskHoldemFeedback, saveTaskHoldemFeedback } from "../../../app/utils/feedback";
 import { createTaskHoldemState, toTaskHoldemRoom } from "../../../server/domain/room";
 
 const nativeNotification = vi.fn();

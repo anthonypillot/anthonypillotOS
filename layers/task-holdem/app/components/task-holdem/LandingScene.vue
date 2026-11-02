@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemProfile } from "../../../shared/types/task-holdem.type";
-import type { TaskHoldemSuit } from "../../utils/task-holdem";
+import type { TaskHoldemProfile } from "../../../shared/types/room.type";
+import type { TaskHoldemSuit } from "../../utils/cards";
 
 type PreviewPlayer = { name: string; avatar: TaskHoldemProfile["avatar"]; value: number; suit: TaskHoldemSuit; speech: string };
 

@@ -47,8 +47,8 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemRoom } from "../../../shared/types/task-holdem.type";
-import { formatTaskHoldemAverage, formatTaskHoldemVote } from "../../utils/task-holdem";
+import type { TaskHoldemRoom } from "../../../shared/types/room.type";
+import { formatTaskHoldemAverage, formatTaskHoldemVote } from "../../utils/cards";
 
 const props = defineProps<{ room: TaskHoldemRoom; disabled: boolean; countdown: number }>();
 const emit = defineEmits<{ reveal: []; restart: [] }>();

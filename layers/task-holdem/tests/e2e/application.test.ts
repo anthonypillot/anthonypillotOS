@@ -2,10 +2,10 @@ import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../../../server/generated/prisma/client";
 import { databaseURL, routes } from "../../../../tests/e2e/configuration";
-import { expect, test } from "./support/task-holdem";
-import { taskHoldemRoomIdSchema } from "../../shared/schemas/task-holdem.schema";
-import { installTaskHoldemFeedbackMocks } from "./support/task-holdem-feedback";
-import { taskHoldemMascots } from "../../shared/data/task-holdem-mascots";
+import { expect, test } from "./support/fixtures";
+import { taskHoldemRoomIdSchema } from "../../shared/schemas/room.schema";
+import { installTaskHoldemFeedbackMocks } from "./support/feedback";
+import { taskHoldemMascots } from "../../shared/data/mascots";
 
 test("all six pixel characters can be selected before joining", async ({ page, roomId }) => {
   await page.goto(`${routes.taskHoldem}?id=${roomId}`);

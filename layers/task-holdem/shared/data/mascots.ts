@@ -1,4 +1,4 @@
-import type { TaskHoldemProfile } from "../types/task-holdem.type";
+import type { TaskHoldemProfile } from "../types/room.type";
 
 export const taskHoldemMascots = {
   cowboy: { name: "Cowboy", description: "A steady hand for the next frontier.", color: "#fbbf24" },

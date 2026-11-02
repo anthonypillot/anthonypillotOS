@@ -47,9 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemProfile } from "../../../shared/types/task-holdem.type";
-import { taskHoldemAvatarSchema } from "../../../shared/schemas/task-holdem.schema";
-import { taskHoldemMascots } from "../../../shared/data/task-holdem-mascots";
+import type { TaskHoldemProfile } from "../../../shared/types/room.type";
+import { taskHoldemAvatarSchema } from "../../../shared/schemas/room.schema";
+import { taskHoldemMascots } from "../../../shared/data/mascots";
 
 const props = defineProps<{ profile: TaskHoldemProfile; creating: boolean; disabled: boolean; busy: boolean }>();
 const emit = defineEmits<{ submit: [profile: TaskHoldemProfile] }>();

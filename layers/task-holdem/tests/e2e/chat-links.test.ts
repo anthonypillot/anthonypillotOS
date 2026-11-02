@@ -1,5 +1,5 @@
 import { expectReadableContrast } from "../../../../tests/e2e/support/contrast";
-import { expect, test } from "./support/task-holdem";
+import { expect, test } from "./support/fixtures";
 
 test("chat recognizes web links for every player without changing the message", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");

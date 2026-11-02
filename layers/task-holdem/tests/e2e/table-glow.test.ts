@@ -1,4 +1,4 @@
-import { expect, test } from "./support/task-holdem";
+import { expect, test } from "./support/fixtures";
 
 test("the table keeps one shared glow frame through reveal and restart", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");

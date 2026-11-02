@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { taskHoldemProfileSchema, taskHoldemVoteSchema } from "../../shared/schemas/task-holdem.schema";
-import { taskHoldemDeck } from "../../shared/types/task-holdem.type";
+import { taskHoldemProfileSchema, taskHoldemVoteSchema } from "../../shared/schemas/room.schema";
+import { taskHoldemDeck } from "../../shared/types/room.type";
 import type {
   TaskHoldemBallot, TaskHoldemErrorCode, TaskHoldemHistoryEntry, TaskHoldemRoom, TaskHoldemSelf, TaskHoldemSelection, TaskHoldemTopic,
-} from "../../shared/types/task-holdem.type";
+} from "../../shared/types/room.type";
 
 const participantSchema = z.object({
   id: z.uuid(),

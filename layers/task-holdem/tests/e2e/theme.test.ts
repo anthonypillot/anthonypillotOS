@@ -1,4 +1,4 @@
-import { expect, test } from "./support/task-holdem";
+import { expect, test } from "./support/fixtures";
 import { expectReadableContrast } from "../../../../tests/e2e/support/contrast";
 
 for (const colorScheme of ["light", "dark"] as const) {

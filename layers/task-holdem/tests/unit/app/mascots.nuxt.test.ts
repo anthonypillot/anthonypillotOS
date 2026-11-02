@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { taskHoldemAvatarSchema, taskHoldemProfileSchema } from "../../../shared/schemas/task-holdem.schema";
-import { taskHoldemMascots } from "../../../shared/data/task-holdem-mascots";
-import { getTaskHoldemMascotPaths, taskHoldemMascotArt } from "../../../app/utils/task-holdem-mascots";
-import { readTaskHoldemProfile, saveTaskHoldemProfile } from "../../../app/utils/task-holdem-storage";
+import { taskHoldemAvatarSchema, taskHoldemProfileSchema } from "../../../shared/schemas/room.schema";
+import { taskHoldemMascots } from "../../../shared/data/mascots";
+import { getTaskHoldemMascotPaths, taskHoldemMascotArt } from "../../../app/utils/mascots";
+import { readTaskHoldemProfile, saveTaskHoldemProfile } from "../../../app/utils/storage";
 
 beforeEach(() => localStorage.clear());
 

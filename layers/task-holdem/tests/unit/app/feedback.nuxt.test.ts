@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { getTaskHoldemRoomCues, readTaskHoldemFeedback, saveTaskHoldemFeedback, taskHoldemSounds } from "../../../app/utils/task-holdem-feedback";
-import { getTaskHoldemMascotPaths, taskHoldemMascotArt } from "../../../app/utils/task-holdem-mascots";
-import { taskHoldemAvatarSchema } from "../../../shared/schemas/task-holdem.schema";
+import { getTaskHoldemRoomCues, readTaskHoldemFeedback, saveTaskHoldemFeedback, taskHoldemSounds } from "../../../app/utils/feedback";
+import { getTaskHoldemMascotPaths, taskHoldemMascotArt } from "../../../app/utils/mascots";
+import { taskHoldemAvatarSchema } from "../../../shared/schemas/room.schema";
 import { createTaskHoldemState, toTaskHoldemRoom } from "../../../server/domain/room";
 
 function room() {

@@ -1,5 +1,5 @@
-import { readTaskHoldemProfile, saveTaskHoldemProfile } from "../utils/task-holdem-storage";
-import type { TaskHoldemProfile } from "../../shared/types/task-holdem.type";
+import { readTaskHoldemProfile, saveTaskHoldemProfile } from "../utils/storage";
+import type { TaskHoldemProfile } from "../../shared/types/room.type";
 
 export function useTaskHoldemProfile() {
   const profile = ref<TaskHoldemProfile>(import.meta.client ? readTaskHoldemProfile() : { name: "", avatar: "cowboy" });

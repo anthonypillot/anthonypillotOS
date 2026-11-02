@@ -3,10 +3,10 @@ import { Server as Engine } from "engine.io";
 import { defineEventHandler } from "h3";
 import pg from "pg";
 import { Server } from "socket.io";
-import { closeTaskHoldemDatabase } from "../dao/task-holdem.dao";
-import { registerTaskHoldemGateway, type TaskHoldemServer } from "../realtime/task-holdem";
+import { closeTaskHoldemDatabase } from "../dao/room.dao";
+import { registerTaskHoldemGateway, type TaskHoldemServer } from "../realtime/gateway";
 import { logger } from "#server/utils/logger";
-import { taskHoldemSocketPath } from "../../shared/types/task-holdem.type";
+import { taskHoldemSocketPath } from "../../shared/types/room.type";
 
 export default defineNitroPlugin((nitro) => {
   const pool = new pg.Pool({ connectionString: process.env.POSTGRES_PRISMA_URL });

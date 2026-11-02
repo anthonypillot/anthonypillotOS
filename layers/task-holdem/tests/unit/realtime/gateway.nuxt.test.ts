@@ -4,13 +4,13 @@ import { Server } from "socket.io";
 import { Adapter, type BroadcastOptions, type Room } from "socket.io-adapter";
 import { io as connect, type Socket } from "socket.io-client";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import * as service from "../../../server/services/task-holdem.service";
-import { registerTaskHoldemGateway, type TaskHoldemServer } from "../../../server/realtime/task-holdem";
+import * as service from "../../../server/services/room.service";
+import { registerTaskHoldemGateway, type TaskHoldemServer } from "../../../server/realtime/gateway";
 import { TaskHoldemError, createTaskHoldemState, selectTaskHoldemVote, type TaskHoldemActor, type TaskHoldemUpdate } from "../../../server/domain/room";
-import { taskHoldemConfig } from "../../../server/utils/task-holdem-config";
-import { taskHoldemProtocolVersion, taskHoldemSocketPath, type TaskHoldemClientEvents, type TaskHoldemServerEvents, type TaskHoldemResult, type TaskHoldemSelf } from "../../../shared/types/task-holdem.type";
+import { taskHoldemConfig } from "../../../server/utils/config";
+import { taskHoldemProtocolVersion, taskHoldemSocketPath, type TaskHoldemClientEvents, type TaskHoldemServerEvents, type TaskHoldemResult, type TaskHoldemSelf } from "../../../shared/types/room.type";
 
-vi.mock("../../../server/services/task-holdem.service", () => ({
+vi.mock("../../../server/services/room.service", () => ({
   inspectRoom: vi.fn(), createRoom: vi.fn(), joinRoom: vi.fn(), getJoinedParticipant: vi.fn(),
   syncRoom: vi.fn(), leaveRoom: vi.fn(), selectVote: vi.fn(), revealRound: vi.fn(), restartRound: vi.fn(),
   setTopic: vi.fn(), getHistory: vi.fn(), createMessage: vi.fn(), disconnect: vi.fn(), heartbeat: vi.fn(),

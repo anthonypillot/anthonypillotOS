@@ -1,9 +1,9 @@
 import { randomBytes } from "node:crypto";
 import pg from "pg";
 import { baseURL, databaseURL } from "../../../../tests/e2e/configuration";
-import { expect, test } from "./support/task-holdem";
-import { connectTaskHoldemSocket, taskHoldemSuccess } from "./support/task-holdem-socket";
-import type { TaskHoldemJoin } from "../../shared/types/task-holdem.type";
+import { expect, test } from "./support/fixtures";
+import { connectTaskHoldemSocket, taskHoldemSuccess } from "./support/socket";
+import type { TaskHoldemJoin } from "../../shared/types/room.type";
 
 test.skip(({ browserName, isMobile }) => browserName !== "chromium" || isMobile, "Connection persistence is covered once against PostgreSQL.");
 

@@ -1,6 +1,6 @@
-import type { TaskHoldemRoom } from "../../shared/types/task-holdem.type";
-import { readTaskHoldemFeedback, saveTaskHoldemFeedback, taskHoldemSounds, type TaskHoldemCue } from "../utils/task-holdem-feedback";
-import { waitForTaskHoldemNotificationWorker } from "../utils/task-holdem-notifications";
+import type { TaskHoldemRoom } from "../../shared/types/room.type";
+import { readTaskHoldemFeedback, saveTaskHoldemFeedback, taskHoldemSounds, type TaskHoldemCue } from "../utils/feedback";
+import { waitForTaskHoldemNotificationWorker } from "../utils/notifications";
 
 const soundVolume = 0.25;
 

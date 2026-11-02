@@ -21,8 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemVote } from "../../../shared/types/task-holdem.type";
-import { formatTaskHoldemVote, getTaskHoldemCardSuit, taskHoldemCardIcons } from "../../utils/task-holdem";
+import type { TaskHoldemVote } from "../../../shared/types/room.type";
+import { formatTaskHoldemVote, getTaskHoldemCardSuit, taskHoldemCardIcons } from "../../utils/cards";
 
 defineProps<{ value: TaskHoldemVote; selected: boolean; disabled: boolean }>();
 const emit = defineEmits<{ select: [value: TaskHoldemVote] }>();

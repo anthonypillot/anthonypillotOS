@@ -3,7 +3,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, type VueWrapper } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import Topic from "../../../app/components/task-holdem/Topic.vue";
-import { taskHoldemDeck, type TaskHoldemRoom } from "../../../shared/types/task-holdem.type";
+import { taskHoldemDeck, type TaskHoldemRoom } from "../../../shared/types/room.type";
 
 type Round = TaskHoldemRoom["round"];
 type SaveTopic = (topic: string, previousTopic: string | null) => Promise<boolean>;

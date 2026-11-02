@@ -22,9 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemParticipant, TaskHoldemPhase, TaskHoldemVote } from "../../../shared/types/task-holdem.type";
-import { formatTaskHoldemVote } from "../../utils/task-holdem";
-import { taskHoldemMascots } from "../../../shared/data/task-holdem-mascots";
+import type { TaskHoldemParticipant, TaskHoldemPhase, TaskHoldemVote } from "../../../shared/types/room.type";
+import { formatTaskHoldemVote } from "../../utils/cards";
+import { taskHoldemMascots } from "../../../shared/data/mascots";
 
 defineProps<{ participant: TaskHoldemParticipant; phase: TaskHoldemPhase; current: boolean; vote: TaskHoldemVote | null; celebrating: boolean }>();
 </script>

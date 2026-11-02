@@ -1,13 +1,13 @@
 import { io, type Socket } from "socket.io-client";
-import { taskHoldemProfileSchema, taskHoldemRoomIdSchema } from "../../shared/schemas/task-holdem.schema";
+import { taskHoldemProfileSchema, taskHoldemRoomIdSchema } from "../../shared/schemas/room.schema";
 import {
   taskHoldemProtocolVersion, taskHoldemSocketPath,
   type TaskHoldemClientEvents, type TaskHoldemJoin, type TaskHoldemMessage, type TaskHoldemPreview,
   type TaskHoldemProfile, type TaskHoldemResult, type TaskHoldemRoom, type TaskHoldemSelf,
   type TaskHoldemServerEvents, type TaskHoldemSnapshot, type TaskHoldemVote,
-} from "../../shared/types/task-holdem.type";
-import { createTaskHoldemToken, readTaskHoldemToken, saveTaskHoldemToken } from "../utils/task-holdem-storage";
-import { getTaskHoldemRoomCues } from "../utils/task-holdem-feedback";
+} from "../../shared/types/room.type";
+import { createTaskHoldemToken, readTaskHoldemToken, saveTaskHoldemToken } from "../utils/storage";
+import { getTaskHoldemRoomCues } from "../utils/feedback";
 
 type RoomSocket = Socket<TaskHoldemServerEvents, TaskHoldemClientEvents>;
 

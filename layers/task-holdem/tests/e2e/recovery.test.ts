@@ -1,5 +1,5 @@
 import type { WebSocketRoute } from "@playwright/test";
-import { expect, test } from "./support/task-holdem";
+import { expect, test } from "./support/fixtures";
 
 test.skip(({ browserName, isMobile }) => browserName !== "chromium" || isMobile, "Socket admission recovery is covered once.");
 

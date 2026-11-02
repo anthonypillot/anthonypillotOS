@@ -1,5 +1,5 @@
-import { taskHoldemProfileSchema, taskHoldemTokenSchema } from "../../shared/schemas/task-holdem.schema";
-import type { TaskHoldemProfile } from "../../shared/types/task-holdem.type";
+import { taskHoldemProfileSchema, taskHoldemTokenSchema } from "../../shared/schemas/room.schema";
+import type { TaskHoldemProfile } from "../../shared/types/room.type";
 
 const profileKey = "task-holdem:v3:profile";
 const roomKey = (roomId: string) => `task-holdem:v3:room:${roomId}`;

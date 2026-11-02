@@ -1,5 +1,5 @@
 import { routes } from "../../../../tests/e2e/configuration";
-import { expect, test } from "./support/task-holdem";
+import { expect, test } from "./support/fixtures";
 
 test("lattice status follows confirmed votes without exposing unrevealed values", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");

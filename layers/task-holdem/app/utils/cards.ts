@@ -1,4 +1,4 @@
-import { taskHoldemDeck, type TaskHoldemVote } from "../../shared/types/task-holdem.type";
+import { taskHoldemDeck, type TaskHoldemVote } from "../../shared/types/room.type";
 
 export type TaskHoldemSuit = "clubs" | "diamonds" | "spades" | "hearts";
 

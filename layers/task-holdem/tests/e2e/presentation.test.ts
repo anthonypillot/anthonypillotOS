@@ -1,5 +1,5 @@
 import { routes } from "../../../../tests/e2e/configuration";
-import { expect, test } from "./support/task-holdem";
+import { expect, test } from "./support/fixtures";
 
 test("connection indicator reads Connected before and after joining a room", async ({ page, roomId, createPlayer }) => {
   await page.goto(routes.taskHoldem);

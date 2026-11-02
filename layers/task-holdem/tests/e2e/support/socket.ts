@@ -3,7 +3,7 @@ import { io, type Socket } from "socket.io-client";
 import {
   taskHoldemProtocolVersion, taskHoldemSocketPath,
   type TaskHoldemClientEvents, type TaskHoldemResult, type TaskHoldemServerEvents,
-} from "../../../shared/types/task-holdem.type";
+} from "../../../shared/types/room.type";
 
 export type TaskHoldemTestSocket = Socket<TaskHoldemServerEvents, TaskHoldemClientEvents>;
 

@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemRoom } from "../../../shared/types/task-holdem.type";
+import type { TaskHoldemRoom } from "../../../shared/types/room.type";
 
 const props = defineProps<{
   round: TaskHoldemRoom["round"];

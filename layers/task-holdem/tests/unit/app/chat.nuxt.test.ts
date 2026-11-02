@@ -1,8 +1,8 @@
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test } from "vitest";
 import Chat from "../../../app/components/task-holdem/Chat.vue";
-import { getTaskHoldemChatParts } from "../../../app/utils/task-holdem-chat";
-import type { TaskHoldemMessage } from "../../../shared/types/task-holdem.type";
+import { getTaskHoldemChatParts } from "../../../app/utils/chat";
+import type { TaskHoldemMessage } from "../../../shared/types/room.type";
 
 const cleanup: (() => void)[] = [];
 

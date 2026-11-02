@@ -1,12 +1,12 @@
 import { createHash, randomUUID } from "node:crypto";
-import * as dao from "../dao/task-holdem.dao";
+import * as dao from "../dao/room.dao";
 import {
   TaskHoldemError, createTaskHoldemState, reconcileTaskHoldemRoom, requireTaskHoldemMember,
   revealTaskHoldemRound, restartTaskHoldemRound, selectTaskHoldemVote, setTaskHoldemTopic,
   type TaskHoldemActor, type TaskHoldemMutation, type TaskHoldemUpdate,
 } from "../domain/room";
-import { taskHoldemConfig } from "../utils/task-holdem-config";
-import type { TaskHoldemJoin, TaskHoldemMessage, TaskHoldemSelection, TaskHoldemTopic } from "../../shared/types/task-holdem.type";
+import { taskHoldemConfig } from "../utils/config";
+import type { TaskHoldemJoin, TaskHoldemMessage, TaskHoldemSelection, TaskHoldemTopic } from "../../shared/types/room.type";
 
 export const inspectRoom = dao.inspectRoom;
 export const findDueRooms = dao.findDueRooms;

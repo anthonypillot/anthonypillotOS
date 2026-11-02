@@ -4,13 +4,13 @@ import { io, type Socket } from "socket.io-client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../../../server/generated/prisma/client";
 import { baseURL, databaseURL, secondaryBaseURL } from "../../../../tests/e2e/configuration";
-import { expect, test } from "./support/task-holdem";
+import { expect, test } from "./support/fixtures";
 import {
   connectTaskHoldemSocket, createTaskHoldemSocket, taskHoldemSuccess, type TaskHoldemTestSocket,
-} from "./support/task-holdem-socket";
+} from "./support/socket";
 import {
   taskHoldemProtocolVersion, taskHoldemSocketPath, type TaskHoldemRoom, type TaskHoldemSnapshot, type TaskHoldemVote,
-} from "../../shared/types/task-holdem.type";
+} from "../../shared/types/room.type";
 
 type SocketPlayerOptions = { roomId: string; name: string; url?: string; token?: string };
 

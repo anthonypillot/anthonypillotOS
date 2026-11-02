@@ -3,7 +3,7 @@ import { nextTick } from "vue";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import LatticeLoader from "../../../../../app/components/base/LatticeLoader.vue";
 import PokerPlayer from "../../../app/components/task-holdem/PokerPlayer.vue";
-import type { TaskHoldemParticipant, TaskHoldemPhase } from "../../../shared/types/task-holdem.type";
+import type { TaskHoldemParticipant, TaskHoldemPhase } from "../../../shared/types/room.type";
 
 const cleanup: (() => void)[] = [];
 const observe = vi.fn();

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { TaskHoldemRoom } from "../../shared/types/task-holdem.type";
+import type { TaskHoldemRoom } from "../../shared/types/room.type";
 
 export const taskHoldemFeedbackSchema = z.object({
   muted: z.boolean(),

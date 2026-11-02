@@ -1,20 +1,20 @@
 import { z } from "zod";
 import type { Server, Socket } from "socket.io";
-import * as service from "../services/task-holdem.service";
+import * as service from "../services/room.service";
 import {
   TaskHoldemError, toTaskHoldemRoom, toTaskHoldemSelf,
   type TaskHoldemActor, type TaskHoldemUpdate,
 } from "../domain/room";
 import { logger } from "#server/utils/logger";
-import { taskHoldemConfig } from "../utils/task-holdem-config";
+import { taskHoldemConfig } from "../utils/config";
 import {
   taskHoldemEmptySchema, taskHoldemInspectSchema, taskHoldemJoinSchema,
   taskHoldemMessageSchema, taskHoldemRoundSchema, taskHoldemSelectSchema, taskHoldemTopicSchema, taskHoldemHistorySchema,
-} from "../../shared/schemas/task-holdem.schema";
+} from "../../shared/schemas/room.schema";
 import {
   taskHoldemProtocolVersion,
   type TaskHoldemAck, type TaskHoldemClientEvents, type TaskHoldemServerEvents, type TaskHoldemSnapshot,
-} from "../../shared/types/task-holdem.type";
+} from "../../shared/types/room.type";
 
 type TaskHoldemSocketData = { actor: TaskHoldemActor | null };
 export type TaskHoldemServer = Server<TaskHoldemClientEvents, TaskHoldemServerEvents, Record<string, never>, TaskHoldemSocketData>;

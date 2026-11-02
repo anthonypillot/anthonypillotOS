@@ -46,8 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemHistoryEntry, TaskHoldemHistoryPage } from "../../../shared/types/task-holdem.type";
-import { formatTaskHoldemAverage, formatTaskHoldemVote } from "../../utils/task-holdem";
+import type { TaskHoldemHistoryEntry, TaskHoldemHistoryPage } from "../../../shared/types/room.type";
+import { formatTaskHoldemAverage, formatTaskHoldemVote } from "../../utils/cards";
 
 const props = defineProps<{ count: number; load: (before?: number) => Promise<TaskHoldemHistoryPage | undefined> }>();
 const open = ref(false);

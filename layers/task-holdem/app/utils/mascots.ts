@@ -1,4 +1,4 @@
-import type { TaskHoldemProfile } from "../../shared/types/task-holdem.type";
+import type { TaskHoldemProfile } from "../../shared/types/room.type";
 
 type MascotArt = { rows: string[]; colors: Record<string, string> };
 

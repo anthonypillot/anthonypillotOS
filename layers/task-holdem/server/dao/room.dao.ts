@@ -3,7 +3,7 @@ import {
   TaskHoldemError, getTaskHoldemAverage, taskHoldemBallotSchema, taskHoldemStateSchema,
   type TaskHoldemMutation, type TaskHoldemState, type TaskHoldemUpdate,
 } from "../domain/room";
-import type { TaskHoldemHistoryPage } from "../../shared/types/task-holdem.type";
+import type { TaskHoldemHistoryPage } from "../../shared/types/room.type";
 
 const prisma = createPrismaClient();
 

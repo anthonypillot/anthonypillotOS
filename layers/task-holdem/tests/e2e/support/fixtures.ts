@@ -4,9 +4,9 @@ import { PrismaClient } from "../../../../../server/generated/prisma/client";
 import type { BrowserContext, Page } from "@playwright/test";
 import { databaseURL, routes } from "../../../../../tests/e2e/configuration";
 import { capturePageDiagnostics, expect, test as base } from "../../../../../tests/e2e/support/fixtures";
-import { createTaskHoldemTestRoom } from "./task-holdem-socket";
-import type { TaskHoldemProfile } from "../../../shared/types/task-holdem.type";
-import { taskHoldemMascots } from "../../../shared/data/task-holdem-mascots";
+import { createTaskHoldemTestRoom } from "./socket";
+import type { TaskHoldemProfile } from "../../../shared/types/room.type";
+import { taskHoldemMascots } from "../../../shared/data/mascots";
 
 type Avatar = TaskHoldemProfile["avatar"];
 

@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemParticipant } from "../../../shared/types/task-holdem.type";
+import type { TaskHoldemParticipant } from "../../../shared/types/room.type";
 
 defineProps<{ participant: TaskHoldemParticipant; disabled: boolean }>();
 const emit = defineEmits<{ leave: [] }>();
