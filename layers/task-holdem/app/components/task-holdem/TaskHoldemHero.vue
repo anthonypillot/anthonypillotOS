@@ -10,17 +10,7 @@
         </BaseSpecularButton>
       </div>
 
-      <div aria-hidden="true" class="relative mx-auto w-full max-w-lg text-center" data-testid="task-holdem-preview">
-        <div class="my-8 flex justify-center gap-3">
-          <div v-for="(card, index) in previewCards" :key="card.name" class="flex flex-col items-center gap-3">
-            <div class="relative flex h-24 w-16 items-center justify-center rounded-xl border text-3xl font-semibold" :class="index === 1 ? '-translate-y-2 border-primary/40 bg-primary/15 text-highlighted shadow-xl shadow-primary/10' : 'border-default bg-default text-primary'">
-              <TaskHoldemSuit :suit="card.suit" class="absolute left-2 top-2 text-xs" />{{ card.value }}
-            </div>
-            <span class="text-[11px] text-muted">{{ card.name }}</span>
-          </div>
-        </div>
-        <p class="text-sm font-medium text-default">Everyone has a seat at the table.</p>
-      </div>
+      <TaskHoldemLandingScene />
     </div>
 
     <div class="mx-auto mt-20 grid max-w-6xl gap-8 border-t border-default pt-10 sm:mt-24 sm:grid-cols-3">
@@ -34,13 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemSuit } from "../../utils/task-holdem";
-
-const previewCards = [
-  { name: "Alex", value: 5, suit: "clubs" },
-  { name: "Sam", value: 8, suit: "hearts" },
-  { name: "Jordan", value: 5, suit: "diamonds" },
-] satisfies { name: string; value: number; suit: TaskHoldemSuit }[];
 const features = [
   { title: "A room in seconds", description: "Create a session and share a single invitation link. Your team is one click away.", icon: "i-heroicons-user-group" },
   { title: "Think independently", description: "Keep votes private until the reveal. Give every opinion the space it deserves.", icon: "i-heroicons-lock-closed" },

@@ -24,23 +24,74 @@ test("landing page links to the multiplayer application", async ({ page }) => {
   }
 });
 
-test("landing illustration keeps only the cards, names and caption without surrounding frames", async ({ page }) => {
+test("landing illustration brings three application characters together without a surrounding frame", async ({ page }) => {
   await page.goto(routes.taskHoldemLanding);
   const preview = page.getByTestId("task-holdem-preview");
   await expect(preview).toHaveCSS("border-top-width", "0px");
   await expect(preview).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(preview).toHaveCSS("box-shadow", "none");
-  await expect(preview.locator(":scope > *")).toHaveCount(2);
-  const cards = preview.locator(":scope > div > div");
+  await expect(preview).toHaveAttribute("aria-hidden", "true");
+  await expect(preview.locator("a, button, input, [tabindex]")).toHaveCount(0);
+  const players = preview.getByTestId("preview-player");
+  await expect(players).toHaveCount(3);
+  expect(await players.locator("[data-mascot]").evaluateAll(avatars => avatars.map(avatar => avatar.getAttribute("data-mascot")))).toEqual(["cowboy", "princess", "robot"]);
+  await expect(players.locator(".scene-name")).toHaveText(["Alex", "Sam", "Jordan"]);
+  await expect(preview.getByTestId("preview-speech")).toHaveText(["A 5 for me.", "Hmm… maybe 8?", "Let's compare!"]);
+  for (const bubble of await preview.getByTestId("preview-speech").all()) await expect(bubble).toHaveCSS("border-radius", "16px");
+  const cards = preview.getByTestId("preview-card");
   await expect(cards).toHaveCount(3);
-  await expect(cards).toHaveText([/5\s*Alex$/u, /8\s*Sam$/u, /5\s*Jordan$/u]);
-  await expect(cards.locator(":scope > span")).toHaveText(["Alex", "Sam", "Jordan"]);
-  for (const card of await cards.all()) await expect(card.locator(":scope > div")).toHaveCSS("border-top-width", "1px");
+  await expect(cards).toHaveText([/5$/u, /8$/u, /5$/u]);
+  for (const card of await cards.all()) await expect(card).toHaveCSS("border-top-width", "1px");
   await expect(preview.getByText("Everyone has a seat at the table.", { exact: true })).toBeVisible();
-  await expect(preview.locator("svg, .iconify, img")).toHaveCount(0);
   for (const text of ["Independent votes. Shared understanding.", "The next great conversation", "Live", "One link. Your whole team."]) {
     await expect(page.getByText(text, { exact: true })).toHaveCount(0);
   }
+});
+
+test("landing conversation keeps its bubbles above the avatars and fits narrow screens", async ({ page }) => {
+  await page.goto(routes.taskHoldemLanding);
+  await page.evaluate(() => document.fonts.ready);
+  const preview = page.getByTestId("task-holdem-preview");
+  const viewport = page.viewportSize()!;
+  for (const width of new Set([320, viewport.width])) {
+    await page.setViewportSize({ width, height: viewport.height });
+    const bounds = (await preview.boundingBox())!;
+    let previousRight = bounds.x;
+    for (const player of await preview.getByTestId("preview-player").all()) {
+      const bubble = (await player.getByTestId("preview-speech").boundingBox())!;
+      const mascot = (await player.locator("[data-mascot]").boundingBox())!;
+      expect(bubble.y + bubble.height).toBeLessThan(mascot.y);
+      expect(bubble.x).toBeGreaterThanOrEqual(previousRight);
+      previousRight = bubble.x + bubble.width;
+      for (const element of [player.getByTestId("preview-speech"), player.locator("[data-mascot]"), player.getByTestId("preview-card")]) {
+        const box = (await element.boundingBox())!;
+        expect(box.x).toBeGreaterThanOrEqual(bounds.x);
+        expect(box.x + box.width).toBeLessThanOrEqual(bounds.x + bounds.width);
+      }
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+  }
+});
+
+test("landing conversation respects reduced motion and pauses outside the viewport", async ({ page }) => {
+  await page.setViewportSize({ width: page.viewportSize()!.width, height: 600 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto(routes.taskHoldemLanding);
+  const preview = page.getByTestId("task-holdem-preview");
+  await preview.scrollIntoViewIfNeeded();
+  await expect(preview).toHaveAttribute("data-running", "true");
+  await expect(preview.getByTestId("preview-speech").first()).toHaveCSS("animation-play-state", "running");
+  await expect(preview.locator(".mascot-idle").first()).toHaveCSS("animation-play-state", "running");
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(preview).toHaveAttribute("data-running", "false");
+  await expect(preview.getByTestId("preview-speech").first()).toHaveCSS("animation-play-state", "paused");
+  await expect(preview.locator(".mascot-idle").first()).toHaveCSS("animation-play-state", "paused");
+  await preview.scrollIntoViewIfNeeded();
+  await expect(preview).toHaveAttribute("data-running", "true");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(preview.getByTestId("preview-speech").first()).toHaveCSS("animation-name", "none");
+  await expect(preview.locator(".mascot-idle").first()).toHaveCSS("animation-name", "none");
+  await expect(preview.locator(".mascot-eyes").first()).toHaveCSS("animation-name", "none");
 });
 
 test("landing introduction is centered below the desktop breakpoint", async ({ page }) => {
