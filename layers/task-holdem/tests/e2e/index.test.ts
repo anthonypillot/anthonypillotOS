@@ -14,6 +14,14 @@ test("landing page links to the multiplayer application", async ({ page }) => {
   await expect(page.getByText("Free to use. No accounts. Just your team.", { exact: true })).toHaveCount(0);
   await expect(page.getByTestId("task-holdem-launch")).toHaveAttribute("data-auto-animate", "true");
   await expect(page.getByTestId("task-holdem-launch").locator(".iconify")).toHaveCount(0);
+  const symbols = page.locator(".holdem-hero [data-suit]");
+  await expect(symbols).toHaveCount(3);
+  const primaryColor = await page.getByText("More alignment.", { exact: true }).evaluate(element => getComputedStyle(element).color);
+  for (const symbol of await symbols.all()) {
+    await expect(symbol).toHaveCSS("color", primaryColor);
+    await expect(symbol).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(symbol).toHaveCSS("-webkit-text-stroke-width", "0px");
+  }
 });
 
 test("landing introduction is centered below the desktop breakpoint", async ({ page }) => {

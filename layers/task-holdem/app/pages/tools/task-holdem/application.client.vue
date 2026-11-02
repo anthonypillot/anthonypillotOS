@@ -35,9 +35,9 @@
           <p class="mt-5 max-w-sm text-sm leading-7 text-muted">Give every perspective a seat. Vote independently, reveal together, and spend more time on what matters.</p>
         </div>
         <div class="my-10 flex items-center justify-center gap-4" aria-hidden="true">
-          <div class="intro-card -rotate-12">3<TaskHoldemSuit suit="clubs" class="text-base" /></div>
-          <div class="intro-card -translate-y-5 border-primary/40 bg-primary/10">5<TaskHoldemSuit suit="spades" class="text-base" /></div>
-          <div class="intro-card rotate-12">8<TaskHoldemSuit suit="diamonds" class="text-base" /></div>
+          <div class="intro-card -rotate-12">3<TaskHoldemSuit suit="clubs" class="text-sm" /></div>
+          <div class="intro-card -translate-y-5 border-primary/40 bg-primary/10">5<TaskHoldemSuit suit="spades" class="text-sm" /></div>
+          <div class="intro-card rotate-12">8<TaskHoldemSuit suit="diamonds" class="text-sm" /></div>
         </div>
         <div class="flex flex-wrap gap-4 text-xs text-muted"><span class="flex items-center gap-2"><UIcon name="i-heroicons-user-circle" class="size-4" />No account needed</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-bolt" class="size-4" />Real-time collaboration</span><span class="flex items-center gap-2"><UIcon name="i-heroicons-lock-closed" class="size-4" />Private votes</span></div>
       </div>

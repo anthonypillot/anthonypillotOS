@@ -15,6 +15,15 @@ test("admission lists its benefits in the requested order", async ({ page, roomI
   const account = page.getByText("No account needed", { exact: true });
   await expect(account).toHaveCount(1);
   await expect(account.locator("..").locator(":scope > span")).toHaveText(["No account needed", "Real-time collaboration", "Private votes"]);
+  const symbols = page.locator(".intro-card [data-suit]");
+  await expect(symbols).toHaveCount(3);
+  const primaryColor = await page.getByText("a conversation.", { exact: true }).evaluate(element => getComputedStyle(element).color);
+  for (const symbol of await symbols.all()) {
+    await expect(symbol).toHaveCSS("color", primaryColor);
+    await expect(symbol).toHaveCSS("font-size", "14px");
+    await expect(symbol).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(symbol).toHaveCSS("-webkit-text-stroke-width", "0px");
+  }
   if ((page.viewportSize()?.width ?? 0) >= 1024) {
     await expect(teamwork).toBeVisible();
     await expect(account).toBeVisible();
@@ -57,17 +66,24 @@ test("the six-column card grid has more breathing room than the single-row deck"
   expect(last!.y).toBeCloseTo(firstWide!.y, 0);
 });
 
-test("all card suits use traditional ink colors and the selected marker is white", async ({ roomId, createPlayer }) => {
+test("all card suits use the original indigo styling and the selected marker stays white", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");
+  const primaryColor = await alice.page.getByRole("heading", { name: "Current topic", exact: true }).evaluate(element => getComputedStyle(element).color);
+  const fontFamily = await alice.page.locator("body").evaluate(element => getComputedStyle(element).fontFamily);
   for (const suit of ["clubs", "spades", "diamonds", "hearts"]) {
     const symbols = alice.page.locator(`[data-suit="${suit}"]`);
     expect(await symbols.count()).toBeGreaterThan(0);
     for (const symbol of await symbols.all()) {
-      await expect(symbol).toHaveCSS("color", suit === "diamonds" || suit === "hearts" ? "rgb(220, 38, 38)" : "rgb(0, 0, 0)");
+      await expect(symbol).toHaveCSS("color", primaryColor);
       await expect(symbol).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await expect(symbol).toHaveCSS("-webkit-text-stroke-width", "0px");
+      await expect(symbol).toHaveCSS("font-family", fontFamily);
     }
   }
-  await expect(alice.page.getByRole("region", { name: "Your cards", exact: true }).locator("[data-suit]").first()).toHaveCSS("font-size", "16px");
+  const voteSymbol = alice.page.getByRole("region", { name: "Your cards", exact: true }).locator("[data-suit]").first();
+  await expect(voteSymbol).toHaveCSS("font-size", "9px");
+  await expect(voteSymbol).toHaveCSS("opacity", "0.6");
+  await expect(alice.page.getByRole("region", { name: "Current round", exact: true }).locator("[data-suit]").first()).toHaveCSS("font-size", "16px");
   await alice.vote(8);
   const marker = alice.page.getByTestId("selected-card-marker");
   await expect(marker).toHaveCSS("color", "rgb(255, 255, 255)");
