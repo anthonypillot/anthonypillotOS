@@ -105,6 +105,7 @@
                 v-for="participant in room.participants"
                 :key="participant.id"
                 :participant="participant"
+                :phase="room.round.phase"
                 :current="participant.id === self.participantId"
                 :celebrating="room.round.phase === 'revealed'"
                 :vote="room.round.ballots?.find(ballot => ballot.participantId === participant.id)?.value ?? null"
