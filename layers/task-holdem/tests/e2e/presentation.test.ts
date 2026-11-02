@@ -24,9 +24,15 @@ test("admission lists its benefits in the requested order", async ({ page, roomI
   }
 });
 
-test("workspace starts two rem higher while clearing the floating navigation", async ({ page }) => {
+test("workspace keeps the base background and clears the floating navigation", async ({ page }) => {
   await page.goto(routes.taskHoldem);
-  const workspace = page.locator(".task-workspace");
+  const workspace = page.locator("main > section");
+  await expect(workspace).not.toHaveClass(/\btask-workspace\b/);
+  const backdrop = await workspace.evaluate((element) => {
+    const style = getComputedStyle(element, "::before");
+    return { content: style.content, background: style.backgroundImage };
+  });
+  expect(backdrop).toEqual({ content: "none", background: "none" });
   await expect(workspace).toHaveCSS("padding-top", (page.viewportSize()?.width ?? 0) < 640 ? "96px" : "112px");
   const navigation = await page.getByRole("navigation", { name: "Global", exact: true }).boundingBox();
   const heading = await workspace.locator(":scope > header").boundingBox();

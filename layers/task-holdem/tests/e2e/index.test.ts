@@ -13,6 +13,35 @@ test("landing page links to the multiplayer application", async ({ page }) => {
   await expect(page.getByText("A shared perspective on what's next", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Free to use. No accounts. Just your team.", { exact: true })).toHaveCount(0);
   await expect(page.getByTestId("task-holdem-launch")).toHaveAttribute("data-auto-animate", "true");
+  await expect(page.getByTestId("task-holdem-launch").locator(".iconify")).toHaveCount(0);
+});
+
+test("landing introduction is centered below the desktop breakpoint", async ({ page }) => {
+  await page.goto(routes.taskHoldemLanding);
+  await page.evaluate(() => document.fonts.ready);
+  const brand = page.getByRole("heading", { name: "TaskHold’em", level: 1 }).locator("..");
+  const introduction = brand.locator("..");
+  const viewport = page.viewportSize()!;
+  for (const width of new Set([320, viewport.width])) {
+    await page.setViewportSize({ width, height: viewport.height });
+    const centered = width < 1024;
+    await expect(introduction).toHaveCSS("text-align", centered ? "center" : "left");
+    await expect(brand).toHaveCSS("justify-content", centered ? "center" : "flex-start");
+
+    const bounds = await introduction.boundingBox();
+    if (centered) {
+      expect(bounds!.x + bounds!.width / 2).toBeCloseTo(width / 2, 0);
+    }
+    for (const element of [introduction.locator(":scope > p"), page.getByTestId("task-holdem-launch")]) {
+      const elementBounds = await element.boundingBox();
+      if (centered) {
+        expect(elementBounds!.x + elementBounds!.width / 2).toBeCloseTo(bounds!.x + bounds!.width / 2, 0);
+      } else {
+        expect(elementBounds!.x).toBeCloseTo(bounds!.x, 0);
+      }
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+  }
 });
 
 test("the specular launch keeps keyboard navigation when WebGL is unavailable", async ({ page }) => {

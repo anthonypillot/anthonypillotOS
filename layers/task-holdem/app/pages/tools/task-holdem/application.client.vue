@@ -1,5 +1,5 @@
 <template>
-  <section class="task-workspace relative isolate mx-auto w-full max-w-7xl px-4 pb-12 pt-24 sm:px-6 sm:pt-28 lg:px-8">
+  <section class="relative isolate mx-auto w-full max-w-7xl px-4 pb-12 pt-24 sm:px-6 sm:pt-28 lg:px-8">
     <header class="mb-8 flex flex-col justify-between gap-5 border-b border-default pb-6 sm:flex-row sm:items-center">
       <div class="flex min-w-0 items-center gap-3">
         <NuxtImg class="size-11 shrink-0" :src="taskHoldemApplication.faviconDark" alt="" />
@@ -148,15 +148,6 @@ async function submitChat(content: string): Promise<void> {
 </script>
 
 <style scoped>
-.task-workspace::before {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background: radial-gradient(ellipse at 30% 5%, rgb(99 102 241 / 6%), transparent 50%);
-  pointer-events: none;
-  content: "";
-}
-
 .join-intro {
   background: radial-gradient(ellipse at 50% 60%, rgb(99 102 241 / 10%), transparent 70%);
 }

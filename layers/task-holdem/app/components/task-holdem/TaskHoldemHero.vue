@@ -1,12 +1,12 @@
 <template>
   <section class="holdem-hero relative isolate overflow-hidden px-5 pb-20 pt-36 sm:px-8 sm:pb-28 sm:pt-44">
-    <div class="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
-      <div>
-        <div class="flex items-center gap-4"><NuxtImg :src="taskHoldemApplication.faviconDark" alt="" class="size-16 sm:size-20" /><h1 class="text-3xl font-semibold tracking-tight text-highlighted sm:text-4xl">{{ taskHoldemApplication.name }}</h1></div>
+    <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
+      <div class="text-center lg:text-left">
+        <div class="flex items-center justify-center gap-4 lg:justify-start"><NuxtImg :src="taskHoldemApplication.faviconDark" alt="" class="size-16 sm:size-20" /><h1 class="text-3xl font-semibold tracking-tight text-highlighted sm:text-4xl">{{ taskHoldemApplication.name }}</h1></div>
         <h2 class="mt-5 text-5xl font-semibold leading-[1.08] tracking-tight text-highlighted sm:text-6xl">Less guesswork.<br><span class="text-primary">More alignment.</span></h2>
-        <p class="mt-6 max-w-lg text-base leading-8 text-muted">Good estimates aren't a solo act. Bring your team together for planning poker that makes space for every perspective.</p>
+        <p class="mx-auto mt-6 max-w-lg text-base leading-8 text-muted lg:mx-0">Good estimates aren't a solo act. Bring your team together for planning poker that makes space for every perspective.</p>
         <BaseSpecularButton :to="taskHoldemApplication.path" :auto-animate="true" class="mt-8" data-testid="task-holdem-launch">
-          Start a planning session <UIcon name="i-heroicons-arrow-right" class="size-5 shrink-0" aria-hidden="true" />
+          Start a planning session
         </BaseSpecularButton>
       </div>
 
