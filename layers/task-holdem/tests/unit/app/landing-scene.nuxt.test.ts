@@ -73,7 +73,7 @@ describe("Task Hold'em landing scene", () => {
     const wrapper = await mountScene();
     const removeListener = vi.spyOn(document, "removeEventListener");
     wrapper.unmount();
-    expect(disconnect).toHaveBeenCalledOnce();
+    expect(disconnect).toHaveBeenCalledTimes(observe.mock.calls.length);
     expect(removeListener).toHaveBeenCalledWith("visibilitychange", expect.any(Function));
   });
 

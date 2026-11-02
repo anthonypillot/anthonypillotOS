@@ -81,17 +81,18 @@ test("landing conversation respects reduced motion and pauses outside the viewpo
   await preview.scrollIntoViewIfNeeded();
   await expect(preview).toHaveAttribute("data-running", "true");
   await expect(preview.getByTestId("preview-speech").first()).toHaveCSS("animation-play-state", "running");
-  await expect(preview.locator(".mascot-idle").first()).toHaveCSS("animation-play-state", "running");
+  await expect(preview.locator("[data-mascot]").first()).toHaveAttribute("data-running", "true");
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect(preview).toHaveAttribute("data-running", "false");
   await expect(preview.getByTestId("preview-speech").first()).toHaveCSS("animation-play-state", "paused");
-  await expect(preview.locator(".mascot-idle").first()).toHaveCSS("animation-play-state", "paused");
+  await expect(preview.locator("[data-mascot]").first()).toHaveAttribute("data-running", "false");
+  await expect(preview.locator("[data-mascot]").first()).toHaveAttribute("data-pose", "rest");
   await preview.scrollIntoViewIfNeeded();
   await expect(preview).toHaveAttribute("data-running", "true");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(preview.getByTestId("preview-speech").first()).toHaveCSS("animation-name", "none");
-  await expect(preview.locator(".mascot-idle").first()).toHaveCSS("animation-name", "none");
-  await expect(preview.locator(".mascot-eyes").first()).toHaveCSS("animation-name", "none");
+  await expect(preview.locator("[data-mascot]").first()).toHaveAttribute("data-running", "false");
+  await expect(preview.locator("[data-mascot]").first()).toHaveAttribute("data-pose", "rest");
 });
 
 test("landing introduction is centered below the desktop breakpoint", async ({ page }) => {

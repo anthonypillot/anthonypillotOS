@@ -5,7 +5,7 @@
       <div class="scene-players">
         <div v-for="player in players" :key="player.name" class="scene-player" data-testid="preview-player">
           <div class="scene-bubble text-xs font-medium text-toned" data-testid="preview-speech">{{ player.speech }}</div>
-          <TaskHoldemMascot :avatar="player.avatar" class="scene-mascot" />
+          <TaskHoldemMascot :avatar="player.avatar" :active="running" class="scene-mascot" />
           <span class="scene-name text-xs text-muted">{{ player.name }}</span>
           <div class="scene-card relative flex items-center justify-center rounded-xl border text-3xl font-semibold text-highlighted" data-testid="preview-card">
             <TaskHoldemSuit :suit="player.suit" class="absolute left-2 top-2 text-[10px]" />
@@ -24,6 +24,8 @@ import type { TaskHoldemProfile } from "../../../shared/types/room.type";
 import type { TaskHoldemSuit } from "../../utils/cards";
 
 type PreviewPlayer = { name: string; avatar: TaskHoldemProfile["avatar"]; value: number; suit: TaskHoldemSuit; speech: string };
+
+provideTaskHoldemMascots();
 
 const players = [
   { name: "Anthony", avatar: "cowboy", value: 5, suit: "clubs", speech: "A 5 for me." },
@@ -152,11 +154,7 @@ onBeforeUnmount(() => {
   transform: rotate(var(--seat-tilt));
 }
 .scene-player:nth-child(2) .scene-card { border-color: color-mix(in oklab, var(--ui-primary) 65%, transparent); background: color-mix(in oklab, var(--ui-primary) 12%, var(--ui-bg-elevated)); }
-.landing-scene :deep(.mascot-idle),
-.landing-scene :deep(.mascot-eyes) { animation-play-state: paused; }
-.landing-scene[data-running="true"] .scene-bubble,
-.landing-scene[data-running="true"] :deep(.mascot-idle),
-.landing-scene[data-running="true"] :deep(.mascot-eyes) { animation-play-state: running; }
+.landing-scene[data-running="true"] .scene-bubble { animation-play-state: running; }
 
 @keyframes scene-conversation {
   0%, 100% { transform: translateY(0) rotate(var(--speech-tilt)); }

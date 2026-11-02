@@ -1,11 +1,10 @@
 import type { TaskHoldemProfile } from "../../shared/types/room.type";
-
-type MascotArt = { rows: string[]; colors: Record<string, string> };
+import { getTaskHoldemMascotPixels, taskHoldemMascotPropColors, type TaskHoldemMascotArt, type TaskHoldemMascotPose } from "./mascot-poses";
 
 const outline = "#172338";
 const eyes = "#172338";
 
-export const taskHoldemMascotArt: Record<TaskHoldemProfile["avatar"], MascotArt> = {
+export const taskHoldemMascotArt: Record<TaskHoldemProfile["avatar"], TaskHoldemMascotArt> = {
   cowboy: {
     colors: { o: outline, t: "#b7793b", l: "#e5b56b", h: "#704731", f: "#efbd8f", s: "#d89566", e: eyes, r: "#ef6461", j: "#60a5fa", d: "#38668e", b: "#805138", a: "#fde68a" },
     rows: [
@@ -134,16 +133,21 @@ export const taskHoldemMascotArt: Record<TaskHoldemProfile["avatar"], MascotArt>
   },
 };
 
-export function getTaskHoldemMascotPaths(avatar: TaskHoldemProfile["avatar"]) {
+type MascotPath = { ink: string; color: string; eyes: boolean; path: string };
+const frames = new Map<string, MascotPath[]>();
+
+export function getTaskHoldemMascotPaths(avatar: TaskHoldemProfile["avatar"], pose: TaskHoldemMascotPose = "rest"): MascotPath[] {
+  const key = `${avatar}:${pose}`;
+  const cached = frames.get(key);
+  if (cached) return cached;
   const art = taskHoldemMascotArt[avatar];
   const pixels = new Map<string, string[]>();
-  art.rows.forEach((row, y) => {
-    [...row].forEach((color, x) => {
-      if (!art.colors[color]) return;
-      const path = pixels.get(color) ?? [];
-      path.push(`M${x} ${y}h1v1h-1z`);
-      pixels.set(color, path);
-    });
-  });
-  return [...pixels].map(([color, paths]) => ({ color: art.colors[color], eyes: color === "e", path: paths.join("") }));
+  for (const { x, y, ink } of getTaskHoldemMascotPixels(art, avatar, pose)) {
+    const path = pixels.get(ink) ?? [];
+    path.push(`M${x} ${y}h1v1h-1z`);
+    pixels.set(ink, path);
+  }
+  const paths = [...pixels].map(([ink, parts]) => ({ ink, color: art.colors[ink] ?? taskHoldemMascotPropColors[ink] ?? outline, eyes: ink === "e", path: parts.join("") }));
+  frames.set(key, paths);
+  return paths;
 }

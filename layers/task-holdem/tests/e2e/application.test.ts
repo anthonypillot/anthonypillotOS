@@ -309,9 +309,11 @@ test("pixel companions respect reduced motion and remember the chosen character"
   const alice = await createPlayer(roomId, "Alice", "robot");
   const companion = alice.player("Alice").getByRole("img", { name: "Robot", exact: true });
   await expect(companion).toBeVisible();
-  expect(await companion.locator(".mascot-idle").evaluate(node => getComputedStyle(node).animationName)).toBe("none");
+  await companion.scrollIntoViewIfNeeded();
+  await expect(companion).toHaveAttribute("data-running", "false");
+  await expect(companion).toHaveAttribute("data-pose", "rest");
   await alice.page.emulateMedia({ reducedMotion: "no-preference" });
-  expect(await companion.locator(".mascot-idle").evaluate(node => getComputedStyle(node).animationName)).not.toBe("none");
+  await expect(companion).toHaveAttribute("data-running", "true");
   await alice.page.reload();
   await expect(alice.player("Alice").getByRole("img", { name: "Robot", exact: true })).toBeVisible();
 });
