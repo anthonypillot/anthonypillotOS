@@ -20,9 +20,14 @@
         class="flex h-64 flex-col gap-4 overflow-y-auto p-5"
       >
         <p v-if="messages.length === 0" class="my-auto text-center text-xs leading-6 text-muted">No messages yet<br>Keep the conversation going.</p>
-        <div v-for="message in messages" :key="message.id" class="min-w-0 text-sm">
+        <div v-for="message in renderedMessages" :key="message.id" class="min-w-0 text-sm">
           <span class="text-xs font-medium text-primary">{{ message.author.name }}:</span>
-          <p class="mt-1 whitespace-pre-wrap break-words text-toned">{{ message.content }}</p>
+          <p class="mt-1 whitespace-pre-wrap break-words text-toned">
+            <template v-for="(part, index) in message.parts" :key="index">
+              <a v-if="part.href" :href="part.href" target="_blank" rel="noopener noreferrer" :aria-label="`${part.text} (opens in a new tab)`" class="break-all rounded-sm text-primary underline underline-offset-4 hover:text-highlighted">{{ part.text }}</a>
+              <template v-else>{{ part.text }}</template>
+            </template>
+          </p>
         </div>
       </div>
       <form class="space-y-3 border-t border-default p-4" @submit.prevent="submit">
@@ -38,12 +43,14 @@
 
 <script setup lang="ts">
 import type { TaskHoldemMessage } from "../../../shared/types/task-holdem.type";
+import { getTaskHoldemChatParts } from "../../utils/task-holdem-chat";
 
 const props = defineProps<{ messages: TaskHoldemMessage[]; disabled: boolean; sending: boolean }>();
 const draft = defineModel<string>({ default: "" });
 const emit = defineEmits<{ submit: [content: string] }>();
 const open = ref(false);
 const messageList = ref<HTMLElement | null>(null);
+const renderedMessages = computed(() => props.messages.map(message => ({ ...message, parts: getTaskHoldemChatParts(message.content) })));
 
 function submit(): void {
   if (!props.disabled && !props.sending && draft.value.trim()) emit("submit", draft.value.trim());
