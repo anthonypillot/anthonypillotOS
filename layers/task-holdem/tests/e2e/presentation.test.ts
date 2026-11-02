@@ -1,6 +1,13 @@
 import { routes } from "../../../../tests/e2e/configuration";
 import { expect, test } from "./support/task-holdem";
 
+test("connection indicator reads Connected before and after joining a room", async ({ page, roomId, createPlayer }) => {
+  await page.goto(routes.taskHoldem);
+  await expect(page.getByTestId("connection-status")).toHaveText("Connected");
+  const alice = await createPlayer(roomId, "Alice");
+  await expect(alice.page.getByTestId("connection-status")).toHaveText("Connected");
+});
+
 test("admission lists its benefits in the requested order", async ({ page, roomId }) => {
   await page.goto(`${routes.taskHoldem}?id=${roomId}`);
   await expect(page.getByText("Made for your next planning session", { exact: true })).toHaveCount(0);

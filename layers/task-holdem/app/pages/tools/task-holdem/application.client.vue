@@ -138,7 +138,7 @@ const chatDraft = ref("");
 const connectionLabel = computed(() => {
   if (isConnected.value && (isLoading.value || (isBusy.value && !isAdmitted.value))) return "Syncing room…";
   if (isConnected.value && isJoined.value && !isAdmitted.value) return "Rejoin required";
-  return ({ connecting: "Connecting…", connected: "Live", reconnecting: "Reconnecting…", offline: "Offline" })[connection.value];
+  return ({ connecting: "Connecting…", connected: "Connected", reconnecting: "Reconnecting…", offline: "Offline" })[connection.value];
 });
 const selectionLabel = computed(() => selectedVote.value !== null ? "Your vote is in" : room.value?.round.phase === "voting" ? "Pick what feels right" : "Ready for the next round");
 
