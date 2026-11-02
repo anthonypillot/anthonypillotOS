@@ -9,7 +9,7 @@
     :class="current ? 'border-default bg-primary/7' : 'border-transparent'"
   >
     <div class="relative shrink-0">
-      <TaskHoldemMascot class="size-12 rounded-xl bg-elevated/60 p-1" :avatar="participant.profile.avatar" :label="taskHoldemMascots[participant.profile.avatar].name" :voted="participant.hasVoted" :celebrating="celebrating" />
+      <TaskHoldemMascot class="size-12 rounded-xl bg-elevated/60 p-1" :avatar="participant.profile.avatar" :label="taskHoldemMascots[participant.profile.avatar].name" :active="participant.connected" :voted="participant.hasVoted" :celebrating="celebrating" />
       <span class="absolute bottom-0 right-0 size-2.5 rounded-full border-2 border-default" :class="participant.connected ? 'bg-success' : 'bg-warning'" />
     </div>
     <div class="min-w-0 flex-1">

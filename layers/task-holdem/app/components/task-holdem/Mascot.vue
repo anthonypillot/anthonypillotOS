@@ -34,8 +34,8 @@ const root = useTemplateRef<SVGSVGElement>("root");
 const { pose, motion, running, play } = useTaskHoldemMascot({ root, avatar: () => props.avatar, active: () => props.active, ambient: () => props.ambient });
 const paths = computed(() => getTaskHoldemMascotPaths(props.avatar, pose.value));
 
-watch(() => props.voted, (value, previous) => { if (value && !previous) play("vote"); });
-watch(() => props.celebrating, (value, previous) => { if (value && !previous) play("reveal"); });
+watch(() => props.voted, (value, previous) => { if (value && !previous) play("vote", "passive"); });
+watch(() => props.celebrating, (value, previous) => { if (value && !previous) play("reveal", "passive"); });
 watch(() => props.presenting, (value, previous) => { if (value && !previous) play("signature"); });
 watch(motion, (value, previous) => { if (value === "rest" && previous !== "rest") emit("motion-end", previous); });
 

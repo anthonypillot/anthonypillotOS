@@ -72,13 +72,23 @@
             :room="room"
             :disabled="!canAct"
             :countdown="countdown"
+            :active="isConnected && isAdmitted && !isLoading"
             @reveal="reveal"
             @restart="restart"
           />
           <section aria-label="Your cards" class="rounded-2xl border border-default bg-muted/50 p-5 sm:p-6">
             <div class="mb-5 flex flex-wrap items-center justify-between gap-2">
-              <h2 class="text-sm font-medium text-default">Your estimate</h2>
-              <p class="text-xs" :class="selectedVote !== null ? 'text-success' : 'text-muted'" role="status">{{ selectionLabel }}</p>
+              <div>
+                <h2 class="text-sm font-medium text-default">Your estimate</h2>
+                <p class="mt-1 text-xs" :class="selectedVote !== null ? 'text-success' : 'text-muted'" role="status">{{ selectionLabel }}</p>
+              </div>
+              <TaskHoldemCardCompanion
+                :avatar="currentParticipant?.profile.avatar ?? profile.avatar"
+                :vote="selectedVote"
+                :round-id="room.round.id"
+                :phase="room.round.phase"
+                :active="isConnected && isAdmitted && !isLoading"
+              />
             </div>
             <div class="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 pt-2 sm:grid sm:grid-cols-6 sm:justify-items-center sm:gap-4 sm:overflow-visible xl:grid-cols-12 xl:gap-2" data-testid="vote-card-grid">
               <TaskHoldemCard
@@ -129,6 +139,7 @@
 
 <script setup lang="ts">
 useApplicationSeo(taskHoldemApplication);
+provideTaskHoldemMascots();
 
 const {
   roomId, room, self, profile, messages, error, invalidLink, connection, countdown, feedback,

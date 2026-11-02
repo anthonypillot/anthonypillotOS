@@ -79,6 +79,14 @@ describe("Task Hold'em pixel poses", () => {
 });
 
 describe("Task Hold'em shared mascot stage", () => {
+  test("lets a new explicit action supersede an earlier gesture", () => {
+    const stage = createTaskHoldemMascotStage();
+    const stop = vi.fn();
+    expect(stage.claim(Symbol("old selection"), stop, "reaction")).toBe(true);
+    expect(stage.claim(Symbol("new selection"), vi.fn(), "reaction")).toBe(true);
+    expect(stop).toHaveBeenCalledOnce();
+  });
+
   test("allows one performance, prioritizes actions and bounds surprise frequency", () => {
     const stage = createTaskHoldemMascotStage();
     const alice = Symbol("alice");

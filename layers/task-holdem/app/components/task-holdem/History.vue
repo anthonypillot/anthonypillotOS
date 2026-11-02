@@ -26,7 +26,7 @@
               <summary class="cursor-pointer text-xs text-toned">{{ entry.ballots.length }} {{ entry.ballots.length === 1 ? 'vote' : 'votes' }} · View details</summary>
               <ul class="mt-3 space-y-2" :aria-label="`Round ${entry.number} votes`">
                 <li v-for="ballot in entry.ballots" :key="ballot.participantId" class="flex items-center gap-2 text-xs">
-                  <TaskHoldemMascot :avatar="ballot.profile.avatar" class="size-8 shrink-0" />
+                  <TaskHoldemMascot :avatar="ballot.profile.avatar" :active="false" class="size-8 shrink-0" />
                   <span class="min-w-0 flex-1 truncate text-toned">{{ ballot.profile.name }}</span>
                   <span class="rounded bg-primary/10 px-2 py-1 font-medium text-primary">{{ formatTaskHoldemVote(ballot.value) }}</span>
                 </li>

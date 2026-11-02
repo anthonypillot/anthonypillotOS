@@ -4,6 +4,23 @@ import { expect, test } from "./support/fixtures";
 
 test.skip(({ hasTouch }) => !hasTouch, "These scenarios exercise touch devices, not desktop pointer interactions.");
 
+test("the companion's touch target triggers its secret without changing the selected vote", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice", "robot");
+  await alice.page.emulateMedia({ reducedMotion: "no-preference" });
+  await alice.vote(8);
+  const hello = alice.page.getByRole("button", { name: "Say hello to your Robot", exact: true });
+  await hello.scrollIntoViewIfNeeded();
+  const bounds = (await hello.boundingBox())!;
+  expect(bounds.width).toBeGreaterThanOrEqual(44);
+  expect(bounds.height).toBeGreaterThanOrEqual(44);
+  await expect(hello.locator("[data-mascot]")).toHaveAttribute("data-running", "true");
+  await hello.tap();
+  await expect(hello.locator("[data-mascot]")).toHaveAttribute("data-motion", "moonwalk");
+  await expect(alice.page.getByRole("button", { name: "Select 8 card", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(alice.page.getByTestId("vote-card-grid").getByRole("button", { pressed: true })).toHaveCount(1);
+  expect(await alice.page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)).toBe(false);
+});
+
 test("finger-sized character targets respond to taps and join with the chosen avatar", async ({ page, roomId, createPlayer }) => {
   const observer = await createPlayer(roomId, "Observer");
   try {

@@ -11,9 +11,10 @@ type Patch = { x: number; y: number; rows: string[] };
 
 export const taskHoldemMascotPropColors: Record<string, string> = { C: "#f1f5f9", S: "#477f89", P: "#fef3c7", I: "#6366f1" };
 
-function paint(pixels: Pixels, patch: Patch): void {
+function paint(pixels: Pixels, patch: Patch, mode: "replace" | "overlay" = "replace"): void {
   patch.rows.forEach((row, dy) => {
     [...row].forEach((ink, dx) => {
+      if (ink === "." && mode === "overlay") return;
       const x = patch.x + dx;
       const y = patch.y + dy;
       const key = `${x},${y}`;
@@ -45,7 +46,10 @@ function look(pixels: Pixels, avatar: TaskHoldemProfile["avatar"], direction: nu
 function raiseHand(pixels: Pixels, avatar: TaskHoldemProfile["avatar"], high: boolean): void {
   const sleeve = { cowboy: "j", officer: "j", firefighter: "y", princess: "p", doctor: "l", robot: "b" }[avatar];
   const hand = avatar === "robot" ? "l" : "f";
-  paint(pixels, { x: 11, y: high ? 5 : 7, rows: [".oo..", `o${hand}${hand}o.`, `o${hand}${hand}o.`, `.o${sleeve}o.`, `.o${sleeve}o.`, ".oo.."] });
+  const y = avatar === "cowboy" ? high ? 2 : 3 : avatar === "officer" || avatar === "firefighter" ? 4 : high ? 5 : 7;
+  const forearm = Math.max(10, y + 5) - y - 4;
+  paint(pixels, { x: 11, y: 10, rows: ["o....", "o....", "o...."] });
+  paint(pixels, { x: 11, y, rows: [".oo..", `o${hand}${hand}o.`, `.o${hand}o.`, ...Array.from({ length: forearm }, (_, index) => `..o${index < 2 ? hand : sleeve}o`), `.o${sleeve}${sleeve}o`, `o${sleeve}${sleeve}o.`] }, "overlay");
 }
 
 function signature(pixels: Pixels, avatar: TaskHoldemProfile["avatar"], high: boolean): void {
@@ -60,9 +64,9 @@ function signature(pixels: Pixels, avatar: TaskHoldemProfile["avatar"], high: bo
     raiseHand(pixels, avatar, true);
   } else if (avatar === "princess") {
     raiseHand(pixels, avatar, high);
-    if (high) paint(pixels, { x: 1, y: 1, rows: [".a.", "aaa", ".a."] });
+    if (high) paint(pixels, { x: 1, y: 1, rows: [".a.", "aaa", ".a."] }, "overlay");
   } else if (avatar === "doctor") {
-    paint(pixels, { x: 5, y: 9, rows: ["S....S", "S....S", ".S..S.", "..SS..", "..SC.."] });
+    paint(pixels, { x: 5, y: 9, rows: ["S....S", "S....S", ".S..S.", "..SS..", "..SC.."] }, "overlay");
     raiseHand(pixels, avatar, high);
   } else {
     move(pixels, { x: 7, y: 0, width: 2, height: 2 }, { x: high ? 1 : -1, y: 0 });
@@ -79,7 +83,7 @@ function mischief(pixels: Pixels, avatar: TaskHoldemProfile["avatar"]): void {
     paint(pixels, { x: 9, y: 10, rows: ["ooooo", "oPPPo", "oIIPo", "oPPPo", "ooooo"] });
   } else if (avatar === "doctor") {
     paint(pixels, { x: 9, y: 9, rows: ["ooooo", "oCCCo", "oCICo", "oCCCo", "ooooo"] });
-    paint(pixels, { x: 6, y: 10, rows: ["S..", "S..", ".SS"] });
+    paint(pixels, { x: 6, y: 10, rows: ["S..", "S..", ".SS"] }, "overlay");
   } else {
     move(pixels, { x: 7, y: 0, width: 2, height: 2 }, { x: -2, y: 0 });
     look(pixels, avatar, 1);
@@ -106,11 +110,13 @@ export function getTaskHoldemMascotPixels(art: TaskHoldemMascotArt, avatar: Task
     mischief(pixels, avatar);
   } else if (pose === "ponder") {
     const hand = avatar === "robot" ? "l" : "f";
-    paint(pixels, { x: 8, y: 8, rows: [".oo..", `o${hand}${hand}o.`, ".oo.."] });
+    paint(pixels, { x: 11, y: 10, rows: ["o....", "o....", "o...."] });
+    paint(pixels, { x: 8, y: 8, rows: [".oo..", `o${hand}${hand}o.`, ".oo.."] }, "overlay");
     look(pixels, avatar, -1);
   } else if (pose === "shrug") {
     raiseHand(pixels, avatar, false);
     const hand = avatar === "robot" ? "l" : "f";
+    paint(pixels, { x: 0, y: 10, rows: ["....o", "....o", "....o"] });
     paint(pixels, { x: 0, y: 7, rows: ["..oo.", `.o${hand}${hand}o`, `.o${hand}${hand}o`, "..oo."] });
   } else if (pose === "sip") {
     paint(pixels, { x: 9, y: 9, rows: [".S.S..", "......", "ooooo.", "oCCCoC", "oCCCoC", ".ooo.."] });

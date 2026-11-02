@@ -26,7 +26,7 @@
             :aria-label="option.name"
             class="absolute inset-0 z-10 h-full w-full cursor-pointer appearance-none rounded-xl outline-none"
           >
-          <TaskHoldemMascot :avatar="option.value" class="size-14" />
+          <TaskHoldemMascot :avatar="option.value" :presenting="avatar === option.value" :ambient="avatar === option.value" class="size-14" />
           <span class="text-xs font-medium text-default">{{ option.name }}</span>
           <UIcon v-if="avatar === option.value" name="i-heroicons-check-circle-solid" class="absolute right-2 top-2 size-4 text-primary" aria-hidden="true" />
         </label>

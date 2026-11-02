@@ -17,17 +17,48 @@ export function provideTaskHoldemMascots(): void {
   provide(stageKey, createTaskHoldemMascotStage());
 }
 
+export function useTaskHoldemMascotVisibility(root: Readonly<Ref<Element | null>>, active: () => boolean) {
+  const visible = ref(false);
+  const pageVisible = ref(false);
+  const reduced = ref(true);
+  let observer: IntersectionObserver | undefined;
+  let media: MediaQueryList | undefined;
+
+  function updateVisibility(): void {
+    pageVisible.value = document.visibilityState !== "hidden";
+  }
+
+  function updateMotion(): void {
+    reduced.value = media?.matches ?? true;
+  }
+
+  onMounted(() => {
+    media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    updateMotion();
+    updateVisibility();
+    media.addEventListener("change", updateMotion);
+    document.addEventListener("visibilitychange", updateVisibility);
+    if (typeof IntersectionObserver === "undefined") visible.value = true;
+    else {
+      observer = new IntersectionObserver(([entry]) => { visible.value = entry?.isIntersecting ?? false; });
+      if (root.value) observer.observe(root.value);
+    }
+  });
+  onScopeDispose(() => {
+    observer?.disconnect();
+    media?.removeEventListener("change", updateMotion);
+    document.removeEventListener("visibilitychange", updateVisibility);
+  });
+
+  return computed(() => active() && visible.value && pageVisible.value && !reduced.value);
+}
+
 export function useTaskHoldemMascot(options: MascotOptions) {
   const stage = inject(stageKey, undefined) ?? createTaskHoldemMascotStage();
   const owner = Symbol("mascot");
   const pose = ref<TaskHoldemMascotPose>("rest");
   const motion = ref<TaskHoldemMascotMotion | "rest">("rest");
-  const visible = ref(false);
-  const pageVisible = ref(false);
-  const reduced = ref(true);
-  const running = computed(() => options.active() && visible.value && pageVisible.value && !reduced.value);
-  let observer: IntersectionObserver | undefined;
-  let media: MediaQueryList | undefined;
+  const running = useTaskHoldemMascotVisibility(options.root, options.active);
   let frameTimer: ReturnType<typeof setTimeout> | undefined;
   let blinkTimer: ReturnType<typeof setTimeout> | undefined;
   let idleTimer: ReturnType<typeof setTimeout> | undefined;
@@ -58,6 +89,7 @@ export function useTaskHoldemMascot(options: MascotOptions) {
   }
 
   function scheduleBlink(): void {
+    if (!running.value) return;
     blinkTimer = setTimeout(() => {
       play("blink");
       scheduleBlink();
@@ -65,7 +97,7 @@ export function useTaskHoldemMascot(options: MascotOptions) {
   }
 
   function scheduleIdle(): void {
-    if (!options.ambient()) return;
+    if (!running.value || !options.ambient()) return;
     idleTimer = setTimeout(() => {
       const next = pickTaskHoldemMascotMotion(previousIdle);
       if (play(next, "ambient")) previousIdle = next;
@@ -82,34 +114,11 @@ export function useTaskHoldemMascot(options: MascotOptions) {
     scheduleIdle();
   }
 
-  function updateVisibility(): void {
-    pageVisible.value = document.visibilityState !== "hidden";
-  }
-
-  function updateMotion(): void {
-    reduced.value = media?.matches ?? true;
-  }
-
   watch([running, options.avatar, options.ambient], reset, { flush: "sync" });
-  onMounted(() => {
-    media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    updateMotion();
-    updateVisibility();
-    media.addEventListener("change", updateMotion);
-    document.addEventListener("visibilitychange", updateVisibility);
-    if (typeof IntersectionObserver === "undefined") visible.value = true;
-    else {
-      observer = new IntersectionObserver(([entry]) => { visible.value = entry?.isIntersecting ?? false; });
-      if (options.root.value) observer.observe(options.root.value);
-    }
-  });
   onScopeDispose(() => {
     clearTimeout(blinkTimer);
     clearTimeout(idleTimer);
     stop();
-    observer?.disconnect();
-    media?.removeEventListener("change", updateMotion);
-    document.removeEventListener("visibilitychange", updateVisibility);
   });
 
   return { pose, motion, running, play };

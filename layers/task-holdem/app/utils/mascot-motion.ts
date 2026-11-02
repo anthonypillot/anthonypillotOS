@@ -1,7 +1,7 @@
 import type { TaskHoldemMascotPose } from "./mascot-poses";
 
 export type TaskHoldemMascotMotion = "blink" | "glance" | "signature" | "mischief" | "vote" | "reveal" | "think" | "break" | "moonwalk";
-export type TaskHoldemMascotMotionKind = "ambient" | "reaction" | "secret";
+export type TaskHoldemMascotMotionKind = "ambient" | "passive" | "reaction" | "secret";
 type Frame = { pose: TaskHoldemMascotPose; duration: number };
 type Performance = { owner: symbol; priority: number; stop: () => void };
 
@@ -29,9 +29,9 @@ export function createTaskHoldemMascotStage() {
 
   function claim(owner: symbol, stop: () => void, kind: TaskHoldemMascotMotionKind): boolean {
     const now = Date.now();
-    const priority = { ambient: 1, secret: 2, reaction: 3 }[kind];
+    const priority = { ambient: 1, passive: 2, secret: 2, reaction: 3 }[kind];
     if ((kind === "ambient" && now < quietUntil) || (kind === "secret" && now < secretAfter)) return false;
-    if (current && current.owner !== owner && current.priority >= priority) return false;
+    if (current && current.owner !== owner && (current.priority > priority || (current.priority === priority && kind !== "reaction"))) return false;
     current?.stop();
     current = { owner, priority, stop };
     if (kind === "secret") secretAfter = now + 60_000;
