@@ -1,5 +1,5 @@
 <template>
-  <section class="relative isolate mx-auto w-full max-w-7xl px-4 pb-12 pt-24 sm:px-6 sm:pt-28 lg:px-8">
+  <section class="relative isolate mx-auto w-full max-w-7xl overflow-x-clip px-4 pb-12 pt-24 sm:px-6 sm:pt-28 lg:px-8">
     <header class="mb-8 flex flex-col justify-between gap-5 border-b border-default pb-6 sm:flex-row sm:items-center">
       <div class="flex min-w-0 items-center gap-3">
         <NuxtImg class="size-11 shrink-0" :src="taskHoldemApplication.faviconDark" alt="" />
