@@ -10,21 +10,16 @@
         </BaseSpecularButton>
       </div>
 
-      <div aria-hidden="true" class="relative mx-auto w-full max-w-lg rounded-3xl border border-default bg-muted/80 p-5 shadow-2xl shadow-indigo-950/20 sm:p-7">
-        <div class="mb-8 flex items-center justify-between"><span class="text-xs font-medium text-toned">The next great conversation</span><span class="flex items-center gap-1.5 text-[10px] text-success"><span class="size-1.5 rounded-full bg-success" /> Live</span></div>
-        <div class="rounded-2xl border border-primary/10 bg-primary/5 px-5 py-10 text-center">
-          <p class="text-[10px] uppercase tracking-[0.2em] text-primary">Independent votes. Shared understanding.</p>
-          <div class="my-8 flex justify-center gap-3">
-            <div v-for="(card, index) in previewCards" :key="card.name" class="flex flex-col items-center gap-3">
-              <div class="relative flex h-24 w-16 items-center justify-center rounded-xl border text-3xl font-semibold" :class="index === 1 ? '-translate-y-2 border-primary/40 bg-primary/15 text-highlighted shadow-xl shadow-primary/10' : 'border-default bg-default text-primary'">
-                <TaskHoldemSuit :suit="card.suit" class="absolute left-2 top-2 text-xs" />{{ card.value }}
-              </div>
-              <span class="text-[11px] text-muted">{{ card.name }}</span>
+      <div aria-hidden="true" class="relative mx-auto w-full max-w-lg text-center" data-testid="task-holdem-preview">
+        <div class="my-8 flex justify-center gap-3">
+          <div v-for="(card, index) in previewCards" :key="card.name" class="flex flex-col items-center gap-3">
+            <div class="relative flex h-24 w-16 items-center justify-center rounded-xl border text-3xl font-semibold" :class="index === 1 ? '-translate-y-2 border-primary/40 bg-primary/15 text-highlighted shadow-xl shadow-primary/10' : 'border-default bg-default text-primary'">
+              <TaskHoldemSuit :suit="card.suit" class="absolute left-2 top-2 text-xs" />{{ card.value }}
             </div>
+            <span class="text-[11px] text-muted">{{ card.name }}</span>
           </div>
-          <p class="text-sm font-medium text-default">Everyone has a seat at the table.</p>
         </div>
-        <div class="mt-5 flex items-center justify-between text-[10px] text-muted"><span>One link. Your whole team.</span><UIcon name="i-heroicons-lock-closed" class="size-3.5" /></div>
+        <p class="text-sm font-medium text-default">Everyone has a seat at the table.</p>
       </div>
     </div>
 

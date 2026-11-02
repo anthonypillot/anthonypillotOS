@@ -24,6 +24,25 @@ test("landing page links to the multiplayer application", async ({ page }) => {
   }
 });
 
+test("landing illustration keeps only the cards, names and caption without surrounding frames", async ({ page }) => {
+  await page.goto(routes.taskHoldemLanding);
+  const preview = page.getByTestId("task-holdem-preview");
+  await expect(preview).toHaveCSS("border-top-width", "0px");
+  await expect(preview).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(preview).toHaveCSS("box-shadow", "none");
+  await expect(preview.locator(":scope > *")).toHaveCount(2);
+  const cards = preview.locator(":scope > div > div");
+  await expect(cards).toHaveCount(3);
+  await expect(cards).toHaveText([/5\s*Alex$/u, /8\s*Sam$/u, /5\s*Jordan$/u]);
+  await expect(cards.locator(":scope > span")).toHaveText(["Alex", "Sam", "Jordan"]);
+  for (const card of await cards.all()) await expect(card.locator(":scope > div")).toHaveCSS("border-top-width", "1px");
+  await expect(preview.getByText("Everyone has a seat at the table.", { exact: true })).toBeVisible();
+  await expect(preview.locator("svg, .iconify, img")).toHaveCount(0);
+  for (const text of ["Independent votes. Shared understanding.", "The next great conversation", "Live", "One link. Your whole team."]) {
+    await expect(page.getByText(text, { exact: true })).toHaveCount(0);
+  }
+});
+
 test("landing introduction is centered below the desktop breakpoint", async ({ page }) => {
   await page.goto(routes.taskHoldemLanding);
   await page.evaluate(() => document.fonts.ready);
