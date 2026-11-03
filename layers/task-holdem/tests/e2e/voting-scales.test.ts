@@ -80,12 +80,14 @@ for (const scenario of scenarios) {
       await page.getByRole("button", { name: /^History/ }).click();
       const history = page.getByRole("dialog", { name: "Session history", exact: true });
       await expect(history.getByText(`Average: ${scenario.average}`, { exact: true })).toBeVisible();
-      await expect(history.getByText(`Voting scale: ${scale.label} · Fixed for this session`, { exact: true })).toBeVisible();
+      await expect(history.getByText(/Voting scale:/)).toHaveCount(0);
       await history.getByRole("button", { name: "Copy summary", exact: true }).click();
       await expect(history.getByText("Room summary copied.", { exact: true })).toBeVisible();
       const text = (await page.evaluate(() => document.body.dataset.copiedSummary))!;
-      expect(text).toContain(`Voting scale: ${scale.label}`);
+      expect(text).not.toContain("Voting scale");
       expect(text).toContain(`Distribution: ${scenario.firstVote} × 1 · ${scenario.secondVote} × 1`);
+      expect(text).toContain(`- Creator: ${scenario.firstVote}`);
+      expect(text).toContain(`- Bob: ${scenario.secondVote}`);
       const downloaded = page.waitForEvent("download");
       await history.getByRole("button", { name: "Download CSV", exact: true }).click();
       const csv = await readFile((await (await downloaded).path())!, "utf8");
@@ -93,14 +95,17 @@ for (const scenario of scenarios) {
       expect(rows).toHaveLength(2);
       const [header, row] = rows;
       expect(row).toHaveLength(header!.length);
-      expect(row![header!.indexOf("Voting scale")]).toBe(scale.label);
+      expect(header).not.toContain("Voting scale");
+      expect(row![header!.indexOf("Participant votes")]).toContain(`Creator: ${scenario.firstVote}`);
+      expect(row![header!.indexOf("Participant votes")]).toContain(`Bob: ${scenario.secondVote}`);
       for (const value of deck.filter(card => typeof card === "number")) {
         expect(row![header!.indexOf(`Votes for ${value}`)]).toBe(value === scenario.firstVote || value === scenario.secondVote ? "1" : "0");
       }
       if (scale.value !== "fibonacci") expect(csv).not.toContain('"Votes for 89"');
       for (const output of [text, csv]) {
-        expect(output).not.toContain("Creator");
-        expect(output).not.toContain("Bob");
+        expect(output).not.toContain(scale.label);
+        expect(output).not.toContain(participantId!);
+        expect(output).not.toContain(joined.self.participantId);
         expect(output).not.toContain(command.token);
       }
       await page.keyboard.press("Escape");

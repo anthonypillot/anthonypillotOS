@@ -40,17 +40,19 @@ export async function loadTaskHoldemReport(load: TaskHoldemHistoryLoader, throug
   return [...entries.values()].sort((left, right) => left.number - right.number);
 }
 
-function getReportVotingScale(entries: readonly TaskHoldemHistoryEntry[], deck: readonly TaskHoldemVote[]) {
-  const scale = getTaskHoldemVotingScale(deck);
-  if (!scale || entries.some(entry => entry.ballots.some(ballot => !deck.includes(ballot.value)))) {
+function validateReportDeck(entries: readonly TaskHoldemHistoryEntry[], deck: readonly TaskHoldemVote[]): void {
+  if (!getTaskHoldemVotingScale(deck) || entries.some(entry => entry.ballots.some(ballot => !deck.includes(ballot.value)))) {
     throw new Error("The room history does not match its voting scale.");
   }
-  return scale;
+}
+
+function formatParticipantVotes(entry: TaskHoldemHistoryEntry): string[] {
+  return entry.ballots.map(ballot => `${ballot.profile.name.replace(/[\r\n\u2028\u2029]+/g, " ")}: ${formatTaskHoldemVote(ballot.value)}`);
 }
 
 export function formatTaskHoldemReportText(entries: readonly TaskHoldemHistoryEntry[], deck: readonly TaskHoldemVote[]): string {
-  const scale = getReportVotingScale(entries, deck);
-  const header = `TaskHold’em · Room summary\nVoting scale: ${scale.label}\nTimes are in UTC. Averages use numeric votes and are not agreed estimates.`;
+  validateReportDeck(entries, deck);
+  const header = "TaskHold’em · Room summary\nTimes are in UTC. Averages use numeric votes and are not agreed estimates.";
   const rounds = entries.map((entry) => {
     const summary = getTaskHoldemVoteSummary(entry.ballots.map(ballot => ballot.value));
     return [
@@ -60,6 +62,8 @@ export function formatTaskHoldemReportText(entries: readonly TaskHoldemHistoryEn
       `Average: ${formatTaskHoldemAverage(entry.average)}`,
       `Votes: ${summary.total} total · ${summary.numeric} numeric · ${summary.pass} Pass · ${summary.unsure} Unsure`,
       `Distribution: ${summary.distribution.map(group => `${formatTaskHoldemVote(group.value)} × ${group.count}`).join(" · ") || "No votes"}`,
+      "Participant votes:",
+      formatParticipantVotes(entry).map(vote => `- ${vote}`).join("\n") || "No votes",
     ].join("\n");
   });
   return [header, ...rounds].join("\n\n");
@@ -72,15 +76,16 @@ function csvCell(value: string | number): string {
 }
 
 export function formatTaskHoldemReportCsv(entries: readonly TaskHoldemHistoryEntry[], deck: readonly TaskHoldemVote[]): string {
-  const scale = getReportVotingScale(entries, deck);
+  validateReportDeck(entries, deck);
   const numericCards = deck.filter(value => typeof value === "number");
-  const header = ["Round", "Topic", "Voting scale", "Started at (UTC)", "Revealed at (UTC)", "Average (numeric votes, not an agreed estimate)", "Total votes", "Numeric votes", "Pass", "Unsure", ...numericCards.map(value => `Votes for ${value}`)];
+  const header = ["Round", "Topic", "Started at (UTC)", "Revealed at (UTC)", "Average (numeric votes, not an agreed estimate)", "Total votes", "Numeric votes", "Pass", "Unsure", ...numericCards.map(value => `Votes for ${value}`), "Participant votes"];
   const rows = entries.map((entry) => {
     const summary = getTaskHoldemVoteSummary(entry.ballots.map(ballot => ballot.value));
     return [
-      entry.number, entry.topic || "Untitled round", scale.label, new Date(entry.startedAt).toISOString(), new Date(entry.revealedAt).toISOString(),
+      entry.number, entry.topic || "Untitled round", new Date(entry.startedAt).toISOString(), new Date(entry.revealedAt).toISOString(),
       formatTaskHoldemAverage(entry.average), summary.total, summary.numeric, summary.pass, summary.unsure,
       ...numericCards.map(value => summary.distribution.find(group => group.value === value)?.count ?? 0),
+      formatParticipantVotes(entry).join("\n") || "No votes",
     ];
   });
   return `\uFEFF${[header, ...rows].map(row => row.map(csvCell).join(",")).join("\r\n")}\r\n`;

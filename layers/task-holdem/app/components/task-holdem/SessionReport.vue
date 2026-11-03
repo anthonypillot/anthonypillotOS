@@ -1,7 +1,7 @@
 <template>
   <section aria-label="Room summary export" class="rounded-xl border border-default bg-muted p-4">
     <p class="text-xs font-medium text-default">Take the results with you</p>
-    <p class="mt-1 text-[11px] leading-5 text-muted">All revealed rounds · UTC timestamps · No player identities or chat</p>
+    <p class="mt-1 text-[11px] leading-5 text-muted">All revealed rounds · Player names and votes · UTC timestamps · No chat</p>
     <div class="mt-3 flex flex-wrap gap-2">
       <UButton label="Copy summary" icon="i-heroicons-clipboard-document" variant="soft" size="xs" :disabled="count === 0 || busy !== null" :loading="busy === 'copy'" @click="exportReport('copy')" />
       <UButton label="Download CSV" icon="i-heroicons-arrow-down-tray" color="neutral" variant="soft" size="xs" :disabled="count === 0 || busy !== null" :loading="busy === 'csv'" @click="exportReport('csv')" />
