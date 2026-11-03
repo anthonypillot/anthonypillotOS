@@ -20,7 +20,7 @@ test("lattice status follows confirmed votes without exposing unrevealed values"
   await alice.page.getByRole("button", { name: "Select 13 card", exact: true }).click();
   await expect(sharedStatus).toHaveAttribute("data-status", "working");
   await alice.vote(13);
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(bob.player("Bob").getByText("No vote", { exact: true })).toBeVisible();
   await expect(bob.player("Bob").getByRole("status")).toHaveCount(0);
   await expect(alice.page.getByText("Average: 13", { exact: true })).toBeVisible();

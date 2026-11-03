@@ -44,7 +44,7 @@ test("the table glow follows the pointer without intercepting its controls", asy
   await alice.page.mouse.move(0, 0);
   await expect(glow).toHaveCSS("opacity", "0");
   await alice.vote(13);
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(alice.page.getByText("Average: 13", { exact: true })).toBeVisible();
 });
 

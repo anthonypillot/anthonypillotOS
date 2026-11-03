@@ -74,7 +74,7 @@ test("joining requests native permission from the user gesture and only alerts i
   expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(1);
   expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.requestHadActivation)).toBe(true);
   await bob.vote(8);
-  await bob.reveal.click();
+  await bob.revealCards();
   await expect(alice.page.getByText("Average: 8", { exact: true })).toBeVisible();
   await alice.page.evaluate(() => { window.taskHoldemFeedbackLog.hidden = true; });
   await bob.restart.click();
@@ -88,14 +88,14 @@ test("joining requests native permission from the user gesture and only alerts i
   });
   await expect.poll(() => alice.page.evaluate(() => window.taskHoldemFeedbackLog.closed)).toBe(1);
   await bob.vote(5);
-  await bob.reveal.click();
+  await bob.revealCards();
   await expect(alice.page.getByText("Average: 5", { exact: true })).toBeVisible();
   await bob.restart.click();
   await expect(alice.page.getByRole("heading", { name: "Round 3", exact: true })).toBeVisible();
   expect(await alice.page.evaluate(() => window.taskHoldemFeedbackLog.notifications.length)).toBe(1);
 
   await bob.vote(13);
-  await bob.reveal.click();
+  await bob.revealCards();
   await expect(alice.page.getByText("Average: 13", { exact: true })).toBeVisible();
   await alice.page.evaluate(() => { window.taskHoldemFeedbackLog.hidden = true; window.taskHoldemFeedbackLog.failNotification = true; });
   await bob.restart.click();
@@ -123,7 +123,7 @@ test("dismissing permission still joins and automatic readmission never prompts"
   expect(await page.evaluate(() => window.taskHoldemFeedbackLog.requests)).toBe(1);
   await page.evaluate(() => { window.taskHoldemFeedbackLog.hidden = true; });
   await bob.vote(8);
-  await bob.reveal.click();
+  await bob.revealCards();
   await expect(page.getByText("Average: 8", { exact: true })).toBeVisible();
   await bob.restart.click();
   await expect(page.getByRole("heading", { name: "Round 2", exact: true })).toBeVisible();
@@ -154,7 +154,7 @@ test("existing browser permission enables alerts without another application pre
   await page.getByRole("button", { name: "Sound effects", exact: true }).click();
   await page.evaluate(() => { window.taskHoldemFeedbackLog.hidden = true; });
   await bob.vote(8);
-  await bob.reveal.click();
+  await bob.revealCards();
   await expect(page.getByText("Average: 8", { exact: true })).toBeVisible();
   await bob.restart.click();
   await expect.poll(() => page.evaluate(() => window.taskHoldemFeedbackLog.notifications.length)).toBe(1);
@@ -163,7 +163,7 @@ test("existing browser permission enables alerts without another application pre
   await expect(page.getByRole("button", { name: "Join game", exact: true })).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.taskHoldemFeedbackLog.closed)).toBe(1);
   await bob.vote(5);
-  await bob.reveal.click();
+  await bob.revealCards();
   await expect(bob.page.getByText("Average: 5", { exact: true })).toBeVisible();
   await bob.restart.click();
   await expect(bob.page.getByRole("heading", { name: "Round 3", exact: true })).toBeVisible();
@@ -199,7 +199,7 @@ test.describe("native notification delivery", () => {
       await expect(page.getByRole("group", { name: "Alice", exact: true })).toBeVisible();
       await expect.poll(() => page.evaluate(async () => (await navigator.serviceWorker.getRegistration("/tools/task-holdem/"))?.active?.state)).toBe("activated");
       await bob.vote(8);
-      await bob.reveal.click();
+      await bob.revealCards();
       await expect(bob.page.getByText("Average: 8", { exact: true })).toBeVisible();
       await page.evaluate(() => { document.hasFocus = () => false; });
       await bob.restart.click();

@@ -70,7 +70,7 @@ test("players synchronize votes, results and a fresh round", async ({ roomId, cr
   await expect(bob.player("Alice")).toHaveAttribute("data-voted", "true");
   await bob.vote(21);
   await expect(alice.player("Bob")).toHaveAttribute("data-voted", "true");
-  await alice.reveal.click();
+  await alice.revealCards();
 
   for (const player of [alice, bob]) {
     await expect(player.page.getByText("Result", { exact: true })).toBeVisible();
@@ -110,7 +110,7 @@ test("non-numeric votes do not distort the average", async ({ roomId, createPlay
   await alice.vote(8);
   await bob.vote("skip");
   await expect(alice.player("Bob")).toHaveAttribute("data-voted", "true");
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(alice.page.getByText("Average: 8", { exact: true })).toBeVisible();
   await expect(bob.page.getByText("Average: 8", { exact: true })).toBeVisible();
 });
@@ -200,7 +200,7 @@ test("shared topics are locked at reveal and saved with timestamped results", as
   await expect(bob.page.getByText("PROJ-42 · Improve sign-in", { exact: true })).toBeVisible();
   await alice.vote(8);
   await bob.vote(13);
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(alice.page.getByRole("button", { name: "Edit topic", exact: true })).toBeHidden();
   await expect(bob.page.getByText("Average: 10.5", { exact: true })).toBeVisible();
   await bob.page.getByRole("button", { name: /^History/ }).click();
@@ -296,7 +296,7 @@ test("history handles empty sessions and rounds without a topic", async ({ roomI
   await expect(alice.page.getByRole("dialog").getByText("Your session story starts here.", { exact: true })).toBeVisible();
   await alice.page.keyboard.press("Escape");
   await alice.vote("skip");
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(alice.page.getByText("Average: N/A", { exact: true })).toBeVisible();
   await alice.page.getByRole("button", { name: /^History/ }).click();
   const history = alice.page.getByRole("dialog");

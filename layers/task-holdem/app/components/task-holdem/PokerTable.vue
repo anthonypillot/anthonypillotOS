@@ -19,7 +19,7 @@
           <span class="size-1.5 rounded-full" :class="everyoneReady ? 'bg-success' : 'bg-primary'" />
           <p class="text-sm text-toned">{{ voteCount }} of {{ room.participants.length }} voted<span v-if="everyoneReady"> · Everyone is ready</span></p>
         </div>
-        <UButton label="Reveal cards" icon="i-heroicons-eye" size="lg" class="mt-4 justify-center" :disabled="disabled || voteCount === 0" data-testid="reveal-button" @click="emit('reveal')" />
+        <TaskHoldemRevealAction :room="room" :disabled="disabled" @reveal="emit('reveal')" />
         <p class="mt-3 text-xs text-muted">Any player can reveal when you're ready.</p>
       </div>
 

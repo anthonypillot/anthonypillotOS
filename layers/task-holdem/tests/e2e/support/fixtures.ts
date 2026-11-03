@@ -46,6 +46,15 @@ export class TaskHoldemPage {
     await this.page.getByRole("button", { name: "Open chat", exact: true }).click();
     await expect(this.page.getByPlaceholder("Your message", { exact: true })).toBeVisible();
   }
+
+  async revealCards(): Promise<void> {
+    await this.reveal.click();
+    const confirmation = this.page.getByRole("dialog", { name: "Reveal before everyone votes?", exact: true });
+    const revealed = this.page.getByText("Result", { exact: true });
+    const revealing = this.page.getByText("Votes are locked for this round.", { exact: true });
+    await expect(confirmation.or(revealing).or(revealed).first()).toBeVisible();
+    if (await confirmation.isVisible()) await confirmation.getByRole("button", { name: /^Reveal (anyway|cards now)$/ }).click();
+  }
 }
 
 export const test = base.extend<Fixtures>({

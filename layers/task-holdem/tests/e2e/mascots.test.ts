@@ -25,7 +25,7 @@ test("hidden table companions stay in the bottom-right corner clear of round con
 
   await expectCorner();
   await alice.vote(8);
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(panel.getByText("Average: 8", { exact: true })).toBeVisible();
   await expectCorner();
   await alice.restart.click();

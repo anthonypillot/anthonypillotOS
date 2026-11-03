@@ -11,7 +11,7 @@ test("revealed distributions group numeric and special cards without exposing th
   await dana.vote("break");
   const distribution = alice.page.getByRole("region", { name: "Vote distribution", exact: true });
   await expect(distribution).toHaveCount(0);
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(alice.page.getByText("Votes are locked for this round.", { exact: true })).toBeVisible();
   await expect(distribution).toHaveCount(0);
   await expect(alice.page.getByText("Average: 8", { exact: true })).toBeVisible();
@@ -33,7 +33,7 @@ test("special-only distributions keep the numeric average unavailable", async ({
   const bob = await createPlayer(roomId, "Bob");
   await alice.vote("break");
   await bob.vote("skip");
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(alice.page.getByText("Average: N/A", { exact: true })).toBeVisible();
   await expect(alice.page.getByRole("region", { name: "Vote distribution", exact: true })).toContainText("2 votes cast · 0 numeric · 1 Pass · 1 Unsure");
 });

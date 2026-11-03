@@ -15,7 +15,7 @@ for (const colorScheme of ["light", "dark"] as const) {
       await alice.page.keyboard.press("Escape");
 
       await alice.vote(13);
-      await alice.reveal.click();
+      await alice.revealCards();
       await expect(alice.page.getByText("Average: 13", { exact: true })).toBeVisible();
       await expectReadableContrast(alice.page);
       await alice.page.getByRole("button", { name: /^History/ }).click();

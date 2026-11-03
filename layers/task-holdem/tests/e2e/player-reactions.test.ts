@@ -64,7 +64,7 @@ test("votes, clears, reveals and new rounds animate player avatars without expos
   await expect(observedAlice).toHaveAttribute("data-motion", "glance");
   await alice.vote(8);
   await bob.vote(13);
-  await alice.reveal.click();
+  await alice.revealCards();
   await expect(alice.page.getByText("Average: 10.5", { exact: true })).toBeVisible();
   await expectOwnReaction(alice.page, "Alice", "reveal");
   await expectOwnReaction(bob.page, "Bob", "reveal");
