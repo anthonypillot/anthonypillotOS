@@ -38,7 +38,10 @@ type Props = {
   description?: string;
 };
 
-const { title = "Feedback", description = "Please provide your feedback" } = defineProps<Props>();
+const {
+  title = "Feedback",
+  description = "Thanks for using the app! If you have feedback or run into a bug, feel free to use this form to let me know how I can improve it.",
+} = defineProps<Props>();
 const open = ref(false);
 
 export type Feedback = {
