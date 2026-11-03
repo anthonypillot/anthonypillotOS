@@ -8,8 +8,8 @@
     @after:leave="resetFeedback"
   >
     <slot />
-    <template #body>
-      <UForm v-if="!isFeedbackSubmitted" :state="state" :validate="validate" class="flex flex-col gap-4" @submit="onSubmit">
+    <template v-if="!isFeedbackSubmitted" #body>
+      <UForm :state="state" :validate="validate" class="flex flex-col gap-4" @submit="onSubmit">
         <p v-if="submissionError" role="alert" class="text-sm text-error">{{ submissionError }}</p>
         <UFormField name="name" label="Name" hint="Optional">
           <UInput v-model="state.name" type="text" class="w-full" autofocus />
@@ -25,7 +25,6 @@
           <UButton label="Submit" type="submit" :loading="isLoading" />
         </div>
       </UForm>
-      <UIcon v-else name="i-heroicons-check-circle-20-solid" class="size-10 text-success" />
     </template>
   </UModal>
 </template>

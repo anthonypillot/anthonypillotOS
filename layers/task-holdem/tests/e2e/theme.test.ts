@@ -53,10 +53,37 @@ for (const colorScheme of ["light", "dark"] as const) {
       await expect(dialog.getByRole("button", { name: "Cancel", exact: true })).toBeEnabled();
       await expectReadableContrast(alice.page);
       await dialog.getByRole("button", { name: "Submit", exact: true }).click();
-      await expect(alice.page.getByRole("dialog", { name: "Thank you!", exact: true })).toBeVisible();
+      const confirmation = alice.page.getByRole("dialog", { name: "Thank you!", exact: true });
+      await expect(confirmation).toBeVisible();
+      await expect(confirmation).toHaveAccessibleDescription("Your feedback has been submitted.");
+      await expect(confirmation.locator("[data-slot='body']")).toHaveCount(0);
+      await expectReadableContrast(alice.page);
       expect(requests).toBe(2);
       await alice.page.keyboard.press("Escape");
       await expect(trigger).toBeFocused();
     });
   });
 }
+
+test("feedback confirmation closes automatically and restores an empty form on reopening", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice");
+  await alice.page.route("**/api/form/feedback", route => route.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+  const trigger = alice.page.getByRole("button", { name: "Send feedback", exact: true });
+  await trigger.click();
+  const dialog = alice.page.getByRole("dialog", { name: "Feedback", exact: true });
+  await dialog.getByRole("textbox", { name: "Name", exact: true }).fill("Alice");
+  await dialog.getByRole("textbox", { name: "Email", exact: true }).fill("alice@example.com");
+  await dialog.getByRole("textbox", { name: /^Feedback/ }).fill("Keep the confirmation compact.");
+  await dialog.getByRole("button", { name: "Submit", exact: true }).click();
+  const confirmation = alice.page.getByRole("dialog", { name: "Thank you!", exact: true });
+  await expect(confirmation).toBeVisible();
+  await expect(confirmation.locator("[data-slot='body']")).toHaveCount(0);
+  await expect(confirmation).toBeHidden();
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await expect(dialog.locator("[data-slot='body']")).toBeVisible();
+  await expect(dialog.getByRole("textbox", { name: "Name", exact: true })).toBeEmpty();
+  await expect(dialog.getByRole("textbox", { name: "Name", exact: true })).toBeFocused();
+  await expect(dialog.getByRole("textbox", { name: "Email", exact: true })).toBeEmpty();
+  await expect(dialog.getByRole("textbox", { name: /^Feedback/ })).toBeEmpty();
+});
