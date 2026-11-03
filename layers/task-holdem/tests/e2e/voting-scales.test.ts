@@ -86,6 +86,8 @@ for (const scenario of scenarios) {
       const text = (await page.evaluate(() => document.body.dataset.copiedSummary))!;
       expect(text).not.toContain("Voting scale");
       expect(text).not.toContain("Distribution:");
+      expect(text).toMatch(/^Duration: .+$/m);
+      expect(text).not.toMatch(/^(Started|Revealed|Votes):/m);
       expect(text).toContain(`- Creator: ${scenario.firstVote}`);
       expect(text).toContain(`- Bob: ${scenario.secondVote}`);
       const downloaded = page.waitForEvent("download");

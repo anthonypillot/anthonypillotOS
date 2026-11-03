@@ -50,21 +50,27 @@ function formatParticipantVotes(entry: TaskHoldemHistoryEntry): string[] {
   return entry.ballots.map(ballot => `${ballot.profile.name.replace(/[\r\n\u2028\u2029]+/g, " ")}: ${formatTaskHoldemVote(ballot.value)}`);
 }
 
-export function formatTaskHoldemReportText(entries: readonly TaskHoldemHistoryEntry[], deck: readonly TaskHoldemVote[]): string {
+function formatRoundDuration(startedAt: number, revealedAt: number): string {
+  const totalSeconds = Math.max(0, Math.round((revealedAt - startedAt) / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor(totalSeconds / 60) % 60;
+  return [
+    hours > 0 ? `${hours}h` : null,
+    hours > 0 || minutes > 0 ? `${minutes}m` : null,
+    `${totalSeconds % 60}s`,
+  ].filter(Boolean).join(" ");
+}
+
+export function formatTaskHoldemReportText(entries: readonly TaskHoldemHistoryEntry[], deck: readonly TaskHoldemVote[], exportedAt = new Date()): string {
   validateReportDeck(entries, deck);
-  const header = "TaskHold’em · Room summary\nTimes are in UTC. Averages use numeric votes and are not agreed estimates.";
-  const rounds = entries.map((entry) => {
-    const summary = getTaskHoldemVoteSummary(entry.ballots.map(ballot => ballot.value));
-    return [
-      `Round ${entry.number} — ${(entry.topic || "Untitled round").replace(/[\r\n]+/g, " ")}`,
-      `Started: ${new Date(entry.startedAt).toISOString()}`,
-      `Revealed: ${new Date(entry.revealedAt).toISOString()}`,
-      `Average: ${formatTaskHoldemAverage(entry.average)}`,
-      `Votes: ${summary.total} total · ${summary.numeric} numeric · ${summary.pass} Pass · ${summary.unsure} Unsure`,
-      "Participant votes:",
-      formatParticipantVotes(entry).map(vote => `- ${vote}`).join("\n") || "No votes",
-    ].join("\n");
-  });
+  const header = `TaskHold’em · Room summary\nAverages use numeric votes and are not agreed estimates.\nDate: ${exportedAt.toISOString().slice(0, 10)}`;
+  const rounds = entries.map(entry => [
+    `Round ${entry.number} — ${(entry.topic || "Untitled round").replace(/[\r\n]+/g, " ")}`,
+    `Duration: ${formatRoundDuration(entry.startedAt, entry.revealedAt)}`,
+    `Average: ${formatTaskHoldemAverage(entry.average)}`,
+    "Participant votes:",
+    formatParticipantVotes(entry).map(vote => `- ${vote}`).join("\n") || "No votes",
+  ].join("\n"));
   return [header, ...rounds].join("\n\n");
 }
 

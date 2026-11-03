@@ -1,7 +1,7 @@
 <template>
   <section aria-label="Room summary export" class="rounded-xl border border-default bg-muted p-4">
     <p class="text-xs font-medium text-default">Take the results with you</p>
-    <p class="mt-1 text-[11px] leading-5 text-muted">All revealed rounds · Player names and votes · UTC timestamps · No chat</p>
+    <p class="mt-1 text-[11px] leading-5 text-muted">All revealed rounds · Player names and votes · No chat</p>
     <div class="mt-3 flex flex-wrap gap-2">
       <UButton label="Copy summary" icon="i-heroicons-clipboard-document" variant="soft" size="xs" :disabled="count === 0 || busy !== null" :loading="busy === 'copy'" @click="exportReport('copy')" />
       <UButton label="Download CSV" icon="i-heroicons-arrow-down-tray" color="neutral" variant="soft" size="xs" :disabled="count === 0 || busy !== null" :loading="busy === 'csv'" @click="exportReport('csv')" />
@@ -65,6 +65,7 @@ async function exportReport(kind: "copy" | "csv"): Promise<void> {
   controller = current;
   const through = props.count;
   const deck = [...props.deck];
+  const exportedAt = new Date();
   busy.value = kind;
   error.value = null;
   preparedText.value = null;
@@ -76,7 +77,7 @@ async function exportReport(kind: "copy" | "csv"): Promise<void> {
       downloadCsv(formatTaskHoldemReportCsv(entries, deck));
       status.value = "Room CSV download started.";
     } else {
-      const text = formatTaskHoldemReportText(entries, deck);
+      const text = formatTaskHoldemReportText(entries, deck, exportedAt);
       try {
         await navigator.clipboard.writeText(text);
         if (!disposed && !current.signal.aborted) status.value = "Room summary copied.";

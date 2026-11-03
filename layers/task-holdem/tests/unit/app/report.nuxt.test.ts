@@ -38,18 +38,23 @@ describe("Task Hold'em complete report loading", () => {
 });
 
 describe("Task Hold'em room summaries", () => {
-  test("includes UTC dates, descriptive results and participant votes without internal identifiers or voting scale labels", () => {
+  test("includes durations and participant votes without timestamps or vote counts in text while retaining detailed CSV data", () => {
     const entries = [entry(1), { ...entry(2, null), ballots: [], average: null }];
-    const text = formatTaskHoldemReportText(entries, taskHoldemDeck);
+    const text = formatTaskHoldemReportText(entries, taskHoldemDeck, new Date("2026-11-03T21:19:51.145Z"));
+    expect(text).toContain("Averages use numeric votes and are not agreed estimates.\nDate: 2026-11-03\n\nRound 1");
     expect(text).toContain("Round 1 — Task 1");
-    expect(text).toContain("1970-01-01T00:00:01.000Z");
-    expect(text).toContain("Votes: 3 total · 1 numeric · 1 Pass · 1 Unsure");
-    expect(text).not.toContain("Distribution:");
+    expect(text).toContain("Duration: 2s");
+    expect(text).toContain("Average: 8\nParticipant votes:");
+    expect(text).not.toMatch(/^(Started|Revealed|Votes|Distribution):/m);
+    expect(text).not.toContain("UTC");
     expect(text).toContain("Participant votes:\n- Alice: 8\n- Bob: Pass\n- Chloé: Unsure");
     expect(text).toContain("Round 2 — Untitled round");
     expect(text).toContain("Average: N/A");
     expect(text).toContain("Participant votes:\nNo votes");
     const csv = formatTaskHoldemReportCsv(entries, taskHoldemDeck);
+    expect(csv).toContain('"Started at (UTC)","Revealed at (UTC)"');
+    expect(csv).toContain('"1970-01-01T00:00:01.000Z","1970-01-01T00:00:03.000Z"');
+    expect(csv).toContain('"Total votes","Numeric votes","Pass","Unsure"');
     expect(csv).toContain('"Participant votes"');
     expect(csv).toContain('"Alice: 8\nBob: Pass\nChloé: Unsure"');
     expect(csv).toContain('"No votes"');
@@ -60,6 +65,22 @@ describe("Task Hold'em room summaries", () => {
       expect(output).not.toContain("Voting scale");
       expect(output).not.toContain("Fibonacci");
     }
+  });
+
+  test.each([
+    { elapsed: -1000, expected: "0s" },
+    { elapsed: 0, expected: "0s" },
+    { elapsed: 918, expected: "1s" },
+    { elapsed: 1499, expected: "1s" },
+    { elapsed: 1500, expected: "2s" },
+    { elapsed: 59999, expected: "1m 0s" },
+    { elapsed: 83000, expected: "1m 23s" },
+    { elapsed: 3599999, expected: "1h 0m 0s" },
+    { elapsed: 3661000, expected: "1h 1m 1s" },
+    { elapsed: 90061000, expected: "25h 1m 1s" },
+  ])("formats a $elapsed ms round as $expected", ({ elapsed, expected }) => {
+    const round = { ...entry(1), revealedAt: 1000 + elapsed };
+    expect(formatTaskHoldemReportText([round], taskHoldemDeck)).toContain(`\nDuration: ${expected}\n`);
   });
 
   test("keeps each archived name and ballot, including participants with identical names", () => {

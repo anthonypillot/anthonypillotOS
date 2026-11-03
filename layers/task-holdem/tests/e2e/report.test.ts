@@ -34,13 +34,17 @@ test("text and CSV summaries include all revealed participant votes without priv
     await alice.page.getByRole("button", { name: /^History/ }).click();
     const dialog = alice.page.getByRole("dialog", { name: "Session history", exact: true });
     await expect(dialog.getByText(/Voting scale:/)).toHaveCount(0);
-    await expect(dialog.getByText("All revealed rounds · Player names and votes · UTC timestamps · No chat", { exact: true })).toBeVisible();
+    await expect(dialog.getByText("All revealed rounds · Player names and votes · No chat", { exact: true })).toBeVisible();
     await dialog.getByRole("button", { name: "Copy summary", exact: true }).click();
     await expect(dialog.getByText("Room summary copied.", { exact: true })).toBeVisible();
     const text = (await alice.page.evaluate(() => document.body.dataset.copiedSummary))!;
     expect(text.match(/^Round \d+ —/gm)).toHaveLength(23);
     expect(text).toContain("Round 1 — =HYPERLINK");
     expect(text).toContain("Round 23 — Archived task 23");
+    expect(text.match(/^Duration: 2s$/gm)).toHaveLength(23);
+    expect(text).toMatch(/Averages use numeric votes and are not agreed estimates\.\nDate: \d{4}-\d{2}-\d{2}\n\nRound 1/);
+    expect(text).not.toMatch(/^(Started|Revealed|Votes|Distribution):/m);
+    expect(text).not.toContain("UTC");
     expect(text.match(/^Participant votes:$/gm)).toHaveLength(23);
     expect(text).toContain("Participant votes:\n- Archived voter: 8\n- Pass voter: Pass\n- Unsure voter: Unsure");
     const downloadPromise = alice.page.waitForEvent("download");
@@ -74,6 +78,8 @@ test("clipboard refusal preserves a selectable summary and allows copying it fro
   await dialog.getByRole("button", { name: "Copy summary", exact: true }).click();
   const summary = dialog.getByRole("textbox", { name: "Select and copy this summary", exact: true });
   await expect(summary).toHaveValue(/Average: N\/A/);
+  await expect(summary).toHaveValue(/^Duration: .+$/m);
+  await expect(summary).not.toHaveValue(/^(Started|Revealed|Votes):/m);
   await expect(summary).toHaveValue(/Participant votes:\n- Alice: Unsure/);
   await expect(summary).not.toHaveValue(/Voting scale/);
   await summary.focus();
