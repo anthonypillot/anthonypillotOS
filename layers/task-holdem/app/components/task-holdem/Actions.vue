@@ -5,7 +5,7 @@
       <span v-if="copyFailed" role="status" class="min-w-0 text-xs text-warning lg:whitespace-nowrap">Copy the room URL from your address bar.</span>
     </div>
     <FormFeedback>
-      <UButton aria-label="Send feedback" title="Send feedback" icon="i-heroicons-chat-bubble-bottom-center-text" color="neutral" variant="ghost" />
+      <UButton aria-label="Send feedback" title="Send feedback" icon="i-heroicons-megaphone" color="neutral" variant="ghost" />
     </FormFeedback>
     <span class="sr-only" role="status">{{ copied ? 'Invitation link copied to clipboard' : '' }}</span>
   </div>
