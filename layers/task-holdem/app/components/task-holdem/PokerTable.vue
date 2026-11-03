@@ -34,7 +34,8 @@
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-success">Result</p>
         <h3 class="mt-4 text-2xl font-semibold tracking-tight text-highlighted">Here's where the team landed.</h3>
         <p class="mt-4 text-lg text-toned">Average: <span class="font-semibold text-highlighted">{{ average }}</span></p>
-        <p class="mt-1 text-xs text-muted">Numeric votes only · {{ room.round.ballots?.length ?? 0 }} votes cast</p>
+        <p class="mt-1 text-xs text-muted">Average uses numeric votes only, not an agreed estimate.</p>
+        <TaskHoldemVoteDistribution :ballots="room.round.ballots ?? []" />
         <ul aria-label="Revealed votes" class="mt-7 flex max-w-full flex-wrap justify-center gap-3">
           <li v-for="ballot in room.round.ballots" :key="ballot.participantId" class="w-20">
             <span class="mx-auto flex h-16 w-12 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-lg font-semibold text-primary">{{ formatTaskHoldemVote(ballot.value) }}</span>
