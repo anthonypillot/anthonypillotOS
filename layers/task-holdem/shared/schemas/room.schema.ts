@@ -1,12 +1,11 @@
 import { z } from "zod";
+import { taskHoldemVotingScales, taskHoldemVoteValues } from "../data/decks";
 
 export const taskHoldemRoomIdSchema = z.uuid();
 export const taskHoldemTokenSchema = z.string().regex(/^[a-f0-9]{64}$/);
 export const taskHoldemAvatarSchema = z.enum(["cowboy", "officer", "firefighter", "princess", "doctor", "robot"]);
-export const taskHoldemVoteSchema = z.union([
-  z.literal(1), z.literal(2), z.literal(3), z.literal(5), z.literal(8), z.literal(13),
-  z.literal(21), z.literal(34), z.literal(55), z.literal(89), z.literal("skip"), z.literal("break"),
-]);
+export const taskHoldemVotingScaleSchema = z.enum(taskHoldemVotingScales.map(scale => scale.value));
+export const taskHoldemVoteSchema = z.literal(taskHoldemVoteValues);
 
 export const taskHoldemProfileSchema = z.strictObject({
   name: z.string().trim().min(1).max(40),
@@ -18,6 +17,8 @@ export const taskHoldemJoinSchema = z.strictObject({
   token: taskHoldemTokenSchema,
   profile: taskHoldemProfileSchema,
 });
+
+export const taskHoldemCreateSchema = taskHoldemJoinSchema.extend({ votingScale: taskHoldemVotingScaleSchema.default("fibonacci") });
 
 export const taskHoldemInspectSchema = z.strictObject({ roomId: taskHoldemRoomIdSchema });
 export const taskHoldemEmptySchema = z.strictObject({});

@@ -5,7 +5,8 @@
     </UButton>
     <template #body>
       <div class="space-y-5">
-        <TaskHoldemSessionReport :count="count" :load="load" />
+        <p v-if="votingScale" class="text-xs text-muted">Voting scale: {{ votingScale.label }} · Fixed for this session</p>
+        <TaskHoldemSessionReport :count="count" :deck="deck" :load="load" />
         <p v-if="loading && entries.length === 0" role="status" class="py-10 text-center text-sm text-muted">Loading round history…</p>
         <div v-else-if="!entries.length && !error" class="rounded-xl border border-dashed border-default px-6 py-12 text-center">
           <UIcon name="i-heroicons-clock" class="size-8 text-primary" />
@@ -47,10 +48,12 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskHoldemHistoryEntry, TaskHoldemHistoryPage } from "../../../shared/types/room.type";
+import type { TaskHoldemHistoryEntry, TaskHoldemHistoryPage, TaskHoldemVote } from "../../../shared/types/room.type";
+import { getTaskHoldemVotingScale } from "../../../shared/data/decks";
 import { formatTaskHoldemAverage, formatTaskHoldemVote } from "../../utils/cards";
 
-const props = defineProps<{ count: number; load: (before?: number) => Promise<TaskHoldemHistoryPage | undefined> }>();
+const props = defineProps<{ count: number; deck: TaskHoldemVote[]; load: (before?: number) => Promise<TaskHoldemHistoryPage | undefined> }>();
+const votingScale = computed(() => getTaskHoldemVotingScale(props.deck));
 const open = ref(false);
 const entries = shallowRef<TaskHoldemHistoryEntry[]>([]);
 const nextBefore = ref<number | null>(null);

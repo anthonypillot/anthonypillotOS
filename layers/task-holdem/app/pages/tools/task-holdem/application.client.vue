@@ -46,6 +46,7 @@
         <TaskHoldemCreateUser
           :profile="profile"
           :creating="!roomId"
+          :creation-pending="creationPending"
           :disabled="!canJoin"
           :busy="isBusy"
           @submit="join"
@@ -60,7 +61,7 @@
           <p class="mt-1.5 hidden text-sm text-muted sm:block">Same room. Fresh perspectives.</p>
         </div>
         <div class="flex flex-wrap gap-2">
-          <TaskHoldemHistory :key="room.id" :count="room.historyCount" :load="loadHistory" />
+          <TaskHoldemHistory :key="room.id" :count="room.historyCount" :deck="room.round.deck" :load="loadHistory" />
           <TaskHoldemActions :disabled="!canAct" @copied="feedback.play('success')" />
         </div>
       </div>
@@ -80,6 +81,7 @@
             <div class="mb-5 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h2 class="text-sm font-medium text-default">Your estimate</h2>
+                <p v-if="votingScale" class="mt-1 text-xs text-muted">Voting scale: {{ votingScale.label }}</p>
                 <p class="mt-1 text-xs" :class="selectedVote !== null ? 'text-success' : 'text-muted'" role="status">{{ selectionLabel }}</p>
               </div>
               <TaskHoldemCardCompanion
@@ -140,16 +142,19 @@
 </template>
 
 <script setup lang="ts">
+import { getTaskHoldemVotingScale } from "../../../../shared/data/decks";
+
 useApplicationSeo(taskHoldemApplication);
 provideTaskHoldemMascots();
 
 const {
   roomId, room, self, profile, messages, error, invalidLink, connection, countdown, feedback,
-  isConnected, isAdmitted, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
+  isConnected, isAdmitted, isLoading, isBusy, isSending, isJoined, creationPending, canAct, canJoin, selectedVote, currentParticipant,
   join, vote, reveal, restart, setTopic, loadHistory, leave, sendMessage, retry,
 } = useTaskHoldemRoom();
 provideTaskHoldemMascotReactions(room, self, () => isConnected.value && isAdmitted.value && !isLoading.value);
 const chatDraft = ref("");
+const votingScale = computed(() => room.value ? getTaskHoldemVotingScale(room.value.round.deck) : undefined);
 const connectionLabel = computed(() => {
   if (isConnected.value && (isLoading.value || (isBusy.value && !isAdmitted.value))) return "Syncing room…";
   if (isConnected.value && isJoined.value && !isAdmitted.value) return "Rejoin required";

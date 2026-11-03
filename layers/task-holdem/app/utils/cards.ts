@@ -1,11 +1,12 @@
-import { taskHoldemDeck, type TaskHoldemVote } from "../../shared/types/room.type";
+import type { TaskHoldemVote } from "../../shared/types/room.type";
+import { taskHoldemVoteValues } from "../../shared/data/decks";
 
 export type TaskHoldemSuit = "clubs" | "diamonds" | "spades" | "hearts";
 
 const cardSuits: readonly TaskHoldemSuit[] = ["clubs", "diamonds", "spades", "hearts"];
 
 export function getTaskHoldemCardSuit(value: TaskHoldemVote): TaskHoldemSuit {
-  return cardSuits[taskHoldemDeck.indexOf(value) % cardSuits.length] ?? "spades";
+  return cardSuits[taskHoldemVoteValues.indexOf(value) % cardSuits.length] ?? "spades";
 }
 
 export const taskHoldemCardIcons = {

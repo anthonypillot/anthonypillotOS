@@ -3,9 +3,10 @@ import { describe, expect, test } from "vitest";
 import {
   TaskHoldemError, createTaskHoldemState, reconcileTaskHoldemRoom, requireTaskHoldemMember,
   revealTaskHoldemRound, restartTaskHoldemRound, selectTaskHoldemVote, setTaskHoldemTopic, toTaskHoldemRoom, toTaskHoldemSelf,
-  type TaskHoldemMutation, type TaskHoldemUpdate,
+  taskHoldemStateSchema, type TaskHoldemMutation, type TaskHoldemUpdate,
 } from "../../../server/domain/room";
-import { taskHoldemJoinSchema, taskHoldemSelectSchema } from "../../../shared/schemas/room.schema";
+import { taskHoldemCreateSchema, taskHoldemJoinSchema, taskHoldemSelectSchema } from "../../../shared/schemas/room.schema";
+import { getTaskHoldemDeck, taskHoldemVotingScales } from "../../../shared/data/decks";
 
 function createRoom(): TaskHoldemMutation {
   const state = createTaskHoldemState(randomUUID());
@@ -30,6 +31,38 @@ describe("Task Hold'em round rules", () => {
     expect(state.participants).toEqual([]);
     expect(state.round).toMatchObject({ number: 1, phase: "voting", revealAt: null, ballots: [] });
     expect(state.round.deck).toEqual([1, 2, 3, 5, 8, 13, 21, 34, 55, 89, "skip", "break"]);
+  });
+
+  test.each(taskHoldemVotingScales)("persists the $label deck across reveal and restart", (scale) => {
+    const mutation = createRoom();
+    const { state } = mutation;
+    state.round = createTaskHoldemState(state.id, 1000, scale.value).round;
+    const member = state.participants[0]!;
+    const value = scale.cards.filter(card => typeof card === "number").at(-1)!;
+    expect(taskHoldemStateSchema.parse(JSON.parse(JSON.stringify(state))).round.deck).toEqual(scale.cards);
+    selectTaskHoldemVote(state, member, { roundId: state.round.id, value });
+    expect(toTaskHoldemRoom(update(mutation)).round.ballots).toBeNull();
+    expect(toTaskHoldemSelf(update(mutation), member.id).vote).toBe(value);
+    revealTaskHoldemRound({ state, roundId: state.round.id, now: 2000, duration: 1000 });
+    reconcileTaskHoldemRoom(mutation, 3000);
+    expect(mutation.completedRounds[0]?.average).toBe(value);
+    restartTaskHoldemRound(state, state.round.id, 4000);
+    expect(state.round.deck).toEqual(scale.cards);
+    expect(state.round.ballots).toEqual([]);
+    state.round.deck.pop();
+    expect(getTaskHoldemDeck(scale.value)).toEqual(scale.cards);
+  });
+
+  test.each([
+    { votingScale: "fibonacci", value: 4 },
+    { votingScale: "linear", value: 13 },
+    { votingScale: "powers-of-two", value: 3 },
+  ] as const)("rejects a valid card from another scale in $votingScale", ({ votingScale, value }) => {
+    const { state } = createRoom();
+    state.round.deck = getTaskHoldemDeck(votingScale);
+    const selection = taskHoldemSelectSchema.parse({ roundId: state.round.id, value });
+    expect(() => selectTaskHoldemVote(state, state.participants[0]!, selection)).toThrowError("Choose a card from this room's deck");
+    expect(state.round.ballots).toEqual([]);
   });
 
   test("replaces one participant's vote without changing another vote", () => {
@@ -182,8 +215,21 @@ describe("Task Hold'em membership lifetime", () => {
 });
 
 describe("Task Hold'em command validation", () => {
-  test.each([0, 4, -1, 100, "8", {}, [], undefined])("rejects values outside the deck: %j", (value) => {
+  test.each([0, 11, -1, 100, 1.5, "8", {}, [], undefined])("rejects values outside every supported deck: %j", (value) => {
     expect(taskHoldemSelectSchema.safeParse({ roundId: randomUUID(), value }).success).toBe(false);
+  });
+
+  test("accepts voting scale selection only on creation and keeps Fibonacci as the legacy default", () => {
+    const command = { roomId: randomUUID(), token: "a".repeat(64), profile: { name: "Alice", avatar: "cowboy" } };
+    expect(taskHoldemCreateSchema.parse(command).votingScale).toBe("fibonacci");
+    for (const scale of taskHoldemVotingScales) {
+      expect(taskHoldemCreateSchema.parse({ ...command, votingScale: scale.value }).votingScale).toBe(scale.value);
+      expect(taskHoldemJoinSchema.safeParse({ ...command, votingScale: scale.value }).success).toBe(false);
+    }
+    for (const votingScale of ["t-shirt", "custom", null, {}, []]) {
+      expect(taskHoldemCreateSchema.safeParse({ ...command, votingScale }).success).toBe(false);
+    }
+    expect(taskHoldemCreateSchema.safeParse({ ...command, deck: [1, 999] }).success).toBe(false);
   });
 
   test("trims names and rejects empty profiles, weak credentials, and caller-owned state", () => {

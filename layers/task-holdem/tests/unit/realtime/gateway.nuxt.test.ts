@@ -9,6 +9,7 @@ import { registerTaskHoldemGateway, type TaskHoldemServer } from "../../../serve
 import { TaskHoldemError, createTaskHoldemState, selectTaskHoldemVote, type TaskHoldemActor, type TaskHoldemUpdate } from "../../../server/domain/room";
 import { taskHoldemConfig } from "../../../server/utils/config";
 import { taskHoldemProtocolVersion, taskHoldemSocketPath, type TaskHoldemClientEvents, type TaskHoldemServerEvents, type TaskHoldemResult, type TaskHoldemSelf } from "../../../shared/types/room.type";
+import { taskHoldemVotingScales } from "../../../shared/data/decks";
 
 vi.mock("../../../server/services/room.service", () => ({
   inspectRoom: vi.fn(), createRoom: vi.fn(), joinRoom: vi.fn(), getJoinedParticipant: vi.fn(),
@@ -111,6 +112,10 @@ beforeEach(async () => {
     actors.set(connectionId, { roomId: state.id, participantId: member.id, connectionId });
     return update(true);
   });
+  vi.mocked(service.createRoom).mockImplementation(async (command, connectionId) => {
+    state = createTaskHoldemState(command.roomId, Date.now(), command.votingScale);
+    return service.joinRoom(command, connectionId);
+  });
   vi.mocked(service.getJoinedParticipant).mockImplementation((value, token) => value.state.participants.find(member => member.tokenHash === hash(token))!.id);
   vi.mocked(service.syncRoom).mockImplementation(async (actor) => { validate(actor); return update(); });
   vi.mocked(service.heartbeat).mockImplementation(async (actor) => { validate(actor); return update(); });
@@ -148,6 +153,34 @@ afterEach(async () => {
 });
 
 describe("Task Hold'em membership subscriptions", () => {
+  test.each(taskHoldemVotingScales)("validates and broadcasts the $label creation choice", async (scale) => {
+    const client = await openClient();
+    const command = { roomId: state.id, token: firstToken, profile: { name: "Alice", avatar: "cowboy" }, votingScale: scale.value } satisfies Parameters<typeof service.createRoom>[0];
+    const created = success(await client.emitWithAck("room:create", command));
+    expect(service.createRoom).toHaveBeenCalledWith(command, expect.any(String));
+    expect(created.room.round.deck).toEqual(scale.cards);
+    const value = scale.cards.filter(card => typeof card === "number").at(-1)!;
+    const voted = success(await client.emitWithAck("round:vote", { roundId: state.round.id, value }));
+    expect(voted.self.vote).toBe(value);
+    expect(voted.room.round.ballots).toBeNull();
+    expect(voted.room.round.average).toBeNull();
+  });
+
+  test("rejects unsupported scales, caller-owned cards and attempts to change scale on join", async () => {
+    const client = await openClient();
+    const unsafe = client as Socket;
+    const command = { roomId: state.id, token: firstToken, profile: { name: "Alice", avatar: "cowboy" } };
+    for (const extra of [{ votingScale: "t-shirt" }, { votingScale: "linear", deck: [999] }]) {
+      expect(await unsafe.emitWithAck("room:create", { ...command, ...extra })).toMatchObject({ ok: false, error: { code: "INVALID_INPUT" } });
+    }
+    expect(service.createRoom).not.toHaveBeenCalled();
+    expect(await unsafe.emitWithAck("room:join", { ...command, votingScale: "linear" })).toMatchObject({ ok: false, error: { code: "INVALID_INPUT" } });
+    expect(service.joinRoom).not.toHaveBeenCalled();
+    const created = success(await client.emitWithAck("room:create", { ...command, profile: { name: "Alice", avatar: "cowboy" } }));
+    expect(created.room.round.deck).toEqual(taskHoldemVotingScales[0].cards);
+    expect(service.createRoom).toHaveBeenCalledWith(expect.objectContaining({ votingScale: "fibonacci" }), expect.any(String));
+  });
+
   test("an expired connection cannot retain another participant's private vote channel", async () => {
     const first = await openClient();
     const original = await join(first);

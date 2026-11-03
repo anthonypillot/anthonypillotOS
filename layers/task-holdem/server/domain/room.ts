@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { taskHoldemProfileSchema, taskHoldemVoteSchema } from "../../shared/schemas/room.schema";
-import { taskHoldemDeck } from "../../shared/types/room.type";
+import { getTaskHoldemDeck, type TaskHoldemVotingScale } from "../../shared/data/decks";
 import type {
   TaskHoldemBallot, TaskHoldemErrorCode, TaskHoldemHistoryEntry, TaskHoldemRoom, TaskHoldemSelf, TaskHoldemSelection, TaskHoldemTopic,
 } from "../../shared/types/room.type";
@@ -50,12 +50,12 @@ export class TaskHoldemError extends Error {
   }
 }
 
-export function createTaskHoldemState(id: string, now = Date.now()): TaskHoldemState {
+export function createTaskHoldemState(id: string, now = Date.now(), votingScale: TaskHoldemVotingScale = "fibonacci"): TaskHoldemState {
   return {
     schemaVersion: 3,
     id,
     participants: [],
-    round: { id: randomUUID(), number: 1, phase: "voting", topic: null, startedAt: now, revealedAt: null, revealAt: null, deck: [...taskHoldemDeck], ballots: [] },
+    round: { id: randomUUID(), number: 1, phase: "voting", topic: null, startedAt: now, revealedAt: null, revealAt: null, deck: getTaskHoldemDeck(votingScale), ballots: [] },
   };
 }
 

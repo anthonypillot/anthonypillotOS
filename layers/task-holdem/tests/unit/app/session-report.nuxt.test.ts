@@ -2,7 +2,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { defineComponent, h } from "vue";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import SessionReport from "../../../app/components/task-holdem/SessionReport.vue";
-import type { TaskHoldemHistoryPage } from "../../../shared/types/room.type";
+import { taskHoldemDeck, type TaskHoldemHistoryPage } from "../../../shared/types/room.type";
 
 const UButton = defineComponent({
   inheritAttrs: false,
@@ -15,7 +15,7 @@ afterEach(() => { vi.unstubAllGlobals(); });
 describe("Task Hold'em report export lifecycle", () => {
   test("does not export a partial report after a failed page and lets the user retry", async () => {
     const load = vi.fn(async () => undefined);
-    const wrapper = mount(SessionReport, { props: { count: 1, load }, global: { stubs: { UButton } } });
+    const wrapper = mount(SessionReport, { props: { count: 1, deck: taskHoldemDeck, load }, global: { stubs: { UButton } } });
     try {
       await wrapper.get("button").trigger("click");
       await flushPromises();
@@ -32,7 +32,7 @@ describe("Task Hold'em report export lifecycle", () => {
     const load = () => new Promise<TaskHoldemHistoryPage>(resolve => { finish = resolve; });
     const writeText = vi.fn();
     vi.stubGlobal("navigator", { clipboard: { writeText } });
-    const wrapper = mount(SessionReport, { props: { count: 1, load }, global: { stubs: { UButton } } });
+    const wrapper = mount(SessionReport, { props: { count: 1, deck: taskHoldemDeck, load }, global: { stubs: { UButton } } });
     await wrapper.get("button").trigger("click");
     if (action === "cancel") await wrapper.findAll("button").find(button => button.text() === "Cancel export")!.trigger("click");
     else wrapper.unmount();

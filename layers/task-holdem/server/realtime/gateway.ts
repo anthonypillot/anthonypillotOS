@@ -8,12 +8,12 @@ import {
 import { logger } from "#server/utils/logger";
 import { taskHoldemConfig } from "../utils/config";
 import {
-  taskHoldemEmptySchema, taskHoldemInspectSchema, taskHoldemJoinSchema,
+  taskHoldemCreateSchema, taskHoldemEmptySchema, taskHoldemInspectSchema, taskHoldemJoinSchema,
   taskHoldemMessageSchema, taskHoldemRoundSchema, taskHoldemSelectSchema, taskHoldemTopicSchema, taskHoldemHistorySchema,
 } from "../../shared/schemas/room.schema";
 import {
   taskHoldemProtocolVersion,
-  type TaskHoldemAck, type TaskHoldemClientEvents, type TaskHoldemServerEvents, type TaskHoldemSnapshot,
+  type TaskHoldemAck, type TaskHoldemClientEvents, type TaskHoldemCreate, type TaskHoldemServerEvents, type TaskHoldemSnapshot,
 } from "../../shared/types/room.type";
 
 type TaskHoldemSocketData = { actor: TaskHoldemActor | null };
@@ -149,7 +149,7 @@ export function registerTaskHoldemGateway(io: TaskHoldemServer): { close: () => 
       });
     }
 
-    async function join(command: z.output<typeof taskHoldemJoinSchema>, create: boolean): Promise<TaskHoldemSnapshot> {
+    async function join(command: TaskHoldemCreate, create: boolean): Promise<TaskHoldemSnapshot> {
       if (socket.data.actor && socket.data.actor.roomId !== command.roomId) {
         throw new TaskHoldemError("INVALID_INPUT", "Leave your current room before joining another one.");
       }
@@ -178,7 +178,7 @@ export function registerTaskHoldemGateway(io: TaskHoldemServer): { close: () => 
       schema: taskHoldemInspectSchema, command, ack,
       operation: value => service.inspectRoom(value.roomId),
     }));
-    socket.on("room:create", (command, ack) => handle({ schema: taskHoldemJoinSchema, command, ack, operation: value => join(value, true) }));
+    socket.on("room:create", (command, ack) => handle({ schema: taskHoldemCreateSchema, command, ack, operation: value => join(value, true) }));
     socket.on("room:join", (command, ack) => handle({ schema: taskHoldemJoinSchema, command, ack, operation: value => join(value, false) }));
     socket.on("room:sync", (command, ack) => handle({
       schema: taskHoldemEmptySchema, command, ack,

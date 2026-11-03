@@ -16,6 +16,13 @@ describe("Task Hold'em descriptive vote results", () => {
     expect(getTaskHoldemVoteSummary(["skip", "break"])).toMatchObject({ total: 2, numeric: 0, pass: 1, unsure: 1 });
   });
 
+  test("includes non-Fibonacci cards in ascending order without losing numeric votes", () => {
+    expect(getTaskHoldemVoteSummary([64, 4, "break", 10, 4, 16, "skip"])).toEqual({
+      total: 7, numeric: 5, pass: 1, unsure: 1,
+      distribution: [{ value: 4, count: 2 }, { value: 10, count: 1 }, { value: 16, count: 1 }, { value: 64, count: 1 }, { value: "skip", count: 1 }, { value: "break", count: 1 }],
+    });
+  });
+
   test("exposes textual counts without depending on color or bar widths", () => {
     const ballots = [5, 5, "break"] as const;
     const wrapper = mount(VoteDistribution, { props: { ballots: ballots.map((value, index) => ({ participantId: `participant-${index}`, profile: { name: "Player", avatar: "cowboy" }, value })) } });

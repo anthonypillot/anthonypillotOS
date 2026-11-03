@@ -4,6 +4,7 @@ import * as dao from "../../../server/dao/room.dao";
 import * as service from "../../../server/services/room.service";
 import { TaskHoldemError, type TaskHoldemMutation, type TaskHoldemState, type TaskHoldemActor } from "../../../server/domain/room";
 import { taskHoldemConfig } from "../../../server/utils/config";
+import { taskHoldemVotingScales } from "../../../shared/data/decks";
 
 vi.mock("../../../server/dao/room.dao", () => ({
   createRoom: vi.fn(), mutateRoom: vi.fn(), inspectRoom: vi.fn(), findDueRooms: vi.fn(), listRoomHistory: vi.fn(),
@@ -19,8 +20,11 @@ beforeEach(() => {
   vi.setSystemTime(new Date("2026-10-30T12:00:00Z"));
   vi.clearAllMocks();
   revision = 0;
+  let exists = false;
   vi.mocked(dao.createRoom).mockImplementation(async (state: TaskHoldemState) => {
+    if (exists) return;
     stored = { state: structuredClone(state), leases: [], completedRounds: [] };
+    exists = true;
   });
   vi.mocked(dao.mutateRoom).mockImplementation(async (_id, mutate) => {
     const copy = structuredClone(stored);
@@ -47,6 +51,23 @@ async function createActor(): Promise<TaskHoldemActor> {
 }
 
 describe("Task Hold'em service", () => {
+  test.each(taskHoldemVotingScales)("keeps $label on rejoin and idempotent creation retries", async (scale) => {
+    const initial = await service.createRoom({ ...command, votingScale: scale.value }, "first-connection");
+    const participantId = service.getJoinedParticipant(initial, command.token);
+    const actor = { roomId, participantId, connectionId: "first-connection" };
+    const value = scale.cards.filter(card => typeof card === "number").at(-1)!;
+    await service.selectVote(actor, { roundId: stored.state.round.id, value });
+    await service.disconnect(actor);
+    const restored = await service.joinRoom(command, "second-connection");
+    expect(restored.state.round.deck).toEqual(scale.cards);
+    expect(restored.state.round.ballots[0]?.value).toBe(value);
+    const retried = await service.createRoom({ ...command, votingScale: scale.value === "linear" ? "powers-of-two" : "linear" }, "second-connection");
+    expect(retried.state.round.deck).toEqual(scale.cards);
+    expect(retried.state.round.ballots[0]?.value).toBe(value);
+    expect(retried.state.participants).toHaveLength(1);
+    expect(service.getJoinedParticipant(retried, command.token)).toBe(participantId);
+  });
+
   test("creates a server-owned participant and stores only a credential hash", async () => {
     const actor = await createActor();
     const member = stored.state.participants[0]!;

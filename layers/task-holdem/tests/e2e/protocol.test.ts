@@ -242,6 +242,7 @@ test("old protocol versions and cross-origin browser handshakes are rejected", a
   for (const options of [
     { auth: { protocolVersion: 1 } },
     { auth: { protocolVersion: 2 } },
+    { auth: { protocolVersion: 3 } },
     { auth: { protocolVersion: taskHoldemProtocolVersion }, extraHeaders: { Origin: "https://unrelated.example" } },
   ]) {
     const socket = io(baseURL, { path: taskHoldemSocketPath, transports: ["websocket"], autoConnect: false, reconnection: false, ...options });

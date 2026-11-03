@@ -19,8 +19,9 @@
 
 <script setup lang="ts">
 import { formatTaskHoldemReportCsv, formatTaskHoldemReportText, loadTaskHoldemReport, type TaskHoldemHistoryLoader } from "../../utils/report";
+import type { TaskHoldemVote } from "../../../shared/types/room.type";
 
-const props = defineProps<{ count: number; load: TaskHoldemHistoryLoader }>();
+const props = defineProps<{ count: number; deck: TaskHoldemVote[]; load: TaskHoldemHistoryLoader }>();
 const busy = ref<"copy" | "csv" | null>(null);
 const status = ref<string | null>(null);
 const error = ref<string | null>(null);
@@ -63,6 +64,7 @@ async function exportReport(kind: "copy" | "csv"): Promise<void> {
   const current = new AbortController();
   controller = current;
   const through = props.count;
+  const deck = [...props.deck];
   busy.value = kind;
   error.value = null;
   preparedText.value = null;
@@ -71,10 +73,10 @@ async function exportReport(kind: "copy" | "csv"): Promise<void> {
     const entries = await loadTaskHoldemReport(props.load, through, current.signal);
     if (disposed || current.signal.aborted) return;
     if (kind === "csv") {
-      downloadCsv(formatTaskHoldemReportCsv(entries));
+      downloadCsv(formatTaskHoldemReportCsv(entries, deck));
       status.value = "Room CSV download started.";
     } else {
-      const text = formatTaskHoldemReportText(entries);
+      const text = formatTaskHoldemReportText(entries, deck);
       try {
         await navigator.clipboard.writeText(text);
         if (!disposed && !current.signal.aborted) status.value = "Room summary copied.";

@@ -1,6 +1,8 @@
 import type { z } from "zod";
 import type { Application } from "../../../../shared/types/application.type";
+import { getTaskHoldemDeck } from "../data/decks";
 import type {
+  taskHoldemCreateSchema,
   taskHoldemJoinSchema,
   taskHoldemProfileSchema,
   taskHoldemSelectSchema,
@@ -18,12 +20,13 @@ export const taskHoldemApplication: Application = {
 };
 
 export const taskHoldemSocketPath = "/api/websocket/task-holdem";
-export const taskHoldemProtocolVersion = 3;
-export const taskHoldemDeck = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, "skip", "break"] satisfies TaskHoldemVote[];
+export const taskHoldemProtocolVersion = 4;
+export const taskHoldemDeck = getTaskHoldemDeck("fibonacci");
 
 export type TaskHoldemProfile = z.infer<typeof taskHoldemProfileSchema>;
 export type TaskHoldemVote = z.infer<typeof taskHoldemVoteSchema>;
 export type TaskHoldemJoin = z.infer<typeof taskHoldemJoinSchema>;
+export type TaskHoldemCreate = z.input<typeof taskHoldemCreateSchema>;
 export type TaskHoldemSelection = z.infer<typeof taskHoldemSelectSchema>;
 export type TaskHoldemTopic = z.infer<typeof taskHoldemTopicSchema>;
 export type TaskHoldemPhase = "voting" | "revealing" | "revealed";
@@ -97,7 +100,7 @@ export type TaskHoldemAck<T> = (result: TaskHoldemResult<T>) => void;
 
 export type TaskHoldemClientEvents = {
   "room:inspect": (command: { roomId: string }, ack: TaskHoldemAck<TaskHoldemPreview>) => void;
-  "room:create": (command: TaskHoldemJoin, ack: TaskHoldemAck<TaskHoldemSnapshot>) => void;
+  "room:create": (command: TaskHoldemCreate, ack: TaskHoldemAck<TaskHoldemSnapshot>) => void;
   "room:join": (command: TaskHoldemJoin, ack: TaskHoldemAck<TaskHoldemSnapshot>) => void;
   "room:sync": (command: Record<string, never>, ack: TaskHoldemAck<TaskHoldemSnapshot>) => void;
   "room:leave": (command: Record<string, never>, ack: TaskHoldemAck<null>) => void;

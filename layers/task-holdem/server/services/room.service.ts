@@ -6,13 +6,13 @@ import {
   type TaskHoldemActor, type TaskHoldemMutation, type TaskHoldemUpdate,
 } from "../domain/room";
 import { taskHoldemConfig } from "../utils/config";
-import type { TaskHoldemJoin, TaskHoldemMessage, TaskHoldemSelection, TaskHoldemTopic } from "../../shared/types/room.type";
+import type { TaskHoldemCreate, TaskHoldemJoin, TaskHoldemMessage, TaskHoldemSelection, TaskHoldemTopic } from "../../shared/types/room.type";
 
 export const inspectRoom = dao.inspectRoom;
 export const findDueRooms = dao.findDueRooms;
 
-export async function createRoom(command: TaskHoldemJoin, connectionId: string): Promise<TaskHoldemUpdate> {
-  await dao.createRoom(createTaskHoldemState(command.roomId));
+export async function createRoom(command: TaskHoldemCreate, connectionId: string): Promise<TaskHoldemUpdate> {
+  await dao.createRoom(createTaskHoldemState(command.roomId, Date.now(), command.votingScale));
   return joinRoom(command, connectionId);
 }
 

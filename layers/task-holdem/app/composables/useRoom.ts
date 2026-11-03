@@ -1,8 +1,9 @@
 import { io, type Socket } from "socket.io-client";
-import { taskHoldemProfileSchema, taskHoldemRoomIdSchema } from "../../shared/schemas/room.schema";
+import { taskHoldemProfileSchema, taskHoldemRoomIdSchema, taskHoldemVotingScaleSchema } from "../../shared/schemas/room.schema";
+import type { TaskHoldemVotingScale } from "../../shared/data/decks";
 import {
   taskHoldemProtocolVersion, taskHoldemSocketPath,
-  type TaskHoldemClientEvents, type TaskHoldemJoin, type TaskHoldemMessage, type TaskHoldemPreview,
+  type TaskHoldemClientEvents, type TaskHoldemCreate, type TaskHoldemMessage, type TaskHoldemPreview,
   type TaskHoldemProfile, type TaskHoldemResult, type TaskHoldemRoom, type TaskHoldemSelf,
   type TaskHoldemServerEvents, type TaskHoldemSnapshot, type TaskHoldemVote,
 } from "../../shared/types/room.type";
@@ -28,17 +29,18 @@ export function useTaskHoldemRoom() {
   const isLoading = ref(true);
   const isBusy = ref(false);
   const isSending = ref(false);
+  const creation = shallowRef<TaskHoldemCreate | null>(null);
   const connection = ref<"connecting" | "connected" | "reconnecting" | "offline">("connecting");
   const clock = ref(Date.now());
   const clockOffset = ref(0);
   let socket: RoomSocket | null = null;
   let token: string | null = null;
-  let creation: TaskHoldemJoin | null = null;
   let syncing = false;
   let disposed = false;
   let revokedThroughRevision = -1;
 
   const isJoined = computed(() => room.value !== null && self.value !== null);
+  const creationPending = computed(() => creation.value !== null);
   const canAct = computed(() => isConnected.value && isAdmitted.value && !isLoading.value && !isBusy.value && isJoined.value);
   const canJoin = computed(() => isConnected.value && !isLoading.value && !isBusy.value && !invalidLink.value && (!roomId.value || preview.value !== null));
   const selectedVote = computed(() => self.value?.roundId === room.value?.round.id ? self.value?.vote ?? null : null);
@@ -52,7 +54,7 @@ export function useTaskHoldemRoom() {
   }
 
   function acceptsRoom(id: string): boolean {
-    return !disposed && id === (roomId.value ?? creation?.roomId);
+    return !disposed && id === (roomId.value ?? creation.value?.roomId);
   }
 
   function clearMembership(revision = room.value?.revision ?? -1): void {
@@ -122,8 +124,8 @@ export function useTaskHoldemRoom() {
     isLoading.value = true;
     error.value = null;
     try {
-      if (creation) {
-        const command = creation;
+      if (creation.value) {
+        const command = creation.value;
         const value = await request(() => client.emitWithAck("room:create", command));
         if (value && client === socket) await finishJoin(value);
       } else if (roomId.value) {
@@ -203,13 +205,14 @@ export function useTaskHoldemRoom() {
     const id = value.room.id;
     if (token) saveTaskHoldemToken(id, token);
     roomId.value = id;
-    creation = null;
+    creation.value = null;
     if (route.query.id !== id) await router.replace({ query: { id } });
   }
 
-  async function join(value: TaskHoldemProfile): Promise<void> {
+  async function join(value: TaskHoldemProfile, votingScale: TaskHoldemVotingScale = "fibonacci"): Promise<void> {
     const parsed = taskHoldemProfileSchema.safeParse(value);
-    if (!socket || !canJoin.value || !parsed.success) return;
+    const scale = taskHoldemVotingScaleSchema.safeParse(votingScale);
+    if (!socket || !canJoin.value || !parsed.success || !scale.success) return;
     // Request permission before the first await to preserve the join gesture.
     void feedback.requestNotifications();
     const client = socket;
@@ -219,14 +222,15 @@ export function useTaskHoldemRoom() {
     saveProfile(parsed.data);
     try {
       token ??= roomId.value ? readTaskHoldemToken(roomId.value) ?? createTaskHoldemToken() : createTaskHoldemToken();
-      const command = { roomId: roomId.value ?? creation?.roomId ?? crypto.randomUUID(), token, profile: parsed.data };
+      const command = { roomId: roomId.value ?? creation.value?.roomId ?? crypto.randomUUID(), token, profile: parsed.data };
       saveTaskHoldemToken(command.roomId, token);
       let result: TaskHoldemSnapshot | undefined;
       if (roomId.value) {
         result = await request(() => client.emitWithAck("room:join", command));
       } else {
-        creation = command;
-        result = await request(() => client.emitWithAck("room:create", command));
+        const pending = creation.value ?? { ...command, votingScale: scale.data };
+        creation.value = pending;
+        result = await request(() => client.emitWithAck("room:create", pending));
       }
       if (result && client === socket) {
         await finishJoin(result);
@@ -340,7 +344,7 @@ export function useTaskHoldemRoom() {
     preview.value = null;
     messages.value = [];
     token = null;
-    creation = null;
+    creation.value = null;
     revokedThroughRevision = -1;
     syncing = false;
     isBusy.value = false;
@@ -373,7 +377,7 @@ export function useTaskHoldemRoom() {
 
   return {
     roomId, room, self, profile, preview, messages, error, invalidLink, connection, countdown, feedback,
-    isConnected, isAdmitted, isLoading, isBusy, isSending, isJoined, canAct, canJoin, selectedVote, currentParticipant,
+    isConnected, isAdmitted, isLoading, isBusy, isSending, isJoined, creationPending, canAct, canJoin, selectedVote, currentParticipant,
     join, vote, reveal, restart, setTopic, loadHistory, leave, sendMessage, retry,
   };
 }

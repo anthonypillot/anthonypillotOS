@@ -33,6 +33,14 @@
       </div>
     </fieldset>
     <p class="-mt-2 text-center text-xs text-muted" aria-live="polite">{{ taskHoldemMascots[avatar].description }}</p>
+    <div v-if="creating" class="space-y-3">
+      <label for="task-holdem-voting-scale" class="block text-sm font-medium text-default">Voting scale</label>
+      <USelect id="task-holdem-voting-scale" v-model="votingScale" :items="votingScales" :disabled="disabled || busy || creationPending" aria-describedby="task-holdem-voting-scale-help" size="lg" class="w-full" />
+      <p id="task-holdem-voting-scale-help" class="text-xs leading-5 text-muted">Shared by everyone and fixed for this session.</p>
+      <ul aria-label="Cards in this voting scale" aria-live="polite" class="flex flex-wrap gap-1.5">
+        <li v-for="card in deck" :key="card" class="rounded-md border border-default bg-elevated px-2 py-1 text-xs tabular-nums text-toned">{{ formatTaskHoldemVote(card) }}</li>
+      </ul>
+    </div>
     <UButton
       type="submit"
       :label="creating ? 'Create room' : 'Join game'"
@@ -50,14 +58,19 @@
 import type { TaskHoldemProfile } from "../../../shared/types/room.type";
 import { taskHoldemAvatarSchema } from "../../../shared/schemas/room.schema";
 import { taskHoldemMascots } from "../../../shared/data/mascots";
+import { getTaskHoldemDeck, taskHoldemVotingScales, type TaskHoldemVotingScale } from "../../../shared/data/decks";
+import { formatTaskHoldemVote } from "../../utils/cards";
 
-const props = defineProps<{ profile: TaskHoldemProfile; creating: boolean; disabled: boolean; busy: boolean }>();
-const emit = defineEmits<{ submit: [profile: TaskHoldemProfile] }>();
+const props = defineProps<{ profile: TaskHoldemProfile; creating: boolean; creationPending: boolean; disabled: boolean; busy: boolean }>();
+const emit = defineEmits<{ submit: [profile: TaskHoldemProfile, votingScale: TaskHoldemVotingScale] }>();
 const name = ref(props.profile.name);
 const avatar = ref<TaskHoldemProfile["avatar"]>(props.profile.avatar);
+const votingScale = ref<TaskHoldemVotingScale>("fibonacci");
 const avatars = taskHoldemAvatarSchema.options.map(value => ({ value, ...taskHoldemMascots[value] }));
+const votingScales = taskHoldemVotingScales.map(({ value, label }) => ({ value, label }));
+const deck = computed(() => getTaskHoldemDeck(votingScale.value));
 
 function submit(): void {
-  if (!props.disabled && name.value.trim()) emit("submit", { name: name.value.trim(), avatar: avatar.value });
+  if (!props.disabled && !props.busy && name.value.trim()) emit("submit", { name: name.value.trim(), avatar: avatar.value }, votingScale.value);
 }
 </script>

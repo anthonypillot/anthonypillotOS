@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
-import type { TaskHoldemHistoryEntry, TaskHoldemHistoryPage } from "../../../shared/types/room.type";
+import { taskHoldemDeck, type TaskHoldemHistoryEntry, type TaskHoldemHistoryPage } from "../../../shared/types/room.type";
+import { getTaskHoldemDeck, taskHoldemVotingScales } from "../../../shared/data/decks";
 import { formatTaskHoldemReportCsv, formatTaskHoldemReportText, loadTaskHoldemReport } from "../../../app/utils/report";
 
 function entry(number: number, topic: string | null = `Task ${number}`): TaskHoldemHistoryEntry {
@@ -39,29 +40,60 @@ describe("Task Hold'em complete report loading", () => {
 describe("Task Hold'em anonymous room summaries", () => {
   test("includes UTC dates and descriptive results without participant identities", () => {
     const entries = [entry(1), { ...entry(2, null), ballots: [], average: null }];
-    const text = formatTaskHoldemReportText(entries);
+    const text = formatTaskHoldemReportText(entries, taskHoldemDeck);
     expect(text).toContain("Round 1 — Task 1");
     expect(text).toContain("1970-01-01T00:00:01.000Z");
     expect(text).toContain("Votes: 3 total · 1 numeric · 1 Pass · 1 Unsure");
     expect(text).toContain("Distribution: 8 × 1 · Pass × 1 · Unsure × 1");
     expect(text).toContain("Round 2 — Untitled round");
     expect(text).toContain("Average: N/A");
-    for (const output of [text, formatTaskHoldemReportCsv(entries)]) {
+    for (const output of [text, formatTaskHoldemReportCsv(entries, taskHoldemDeck)]) {
       expect(output).not.toContain("Private voter");
       expect(output).not.toContain("private-");
     }
   });
 
   test.each(["=HYPERLINK(\"https://example.com\")", "+SUM(1,2)", "-1+2", "@SUM(1,2)", "  =1+2", "\tformula"])("protects spreadsheet cells starting with %j", (topic) => {
-    const csv = formatTaskHoldemReportCsv([entry(1, topic)]);
+    const csv = formatTaskHoldemReportCsv([entry(1, topic)], taskHoldemDeck);
     expect(csv).toContain(`"'${topic.replace(/"/g, '""')}"`);
     expect(csv.startsWith("\uFEFF")).toBe(true);
   });
 
   test("quotes commas, newlines and quotes without changing ordinary titles", () => {
-    const csv = formatTaskHoldemReportCsv([entry(1, 'A, "quoted"\nsubject')]);
+    const csv = formatTaskHoldemReportCsv([entry(1, 'A, "quoted"\nsubject')], taskHoldemDeck);
     expect(csv).toContain('"A, ""quoted""\nsubject"');
     expect(csv).toContain('"Votes for 89"');
     expect(csv.endsWith("\r\n")).toBe(true);
+  });
+
+  test.each(taskHoldemVotingScales)("exports every $label card without Fibonacci-only columns", (scale) => {
+    const deck = getTaskHoldemDeck(scale.value);
+    const votes = scale.cards;
+    const entries: TaskHoldemHistoryEntry[] = [{
+      ...entry(1),
+      ballots: votes.map((value, index) => ({ participantId: `private-${index}`, profile: { name: "Private voter", avatar: "robot" }, value })),
+    }];
+    const text = formatTaskHoldemReportText(entries, deck);
+    const csv = formatTaskHoldemReportCsv(entries, deck);
+    expect(text).toContain(`Voting scale: ${scale.label}`);
+    expect(csv).toContain(`"${scale.label}"`);
+    for (const value of deck.filter(card => typeof card === "number")) {
+      expect(text).toContain(`${value} × 1`);
+      expect(csv).toContain(`"Votes for ${value}"`);
+    }
+    const rows = csv.trim().split("\r\n");
+    expect(rows[0]?.match(/"(?:[^"]|"")*"/g)).toHaveLength(10 + deck.length - 2);
+    expect(rows[1]?.match(/"(?:[^"]|"")*"/g)).toHaveLength(10 + deck.length - 2);
+    expect(rows[1]?.endsWith(deck.filter(card => typeof card === "number").map(() => ',"1"').join(""))).toBe(true);
+    if (scale.value !== "fibonacci") expect(csv).not.toContain('"Votes for 89"');
+    expect(text).not.toContain("Private voter");
+    expect(csv).not.toContain("private-");
+  });
+
+  test("refuses inconsistent history instead of silently dropping votes outside the selected deck", () => {
+    const entries = [{ ...entry(1), ballots: [{ participantId: "private", profile: { name: "Private voter", avatar: "robot" }, value: 13 }] }] satisfies TaskHoldemHistoryEntry[];
+    const deck = getTaskHoldemDeck("linear");
+    expect(() => formatTaskHoldemReportText(entries, deck)).toThrow("does not match");
+    expect(() => formatTaskHoldemReportCsv(entries, deck)).toThrow("does not match");
   });
 });
