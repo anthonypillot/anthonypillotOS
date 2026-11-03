@@ -5,6 +5,7 @@
     </UButton>
     <template #body>
       <div class="space-y-5">
+        <TaskHoldemSessionReport :count="count" :load="load" />
         <p v-if="loading && entries.length === 0" role="status" class="py-10 text-center text-sm text-muted">Loading round history…</p>
         <div v-else-if="!entries.length && !error" class="rounded-xl border border-dashed border-default px-6 py-12 text-center">
           <UIcon name="i-heroicons-clock" class="size-8 text-primary" />
