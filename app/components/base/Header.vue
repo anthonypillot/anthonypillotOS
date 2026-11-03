@@ -143,7 +143,8 @@ onMounted(() => {
 <style>
 .floating-header {
   position: fixed;
-  inset: max(0.75rem, env(safe-area-inset-top)) 0 auto;
+  /* Match Reka's body compensation when an overlay removes the viewport scrollbar. */
+  inset: max(0.75rem, env(safe-area-inset-top)) var(--scrollbar-width, 0px) auto 0;
   z-index: 50;
   display: flex;
   justify-content: center;
