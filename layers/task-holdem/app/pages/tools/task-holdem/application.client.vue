@@ -124,8 +124,10 @@
             <p class="mt-3 border-t border-default px-2 pt-4 text-[11px] leading-5 text-muted">A brief disconnect keeps your seat warm. Use “Leave room” when you're done.</p>
           </section>
           <TaskHoldemChat
+            :key="`${room.id}:${self.participantId}`"
             v-model="chatDraft"
             :messages="messages"
+            :participant-id="self.participantId"
             :disabled="!canAct"
             :sending="isSending"
             @submit="submitChat"

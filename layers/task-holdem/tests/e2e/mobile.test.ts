@@ -4,6 +4,23 @@ import { expect, test } from "./support/fixtures";
 
 test.skip(({ hasTouch }) => !hasTouch, "These scenarios exercise touch devices, not desktop pointer interactions.");
 
+test("an expanded chat below the touch viewport keeps incoming messages unread", async ({ roomId, createPlayer }) => {
+  const alice = await createPlayer(roomId, "Alice");
+  const bob = await createPlayer(roomId, "Bob");
+  await alice.openChat();
+  const log = alice.page.getByRole("log", { name: "Room messages", exact: true });
+  await log.scrollIntoViewIfNeeded();
+  await alice.page.evaluate(() => window.scrollTo(0, 0));
+  await expect(log).not.toBeInViewport();
+  await bob.openChat();
+  await bob.page.getByRole("textbox", { name: "Your message", exact: true }).fill("Read this when you return to the chat");
+  await bob.page.getByRole("button", { name: "Send", exact: true }).tap();
+  await alice.page.bringToFront();
+  await expect(alice.page.getByTestId("chat-message-count")).toContainText("1 unread message");
+  await log.scrollIntoViewIfNeeded();
+  await expect(alice.page.getByTestId("chat-message-count")).toHaveCount(0);
+});
+
 test("a player-list avatar responds to touch while its card companion is offscreen", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice", "robot");
   await alice.page.emulateMedia({ reducedMotion: "no-preference" });

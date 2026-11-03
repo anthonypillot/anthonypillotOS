@@ -163,14 +163,15 @@ test("the sticky sidebar keeps chat controls reachable in short desktop windows"
   await expect.poll(async () => (await sidebar.boundingBox())!.y).toBeCloseTo(112, 0);
 });
 
-test("message counts use a white badge with dark text", async ({ roomId, createPlayer }) => {
+test("unread messages use a white badge with dark text", async ({ roomId, createPlayer }) => {
   const alice = await createPlayer(roomId, "Alice");
+  const bob = await createPlayer(roomId, "Bob");
   const badge = alice.page.getByTestId("chat-message-count");
   await expect(badge).toHaveCount(0);
-  await alice.openChat();
-  await alice.page.getByRole("textbox", { name: "Your message", exact: true }).fill("Ready to estimate");
-  await alice.page.getByRole("button", { name: "Send", exact: true }).click();
-  await expect(badge).toHaveText("1");
+  await bob.openChat();
+  await bob.page.getByRole("textbox", { name: "Your message", exact: true }).fill("Ready to estimate");
+  await bob.page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(badge).toContainText("1 unread message");
   const colors = await badge.evaluate((element) => {
     const context = document.createElement("canvas").getContext("2d");
     if (!context) throw new Error("Canvas is required to resolve semantic colors");

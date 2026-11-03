@@ -8,7 +8,7 @@
       aria-controls="task-holdem-chat"
       @click="open = !open"
     >
-      <span class="flex items-center gap-2 text-sm font-medium text-default"><UIcon name="i-heroicons-chat-bubble-left-right" class="size-4 text-primary" aria-hidden="true" /> Team chat <span v-if="messages.length" class="inline-flex min-w-5 items-center justify-center rounded-full bg-inverted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-inverted" data-testid="chat-message-count">{{ messages.length }}</span></span>
+      <span class="flex items-center gap-2 text-sm font-medium text-default"><UIcon name="i-heroicons-chat-bubble-left-right" class="size-4 text-primary" aria-hidden="true" /> Team chat <span v-if="unreadCount" class="inline-flex min-w-5 items-center justify-center rounded-full bg-inverted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-inverted" data-testid="chat-message-count" role="status"><span aria-hidden="true">{{ unreadCount }}</span><span class="sr-only">{{ unreadCount }} unread {{ unreadCount === 1 ? 'message' : 'messages' }}</span></span></span>
       <UIcon name="i-heroicons-chevron-down" class="size-4 text-muted transition-transform" :class="open ? 'rotate-180' : ''" aria-hidden="true" />
     </button>
     <div v-if="open" id="task-holdem-chat" class="border-t border-default">
@@ -18,6 +18,7 @@
         aria-label="Room messages"
         aria-live="polite"
         class="flex h-64 flex-col gap-4 overflow-y-auto p-5"
+        @scroll.passive="updatePosition"
       >
         <p v-if="messages.length === 0" class="my-auto text-center text-xs leading-6 text-muted">No messages yet<br>Keep the conversation going.</p>
         <div v-for="message in renderedMessages" :key="message.id" class="min-w-0 text-sm">
@@ -29,7 +30,9 @@
             </template>
           </p>
         </div>
+        <span ref="messageEnd" aria-hidden="true" class="block h-px shrink-0" />
       </div>
+      <button v-if="unreadCount" type="button" aria-label="Show new messages" class="block w-full border-t border-default px-4 py-2 text-xs font-medium text-primary outline-none hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary" @click="showLatest">{{ unreadCount }} new {{ unreadCount === 1 ? 'message' : 'messages' }} ↓</button>
       <form class="space-y-3 border-t border-default p-4" @submit.prevent="submit">
         <UInput v-model="draft" placeholder="Your message" aria-label="Your message" :maxlength="2000" :disabled="disabled" class="w-full" />
         <div class="flex items-center justify-between gap-2">
@@ -45,19 +48,17 @@
 import type { TaskHoldemMessage } from "../../../shared/types/room.type";
 import { getTaskHoldemChatParts } from "../../utils/chat";
 
-const props = defineProps<{ messages: TaskHoldemMessage[]; disabled: boolean; sending: boolean }>();
+const props = defineProps<{ messages: TaskHoldemMessage[]; participantId: string; disabled: boolean; sending: boolean }>();
 const draft = defineModel<string>({ default: "" });
 const emit = defineEmits<{ submit: [content: string] }>();
 const open = ref(false);
 const messageList = ref<HTMLElement | null>(null);
+const messageEnd = ref<HTMLElement | null>(null);
+const { unreadCount, updatePosition, showLatest } = useTaskHoldemChatReading({ messages: () => props.messages, participantId: () => props.participantId, open, list: messageList, end: messageEnd });
 const renderedMessages = computed(() => props.messages.map(message => ({ ...message, parts: getTaskHoldemChatParts(message.content) })));
 
 function submit(): void {
   if (!props.disabled && !props.sending && draft.value.trim()) emit("submit", draft.value.trim());
 }
 
-watch(() => [props.messages.length, open.value], async () => {
-  await nextTick();
-  if (messageList.value) messageList.value.scrollTop = messageList.value.scrollHeight;
-});
 </script>
