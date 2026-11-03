@@ -48,6 +48,17 @@ export default defineNuxtConfig({
     colorMode: false,
   },
 
+  fonts: {
+    families: [
+      {
+        name: "Poppins",
+        weights: [400, 500, 600, 700, 800],
+        styles: ["normal"],
+        subsets: ["latin", "latin-ext"],
+      },
+    ],
+  },
+
   plausible: {
     apiHost: "https://plausible.monitoring.anthonypillot.com",
     ignoredHostnames: ["localhost", "127.0.0.1"],
@@ -66,7 +77,7 @@ export default defineNuxtConfig({
     "/tools/it-facts": { swr: true },
   },
 
-  modules: ["@nuxt/ui", "@nuxt/eslint", "@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/plausible"],
+  modules: ["@nuxt/ui", "@nuxt/eslint", "@nuxt/image", "@nuxt/test-utils/module", "@nuxtjs/plausible", "@nuxt/fonts"],
 
   devtools: { enabled: true },
 });

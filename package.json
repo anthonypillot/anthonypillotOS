@@ -45,6 +45,7 @@
   "dependencies": {
     "@iconify-json/heroicons": "^1.2.3",
     "@nuxt/eslint": "^1.17.0",
+    "@nuxt/fonts": "^1.2.0",
     "@nuxt/image": "^2.2.0",
     "@nuxt/test-utils": "^4.3.4",
     "@nuxt/ui": "^4.12.0",
