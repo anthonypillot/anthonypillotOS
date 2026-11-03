@@ -1,6 +1,10 @@
 <template>
   <UButton ref="trigger" label="Reveal cards" icon="i-heroicons-eye" size="lg" class="mt-4 justify-center" :disabled="!canReveal" data-testid="reveal-button" @click="requestReveal" />
-  <UModal v-model:open="open" title="Reveal before everyone votes?" description="Revealing locks all votes. You can wait, or reveal the votes already cast." :content="{ onOpenAutoFocus: focusCancel, onCloseAutoFocus: restoreFocus }" :ui="{ footer: 'justify-end' }">
+  <UModal v-model:open="open" title="Reveal before everyone votes?" :content="{ onOpenAutoFocus: focusCancel, onCloseAutoFocus: restoreFocus }" :ui="{ footer: 'justify-end' }">
+    <template #description>
+      Revealing locks all votes.<br>
+      You can wait, or reveal the votes already cast.
+    </template>
     <template #body>
       <div aria-live="polite" aria-atomic="true">
         <p class="text-sm text-toned">{{ missing.length ? `${missing.length} ${missing.length === 1 ? 'player has' : 'players have'} not voted yet:` : 'Everyone has now voted. Reveal when you are ready.' }}</p>
