@@ -3,7 +3,12 @@ import { routes } from "../../../../tests/e2e/configuration";
 import { expect, test } from "./support/fixtures";
 
 test.skip(({ browserName, isMobile, hasTouch }) => browserName !== "chromium" || isMobile || hasTouch, "Exercise classic desktop scrollbar geometry once; touch devices use overlay scrollbars.");
-test.use({ launchOptions: { ignoreDefaultArgs: ["--hide-scrollbars"] } });
+test.use({
+  launchOptions: {
+    ignoreDefaultArgs: ["--hide-scrollbars"],
+    args: ["--disable-features=OverlayScrollbar,FluentOverlayScrollbar", "--disable-overlay-scrollbar"],
+  },
+});
 
 async function prepareScrollbar(page: Page, width: number, height = 900): Promise<void> {
   await page.setViewportSize({ width, height });
@@ -44,6 +49,7 @@ for (const width of [1440, 1100]) {
     const scrollbarWidth = await page.evaluate(() => window.innerWidth - document.documentElement.clientWidth);
     expect(scrollbarWidth).toBeGreaterThan(0);
     const picker = page.getByRole("combobox", { name: "Voting scale", exact: true });
+    await expect(picker).toBeEnabled();
     await picker.scrollIntoViewIfNeeded();
     await picker.focus();
     const baseline = await readLayout(page);
@@ -97,6 +103,7 @@ test("opening a menu without a scrollbar does not add an empty gutter", async ({
   await prepareScrollbar(page, 1440, 6000);
   expect(await page.evaluate(() => window.innerWidth - document.documentElement.clientWidth)).toBe(0);
   const picker = page.getByRole("combobox", { name: "Voting scale", exact: true });
+  await expect(picker).toBeEnabled();
   await picker.focus();
   const baseline = await readLayout(page);
   await picker.press("Space");

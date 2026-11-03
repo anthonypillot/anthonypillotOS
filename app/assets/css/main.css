@@ -4,6 +4,9 @@
 .dark {
   --ui-primary: var(--ui-color-primary-300);
   --ui-text-dimmed: var(--ui-color-neutral-400);
+  --ui-bg-muted: color-mix(in oklab, var(--ui-color-neutral-900) 50%, var(--ui-color-neutral-800));
+  --ui-border: var(--ui-color-neutral-700);
+  --ui-border-muted: color-mix(in oklab, var(--ui-color-neutral-700) 70%, var(--ui-color-neutral-800));
   --ui-border-accented: var(--ui-color-neutral-500);
 }
 

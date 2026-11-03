@@ -56,7 +56,7 @@ type AnimationOptions = {
 
 const props = withDefaults(defineProps<BorderGlowProps>(), {
   animated: false,
-  backgroundColor: "var(--ui-bg-elevated)",
+  backgroundColor: "var(--ui-bg-muted)",
   borderRadius: 16,
   edgeSensitivity: 30,
   glowRadius: 32,

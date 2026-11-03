@@ -1,3 +1,4 @@
+import { waitForHydration } from "@nuxt/test-utils/e2e";
 import { routes } from "./configuration";
 import { expect, test } from "./support/fixtures";
 import { expectReadableContrast } from "./support/contrast";
@@ -54,6 +55,7 @@ for (const colorScheme of ["light", "dark"] as const) {
 
     test("History Cleaner confirmation stays readable above the page", async ({ page }) => {
       await page.goto(routes.githubHistoryCleaner);
+      await waitForHydration(page, routes.githubHistoryCleaner, "hydration");
       await page.getByLabel("Account name or organization").fill("theme-test");
       await page.getByLabel("Repository", { exact: true }).fill("example");
       await page.getByLabel("GitHub Personal Access Token (PAT)", { exact: true }).fill("ghp_theme-test");

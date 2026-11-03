@@ -1,4 +1,5 @@
 import { expect, type Dialog, type Page } from "@playwright/test";
+import { waitForHydration } from "@nuxt/test-utils/e2e";
 import { routes } from "../configuration";
 
 export const cleanerEndpoint = "/api/tools/github/history-cleaner";
@@ -21,6 +22,7 @@ export class HistoryCleanerPage {
 
   async goto(): Promise<void> {
     await this.page.goto(routes.githubHistoryCleaner);
+    await waitForHydration(this.page, routes.githubHistoryCleaner, "hydration");
   }
 
   async fill(): Promise<void> {

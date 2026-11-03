@@ -39,7 +39,7 @@
             :key="highlight.label"
             class="flex items-center gap-3 py-3 first:pt-0 last:pb-0 sm:gap-4 sm:py-4"
           >
-            <span class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-default bg-muted/70 sm:size-11">
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-default bg-elevated/70 sm:size-11">
               <UIcon :name="highlight.icon" class="size-5 text-primary sm:size-6" aria-hidden="true" />
             </span>
             <span class="text-sm leading-5 text-highlighted sm:text-base">{{ highlight.label }}</span>
@@ -49,7 +49,7 @@
 
       <button
         type="button"
-        class="group flex w-full items-center gap-3 border-t border-default bg-muted/45 px-4 py-4 text-left text-sm font-medium text-success transition-colors hover:bg-muted/70 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:px-6 sm:py-5 sm:text-base lg:px-8"
+        class="group flex w-full items-center gap-3 border-t border-default bg-elevated/45 px-4 py-4 text-left text-sm font-medium text-success transition-colors hover:bg-elevated/70 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary sm:px-6 sm:py-5 sm:text-base lg:px-8"
         :aria-label="`View ${technologyLabel} used at ${experience.company.name}`"
         @click="openDrawer"
       >
