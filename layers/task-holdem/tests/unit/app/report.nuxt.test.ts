@@ -44,7 +44,7 @@ describe("Task Hold'em room summaries", () => {
     expect(text).toContain("Round 1 — Task 1");
     expect(text).toContain("1970-01-01T00:00:01.000Z");
     expect(text).toContain("Votes: 3 total · 1 numeric · 1 Pass · 1 Unsure");
-    expect(text).toContain("Distribution: 8 × 1 · Pass × 1 · Unsure × 1");
+    expect(text).not.toContain("Distribution:");
     expect(text).toContain("Participant votes:\n- Alice: 8\n- Bob: Pass\n- Chloé: Unsure");
     expect(text).toContain("Round 2 — Untitled round");
     expect(text).toContain("Average: N/A");
@@ -113,12 +113,12 @@ describe("Task Hold'em room summaries", () => {
     }];
     const text = formatTaskHoldemReportText(entries, deck);
     const csv = formatTaskHoldemReportCsv(entries, deck);
+    expect(text).not.toContain("Distribution:");
     for (const output of [text, csv]) {
       expect(output).not.toContain("Voting scale");
       expect(output).not.toContain(scale.label);
     }
     for (const value of deck.filter(card => typeof card === "number")) {
-      expect(text).toContain(`${value} × 1`);
       expect(csv).toContain(`"Votes for ${value}"`);
     }
     const rows = csv.trim().split("\r\n").map(row => [...row.matchAll(/"((?:[^"]|"")*)"/g)].map(cell => cell[1]!.replace(/""/g, '"')));

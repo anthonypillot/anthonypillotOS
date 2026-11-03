@@ -61,7 +61,6 @@ export function formatTaskHoldemReportText(entries: readonly TaskHoldemHistoryEn
       `Revealed: ${new Date(entry.revealedAt).toISOString()}`,
       `Average: ${formatTaskHoldemAverage(entry.average)}`,
       `Votes: ${summary.total} total · ${summary.numeric} numeric · ${summary.pass} Pass · ${summary.unsure} Unsure`,
-      `Distribution: ${summary.distribution.map(group => `${formatTaskHoldemVote(group.value)} × ${group.count}`).join(" · ") || "No votes"}`,
       "Participant votes:",
       formatParticipantVotes(entry).map(vote => `- ${vote}`).join("\n") || "No votes",
     ].join("\n");

@@ -85,7 +85,7 @@ for (const scenario of scenarios) {
       await expect(history.getByText("Room summary copied.", { exact: true })).toBeVisible();
       const text = (await page.evaluate(() => document.body.dataset.copiedSummary))!;
       expect(text).not.toContain("Voting scale");
-      expect(text).toContain(`Distribution: ${scenario.firstVote} × 1 · ${scenario.secondVote} × 1`);
+      expect(text).not.toContain("Distribution:");
       expect(text).toContain(`- Creator: ${scenario.firstVote}`);
       expect(text).toContain(`- Bob: ${scenario.secondVote}`);
       const downloaded = page.waitForEvent("download");
