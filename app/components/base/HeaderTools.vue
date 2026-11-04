@@ -1,38 +1,38 @@
 <template>
   <div class="flex flex-col gap-2 p-2">
-    <p class="px-3 pb-2 pt-3 text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-slate-300">Tools</p>
+    <p class="px-3 pb-2 pt-3 text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-toned">Tools</p>
     <NuxtLink
       v-for="tool in tools"
       :key="tool.to"
       :to="tool.to"
       :aria-current="route.path === tool.to ? 'page' : undefined"
-      class="group flex items-center gap-3 rounded-2xl p-3 transition-colors hover:bg-white/8 motion-reduce:transition-none"
-      :class="{ 'bg-indigo-400/12': isActive(tool.to) }"
+      class="group flex items-center gap-3 rounded-2xl p-3 transition-colors hover:bg-elevated/60 motion-reduce:transition-none"
+      :class="{ 'bg-primary/12': isActive(tool.to) }"
       @click="emit('navigate')"
     >
       <span
-        class="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-indigo-300 group-hover:bg-indigo-400/15"
+        class="flex size-10 shrink-0 items-center justify-center rounded-xl border border-default bg-elevated/60 text-primary group-hover:bg-primary/15"
       >
         <UIcon :name="tool.icon" class="size-5" aria-hidden="true" />
       </span>
       <span class="min-w-0 flex-1">
-        <span class="block text-sm font-semibold text-slate-100">{{ tool.name }}</span>
-        <span class="mt-1 block text-xs leading-5 text-slate-300">{{ tool.description }}</span>
+        <span class="block text-sm font-semibold text-highlighted">{{ tool.name }}</span>
+        <span class="mt-1 block text-xs leading-5 text-toned">{{ tool.description }}</span>
       </span>
       <UIcon
         name="i-heroicons-chevron-right"
-        class="size-3.5 shrink-0 text-slate-400 group-hover:text-indigo-300"
+        class="size-3.5 shrink-0 text-muted group-hover:text-primary"
         aria-hidden="true"
       />
     </NuxtLink>
   </div>
-  <div class="border-t border-white/10 p-2">
+  <div class="border-t border-default p-2">
     <NuxtLink to="/tools" class="header-link justify-between" @click="emit('navigate')">
       <span class="flex items-center gap-2">
-        <UIcon name="i-heroicons-squares-2x2" class="size-4 text-indigo-300" aria-hidden="true" />
+        <UIcon name="i-heroicons-squares-2x2" class="size-4 text-primary" aria-hidden="true" />
         View all tools
       </span>
-      <UIcon name="i-heroicons-arrow-right" class="size-4 text-indigo-300" aria-hidden="true" />
+      <UIcon name="i-heroicons-arrow-right" class="size-4 text-primary" aria-hidden="true" />
     </NuxtLink>
   </div>
 </template>

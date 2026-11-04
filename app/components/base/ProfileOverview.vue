@@ -1,6 +1,6 @@
 <template>
-  <section class="bg-slate-800">
-    <div class="bg-gray-900 pb-20 sm:pb-24 xl:pb-0">
+  <section class="bg-muted">
+    <div class="bg-default pb-20 sm:pb-24 xl:pb-0">
       <div
         class="mx-auto flex max-w-7xl flex-col items-center gap-x-8 gap-y-10 px-6 sm:gap-y-8 lg:px-8 xl:flex-row xl:items-stretch"
       >
@@ -25,23 +25,23 @@
               />
               <use href="#b56e9dab-6ccb-4d32-ad02-6b4bb5d9bbeb" x="86" />
             </svg>
-            <blockquote class="text-xl font-semibold leading-8 text-white sm:text-2xl sm:leading-9">
+            <blockquote class="text-xl font-semibold leading-8 text-highlighted sm:text-2xl sm:leading-9">
               <p>
-                <span class="text-indigo-400">Lead</span> Full-Stack <span class="text-indigo-400">Engineer</span> —
-                architecture to deployment (<span class="text-indigo-400">Project Architecture</span>,
-                <span class="text-indigo-400">Database</span>, <span class="text-indigo-400">Back-end</span>,
-                <span class="text-indigo-400">Front-end</span>, <span class="text-indigo-400">Testing</span>,
-                <span class="text-indigo-400">Integration</span>, and Deployment through
-                <span class="text-indigo-400">DevOps/FinOps</span>). Building
-                <span class="text-indigo-400">agentic</span> systems &
-                <span class="text-indigo-400">MCP</span> integrations.
-                <span class="text-indigo-400">FOSS</span> advocate. Unexpected background:
-                <span class="text-indigo-400">work psychology</span>.
+                <span class="text-primary">Lead</span> Full-Stack <span class="text-primary">Engineer</span> —
+                architecture to deployment (<span class="text-primary">Project Architecture</span>,
+                <span class="text-primary">Database</span>, <span class="text-primary">Back-end</span>,
+                <span class="text-primary">Front-end</span>, <span class="text-primary">Testing</span>,
+                <span class="text-primary">Integration</span>, and Deployment through
+                <span class="text-primary">DevOps/FinOps</span>). Building
+                <span class="text-primary">agentic</span> systems &
+                <span class="text-primary">MCP</span> integrations.
+                <span class="text-primary">FOSS</span> advocate. Unexpected background:
+                <span class="text-primary">work psychology</span>.
               </p>
             </blockquote>
             <figcaption class="mt-8 text-base">
-              <div class="font-semibold text-white">{{ config.public.author.name }}</div>
-              <div class="mt-1 text-gray-400">Software Engineer</div>
+              <div class="font-semibold text-highlighted">{{ config.public.author.name }}</div>
+              <div class="mt-1 text-muted">Software Engineer</div>
             </figcaption>
           </figure>
         </article>

@@ -77,6 +77,8 @@ Start the development server on `http://localhost:3000`:
 npm run dev
 ```
 
+Task Hold'em is grouped in `layers/task-holdem/`: app, server, shared contracts, public assets and tests. Nuxt registers this local layer automatically; Prisma and shared infrastructure stay at the project root.
+
 > More context for contributors: see [AGENTS.md](AGENTS.md).
 
 ## 🧪 Tests
@@ -93,7 +95,7 @@ npm run test:e2e:db:down # Stop and discard the E2E database
 ```
 
 E2E tests always launch the production build at `http://127.0.0.1:4173`, including in CI.
-Their dedicated database uses port `55439` and never reads database credentials from `.env`.
+The disposable `os-e2e-postgres` container runs the `os_e2e_postgres` database on port `55439` and never reads database credentials from `.env`.
 Install browsers once with `npx playwright install --with-deps`.
 
 For a quick check, use `npm run test:e2e -- --project="Desktop - Chromium"`.
@@ -102,7 +104,7 @@ After building, `npx playwright test ...` reruns selected specs without rebuildi
 
 GitHub Actions runs E2E only on the weekly schedule or manual dispatch, grouped by browser engine.
 Failures fail the workflow; artifacts include HTML/JUnit reports, failure screenshots/traces, browser diagnostics, and `logs/e2e-server.log`.
-TaskHold'em exercises real WebSockets/PostgreSQL; History Cleaner submissions are mocked with fake tokens and blocked unless explicitly intercepted.
+TaskHold'em exercises real WebSockets/PostgreSQL, including two Nitro instances for concurrent-command tests. History Cleaner submissions are mocked with fake tokens and blocked unless explicitly intercepted.
 Do not run builds and Playwright simultaneously: `npm run build` removes previous reports and test results.
 
 ## 🚀 Production

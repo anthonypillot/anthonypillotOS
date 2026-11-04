@@ -1,0 +1,33 @@
+# Repository and local tooling
+.git
+.fleet
+.idea
+.vscode
+.opencode
+.agents
+.playwright-mcp
+**/.DS_Store
+
+# Local environment files
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies and generated application files
+**/node_modules
+**/.nuxt
+**/.output
+**/.data
+**/.nitro
+**/.cache
+dist
+server/generated/prisma
+
+# Logs and test artifacts
+logs
+**/*.log
+coverage
+test-results
+playwright-report
+blob-report
+playwright/.cache
