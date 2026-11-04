@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.12...v1.6.0) (2026-11-04)
+
+
+### Features
+
+* **task-holdem:** Task Hold’em v2 ([#108](https://github.com/anthonypillot/anthonypillotOS/issues/108)) ([d5667ad](https://github.com/anthonypillot/anthonypillotOS/commit/d5667ad8e3dba475dfc1f9b185a4281fd74dcb9a))
+
 ## [1.5.12](https://github.com/anthonypillot/anthonypillotOS/compare/v1.5.11...v1.5.12) (2026-10-29)
 
 
