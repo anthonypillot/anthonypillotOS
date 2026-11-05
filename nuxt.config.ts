@@ -1,4 +1,5 @@
-import { author, description, version } from "./package.json";
+import { author, description } from "./package.json" with { type: "json" };
+import { getApplicationVersion } from "./runtime/application-version";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -7,7 +8,7 @@ export default defineNuxtConfig({
       title: "anthonypillotOS",
       description,
       url: author.url,
-      version,
+      version: getApplicationVersion(),
       logo: {
         hero: {
           white: "https://raw.githubusercontent.com/anthonypillot/assets/main/logo/svg/logo_anthonypillotOS_white.svg",

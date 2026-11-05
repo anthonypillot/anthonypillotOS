@@ -1,4 +1,4 @@
-import { version } from "@@/package.json";
+import { getApplicationVersion } from "@@/runtime/application-version";
 
 /**
  * Initializes all the necessary configurations and checks before starting the server.
@@ -7,7 +7,7 @@ import { version } from "@@/package.json";
 export default defineNitroPlugin(async (_nitro) => {
   convertConsoleLogToCustomLogger();
   logger.start(
-    `Starting [${useRuntimeConfig().public.title}] with version [${version}] (${process.env.GIT_SHA || "local"}) and env. [${
+    `Starting [${useRuntimeConfig().public.title}] with version [${getApplicationVersion()}] (${process.env.GIT_SHA || "local"}) and env. [${
       process.env.ENV || "local"
     }]`
   );

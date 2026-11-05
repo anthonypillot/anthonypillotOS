@@ -1,4 +1,4 @@
-import { dependencies, devDependencies } from "@@/package.json";
+import { dependencies, devDependencies } from "@@/package.json" with { type: "json" };
 
 interface ApplicationResponse {
   name: string;

@@ -140,6 +140,14 @@ docker build --no-cache -t os:latest . \
 
 The image is multi-stage (`node:24` builder → `gcr.io/distroless/nodejs24-debian13` runtime) and exposes port 3000. Pass `GIT_SHA` as a build arg to surface the commit in `/api` and the startup logs.
 
+Pass `--build-arg APP_VERSION=<image-version>` for preview builds; otherwise the original
+`package.json` version is used. The image embeds this value for the UI, JSON logs and OpenTelemetry
+`service.version`. Its Node.js 24 preload initializes OTEL before the server only when
+`OTEL_EXPORTER_OTLP_ENDPOINT` is configured. Keep environment and namespace attributes in
+`OTEL_RESOURCE_ATTRIBUTES`, but do not set `service.version` or the OTEL preload in Kubernetes
+`NODE_OPTIONS`. Upgrade the image and remove the old preload together; roll back the complete
+Deployment template rather than only the image.
+
 ## 🛠️ Linting & type checking
 
 ```bash

@@ -4,6 +4,9 @@ FROM node:24 AS build
 # Define working directory
 WORKDIR /app
 
+ARG APP_VERSION
+ENV APP_VERSION=${APP_VERSION}
+
 # Copy all content into the first stage
 COPY ./ ./
 
@@ -24,9 +27,15 @@ COPY --from=build /app/node_modules ./node_modules
 # Copy the build files from the first stage
 COPY --from=build /app/.output ./
 
+COPY --from=build /app/package.json ./bootstrap/package.json
+COPY --from=build /app/runtime ./bootstrap/runtime
+
+ARG APP_VERSION
+ENV APP_VERSION=${APP_VERSION}
+
 ARG GIT_SHA=not_set
 ENV GIT_SHA=${GIT_SHA}
 
 EXPOSE 3000
 
-CMD [ "./server/index.mjs" ]
+CMD [ "--import", "./bootstrap/runtime/register-telemetry.mts", "./server/index.mjs" ]

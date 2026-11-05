@@ -1,7 +1,7 @@
 import type { ConsolaInstance, LogLevel } from "consola";
 import { createConsola } from "consola";
 
-import { version } from "@@/package.json";
+import { getApplicationVersion } from "@@/runtime/application-version";
 
 /**
  * Returns a logger instance.
@@ -29,7 +29,7 @@ function getLogger(): ConsolaInstance {
           logObj.message = logObj.args[0];
           logObj.level = mapLevel(logObj.level) as unknown as LogLevel;
 
-          logObj.version = version;
+          logObj.version = getApplicationVersion();
           logObj.env = process.env.ENV || "local";
 
           console.log(JSON.stringify(logObj));
