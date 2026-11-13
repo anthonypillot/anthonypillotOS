@@ -27,8 +27,8 @@ COPY --from=build /app/node_modules ./node_modules
 # Copy the build files from the first stage
 COPY --from=build /app/.output ./
 
-COPY --from=build /app/package.json ./bootstrap/package.json
-COPY --from=build /app/runtime ./bootstrap/runtime
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/server/register-telemetry.ts ./server/register-telemetry.ts
 
 ARG APP_VERSION
 ENV APP_VERSION=${APP_VERSION}
@@ -38,4 +38,4 @@ ENV GIT_SHA=${GIT_SHA}
 
 EXPOSE 3000
 
-CMD [ "--import", "./bootstrap/runtime/register-telemetry.mts", "./server/index.mjs" ]
+CMD [ "--import", "./server/register-telemetry.ts", "./server/index.mjs" ]

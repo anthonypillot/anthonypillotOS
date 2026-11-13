@@ -24,7 +24,7 @@
   "scripts": {
     "postinstall": "nuxt prepare && prisma generate",
     "clean": "rm -rf .nuxt .output coverage playwright-report test-results",
-    "lint": "nuxt typecheck && tsc --project runtime/tsconfig.json && npm run test:e2e:typecheck && eslint .",
+    "lint": "nuxt typecheck && npm run test:e2e:typecheck && eslint .",
     "build": "npm run clean && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
