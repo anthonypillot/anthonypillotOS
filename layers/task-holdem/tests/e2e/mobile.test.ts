@@ -1,4 +1,4 @@
-import { routes } from "../../../../tests/e2e/configuration";
+import { routes } from "../../../../tests/e2e/support/configuration";
 import { taskHoldemMascots } from "../../shared/data/mascots";
 import { expect, test } from "./support/fixtures";
 

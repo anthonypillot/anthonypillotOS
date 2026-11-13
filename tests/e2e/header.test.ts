@@ -1,5 +1,5 @@
 import { expect, test } from "./support/fixtures";
-import { routes } from "./configuration";
+import { routes } from "./support/configuration";
 
 function readBackgroundOpacity(element: Element): number {
   const canvas = document.createElement("canvas");

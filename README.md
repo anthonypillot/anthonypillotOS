@@ -88,22 +88,22 @@ The project uses [Vitest](https://vitest.dev/) for server-side unit tests and [P
 ```bash
 npm run test             # Vitest unit tests
 npm run test:coverage    # Vitest with v8 coverage
-npm run test:e2e:db:up   # Start disposable Docker PostgreSQL and initialize its schema
-npm run test:e2e         # Build once, then run all six Playwright browser/device projects
+npm run test:e2e         # Build, provision Docker PostgreSQL, run all six projects, and clean up
 npm run test:e2e:ui      # Playwright UI mode
-npm run test:e2e:db:down # Stop and discard the E2E database
 ```
 
 E2E tests always launch the production build at `http://127.0.0.1:4173`, including in CI.
-The disposable `os-e2e-postgres` container runs the `os_e2e_postgres` database on port `55439` and never reads database credentials from `.env`.
+The coordinator in `tests/e2e/support/server.ts` initializes PostgreSQL, starts both Nitro instances, and waits for both to report database readiness.
+By default, it creates and removes the disposable `os-e2e-postgres` Docker container (`os_e2e_postgres` database, port `55439`). Docker must be running. Database credentials never come from `.env`, and existing containers are never silently reused or removed.
 Install browsers once with `npx playwright install --with-deps`.
 
 For a quick check, use `npm run test:e2e -- --project="Desktop - Chromium"`.
 After building, `npx playwright test ...` reruns selected specs without rebuilding.
+To retain a manually managed E2E database, run `npm run test:e2e:db:up`, use `E2E_DATABASE_MODE=external npx playwright test ...`, then stop it yourself with `npm run test:e2e:db:down`. CI uses this explicit external mode with its PostgreSQL service.
 `npm run test:e2e:typecheck` and `npm run test:e2e:list` check types/discovery without starting the app or database.
 
 GitHub Actions runs E2E only on the weekly schedule or manual dispatch, grouped by browser engine.
-Failures fail the workflow; artifacts include HTML/JUnit reports, failure screenshots/traces, browser diagnostics, and `logs/e2e-server.log`.
+Failures fail the workflow; artifacts include HTML/JUnit reports, failure screenshots/traces, browser diagnostics, and `logs/e2e-*.log`.
 TaskHold'em exercises real WebSockets/PostgreSQL, including two Nitro instances for concurrent-command tests. History Cleaner submissions are mocked with fake tokens and blocked unless explicitly intercepted.
 Do not run builds and Playwright simultaneously: `npm run build` removes previous reports and test results.
 

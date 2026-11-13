@@ -1,5 +1,5 @@
 import { expect, test } from "../../../support/fixtures";
-import { routes } from "../../../configuration";
+import { routes } from "../../../support/configuration";
 import { expectReadableContrast } from "../../../support/contrast";
 
 test("landing page launches the game without starting a round", async ({ page }) => {

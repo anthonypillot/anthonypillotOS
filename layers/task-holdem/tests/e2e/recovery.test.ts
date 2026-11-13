@@ -1,7 +1,7 @@
 import type { WebSocketRoute } from "@playwright/test";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../../../server/generated/prisma/client";
-import { databaseURL, routes } from "../../../../tests/e2e/configuration";
+import { databaseURL, routes } from "../../../../tests/e2e/support/configuration";
 import { taskHoldemCreateSchema, taskHoldemRoomIdSchema } from "../../shared/schemas/room.schema";
 import { getTaskHoldemDeck } from "../../shared/data/decks";
 import { taskHoldemStateSchema } from "../../server/domain/room";

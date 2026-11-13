@@ -1,5 +1,5 @@
 import { expect, test } from "../../../../tests/e2e/support/fixtures";
-import { routes } from "../../../../tests/e2e/configuration";
+import { routes } from "../../../../tests/e2e/support/configuration";
 
 test("landing page links to the multiplayer application", async ({ page }) => {
   await page.goto(routes.taskHoldemLanding);

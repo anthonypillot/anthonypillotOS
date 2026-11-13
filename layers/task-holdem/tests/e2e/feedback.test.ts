@@ -1,7 +1,7 @@
 import type { WebSocketRoute } from "@playwright/test";
 import { expect, test, TaskHoldemPage } from "./support/fixtures";
 import { installTaskHoldemFeedbackMocks } from "./support/feedback";
-import { routes } from "../../../../tests/e2e/configuration";
+import { routes } from "../../../../tests/e2e/support/configuration";
 
 test.skip(({ browserName, isMobile }) => browserName !== "chromium" || isMobile, "Browser API behavior is covered once; responsive controls are covered by the page suite.");
 

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../../../server/generated/prisma/client";
-import { databaseURL } from "../../../../tests/e2e/configuration";
+import { databaseURL } from "../../../../tests/e2e/support/configuration";
 import { taskHoldemStateSchema } from "../../server/domain/room";
 import { expect, test } from "./support/fixtures";
 

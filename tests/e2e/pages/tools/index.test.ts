@@ -1,5 +1,5 @@
 import { expect, test } from "../../support/fixtures";
-import { routes } from "../../configuration";
+import { routes } from "../../support/configuration";
 
 const tools = [
   { name: "TaskHold’em", path: routes.taskHoldemLanding },

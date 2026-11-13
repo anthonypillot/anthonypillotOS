@@ -9,7 +9,7 @@ export default defineVitestConfig({
         h3Version: 1,
       },
     },
-    include: ["server/**/*.{test,spec}.?(c|m)[jt]s?(x)", "layers/*/tests/unit/**/*.nuxt.test.ts"],
+    include: ["server/**/*.{test,spec}.?(c|m)[jt]s?(x)", "layers/*/tests/unit/**/*.nuxt.test.ts", "tests/unit/e2e/**/*.test.ts"],
     coverage: {
       include: ["server/**/*.{js,ts}", "layers/*/server/**/*.{js,ts}"],
       exclude: ["server/generated/**"],

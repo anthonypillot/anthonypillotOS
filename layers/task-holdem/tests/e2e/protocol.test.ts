@@ -3,7 +3,7 @@ import type { WebSocketRoute } from "@playwright/test";
 import { io, type Socket } from "socket.io-client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../../../server/generated/prisma/client";
-import { baseURL, databaseURL, secondaryBaseURL } from "../../../../tests/e2e/configuration";
+import { baseURL, databaseURL, secondaryBaseURL } from "../../../../tests/e2e/support/configuration";
 import { expect, test } from "./support/fixtures";
 import {
   connectTaskHoldemSocket, createTaskHoldemSocket, taskHoldemSuccess, type TaskHoldemTestSocket,

@@ -58,17 +58,17 @@ jobs:
         run: |
           npm run test:e2e:typecheck
           npm run test:e2e:list
+          npx vitest run tests/unit/e2e
 
       - name: 📦 Install Playwright Browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
-
-      - name: 🗄️ Initialize isolated test database
-        run: npm run test:e2e:db
 
       - name: 🏗️ Build application
         run: npm run build
 
       - name: 🎭 Run Playwright tests
+        env:
+          E2E_DATABASE_MODE: external
         run: npx playwright test ${{ matrix.projects }}
 
       - name: 📤 Upload report

@@ -1,6 +1,6 @@
 import { expect, type Dialog, type Page } from "@playwright/test";
 import { waitForHydration } from "@nuxt/test-utils/e2e";
-import { routes } from "../configuration";
+import { routes } from "./configuration";
 
 export const cleanerEndpoint = "/api/tools/github/history-cleaner";
 export const cleanerInput = {

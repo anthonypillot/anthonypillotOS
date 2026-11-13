@@ -1,5 +1,5 @@
 import { waitForHydration } from "@nuxt/test-utils/e2e";
-import { routes } from "./configuration";
+import { routes } from "./support/configuration";
 import { expect, test } from "./support/fixtures";
 import { expectReadableContrast } from "./support/contrast";
 

@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import pg from "pg";
-import { baseURL, databaseURL } from "../../../../tests/e2e/configuration";
+import { baseURL, databaseURL } from "../../../../tests/e2e/support/configuration";
 import { expect, test } from "./support/fixtures";
 import { connectTaskHoldemSocket, taskHoldemSuccess } from "./support/socket";
 import type { TaskHoldemJoin } from "../../shared/types/room.type";
