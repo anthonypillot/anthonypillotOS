@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../../../../server/generated/prisma/client";
 import type { BrowserContext, Page } from "@playwright/test";
-import { databaseURL, routes } from "../../../../../tests/e2e/configuration";
+import { databaseURL, routes } from "../../../../../tests/e2e/support/configuration";
 import { capturePageDiagnostics, expect, test as base } from "../../../../../tests/e2e/support/fixtures";
 import { createTaskHoldemTestRoom } from "./socket";
 import type { TaskHoldemProfile } from "../../../shared/types/room.type";

@@ -1,4 +1,4 @@
-import { routes } from "../configuration";
+import { routes } from "../support/configuration";
 import { expect, test } from "../support/fixtures";
 
 const experienceWebsites = [

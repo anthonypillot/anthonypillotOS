@@ -1,7 +1,8 @@
 import { spawnSync } from "node:child_process";
-import { databaseURL } from "./configuration.ts";
+import { databaseURL, rootDirectory } from "./configuration.ts";
 
 const result = spawnSync(process.execPath, ["node_modules/prisma/build/index.js", "db", "push"], {
+  cwd: rootDirectory,
   env: { ...process.env, POSTGRES_PRISMA_URL: databaseURL },
   stdio: "inherit",
 });

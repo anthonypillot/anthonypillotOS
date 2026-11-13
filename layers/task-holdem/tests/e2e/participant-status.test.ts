@@ -1,4 +1,4 @@
-import { routes } from "../../../../tests/e2e/configuration";
+import { routes } from "../../../../tests/e2e/support/configuration";
 import { expect, test } from "./support/fixtures";
 
 test("lattice status follows confirmed votes without exposing unrevealed values", async ({ roomId, createPlayer }) => {

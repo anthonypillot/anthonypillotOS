@@ -1,4 +1,4 @@
-import { routes } from "../../../../tests/e2e/configuration";
+import { routes } from "../../../../tests/e2e/support/configuration";
 import { expect, test } from "./support/fixtures";
 
 test("connection indicator reads Connected before and after joining a room", async ({ page, roomId, createPlayer }) => {

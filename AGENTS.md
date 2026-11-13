@@ -14,11 +14,11 @@ npm run test -- --run              # all server tests once; npm run test watches
 npx vitest run server/tests/services/history-cleaner.service.nuxt.test.ts
 npm run test:coverage -- --run      # one-shot server coverage
 npm run start                      # clean production build, then preview
-npm run test:e2e:db:up              # disposable Docker PostgreSQL + E2E schema setup
-npm run test:e2e                    # build then Playwright, all six projects
+npm run test:e2e:db:up              # optional manually managed E2E database
+npm run test:e2e                    # build, managed Docker PostgreSQL, Playwright, cleanup
 npm run test:e2e:typecheck          # standalone strict TypeScript check
 npm run test:e2e:list               # discovery without app/database startup
-npm run test:e2e:db:down            # discard the E2E database
+npm run test:e2e:db:down            # discard a manually managed E2E database
 npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 ```
 
@@ -27,10 +27,10 @@ npx playwright test tests/e2e/pages/index.test.ts --project="Desktop - Chromium"
 
 ## Testing gotchas
 
-- Vitest uses the Nuxt environment and discovers tests under `server/` and `layers/*/tests/unit/`; UI tests use Playwright. Keep `vitest.config.ts`'s `h3Version: 1` pin to match Nitro 2 despite transitive H3 v2 tooling.
+- Vitest uses the Nuxt environment for tests under `server/` and `layers/*/tests/unit/`; E2E coordinator tests under `tests/unit/e2e/` use the Node environment with mocked infrastructure. UI tests use Playwright. Keep `vitest.config.ts`'s `h3Version: 1` pin to match Nitro 2 despite transitive H3 v2 tooling.
 - Service tests mock DAOs; GitHub DAO tests use MSW with unhandled requests treated as errors. Keep DB/GitHub interactions mocked rather than using live credentials.
 - Playwright always starts the built Nitro server at `http://127.0.0.1:4173`, locally and in CI. Run `npm run build` before direct `npx playwright test` commands; `npm run test:e2e` builds first. CI runs on schedule/manual dispatch only.
-- E2E uses the dedicated `os-e2e-postgres` Docker container (`os_e2e_postgres` database) on port `55439`, never `.env` credentials. Fixtures block unmocked History Cleaner requests; multiplayer fixtures close contexts and delete only their test-owned rooms.
+- The E2E coordinator in `tests/e2e/support/server.ts` owns Docker PostgreSQL and both Nitro instances by default, checks both readiness responses, and removes only its own resources. `E2E_DATABASE_MODE=external` uses a manually started or CI-provided database without managing its lifecycle. E2E always uses `os_e2e_postgres` on port `55439`, never `.env` credentials. Fixtures block unmocked History Cleaner requests; multiplayer fixtures close contexts and delete only their test-owned rooms.
 - The default Playwright run covers six desktop/tablet/mobile projects; use the focused Chromium command above for a quick check. Install browsers with `npx playwright install --with-deps` when needed.
 
 ## Wiring and boundaries

@@ -1,3 +1,6 @@
+import { fileURLToPath } from "node:url";
+
+export const rootDirectory = fileURLToPath(new URL("../../../", import.meta.url));
 export const baseURL = "http://127.0.0.1:4173";
 export const secondaryBaseURL = "http://127.0.0.1:4174";
 

@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../../../server/generated/prisma/client";
-import { databaseURL, routes, secondaryBaseURL } from "../../../../tests/e2e/configuration";
+import { databaseURL, routes, secondaryBaseURL } from "../../../../tests/e2e/support/configuration";
 import { expectReadableContrast } from "../../../../tests/e2e/support/contrast";
 import { getTaskHoldemDeck, taskHoldemVotingScales } from "../../shared/data/decks";
 import { taskHoldemRoomIdSchema } from "../../shared/schemas/room.schema";

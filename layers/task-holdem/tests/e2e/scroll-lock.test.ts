@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { routes } from "../../../../tests/e2e/configuration";
+import { routes } from "../../../../tests/e2e/support/configuration";
 import { expect, test } from "./support/fixtures";
 
 test.skip(({ browserName, isMobile, hasTouch }) => browserName !== "chromium" || isMobile || hasTouch, "Exercise classic desktop scrollbar geometry once; touch devices use overlay scrollbars.");

@@ -1,11 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
-import { baseURL, databaseURL, secondaryBaseURL } from "./tests/e2e/configuration";
+import { baseURL } from "./tests/e2e/support/configuration";
 
 export default defineConfig({
   testDir: ".",
   testMatch: "**/tests/e2e/**/*.test.ts",
   tsconfig: "./tests/e2e/tsconfig.json",
-  globalSetup: "./tests/e2e/global-setup.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   failOnFlakyTests: !!process.env.CI,
@@ -36,21 +35,13 @@ export default defineConfig({
     { name: "Mobile Chrome - Samsung Galaxy S24", use: { ...devices["Galaxy S24"] } },
     { name: "Mobile Safari - iPhone 15", use: { ...devices["iPhone 15"] } },
   ],
-  webServer: [4173, 4174].map((port) => ({
-    command: "node tests/e2e/start-server.ts",
-    url: `${port === 4173 ? baseURL : secondaryBaseURL}/api/health/live`,
+  webServer: {
+    command: "node tests/e2e/support/server.ts",
+    wait: { stdout: /\[E2E\] Environment ready/ },
     reuseExistingServer: false,
-    timeout: 60_000,
-    gracefulShutdown: { signal: "SIGTERM", timeout: 10_000 },
-    env: {
-      HOST: "127.0.0.1",
-      PORT: port.toString(),
-      E2E_SERVER_NAME: port === 4173 ? "server" : "secondary-server",
-      POSTGRES_PRISMA_URL: databaseURL,
-      TASK_HOLDEM_GRACE_MS: "4000",
-      TASK_HOLDEM_REVEAL_MS: "750",
-      ENV: "e2e",
-      LOG_LEVEL: "info",
-    },
-  })),
+    timeout: 240_000,
+    gracefulShutdown: { signal: "SIGTERM", timeout: 45_000 },
+    stdout: "pipe",
+    stderr: "pipe",
+  },
 });
