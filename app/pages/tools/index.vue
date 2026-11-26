@@ -9,7 +9,7 @@
         <h1 class="mt-6 text-5xl font-semibold tracking-tight text-highlighted sm:text-6xl">Tools</h1>
         <p class="mx-auto mt-5 max-w-xl text-base leading-8 text-toned sm:text-lg">{{ description }}</p>
       </div>
-      <ul aria-label="Available tools" class="mx-auto mt-12 grid max-w-lg grid-cols-1 gap-6 sm:mt-16 lg:max-w-none lg:grid-cols-3">
+      <ul aria-label="Available tools" class="mx-auto mt-12 grid max-w-lg grid-cols-1 gap-6 sm:mt-16 lg:max-w-3xl lg:grid-cols-2">
         <li v-for="tool in tools" :key="tool.id" class="min-w-0">
           <ToolsToolCard :tool="tool" />
         </li>
@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import type { Tool } from "~/types/tool.type";
 
-const description = "Plan with your team, put your IT knowledge to the test, or tidy up GitHub.";
+const description = "Plan with your team or put your IT knowledge to the test.";
 
 useSeo({
   title: "Tools",
@@ -44,14 +44,6 @@ const tools = [
     description: "Test your IT knowledge with a quick true-or-false challenge.",
     to: "/tools/it-facts",
     icon: "i-heroicons-check-badge",
-  },
-  {
-    id: "history-cleaner",
-    name: "GitHub History Cleaner",
-    category: "Repository maintenance",
-    description: "Bulk-delete GitHub workflow runs and deployments from your repositories.",
-    to: "/tools/github/history-cleaner",
-    icon: "i-heroicons-arrow-path-rounded-square",
   },
 ] satisfies Tool[];
 </script>

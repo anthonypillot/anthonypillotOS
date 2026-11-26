@@ -54,7 +54,7 @@ test("experience actions retain hover feedback and a high-contrast keyboard focu
 test("shared borders stay visible on tool cards and raised voting scale cards", async ({ page }) => {
   await page.goto(routes.tools);
   const tools = page.locator(".tool-card");
-  await expect(tools).toHaveCount(3);
+  await expect(tools).toHaveCount(2);
   for (const tool of await tools.all()) {
     expect((await readSurfaceContrast(tool)).border, "Tool outlines must remain visible against their raised surface").toBeGreaterThan(1.2);
   }

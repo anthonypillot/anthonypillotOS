@@ -21,25 +21,6 @@
       </div>
     </div>
 
-    <div v-else-if="toolId === 'history-cleaner'" class="w-full max-w-64 rounded-xl border border-sky-200/15 bg-default/40 p-3 shadow-xl shadow-slate-950/20">
-      <div class="mb-2 flex items-center gap-2 border-b border-white/10 pb-2 text-[0.625rem] text-sky-100/80 sm:mb-3 sm:pb-2.5">
-        <UIcon name="i-heroicons-folder" class="size-3.5 text-sky-300" />
-        <span>your-repository / history</span>
-        <UIcon name="i-heroicons-ellipsis-horizontal" class="ml-auto size-4" />
-      </div>
-      <div class="space-y-1.5 sm:space-y-2">
-        <div v-for="run in ['Workflow run #128', 'Workflow run #127', 'Deployment #42']" :key="run" class="flex items-center gap-2 rounded-md bg-elevated/60 px-2 py-1 text-[0.625rem] text-toned sm:py-1.5">
-          <UIcon name="i-heroicons-check-circle" class="size-3.5 shrink-0 text-sky-300" />
-          <span>{{ run }}</span>
-          <UIcon name="i-heroicons-trash" class="ml-auto size-3 shrink-0 text-muted" />
-        </div>
-      </div>
-      <div class="mt-2 flex items-center justify-between text-[0.5625rem] sm:mt-3">
-        <span class="text-muted">3 items selected</span>
-        <span class="flex items-center gap-1 text-sky-200"><UIcon name="i-heroicons-sparkles" class="size-3" />Ready to clean</span>
-      </div>
-    </div>
-
     <div v-else class="w-full max-w-64 rounded-xl border border-violet-200/15 bg-default/40 p-4 shadow-xl shadow-slate-950/20">
       <div class="flex items-center justify-between text-[0.625rem] text-violet-200/80">
         <span class="flex items-center gap-1.5"><UIcon name="i-heroicons-bolt" class="size-3.5" />Fact or fiction?</span>
@@ -69,10 +50,6 @@ defineProps<{ toolId: ToolId }>();
 
 .preview-task-holdem {
   --preview-glow: rgb(99 102 241 / 25%);
-}
-
-.preview-history-cleaner {
-  --preview-glow: rgb(14 165 233 / 18%);
 }
 
 .preview-it-facts {

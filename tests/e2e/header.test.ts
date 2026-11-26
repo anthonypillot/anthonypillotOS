@@ -52,7 +52,6 @@ test("floating navigation supports tool navigation and keyboard dismissal", asyn
   await page.keyboard.press("Enter");
   await expect(menu).toBeVisible();
   await expect(menu.getByRole("link", { name: /TaskHold’em/ })).toBeVisible();
-  await expect(menu.getByRole("link", { name: /GitHub History Cleaner/ })).toBeVisible();
   await expect(menu.getByRole("link", { name: "View all tools" })).toHaveAttribute("href", "/tools");
 
   if (mobile) {
