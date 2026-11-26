@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from "@playwright/test";
+import { test as base, type Page } from "@playwright/test";
 
 type Fixtures = {
   diagnostics: string[];
@@ -22,18 +22,10 @@ export const test = base.extend<Fixtures>({
   captureDiagnostics: [async ({ context, diagnostics }, use, testInfo) => {
     context.on("page", page => capturePageDiagnostics(page, diagnostics));
 
-    // A missing/mismatched mock must never fall through to the destructive server endpoint.
-    const unmockedCleanerRequests: string[] = [];
-    await context.route("**/api/tools/github/history-cleaner", async route => {
-      unmockedCleanerRequests.push(route.request().url());
-      await route.abort("blockedbyclient");
-    });
-
     try {
       await use(undefined);
-      expect(unmockedCleanerRequests, "History Cleaner requests must be explicitly mocked").toEqual([]);
     } finally {
-      if (testInfo.status !== testInfo.expectedStatus || unmockedCleanerRequests.length > 0) {
+      if (testInfo.status !== testInfo.expectedStatus) {
         await testInfo.attach("browser-diagnostics", {
           body: diagnostics.join("\n") || "No browser warnings, errors, or failed requests captured.",
           contentType: "text/plain",

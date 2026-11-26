@@ -1,4 +1,3 @@
-import { waitForHydration } from "@nuxt/test-utils/e2e";
 import { routes } from "./configuration";
 import { expect, test } from "./support/fixtures";
 import { expectReadableContrast } from "./support/contrast";
@@ -6,7 +5,6 @@ import { expectReadableContrast } from "./support/contrast";
 const pages = [
   { name: "home", path: routes.home },
   { name: "tool catalog", path: routes.tools },
-  { name: "History Cleaner", path: routes.githubHistoryCleaner },
   { name: "IT Facts introduction", path: routes.itFactsLanding },
   { name: "IT Facts game", path: routes.itFacts },
   { name: "Task Hold'em introduction", path: routes.taskHoldemLanding },
@@ -51,17 +49,6 @@ for (const colorScheme of ["light", "dark"] as const) {
       await menu.getByRole("link", { name: /IT Facts/ }).click();
       await expect(page).toHaveURL(routes.itFactsLanding);
       await expect(page.locator("html")).toHaveClass(/\bdark\b/);
-    });
-
-    test("History Cleaner confirmation stays readable above the page", async ({ page }) => {
-      await page.goto(routes.githubHistoryCleaner);
-      await waitForHydration(page, routes.githubHistoryCleaner, "hydration");
-      await page.getByLabel("Account name or organization").fill("theme-test");
-      await page.getByLabel("Repository", { exact: true }).fill("example");
-      await page.getByLabel("GitHub Personal Access Token (PAT)", { exact: true }).fill("ghp_theme-test");
-      await page.getByRole("button", { name: "Submit", exact: true }).click();
-      await expect(page.getByRole("dialog", { name: "Confirm deletion" })).toBeVisible();
-      await expectReadableContrast(page);
     });
   });
 }

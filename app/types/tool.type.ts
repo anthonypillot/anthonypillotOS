@@ -1,4 +1,4 @@
-export type ToolId = "task-holdem" | "history-cleaner" | "it-facts";
+export type ToolId = "task-holdem" | "it-facts";
 
 export type Tool = {
   id: ToolId;

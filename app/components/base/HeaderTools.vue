@@ -54,12 +54,6 @@ const tools = [
     to: "/tools/it-facts",
     icon: "i-heroicons-check-badge",
   },
-  {
-    name: "GitHub History Cleaner",
-    description: "Clean up workflow runs and deployments",
-    to: "/tools/github/history-cleaner",
-    icon: "i-heroicons-arrow-path-rounded-square",
-  },
 ];
 
 function isActive(path: string): boolean {

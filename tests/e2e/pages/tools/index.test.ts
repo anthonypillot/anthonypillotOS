@@ -4,7 +4,6 @@ import { routes } from "../../configuration";
 const tools = [
   { name: "TaskHold’em", path: routes.taskHoldemLanding },
   { name: "IT Facts", path: routes.itFactsLanding },
-  { name: "GitHub History Cleaner", path: routes.githubHistoryCleaner },
 ];
 
 test.beforeEach(async ({ page }) => {
@@ -45,7 +44,7 @@ test("cards support keyboard navigation and reduced motion", async ({ page, brow
   await links.last().hover();
   await expect(links.last()).toHaveCSS("transform", "none");
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(routes.githubHistoryCleaner);
+  await expect(page).toHaveURL(routes.itFactsLanding);
 });
 
 test("showcase fits the project's viewport and keeps illustrations inside cards", async ({ page }) => {
